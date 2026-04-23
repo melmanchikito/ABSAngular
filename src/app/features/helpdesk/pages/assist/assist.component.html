@@ -1,0 +1,12 @@
+<app-stepper
+  [steps]="steps"
+  [activeStep]="activeStep"
+  (activeStepChange)="setActiveStep($event)"
+>
+  <div class="content">
+    <app-clients *ngIf="activeStep === 0"></app-clients>
+    <app-equipment *ngIf="activeStep === 1"></app-equipment>
+    <app-problem *ngIf="activeStep === 2"></app-problem>
+    <app-confirm *ngIf="activeStep === 3"></app-confirm>
+  </div>
+</app-stepper>

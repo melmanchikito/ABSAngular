@@ -1,0 +1,237 @@
+.background_login {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  width: 100%;
+  min-height: 100dvh;
+  background-color: rgba(221, 221, 221, 0.822);
+  background-image: url('/assets/auth/arwallpaper.webp');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  color: black;
+  overflow-y: auto;
+}
+
+.login_form {
+  display: flex;
+  width: 50%;
+  min-height: 100dvh;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+}
+
+.card_form {
+  display: flex;
+  flex-direction: column;
+  width: min(100%, 520px);
+  min-height: 620px;
+  background-color: #fff;
+  border-radius: 42px;
+  padding: 2rem 3rem;
+}
+
+.login_img {
+  display: flex;
+  width: 100%;
+  margin-bottom: 1.5rem;
+}
+
+.img {
+  width: min(200px, 70%);
+  height: auto;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 1.8rem;
+}
+
+.tittle {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.tittle h1 {
+  font-size: clamp(2rem, 4vw, 3rem);
+  margin: 0;
+  font-weight: 700;
+}
+
+.tittle p {
+  margin: 0;
+  color: #333;
+  font-size: clamp(0.95rem, 2vw, 1.1rem);
+}
+
+.card_auth {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 1.4rem;
+}
+
+.card_user,
+.card_password {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 0.6rem;
+}
+
+.card_auth label {
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+.card_auth input {
+  width: 100%;
+  height: 52px;
+  background-color: transparent;
+  border-radius: 10px;
+  border: 2px solid rgba(196, 196, 196, 0.575);
+  padding: 0 1rem;
+  color: black;
+  outline: none;
+  transition: all 0.3s ease;
+  font-size: 1rem;
+}
+
+.card_auth input:focus {
+  border-color: #4A90E2;
+  box-shadow: 0 0 8px rgba(74, 144, 226, 0.5);
+  background-color: rgba(74, 144, 226, 0.05);
+}
+
+.card_opciones {
+  display: flex;
+  width: 100%;
+}
+
+.card_opciones a {
+  color: #0866ff;
+  font-size: 1rem;
+}
+
+.card_recoverpass {
+  display: flex;
+}
+
+.card_button {
+  display: flex;
+  width: 100%;
+  height: 52px;
+}
+
+.botonlogin {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  border: none;
+  background-color: #c72026;
+  color: #fff;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+  font-size: 1.05rem;
+}
+
+.botonlogin:hover {
+  background-color: #eb484e;
+  transform: scale(1.02);
+}
+
+.card_opcion:hover {
+  text-decoration: underline;
+}
+
+.alert {
+  width: 100%;
+  border-radius: 10px;
+  padding: 0.9rem 1rem;
+  font-size: 0.95rem;
+}
+
+.error {
+  background: rgba(199, 32, 38, 0.12);
+  color: #a3151a;
+  border: 1px solid rgba(199, 32, 38, 0.3);
+}
+
+.info {
+  background: rgba(0, 123, 255, 0.1);
+  color: #0056b3;
+  border: 1px solid rgba(0, 123, 255, 0.25);
+}
+
+/* Tablet */
+@media (max-width: 1024px) {
+  .login_form {
+    width: 60%;
+  }
+
+  .card_form {
+    padding: 2rem;
+  }
+}
+
+/* Celular grande / tablet vertical */
+@media (max-width: 768px) {
+  .background_login {
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+  }
+
+  .login_form {
+    width: 100%;
+    min-height: auto;
+    padding: 0;
+  }
+
+  .card_form {
+    width: min(100%, 480px);
+    min-height: auto;
+    border-radius: 28px;
+    padding: 2rem;
+  }
+
+  .login_img {
+    justify-content: center;
+  }
+
+  .tittle {
+    text-align: center;
+  }
+}
+
+/* Celular pequeño */
+@media (max-width: 480px) {
+  .background_login {
+    padding: 0.75rem;
+  }
+
+  .card_form {
+    border-radius: 22px;
+    padding: 1.5rem;
+  }
+
+  .img {
+    width: 160px;
+  }
+
+  .form {
+    gap: 1.4rem;
+  }
+
+  .card_auth input,
+  .botonlogin {
+    height: 48px;
+  }
+}

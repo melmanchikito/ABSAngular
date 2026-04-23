@@ -1,0 +1,134 @@
+<div class="card">
+  <div class="card_tittle">
+    <span>👔</span>
+    <h1>Datos del solicitante</h1>
+  </div>
+
+  <form class="form">
+    <div class="card_options">
+      <label for="dateInit">Fecha y hora de creación:</label>
+      <input
+        id="dateInit"
+        type="datetime-local"
+        [ngModel]="form.dateInit"
+        (ngModelChange)="handleChange('dateInit', $event)"
+        name="dateInit"
+      />
+      <label class="alert" *ngIf="alertStart">{{ alertStart }}</label>
+    </div>
+
+    <div class="card_options">
+      <label for="dateEnd">Fecha y hora de cierre:</label>
+      <input
+        id="dateEnd"
+        type="datetime-local"
+        [ngModel]="form.dateEnd"
+        (ngModelChange)="handleChange('dateEnd', $event)"
+        name="dateEnd"
+      />
+      <label class="alert" *ngIf="alertEnd">{{ alertEnd }}</label>
+    </div>
+
+    <div class="card_options">
+      <label for="employee">Empleado:</label>
+      <select
+        id="employee"
+        [ngModel]="form.employeeId"
+        (ngModelChange)="handleChange('employeeId', +$event)"
+        name="employee"
+      >
+        <option [ngValue]="undefined" disabled>Seleccione un empleado</option>
+        <option *ngFor="let item of filteredEmployees" [ngValue]="item.id">
+          {{ item.code }} - {{ item.name }}
+        </option>
+      </select>
+    </div>
+
+    <div class="card_options">
+      <label for="company">Compañía:</label>
+      <select
+        id="company"
+        [ngModel]="form.companyId"
+        (ngModelChange)="handleChange('companyId', +$event)"
+        name="company"
+      >
+        <option [ngValue]="undefined" disabled>Seleccione una compañía</option>
+        <option *ngFor="let item of filteredCompanies" [ngValue]="item.id">
+          {{ item.code }} - {{ item.name }}
+        </option>
+      </select>
+    </div>
+
+    <div class="card_options">
+      <label for="branch">Sucursal:</label>
+      <select
+        id="branch"
+        [ngModel]="form.branchId"
+        (ngModelChange)="handleChange('branchId', +$event)"
+        name="branch"
+      >
+        <option [ngValue]="undefined" disabled>Seleccione una sucursal</option>
+        <option *ngFor="let item of filteredBranches" [ngValue]="item.id">
+          {{ item.code }} - {{ item.name }}
+        </option>
+      </select>
+    </div>
+
+    <div class="card_options">
+      <label for="department">Departamento:</label>
+      <select
+        id="department"
+        [ngModel]="form.departmentId"
+        (ngModelChange)="handleChange('departmentId', +$event)"
+        name="department"
+      >
+        <option [ngValue]="undefined" disabled>Seleccione un departamento</option>
+        <option *ngFor="let item of filteredDepartments" [ngValue]="item.id">
+          {{ item.code }} - {{ item.name }}
+        </option>
+      </select>
+    </div>
+
+    <div class="card_options">
+      <label for="priority">Prioridad:</label>
+      <select
+        id="priority"
+        [ngModel]="form.priority"
+        (ngModelChange)="handleChange('priority', $event)"
+        name="priority"
+      >
+        <option value="" disabled>Seleccione la prioridad</option>
+        <option value="1">Baja</option>
+        <option value="2">Moderada</option>
+        <option value="3">Alta</option>
+        <option value="4">Urgente</option>
+      </select>
+    </div>
+
+    <div class="card_chk">
+      <label for="isOwner">¿Es dueño del equipo?</label>
+      <input
+        id="isOwner"
+        type="checkbox"
+        [ngModel]="form.isOwner"
+        (ngModelChange)="handleChange('isOwner', $event)"
+        name="isOwner"
+      />
+    </div>
+
+    <div class="card_options" *ngIf="!form.isOwner">
+      <label for="owner">Dueño del equipo:</label>
+      <select
+        id="owner"
+        [ngModel]="form.ownerId"
+        (ngModelChange)="handleChange('ownerId', +$event)"
+        name="owner"
+      >
+        <option [ngValue]="undefined" disabled>Seleccione al dueño del equipo</option>
+        <option *ngFor="let item of ownerOptions" [ngValue]="item.id">
+          {{ item.code }} - {{ item.name }}
+        </option>
+      </select>
+    </div>
+  </form>
+</div>

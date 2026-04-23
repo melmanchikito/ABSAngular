@@ -1,0 +1,170 @@
+.contenedor_principal {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  min-height: 100dvh;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+  background-color: #fff;
+  background-image: url('/assets/auth/fondo.svg');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  padding: 2rem;
+  overflow-y: auto;
+}
+
+.card_ingresarotp {
+  display: flex;
+  flex-direction: column;
+  width: min(100%, 760px);
+  min-height: 560px;
+  background-color: #fff;
+  border-radius: 25px;
+  box-shadow: 0 0 5px rgba(86, 86, 86, 0.6);
+  align-items: center;
+  padding: 2rem;
+}
+
+.card_info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.image {
+  width: min(180px, 70%);
+  margin-bottom: 2rem;
+}
+
+.card_h1 {
+  width: 100%;
+}
+
+.info_h1 {
+  font-size: clamp(1.6rem, 4vw, 2rem);
+  text-align: center;
+  margin: 0;
+}
+
+.contenedor_inputs {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  align-items: center;
+  gap: 20px;
+}
+
+.inputs_row {
+  display: flex;
+  gap: clamp(0.5rem, 2vw, 1.25rem);
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.twofactor_Inputs {
+  width: clamp(48px, 10vw, 80px);
+  height: clamp(48px, 9vw, 70px);
+  border: 2px solid #ddd;
+  border-radius: 20px;
+  background-color: #dbd4d454;
+  transition: all 0.3s ease;
+  text-align: center;
+  font-size: clamp(1.4rem, 4vw, 1.9rem);
+  outline: none;
+}
+
+.twofactor_Inputs:hover {
+  transform: scale(1.04);
+  box-shadow: 0 4px 8px rgba(27, 27, 27, 0.3);
+}
+
+.twofactor_Inputs:focus {
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.6);
+  border: 2px solid #007bff;
+  transform: none;
+}
+
+.contenedor_boton {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.contenedor_boton button {
+  width: min(100%, 460px);
+  height: 50px;
+  border-radius: 15px;
+  border: none;
+  font-size: 16px;
+  background-color: #c72026;
+  color: #fff;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.contenedor_boton button:hover {
+  background-color: #eb484e;
+  transform: scale(1.02);
+}
+
+.contenedor_boton button.secondary {
+  background: #bbb6b6c0;
+  color: #000;
+}
+
+.alert {
+  width: min(100%, 520px);
+  border-radius: 10px;
+  padding: 0.9rem 1rem;
+  font-size: 0.95rem;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.error {
+  background: rgba(199, 32, 38, 0.12);
+  color: #a3151a;
+  border: 1px solid rgba(199, 32, 38, 0.3);
+}
+
+.info {
+  background: rgba(46, 204, 113, 0.14);
+  color: #1f7a45;
+  border: 1px solid rgba(46, 204, 113, 0.3);
+}
+
+@media (max-width: 768px) {
+  .contenedor_principal {
+    padding: 1rem;
+  }
+
+  .card_ingresarotp {
+    min-height: auto;
+    border-radius: 22px;
+    padding: 1.5rem;
+  }
+
+  .inputs_row {
+    max-width: 360px;
+  }
+}
+
+@media (max-width: 480px) {
+  .contenedor_principal {
+    padding: 0.75rem;
+  }
+
+  .twofactor_Inputs {
+    border-radius: 16px;
+  }
+
+  .contenedor_boton button {
+    height: 48px;
+  }
+}

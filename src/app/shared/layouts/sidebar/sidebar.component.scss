@@ -1,0 +1,142 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+}
+
+.card_image {
+  display: flex;
+  width: 100%;
+  min-height: 110px;
+  padding: 1rem;
+  align-items: center;
+}
+
+.logo {
+  width: min(160px, 80%);
+  height: auto;
+}
+
+.card_options {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  flex: 1;
+}
+
+.card_options nav {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding-left: 5%;
+  width: 100%;
+  height: 100%;
+}
+
+.card_options ul {
+  display: flex;
+  flex-direction: column;
+  list-style: none;
+  min-height: 100%;
+  width: 100%;
+  color: rgb(77, 77, 77);
+  gap: 0.35rem;
+  padding: 0;
+  margin: 0;
+}
+
+.item {
+  display: flex;
+  gap: 0.9rem;
+  min-height: 50px;
+  width: 90%;
+  font-size: 15px;
+  border-radius: 10px;
+  align-items: center;
+  padding-left: 0.75rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  white-space: nowrap;
+}
+
+.item:hover {
+  transform: translateX(3px);
+  background-color: #e2e2e2bb;
+}
+
+.active {
+  color: #007bff;
+  background-color: rgba(0, 123, 255, 0.1);
+}
+
+.separator {
+  border-top: 1px solid #ccc;
+  margin-top: 10px;
+  list-style: none;
+  height: 0 !important;
+  padding: 0;
+}
+
+.icon {
+  font-size: 17px;
+  width: 22px;
+  text-align: center;
+}
+
+/* Tablet */
+@media (max-width: 1024px) {
+  .logo {
+    width: 140px;
+  }
+
+  .item {
+    font-size: 14px;
+  }
+}
+
+/* Celular / tablet vertical */
+@media (max-width: 768px) {
+  .card {
+    flex-direction: column;
+    height: auto;
+  }
+
+  .card_image {
+    min-height: 75px;
+    justify-content: center;
+    padding: 0.75rem;
+  }
+
+  .logo {
+    width: 140px;
+  }
+
+  .card_options {
+    width: 100%;
+  }
+
+  .card_options nav {
+    padding: 0 0.75rem 0.75rem;
+  }
+
+  .card_options ul {
+    flex-direction: row;
+    overflow-x: auto;
+    gap: 0.5rem;
+    padding-bottom: 0.25rem;
+  }
+
+  .item {
+    flex: 0 0 auto;
+    width: auto;
+    min-width: 150px;
+    justify-content: center;
+    padding: 0 0.75rem;
+  }
+
+  .separator {
+    display: none;
+  }
+}

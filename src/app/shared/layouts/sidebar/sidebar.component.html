@@ -1,0 +1,33 @@
+<section class="card">
+  <div class="card_image">
+    <img src="assets/auth/LogoAR.svg" alt="Logo ABS" class="logo" />
+  </div>
+
+  <div class="card_options">
+    <nav>
+      <ul>
+        <li
+          *ngFor="let perm of permissions"
+          class="item"
+          [class.active]="activePerm === perm"
+          (click)="onSelect(perm)"
+        >
+          <span class="icon">{{ permissionIcons[perm] || '⚙️' }}</span>
+          <span>{{ perm }}</span>
+        </li>
+
+        <li class="separator"></li>
+
+        <li class="item">
+          <span class="icon">👤</span>
+          <span>Perfil</span>
+        </li>
+
+        <li class="item" (click)="logout()">
+          <span class="icon">↩</span>
+          <span>Cerrar Sesión</span>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</section>

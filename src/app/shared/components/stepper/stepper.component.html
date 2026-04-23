@@ -1,0 +1,45 @@
+<div class="fondo">
+  <header class="cardpages">
+    <button
+      *ngFor="let step of steps; let i = index"
+      class="stepButton"
+      [class.active]="activeStep === i"
+      (click)="setStep(i)"
+    >
+      <span class="stepIcon">{{ step.icon }}</span>
+      <span>{{ step.label }}</span>
+    </button>
+  </header>
+
+  <ng-content></ng-content>
+
+  <div class="footerNav">
+    <div>
+      <button
+        class="navButton"
+        (click)="prevStep()"
+        [disabled]="activeStep === 0"
+      >
+        Volver
+      </button>
+    </div>
+
+    <div class="dots">
+      <span
+        *ngFor="let step of steps; let i = index"
+        class="dot"
+        [class.dotActive]="activeStep === i"
+      ></span>
+    </div>
+
+    <div>
+      <button
+        class="navButton"
+        (click)="nextStep()"
+        [disabled]="activeStep === steps.length - 1"
+      >
+        Siguiente
+      </button>
+    </div>
+  </div>
+</div>

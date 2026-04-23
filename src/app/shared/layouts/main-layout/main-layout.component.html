@@ -1,0 +1,15 @@
+<div class="fondo">
+  <section class="card_sidebar">
+    <app-sidebar (selectSection)="onSelectSection($event)"></app-sidebar>
+  </section>
+
+  <div class="right_content">
+    <section class="card_header">
+      <app-header [img]="img" [username]="username"></app-header>
+    </section>
+
+    <main class="card_main">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>

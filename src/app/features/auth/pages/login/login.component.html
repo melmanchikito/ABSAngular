@@ -1,0 +1,73 @@
+<div class="background_login">
+  <section class="login_form">
+    <div class="card_form">
+      <div class="login_img">
+        <img
+          class="img"
+          src="assets/auth/LogoAR.svg"
+          alt="Logo ABS"
+        />
+      </div>
+
+      <form class="form" [formGroup]="form" (ngSubmit)="onSubmit()">
+        <div class="tittle">
+          <h1>INGRESAR</h1>
+          <p>Por favor ingrese sus datos</p>
+        </div>
+
+        <div class="card_auth">
+          <div class="alert error" *ngIf="errorMessage">
+            {{ errorMessage }}
+          </div>
+
+          <div class="alert info" *ngIf="infoMessage">
+            {{ infoMessage }}
+          </div>
+
+          <div class="card_user">
+            <label class="card_label" for="email">Usuario:</label>
+            <input
+              id="email"
+              type="email"
+              placeholder="abc@autoradiador.com"
+              class="card_input"
+              formControlName="email"
+            />
+          </div>
+
+          <div class="card_password">
+            <label class="card_label" for="password">Contraseña:</label>
+            <input
+              id="password"
+              type="password"
+              placeholder="Ingrese su contraseña"
+              autocomplete="current-password"
+              class="card_input"
+              formControlName="password"
+              (copy)="$event.preventDefault()"
+              (paste)="$event.preventDefault()"
+            />
+          </div>
+
+          <div class="card_opciones">
+            <div class="card_recoverpass">
+              <a
+                href="#"
+                class="card_opcion"
+                (click)="goToRecoverPassword($event)"
+              >
+                Olvidé mi contraseña
+              </a>
+            </div>
+          </div>
+
+          <div class="card_button">
+            <button class="botonlogin" type="submit">
+              Ingresar
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </section>
+</div>

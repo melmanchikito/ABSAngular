@@ -1,0 +1,44 @@
+<div class="contenedor_principal">
+  <section class="card_ingresarotp">
+    <div class="card_info">
+      <img
+        src="assets/auth/LogoAR.svg"
+        alt="Logo ABS"
+        class="image"
+      />
+
+      <div class="card_h1">
+        <h1 class="info_h1">Ingresar código OTP</h1>
+      </div>
+    </div>
+
+    <div class="alert error" *ngIf="errorMessage">
+      {{ errorMessage }}
+    </div>
+
+    <div class="alert info" *ngIf="infoMessage">
+      {{ infoMessage }}
+    </div>
+
+    <form class="contenedor_inputs" (ngSubmit)="verifyOtp()">
+      <div class="inputs_row">
+        <input #otp0 class="twofactor_Inputs" type="text" maxlength="1" [value]="code[0]" (input)="onInput(0, $event, otp1)" (keydown.backspace)="onBackspace(0)" />
+        <input #otp1 class="twofactor_Inputs" type="text" maxlength="1" [value]="code[1]" (input)="onInput(1, $event, otp2)" (keydown.backspace)="onBackspace(1, otp0)" />
+        <input #otp2 class="twofactor_Inputs" type="text" maxlength="1" [value]="code[2]" (input)="onInput(2, $event, otp3)" (keydown.backspace)="onBackspace(2, otp1)" />
+        <input #otp3 class="twofactor_Inputs" type="text" maxlength="1" [value]="code[3]" (input)="onInput(3, $event, otp4)" (keydown.backspace)="onBackspace(3, otp2)" />
+        <input #otp4 class="twofactor_Inputs" type="text" maxlength="1" [value]="code[4]" (input)="onInput(4, $event, otp5)" (keydown.backspace)="onBackspace(4, otp3)" />
+        <input #otp5 class="twofactor_Inputs" type="text" maxlength="1" [value]="code[5]" (input)="onInput(5, $event)" (keydown.backspace)="onBackspace(5, otp4)" />
+      </div>
+
+      <div class="contenedor_boton">
+        <button type="submit">
+          Verificar OTP
+        </button>
+
+        <button type="button" class="secondary" (click)="goBack()">
+          Volver al login
+        </button>
+      </div>
+    </form>
+  </section>
+</div>

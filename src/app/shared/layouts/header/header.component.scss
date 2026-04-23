@@ -1,0 +1,170 @@
+.card_header {
+  display: flex;
+  width: 100%;
+  height: 100%;
+}
+
+.card_user {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  gap: 1rem;
+}
+
+.card_menu {
+  display: flex;
+  width: 55%;
+  height: 100%;
+  align-items: center;
+  gap: 1rem;
+}
+
+.card_menu select {
+  width: 100%;
+  height: 40px;
+  padding: 10px 12px;
+  border: none;
+  border-radius: 10px;
+  background-color: #fff;
+  font-size: 14px;
+  color: #333;
+  outline: none;
+}
+
+.card_profile {
+  display: flex;
+  width: 45%;
+  height: 100%;
+  align-items: center;
+  gap: 1rem;
+}
+
+.card_input {
+  position: relative;
+  display: flex;
+  width: 70%;
+  height: 100%;
+  align-items: center;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 12px;
+  color: #888;
+  pointer-events: none;
+}
+
+.card_input input {
+  width: 100%;
+  height: 40px;
+  background-color: transparent;
+  border-radius: 10px;
+  border: 2px solid rgba(196, 196, 196, 0.575);
+  padding-left: 2.2rem;
+  padding-right: 1rem;
+}
+
+.card_info {
+  display: flex;
+  width: 30%;
+  height: 100%;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 140px;
+}
+
+.card_text {
+  display: flex;
+  flex-direction: column;
+  color: rgb(77, 77, 77);
+  font-size: 15px;
+  justify-content: center;
+}
+
+.card_text p {
+  margin: 0;
+  white-space: nowrap;
+}
+
+.image {
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+}
+
+/* Tablet */
+@media (max-width: 1024px) {
+  .card_user {
+    gap: 0.75rem;
+  }
+
+  .card_menu {
+    gap: 0.5rem;
+  }
+
+  .card_menu select {
+    font-size: 13px;
+  }
+
+  .card_text {
+    font-size: 14px;
+  }
+}
+
+/* Celular / tablet vertical */
+@media (max-width: 768px) {
+  .card_user {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+
+  .card_menu {
+    width: 100%;
+    height: auto;
+    overflow-x: auto;
+    gap: 0.5rem;
+  }
+
+  .card_menu select {
+    min-width: 150px;
+  }
+
+  .card_profile {
+    width: 100%;
+    height: auto;
+    justify-content: space-between;
+  }
+
+  .card_input {
+    width: 70%;
+    height: auto;
+  }
+
+  .card_info {
+    width: auto;
+  }
+}
+
+/* Celular pequeño */
+@media (max-width: 480px) {
+  .card_profile {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .card_input {
+    width: 100%;
+  }
+
+  .card_info {
+    justify-content: center;
+  }
+
+  .card_text p {
+    white-space: normal;
+    text-align: center;
+  }
+}

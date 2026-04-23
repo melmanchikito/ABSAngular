@@ -1,0 +1,86 @@
+<div class="fondo">
+  <header class="header">
+    <div class="card_device">
+      <label for="device">Equipo:</label>
+      <select
+        id="device"
+        [ngModel]="selectedDeviceId"
+        (ngModelChange)="onDeviceChange(+$event)"
+        name="device"
+      >
+        <option [ngValue]="undefined">Seleccione un equipo</option>
+        <option *ngFor="let item of devices" [ngValue]="item.id">
+          {{ item.code }} - {{ item.name }}
+        </option>
+      </select>
+    </div>
+
+    <div class="card_options_equipments">
+      <button class="addBtn" type="button">Agregar Equipo</button>
+      <button class="deleteBtn" type="button">Eliminar Equipo</button>
+    </div>
+  </header>
+
+  <div class="detail">
+    <section>
+      <label>Detalles del equipo</label>
+
+      <dl>
+        <dt>Nombre:</dt>
+        <dd>{{ selectedDevice?.name || '' }}</dd>
+
+        <dt>Tipo:</dt>
+        <dd>{{ selectedDevice?.type || '' }}</dd>
+
+        <dt>Descripción:</dt>
+        <dd>{{ selectedDevice?.description || '' }}</dd>
+
+        <dt>Estado:</dt>
+        <dd>{{ selectedDevice?.state || '' }}</dd>
+
+        <dt>Modelo:</dt>
+        <dd>{{ selectedDevice?.model || '' }}</dd>
+
+        <dt>Serie:</dt>
+        <dd>{{ selectedDevice?.serial_number || '' }}</dd>
+
+        <dt>Último mantenimiento:</dt>
+        <dd>{{ selectedDevice?.last_maintenance_at || '' }}</dd>
+
+        <dt>Fecha de asignación:</dt>
+        <dd>{{ selectedDevice?.assignment_at || '' }}</dd>
+      </dl>
+    </section>
+
+    <section class="componentes">
+      <label>Componentes</label>
+
+      <div class="componentList">
+        <div class="componentCard" *ngIf="!selectedDevice?.components?.length">
+          <span>No hay componentes</span>
+        </div>
+
+        <div
+          class="componentCard"
+          *ngFor="let c of selectedDevice?.components"
+          (click)="toggleComponent(c.id)"
+        >
+          <div class="cardHeader">
+            <p>{{ c.name }}</p>
+            <button class="iconCard" type="button" (click)="$event.stopPropagation()">🗑</button>
+          </div>
+
+          <div class="detailSection" *ngIf="activeComponentId === c.id">
+            <h3>Detalle de Componente:</h3>
+            <p>Nombre: {{ c.name || 'No encontrado' }}</p>
+            <p>Tipo: {{ c.type || 'No encontrado' }}</p>
+            <p>Estado: {{ c.state || 'No encontrado' }}</p>
+            <p>Fecha de asignación: {{ c.assignment_at || 'No encontrado' }}</p>
+          </div>
+        </div>
+      </div>
+
+      <button class="addBtn" type="button">Agregar componente</button>
+    </section>
+  </div>
+</div>

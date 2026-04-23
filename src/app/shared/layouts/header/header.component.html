@@ -1,0 +1,37 @@
+<header class="card_header">
+  <div class="card_user">
+    <div class="card_menu">
+      <select>
+        <option value="">Mantenimiento</option>
+      </select>
+      <select>
+        <option value="">Documentos</option>
+      </select>
+      <select>
+        <option value="">Procesos</option>
+      </select>
+      <select>
+        <option value="">Informes</option>
+      </select>
+    </div>
+
+    <div class="card_profile">
+      <div class="card_input">
+        <span class="searchIcon">🔎</span>
+        <input placeholder="¿Qué estás buscando?" />
+      </div>
+
+      <div class="card_info">
+        <img
+          [src]="img || 'assets/auth/perfil.webp'"
+          alt="Foto de perfil"
+          class="image"
+        />
+
+        <div class="card_text">
+          <p>{{ username || 'Usuario' }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
