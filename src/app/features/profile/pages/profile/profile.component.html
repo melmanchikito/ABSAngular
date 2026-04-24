@@ -1,0 +1,128 @@
+<div class="profile-page">
+  <section class="profile-header">
+    <div class="avatar">
+      <img src="assets/auth/perfil.webp" alt="Perfil" />
+    </div>
+
+    <div>
+      <h1>Perfil y preferencias</h1>
+      <p>Personaliza la apariencia del sistema ABS.</p>
+    </div>
+  </section>
+
+  <section class="profile-card">
+    <h2>Información del usuario</h2>
+
+    <div class="info-grid">
+      <div>
+        <label>Usuario</label>
+        <strong>{{ username }}</strong>
+      </div>
+
+      <div>
+        <label>Correo</label>
+        <strong>{{ email }}</strong>
+      </div>
+    </div>
+  </section>
+
+  <section class="profile-card">
+    <h2>Apariencia</h2>
+
+    <div class="pref-row">
+      <div>
+        <h3>Tema</h3>
+        <p>Cambia entre modo claro, oscuro o automático.</p>
+      </div>
+
+      <div class="chip-group">
+        <button
+          [class.active]="prefs.theme === 'light'"
+          (click)="setTheme('light')"
+        >
+          Claro
+        </button>
+
+        <button
+          [class.active]="prefs.theme === 'dark'"
+          (click)="setTheme('dark')"
+        >
+          Oscuro
+        </button>
+
+        <button
+          [class.active]="prefs.theme === 'system'"
+          (click)="setTheme('system')"
+        >
+          Sistema
+        </button>
+      </div>
+    </div>
+
+    <div class="pref-row">
+      <div>
+        <h3>Tamaño de letra</h3>
+        <p>Ajusta el tamaño visual del sistema.</p>
+      </div>
+
+      <div class="chip-group">
+        <button
+          [class.active]="prefs.fontSize === 'small'"
+          (click)="setFontSize('small')"
+        >
+          Pequeña
+        </button>
+
+        <button
+          [class.active]="prefs.fontSize === 'medium'"
+          (click)="setFontSize('medium')"
+        >
+          Normal
+        </button>
+
+        <button
+          [class.active]="prefs.fontSize === 'large'"
+          (click)="setFontSize('large')"
+        >
+          Grande
+        </button>
+      </div>
+    </div>
+
+    <div class="pref-row">
+      <div>
+        <h3>Color del sistema</h3>
+        <p>Define el color principal de botones y elementos activos.</p>
+      </div>
+
+      <div class="color-group">
+        <button
+          class="color red"
+          [class.selected]="prefs.accentColor === 'red'"
+          (click)="setAccentColor('red')"
+        ></button>
+
+        <button
+          class="color dark-red"
+          [class.selected]="prefs.accentColor === 'darkRed'"
+          (click)="setAccentColor('darkRed')"
+        ></button>
+
+        <button
+          class="color gray"
+          [class.selected]="prefs.accentColor === 'gray'"
+          (click)="setAccentColor('gray')"
+        ></button>
+      </div>
+    </div>
+  </section>
+
+  <section class="profile-card">
+    <h2>Restablecer</h2>
+    <p>Vuelve a la configuración inicial del sistema.</p>
+
+    <button class="reset-btn" (click)="reset()">
+      Restablecer preferencias
+    </button>
+  </section>
+</div>

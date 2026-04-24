@@ -16,12 +16,12 @@
           <span>{{ perm }}</span>
         </li>
 
-        <li class="separator"></li>
+      <li class="separator"></li>
 
-        <li class="item">
-          <span class="icon">👤</span>
-          <span>Perfil</span>
-        </li>
+        <li class="item" [class.active]="activePerm === 'Perfil'" (click)="goToProfile()">
+        <span class="icon">👤</span>
+        <span>Perfil</span>
+       </li>
 
         <li class="item" (click)="logout()">
           <span class="icon">↩</span>

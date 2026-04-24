@@ -1,8 +1,18 @@
+:host {
+  display: block;
+  width: 100%;
+  min-height: 100%;
+  background: var(--abs-bg);
+  color: var(--abs-text);
+}
+
 .card {
-  background: #fff;
+  background: var(--abs-surface) !important;
+  color: var(--abs-text);
+  border: 1px solid var(--abs-border);
   border-radius: 14px;
   padding: 25px 30px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.253);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.18);
   width: 100%;
   max-width: 900px;
   margin: 10px auto 0;
@@ -14,33 +24,37 @@
   justify-content: center;
   gap: 12px;
   margin-bottom: 25px;
-  color: #666;
+  color: var(--abs-text-muted);
 }
 
 .card_tittle h1 {
   font-size: 20px;
   font-weight: 500;
+  color: var(--abs-text);
 }
 
 .form {
   display: grid;
   gap: 10px 30px;
+  background: transparent;
 }
 
 .row {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 20px 10px;
+  background: transparent;
 }
 
 .options {
   display: flex;
   flex-direction: column;
+  background: transparent;
 }
 
 .options label {
   font-size: 13px;
-  color: #555;
+  color: var(--abs-text-muted);
   font-weight: 500;
   margin-left: 1%;
   margin-bottom: 1%;
@@ -50,19 +64,38 @@
 .options select {
   width: 100%;
   padding: 12px 14px;
-  border: 1.5px solid #ddd;
+  border: 1.5px solid var(--abs-border);
   border-radius: 10px;
-  background: #f9f9f9;
+  background: var(--abs-surface-soft);
   font-size: 15px;
-  color: #333;
+  color: var(--abs-text);
   outline: none;
   transition: all 0.25s ease;
+}
+
+.options textarea:hover,
+.options select:hover,
+.options textarea:focus,
+.options select:focus {
+  border-color: var(--abs-primary);
+  background: var(--abs-surface);
+  box-shadow: 0 0 6px color-mix(in srgb, var(--abs-primary) 25%, transparent);
+}
+
+.options textarea::placeholder {
+  color: var(--abs-text-muted);
+}
+
+.options select option {
+  background: var(--abs-surface);
+  color: var(--abs-text);
 }
 
 .textareaWrapper {
   position: relative;
   display: flex;
   flex-direction: column;
+  background: transparent;
 }
 
 .inputper {
@@ -75,22 +108,15 @@
   right: 8px;
   bottom: 6px;
   font-size: 0.75rem;
-  color: #6b7280;
-}
-
-.options textarea:hover,
-.options select:hover,
-.options textarea:focus,
-.options select:focus {
-  border-color: #007bff;
-  background: #fff;
-  box-shadow: 0 0 6px rgba(0, 123, 255, 0.25);
+  color: var(--abs-text-muted);
+  pointer-events: none;
 }
 
 .utils {
   display: flex;
   flex-direction: column;
   height: 100px;
+  background: transparent;
 }
 
 .card_chk {
@@ -100,22 +126,30 @@
   flex: 1;
   padding-top: 5%;
   padding-left: 2%;
+  background: transparent;
+}
+
+.card_chk label {
+  color: var(--abs-text-muted);
+  font-size: 14px;
+  font-weight: 500;
 }
 
 .card_chk input[type='checkbox'] {
   appearance: none;
   width: 18px;
   height: 18px;
-  border: 2px solid #bbb;
+  border: 2px solid var(--abs-border);
   border-radius: 6px;
-  background: #fff;
+  background: var(--abs-surface);
   cursor: pointer;
   position: relative;
+  transition: all 0.25s ease;
 }
 
 .card_chk input[type='checkbox']:checked {
-  background: #007bff;
-  border-color: #007bff;
+  background: var(--abs-primary);
+  border-color: var(--abs-primary);
 }
 
 .card_chk input[type='checkbox']:checked::after {
@@ -125,4 +159,40 @@
   position: absolute;
   left: 2px;
   top: 0;
+}
+
+@media (max-width: 768px) {
+  .card {
+    padding: 20px;
+    margin-top: 12px;
+  }
+
+  .row {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .utils {
+    height: auto;
+  }
+
+  .card_chk {
+    padding-top: 0;
+    padding-left: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .card {
+    padding: 16px;
+  }
+
+  .card_tittle h1 {
+    font-size: 18px;
+  }
+
+  .options textarea,
+  .options select {
+    font-size: 14px;
+  }
 }

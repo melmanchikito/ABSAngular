@@ -1,85 +1,84 @@
 .card_header {
-  display: flex;
   width: 100%;
   height: 100%;
+  color: var(--abs-text);
 }
 
 .card_user {
-  display: flex;
-  width: 100%;
-  height: 100%;
+  display: grid;
+  grid-template-columns: minmax(360px, 1.1fr) minmax(320px, .9fr);
   align-items: center;
   gap: 1rem;
+  width: 100%;
+  height: 100%;
 }
 
 .card_menu {
-  display: flex;
-  width: 55%;
-  height: 100%;
-  align-items: center;
-  gap: 1rem;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(120px, 1fr));
+  gap: .75rem;
+  width: 100%;
 }
 
 .card_menu select {
   width: 100%;
   height: 40px;
-  padding: 10px 12px;
-  border: none;
+  padding: 0 .75rem;
+  border: 1px solid var(--abs-border);
   border-radius: 10px;
-  background-color: #fff;
+  background: var(--abs-surface);
   font-size: 14px;
-  color: #333;
+  color: var(--abs-text);
   outline: none;
 }
 
 .card_profile {
-  display: flex;
-  width: 45%;
-  height: 100%;
+  display: grid;
+  grid-template-columns: 1fr auto;
   align-items: center;
   gap: 1rem;
+  width: 100%;
 }
 
 .card_input {
   position: relative;
-  display: flex;
-  width: 70%;
-  height: 100%;
-  align-items: center;
+  width: 100%;
 }
 
 .searchIcon {
   position: absolute;
   left: 12px;
-  color: #888;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--abs-text-muted);
   pointer-events: none;
 }
 
 .card_input input {
   width: 100%;
   height: 40px;
-  background-color: transparent;
+  background: var(--abs-surface);
+  color: var(--abs-text);
   border-radius: 10px;
-  border: 2px solid rgba(196, 196, 196, 0.575);
+  border: 2px solid var(--abs-border);
   padding-left: 2.2rem;
   padding-right: 1rem;
 }
 
+.card_input input::placeholder {
+  color: var(--abs-text-muted);
+}
+
 .card_info {
   display: flex;
-  width: 30%;
-  height: 100%;
   align-items: center;
-  gap: 0.5rem;
-  min-width: 140px;
+  gap: .5rem;
+  min-width: 130px;
 }
 
 .card_text {
-  display: flex;
-  flex-direction: column;
-  color: rgb(77, 77, 77);
-  font-size: 15px;
-  justify-content: center;
+  color: var(--abs-text);
+  font-size: 14px;
 }
 
 .card_text p {
@@ -89,82 +88,76 @@
 
 .image {
   border-radius: 50%;
-  width: 50px;
-  height: 50px;
+  width: 46px;
+  height: 46px;
   object-fit: cover;
 }
 
-/* Tablet */
 @media (max-width: 1024px) {
   .card_user {
-    gap: 0.75rem;
+    grid-template-columns: 1fr;
+    gap: .75rem;
+    padding: .5rem 0;
   }
 
   .card_menu {
-    gap: 0.5rem;
+    grid-template-columns: repeat(4, minmax(120px, 1fr));
+  }
+
+  .card_profile {
+    grid-template-columns: 1fr auto;
+  }
+}
+
+@media (max-width: 768px) {
+  .card_menu {
+    display: flex;
+    overflow-x: auto;
+    gap: .5rem;
+    padding-bottom: .2rem;
+    scrollbar-width: thin;
   }
 
   .card_menu select {
+    flex: 0 0 145px;
+    height: 38px;
     font-size: 13px;
   }
 
+  .card_profile {
+    grid-template-columns: 1fr auto;
+  }
+
+  .card_input input {
+    height: 38px;
+  }
+
+  .image {
+    width: 40px;
+    height: 40px;
+  }
+
   .card_text {
-    font-size: 14px;
+    display: none;
+  }
+
+  .card_info {
+    min-width: auto;
   }
 }
 
-/* Celular / tablet vertical */
-@media (max-width: 768px) {
+@media (max-width: 480px) {
   .card_user {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 0.75rem;
+    gap: .6rem;
   }
 
-  .card_menu {
-    width: 100%;
-    height: auto;
-    overflow-x: auto;
-    gap: 0.5rem;
+  .card_profile {
+    grid-template-columns: 1fr 40px;
+    gap: .6rem;
   }
 
   .card_menu select {
-    min-width: 150px;
-  }
-
-  .card_profile {
-    width: 100%;
-    height: auto;
-    justify-content: space-between;
-  }
-
-  .card_input {
-    width: 70%;
-    height: auto;
-  }
-
-  .card_info {
-    width: auto;
-  }
-}
-
-/* Celular pequeño */
-@media (max-width: 480px) {
-  .card_profile {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .card_input {
-    width: 100%;
-  }
-
-  .card_info {
-    justify-content: center;
-  }
-
-  .card_text p {
-    white-space: normal;
-    text-align: center;
+    flex-basis: 132px;
+    font-size: 12px;
   }
 }

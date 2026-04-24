@@ -1,8 +1,10 @@
 .card {
-  background: #fff;
+  background: var(--abs-surface);
+  color: var(--abs-text);
+  border: 1px solid var(--abs-border);
   border-radius: 14px;
   padding: 25px 30px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.253);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.18);
   width: 100%;
   max-width: 1080px;
   min-height: 480px;
@@ -15,12 +17,13 @@
   justify-content: center;
   gap: 12px;
   margin-bottom: 25px;
-  color: #666;
+  color: var(--abs-text-muted);
 }
 
 .card_tittle h1 {
   font-size: 20px;
   font-weight: 500;
+  color: var(--abs-text);
 }
 
 .form {
@@ -34,9 +37,10 @@
   flex-direction: column;
 }
 
-.card_options label {
+.card_options label,
+.card_chk label {
   font-size: 13px;
-  color: #555;
+  color: var(--abs-text-muted);
   font-weight: 500;
   margin-left: 2%;
 }
@@ -45,13 +49,13 @@
 .card_options select {
   width: 100%;
   padding: 12px 14px;
-  border: 1.5px solid #ddd;
+  border: 1.5px solid var(--abs-border);
   border-radius: 10px;
-  background: #f9f9f9;
+  background: var(--abs-surface-soft);
   margin-top: 1%;
   margin-bottom: 2%;
   font-size: 15px;
-  color: #333;
+  color: var(--abs-text);
   outline: none;
   transition: all 0.25s ease;
   font-family: Arial, Helvetica, sans-serif;
@@ -61,9 +65,14 @@
 .card_options select:hover,
 .card_options input:focus,
 .card_options select:focus {
-  border-color: #007bff;
-  background: #fff;
-  box-shadow: 0 0 6px rgba(0, 123, 255, 0.25);
+  border-color: var(--abs-primary);
+  background: var(--abs-surface);
+  box-shadow: 0 0 6px color-mix(in srgb, var(--abs-primary) 25%, transparent);
+}
+
+.card_options select option {
+  background: var(--abs-surface);
+  color: var(--abs-text);
 }
 
 .card_chk {
@@ -78,16 +87,17 @@
   appearance: none;
   width: 18px;
   height: 18px;
-  border: 2px solid #bbb;
+  border: 2px solid var(--abs-border);
   border-radius: 6px;
-  background: #fff;
+  background: var(--abs-surface);
   cursor: pointer;
   position: relative;
+  transition: all 0.25s ease;
 }
 
 .card_chk input[type='checkbox']:checked {
-  background: #007bff;
-  border-color: #007bff;
+  background: var(--abs-primary);
+  border-color: var(--abs-primary);
 }
 
 .card_chk input[type='checkbox']:checked::after {
@@ -100,6 +110,23 @@
 }
 
 .alert {
-  color: rgb(233, 47, 47) !important;
+  color: #ef4444 !important;
   font-size: 12px !important;
+}
+
+@media (max-width: 768px) {
+  .card {
+    padding: 20px;
+    margin-top: 12px;
+  }
+
+  .form {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .card_chk {
+    margin-top: 0;
+    margin-bottom: 0;
+  }
 }

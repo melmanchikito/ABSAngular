@@ -31,4 +31,8 @@ export class NavigationService {
   goToHelpdesk(): Promise<boolean> {
     return this.router.navigate([APP_ROUTES.helpdesk]);
   }
+
+  goToProfile(): Promise<boolean> {
+    return this.router.navigate([APP_ROUTES.profile]);
+  }
 }

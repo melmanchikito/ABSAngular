@@ -1,27 +1,135 @@
+:host {
+  display: block;
+  width: 100%;
+  min-height: 100%;
+  background: var(--abs-bg);
+  color: var(--abs-text);
+}
+
 .card {
-  background: #fff;
+  background: var(--abs-surface) !important;
+  color: var(--abs-text);
+  border: 1px solid var(--abs-border);
   border-radius: 14px;
   padding: 25px 30px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.253);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.18);
   width: 100%;
-  max-width: 900px;
+  max-width: 950px;
   margin: 10px auto 0;
 }
 
-pre {
-  background: #f7f7f7;
-  padding: 1rem;
-  border-radius: 10px;
-  overflow: auto;
-  margin: 1rem 0;
+.card_tittle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 25px;
+  color: var(--abs-text-muted);
 }
 
-button {
-  height: 48px;
-  padding: 0 1rem;
-  border: none;
+.card_tittle h1 {
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--abs-text);
+}
+
+.resume {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  background: transparent;
+}
+
+.block {
+  background: var(--abs-surface-soft);
+  border: 1px solid var(--abs-border);
+  border-radius: 12px;
+  padding: 1rem;
+}
+
+.block h3 {
+  margin: 0 0 12px;
+  color: var(--abs-primary);
+  font-size: 16px;
+}
+
+.block p {
+  margin: 6px 0;
+  color: var(--abs-text-muted);
+  line-height: 1.4;
+}
+
+.block strong {
+  color: var(--abs-text);
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.btnBack {
+  border: 1px solid var(--abs-border);
+  background: var(--abs-surface);
+  color: var(--abs-text);
   border-radius: 10px;
-  background: #c72026;
-  color: white;
+  padding: 0.8rem 1rem;
   cursor: pointer;
+  min-width: 130px;
+  transition: all 0.25s ease;
+}
+
+.btnBack:hover {
+  background: var(--abs-surface-soft);
+}
+
+.btnSave {
+  border: none;
+  background: var(--abs-primary);
+  color: #fff;
+  border-radius: 10px;
+  padding: 0.8rem 1rem;
+  cursor: pointer;
+  min-width: 150px;
+  font-weight: 700;
+  transition: all 0.25s ease;
+}
+
+.btnSave:hover {
+  background: var(--abs-primary-hover);
+}
+
+@media (max-width: 768px) {
+  .card {
+    padding: 20px;
+  }
+
+  .resume {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .actions {
+    flex-direction: column;
+  }
+
+  .btnBack,
+  .btnSave {
+    width: 100%;
+  }
+}
+.subtitle {
+  color: var(--abs-text-muted);
+  margin: 0 0 1rem;
+}
+@media (max-width: 480px) {
+  .card {
+    padding: 16px;
+  }
+
+  .card_tittle h1 {
+    font-size: 18px;
+  }
 }

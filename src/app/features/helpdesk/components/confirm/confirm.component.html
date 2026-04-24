@@ -1,8 +1,47 @@
 <div class="card">
-  <h2>Confirmar información</h2>
-  <p>Revisa los datos antes de guardar.</p>
+  <div class="card_tittle">
+    <span>📨</span>
+    <h1>Confirmar información</h1>
+  </div>
 
-  <pre>{{ assistFormService.snapshot | json }}</pre>
+  <p class="subtitle">Revisa los datos antes de guardar el ticket.</p>
 
-  <button type="button">Guardar ticket</button>
+  <div class="resume">
+    <div class="block">
+      <h3>Datos generales</h3>
+      <p><strong>Empleado ID:</strong> {{ assistFormService.snapshot.employeeId || 'No seleccionado' }}</p>
+      <p><strong>Dueño del equipo:</strong> {{ assistFormService.snapshot.isOwner ? 'Sí' : 'No' }}</p>
+      <p><strong>Prioridad:</strong> {{ assistFormService.snapshot.priority || 'No seleccionada' }}</p>
+      <p><strong>Inicio:</strong> {{ assistFormService.snapshot.dateInit }}</p>
+      <p><strong>Cierre:</strong> {{ assistFormService.snapshot.dateEnd }}</p>
+    </div>
+
+    <div class="block">
+      <h3>Equipo</h3>
+      <p><strong>Equipo:</strong> {{ assistFormService.snapshot.selectedDevice?.name || 'No seleccionado' }}</p>
+      <p><strong>Código:</strong> {{ assistFormService.snapshot.selectedDevice?.code || 'No seleccionado' }}</p>
+      <p><strong>Modelo:</strong> {{ assistFormService.snapshot.selectedDevice?.model || 'No registrado' }}</p>
+      <p><strong>Serie:</strong> {{ assistFormService.snapshot.selectedDevice?.serial_number || 'No registrada' }}</p>
+    </div>
+
+    <div class="block">
+      <h3>Problema</h3>
+      <p><strong>Categoría:</strong> {{ assistFormService.snapshot.selectedCategory?.name || 'No seleccionada' }}</p>
+      <p><strong>Problema:</strong> {{ assistFormService.snapshot.selectedProblem?.name || 'No seleccionado' }}</p>
+      <p><strong>Remoto:</strong> {{ assistFormService.snapshot.selectedTicketDt?.is_remote ? 'Sí' : 'No' }}</p>
+    </div>
+
+    <div class="block">
+      <h3>Descripciones</h3>
+      <p><strong>Descripción:</strong> {{ assistFormService.snapshot.selectedTicketDt?.issue_description || 'Sin descripción' }}</p>
+      <p><strong>Solución:</strong> {{ assistFormService.snapshot.selectedTicketDt?.solution_description || 'Sin solución' }}</p>
+      <p><strong>Observación:</strong> {{ assistFormService.snapshot.selectedTicketDt?.observation || 'Sin observación' }}</p>
+    </div>
+  </div>
+
+  <div class="actions">
+    <button class="btnSave" type="button">
+      Guardar ticket
+    </button>
+  </div>
 </div>

@@ -16,12 +16,12 @@ export const routes: Routes = [
     path: 'main',
     canActivate: [authGuard],
     loadChildren: () =>
-      import('./features/helpdesk/helpdesk.routes').then((m) => m.HELPDESK_ROUTES)
+      import('./features/main/main.routes').then((m) => m.MAIN_ROUTES)
   },*/
   {
   path: 'main',
   loadChildren: () =>
-    import('./features/helpdesk/helpdesk.routes').then((m) => m.HELPDESK_ROUTES)
+    import('./features/main/main.routes').then((m) => m.MAIN_ROUTES)
 },
   {
     path: '**',

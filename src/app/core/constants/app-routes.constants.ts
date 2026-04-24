@@ -5,5 +5,6 @@ export const APP_ROUTES = {
   newPassword: 'auth/new-password',
   twoFactor: 'auth/two-factor',
   main: 'main/helpdesk',
-  helpdesk: 'main/helpdesk'
+  helpdesk: 'main/helpdesk',
+  profile: 'main/profile'
 } as const;
