@@ -5,7 +5,7 @@ import { AccentColor, AppPreferences, AppTheme, CardDensity, FontSize } from '..
 export const DEFAULT_PREFERENCES: AppPreferences = {
   theme: 'light',
   fontSize: 'medium',
-  accentColor: 'red',
+  accentColor: 'absRed',
   cardDensity: 'normal',
 
   autoSync: true,
@@ -122,15 +122,19 @@ export class PreferencesService {
     const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
     const isDark = prefs.theme === 'dark' || (prefs.theme === 'system' && systemDark);
 
-    root.classList.toggle('theme-dark', isDark);
-    root.classList.toggle('theme-light', !isDark);
+    root.setAttribute('data-theme', isDark ? 'dark' : 'light');
 
     root.classList.remove('font-small', 'font-medium', 'font-large', 'font-extralarge');
     root.classList.add(`font-${prefs.fontSize}`);
 
-    root.classList.remove('accent-red', 'accent-darkRed', 'accent-gray');
-    root.classList.add(`accent-${prefs.accentColor}`);
+root.classList.remove(
+  'accent-absRed',
+  'accent-executiveRed',
+  'accent-enterpriseGray',
+  'accent-premiumNight'
+);
 
+root.classList.add(`accent-${prefs.accentColor}`);
     root.classList.remove('density-compact', 'density-normal', 'density-comfortable');
     root.classList.add(`density-${prefs.cardDensity}`);
   }

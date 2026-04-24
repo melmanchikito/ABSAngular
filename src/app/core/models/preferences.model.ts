@@ -1,6 +1,12 @@
 export type AppTheme = 'light' | 'dark' | 'system';
 export type FontSize = 'small' | 'medium' | 'large' | 'extralarge';
-export type AccentColor = 'red' | 'darkRed' | 'gray';
+
+export type AccentColor =
+  | 'absRed'
+  | 'executiveRed'
+  | 'enterpriseGray'
+  | 'premiumNight';
+
 export type CardDensity = 'compact' | 'normal' | 'comfortable';
 
 export interface AppPreferences {

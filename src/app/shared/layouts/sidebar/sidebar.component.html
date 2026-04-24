@@ -1,4 +1,4 @@
-<section class="card">
+<section class="card" [class.collapsed]="collapsed">
   <div class="card_image">
     <img src="assets/auth/LogoAR.svg" alt="Logo ABS" class="logo" />
   </div>
@@ -11,21 +11,31 @@
           class="item"
           [class.active]="activePerm === perm"
           (click)="onSelect(perm)"
+          [title]="collapsed ? perm : ''"
         >
           <span class="icon">{{ permissionIcons[perm] || '⚙️' }}</span>
-          <span>{{ perm }}</span>
+          <span class="item-text">{{ perm }}</span>
         </li>
 
-      <li class="separator"></li>
+        <li class="separator"></li>
 
-        <li class="item" [class.active]="activePerm === 'Perfil'" (click)="goToProfile()">
-        <span class="icon">👤</span>
-        <span>Perfil</span>
-       </li>
+        <li
+          class="item"
+          [class.active]="activePerm === 'Perfil'"
+          (click)="goToProfile()"
+          [title]="collapsed ? 'Perfil' : ''"
+        >
+          <span class="icon">👤</span>
+          <span class="item-text">Perfil</span>
+        </li>
 
-        <li class="item" (click)="logout()">
+        <li
+          class="item"
+          (click)="logout()"
+          [title]="collapsed ? 'Cerrar Sesión' : ''"
+        >
           <span class="icon">↩</span>
-          <span>Cerrar Sesión</span>
+          <span class="item-text">Cerrar Sesión</span>
         </li>
       </ul>
     </nav>

@@ -1,14 +1,20 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
 .card_header {
   width: 100%;
   height: 100%;
   color: var(--abs-text);
+  padding: 0 4rem;
 }
 
 .card_user {
   display: grid;
-  grid-template-columns: minmax(360px, 1.1fr) minmax(320px, .9fr);
+  grid-template-columns: minmax(420px, 1.2fr) minmax(420px, 1fr);
   align-items: center;
-  gap: 1rem;
+  gap: 1.5rem;
   width: 100%;
   height: 100%;
 }
@@ -34,15 +40,17 @@
 
 .card_profile {
   display: grid;
-  grid-template-columns: 1fr auto;
+  grid-template-columns: minmax(260px, 1fr) auto;
   align-items: center;
-  gap: 1rem;
+  gap: 1.5rem;
   width: 100%;
 }
 
 .card_input {
   position: relative;
   width: 100%;
+  max-width: 420px;
+  justify-self: end;
 }
 
 .searchIcon {
@@ -72,8 +80,17 @@
 .card_info {
   display: flex;
   align-items: center;
-  gap: .5rem;
-  min-width: 130px;
+  gap: .6rem;
+  min-width: 150px;
+}
+
+.user-box {
+  justify-self: end;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-left: 24px;
+  padding-right: 12px;
 }
 
 .card_text {
@@ -93,19 +110,20 @@
   object-fit: cover;
 }
 
-@media (max-width: 1024px) {
+@media (max-width: 1200px) {
   .card_user {
     grid-template-columns: 1fr;
     gap: .75rem;
     padding: .5rem 0;
   }
 
-  .card_menu {
-    grid-template-columns: repeat(4, minmax(120px, 1fr));
-  }
-
   .card_profile {
     grid-template-columns: 1fr auto;
+  }
+
+  .card_input {
+    justify-self: stretch;
+    max-width: 100%;
   }
 }
 
@@ -126,6 +144,7 @@
 
   .card_profile {
     grid-template-columns: 1fr auto;
+    gap: .75rem;
   }
 
   .card_input input {
@@ -143,6 +162,11 @@
 
   .card_info {
     min-width: auto;
+  }
+
+  .user-box {
+    padding-left: 8px;
+    padding-right: 4px;
   }
 }
 

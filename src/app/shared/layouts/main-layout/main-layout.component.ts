@@ -14,8 +14,13 @@ import { AuthService } from '../../../core/services/auth.service';
 })
 export class MainLayoutComponent {
   activeSection = 'HelpDesk';
+  sidebarCollapsed = false;
 
   constructor(private readonly authService: AuthService) {}
+
+  toggleSidebar(): void {
+    this.sidebarCollapsed = !this.sidebarCollapsed;
+  }
 
   onSelectSection(section: string): void {
     this.activeSection = section;

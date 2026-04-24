@@ -1,0 +1,34 @@
+@use './variables.scss' as v;
+
+@mixin respond-md {
+  @media (max-width: v.$breakpoint-md) {
+    @content;
+  }
+}
+
+@mixin respond-lg {
+  @media (max-width: v.$breakpoint-lg) {
+    @content;
+  }
+}
+
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin btn-reset {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+@mixin abs-card {
+  background: var(--abs-surface);
+  color: var(--abs-text);
+  border: 1px solid var(--abs-border);
+  border-radius: v.$radius-lg;
+}

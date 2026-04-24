@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PermissionsService } from '../../../core/services/permissions.service';
 import { AuthApiService } from '../../../features/auth/services/auth-api.service';
@@ -13,6 +13,7 @@ import { NavigationService } from '../../../core/services/navigation.service';
   styleUrl: './sidebar.component.scss'
 })
 export class SidebarComponent {
+  @Input() collapsed = false;
   @Output() selectSection = new EventEmitter<string>();
 
   activePerm: string | null = 'HelpDesk';
@@ -35,6 +36,7 @@ export class SidebarComponent {
 
   goToProfile(): void {
     this.activePerm = 'Perfil';
+    this.selectSection.emit('Perfil');
     void this.navigationService.goToProfile();
   }
 

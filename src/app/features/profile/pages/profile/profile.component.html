@@ -118,13 +118,48 @@
         <h3>Color del sistema</h3>
         <p>Color principal de botones y elementos activos.</p>
       </div>
-      <div class="color-group">
-        <button class="color red" [class.selected]="prefs.accentColor === 'red'" (click)="setAccentColor('red')"></button>
-        <button class="color dark-red" [class.selected]="prefs.accentColor === 'darkRed'" (click)="setAccentColor('darkRed')"></button>
-        <button class="color gray" [class.selected]="prefs.accentColor === 'gray'" (click)="setAccentColor('gray')"></button>
-      </div>
-    </div>
+    <div class="theme-grid">
+    <button type="button"
+    class="theme-option abs-red"
+    [class.selected]="prefs.accentColor === 'absRed'"
+    (click)="setAccentColor('absRed')"
+  >
+    <span></span>
+    <strong>Rojo ABS</strong>
+    <small>Marca principal</small>
+  </button>
 
+  <button type="button"
+    class="theme-option executive-red"
+    [class.selected]="prefs.accentColor === 'executiveRed'"
+    (click)="setAccentColor('executiveRed')"
+  >
+    <span></span>
+    <strong>Rojo ejecutivo</strong>
+    <small>Formal y elegante</small>
+  </button>
+
+  <button type="button"
+    class="theme-option enterprise-gray"
+    [class.selected]="prefs.accentColor === 'enterpriseGray'"
+    (click)="setAccentColor('enterpriseGray')"
+  >
+    <span></span>
+    <strong>Gris empresarial</strong>
+    <small>Neutro y serio</small>
+  </button>
+
+  <button type="button"
+    class="theme-option premium-night"
+    [class.selected]="prefs.accentColor === 'premiumNight'"
+    (click)="setAccentColor('premiumNight')"
+  >
+    <span></span>
+    <strong>Nocturno premium</strong>
+    <small>Rojo, dorado y gris oscuro</small>
+  </button>
+</div>
+</div>
     <div class="pref-row">
       <div>
         <h3>Tamaño de fuente</h3>

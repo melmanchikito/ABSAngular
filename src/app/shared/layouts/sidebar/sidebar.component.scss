@@ -5,6 +5,8 @@
   height: 100%;
   background: var(--abs-sidebar-bg);
   color: var(--abs-text);
+  transition: all 0.3s ease;
+  overflow: hidden;
 }
 
 .card_image {
@@ -13,11 +15,13 @@
   width: 100%;
   min-height: 100px;
   padding: 1rem;
+  transition: all 0.3s ease;
 }
 
 .logo {
   width: 160px;
   height: auto;
+  transition: width 0.3s ease, opacity 0.3s ease;
 }
 
 .card_options {
@@ -28,6 +32,7 @@
 .card_options nav {
   width: 100%;
   padding-left: 5%;
+  transition: padding 0.3s ease;
 }
 
 .card_options ul {
@@ -51,7 +56,7 @@
   border-radius: 10px;
   padding: 0 .75rem;
   cursor: pointer;
-  transition: background-color .2s ease, transform .2s ease;
+  transition: all .25s ease;
   white-space: nowrap;
   color: var(--abs-text);
 }
@@ -79,9 +84,56 @@
   text-align: center;
 }
 
+.item-text {
+  opacity: 1;
+  transform: translateX(0);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+/* MODO COLAPSADO */
+.card.collapsed .card_image {
+  justify-content: center;
+  padding: 1rem 0.4rem;
+}
+
+.card.collapsed .logo {
+  width: 42px;
+}
+
+.card.collapsed .card_options nav {
+  padding-left: 0;
+}
+
+.card.collapsed .item {
+  width: 52px;
+  justify-content: center;
+  margin: 0 auto;
+  padding: 0;
+  gap: 0;
+}
+
+.card.collapsed .item:hover {
+  transform: scale(1.05);
+}
+
+.card.collapsed .item-text {
+  opacity: 0;
+  width: 0;
+  overflow: hidden;
+  transform: translateX(-8px);
+}
+
+.card.collapsed .separator {
+  width: 70%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* TABLET / CELULAR */
 @media (max-width: 768px) {
   .card {
     border-bottom: 1px solid var(--abs-border);
+    height: auto;
   }
 
   .card_image {
@@ -90,11 +142,13 @@
     padding: .6rem;
   }
 
-  .logo {
+  .logo,
+  .card.collapsed .logo {
     width: 130px;
   }
 
-  .card_options nav {
+  .card_options nav,
+  .card.collapsed .card_options nav {
     padding: 0 .6rem .6rem;
   }
 
@@ -106,7 +160,8 @@
     scrollbar-width: thin;
   }
 
-  .item {
+  .item,
+  .card.collapsed .item {
     flex: 0 0 auto;
     width: auto;
     min-width: 128px;
@@ -114,9 +169,18 @@
     justify-content: center;
     font-size: 13px;
     padding: 0 .75rem;
+    gap: .45rem;
   }
 
-  .item:hover {
+  .item:hover,
+  .card.collapsed .item:hover {
+    transform: none;
+  }
+
+  .card.collapsed .item-text {
+    opacity: 1;
+    width: auto;
+    overflow: visible;
     transform: none;
   }
 
@@ -126,11 +190,13 @@
 }
 
 @media (max-width: 480px) {
-  .logo {
+  .logo,
+  .card.collapsed .logo {
     width: 115px;
   }
 
-  .item {
+  .item,
+  .card.collapsed .item {
     min-width: 112px;
     font-size: 12px;
     gap: .45rem;

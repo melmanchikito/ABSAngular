@@ -1,6 +1,13 @@
-<div class="fondo">
+<div class="fondo" [class.sidebar-collapsed]="sidebarCollapsed">
   <section class="card_sidebar">
-    <app-sidebar (selectSection)="onSelectSection($event)"></app-sidebar>
+    <button class="toggle-sidebar" type="button" (click)="toggleSidebar()">
+      <span>{{ sidebarCollapsed ? '☰' : '✕' }}</span>
+    </button>
+
+    <app-sidebar
+      [collapsed]="sidebarCollapsed"
+      (selectSection)="onSelectSection($event)"
+    ></app-sidebar>
   </section>
 
   <div class="right_content">
