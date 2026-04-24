@@ -1,128 +1,450 @@
 <div class="profile-page">
-  <section class="profile-header">
+  <section class="page-header">
+    <div>
+      <h1>Perfil y preferencias</h1>
+      <p>Personaliza la experiencia del sistema ABS.</p>
+    </div>
+
+    <div class="header-actions">
+      <span class="saved" *ngIf="savedBadge">✓ Guardado</span>
+      <button class="reset-top" type="button" (click)="showResetConfirm = true">
+        Restablecer todo
+      </button>
+    </div>
+  </section>
+
+  <section class="profile-card user-card">
     <div class="avatar">
       <img src="assets/auth/perfil.webp" alt="Perfil" />
     </div>
 
-    <div>
-      <h1>Perfil y preferencias</h1>
-      <p>Personaliza la apariencia del sistema ABS.</p>
+    <div class="user-info">
+      <h2>{{ username }}</h2>
+      <p>{{ email }}</p>
+      <span>Usuario ABS</span>
     </div>
   </section>
 
   <section class="profile-card">
-    <h2>Información del usuario</h2>
-
-    <div class="info-grid">
+    <div class="section-title">
+      <span>🔄</span>
       <div>
-        <label>Usuario</label>
-        <strong>{{ username }}</strong>
-      </div>
-
-      <div>
-        <label>Correo</label>
-        <strong>{{ email }}</strong>
-      </div>
-    </div>
-  </section>
-
-  <section class="profile-card">
-    <h2>Apariencia</h2>
-
-    <div class="pref-row">
-      <div>
-        <h3>Tema</h3>
-        <p>Cambia entre modo claro, oscuro o automático.</p>
-      </div>
-
-      <div class="chip-group">
-        <button
-          [class.active]="prefs.theme === 'light'"
-          (click)="setTheme('light')"
-        >
-          Claro
-        </button>
-
-        <button
-          [class.active]="prefs.theme === 'dark'"
-          (click)="setTheme('dark')"
-        >
-          Oscuro
-        </button>
-
-        <button
-          [class.active]="prefs.theme === 'system'"
-          (click)="setTheme('system')"
-        >
-          Sistema
-        </button>
+        <h2>Sincronización</h2>
+        <p>Cómo y cuándo se envían los datos pendientes.</p>
       </div>
     </div>
 
     <div class="pref-row">
       <div>
-        <h3>Tamaño de letra</h3>
-        <p>Ajusta el tamaño visual del sistema.</p>
+        <h3>Sincronización automática</h3>
+        <p>Envía registros pendientes en segundo plano.</p>
       </div>
+      <label class="switch">
+        <input type="checkbox" [ngModel]="prefs.autoSync" (ngModelChange)="update({ autoSync: $event })" />
+        <span></span>
+      </label>
+    </div>
 
+    <div class="pref-row" *ngIf="prefs.autoSync">
+      <div>
+        <h3>Intervalo de sincronización</h3>
+        <p>Cada cuánto tiempo se intenta sincronizar.</p>
+      </div>
+      <select [ngModel]="prefs.syncInterval" (ngModelChange)="update({ syncInterval: $event })">
+        <option value="5">Cada 5 minutos</option>
+        <option value="15">Cada 15 minutos</option>
+        <option value="30">Cada 30 minutos</option>
+        <option value="60">Cada 1 hora</option>
+      </select>
+    </div>
+
+    <div class="pref-row">
+      <div>
+        <h3>Notificaciones de sincronización</h3>
+        <p>Muestra aviso cuando se complete la sincronización.</p>
+      </div>
+      <label class="switch">
+        <input type="checkbox" [ngModel]="prefs.syncNotifications" (ngModelChange)="update({ syncNotifications: $event })" />
+        <span></span>
+      </label>
+    </div>
+
+    <div class="pref-row">
+      <div>
+        <h3>Reintentar automáticamente</h3>
+        <p>Reintenta procesos fallidos en el próximo ciclo.</p>
+      </div>
+      <label class="switch">
+        <input type="checkbox" [ngModel]="prefs.retryFailedSync" (ngModelChange)="update({ retryFailedSync: $event })" />
+        <span></span>
+      </label>
+    </div>
+
+    <div class="pref-row">
+      <div>
+        <h3>Solo en WiFi</h3>
+        <p>No sincroniza con datos móviles.</p>
+      </div>
+      <label class="switch">
+        <input type="checkbox" [ngModel]="prefs.syncOnlyOnWifi" (ngModelChange)="update({ syncOnlyOnWifi: $event })" />
+        <span></span>
+      </label>
+    </div>
+  </section>
+
+  <section class="profile-card">
+    <div class="section-title">
+      <span>🎨</span>
+      <div>
+        <h2>Apariencia</h2>
+        <p>Tema, colores, tamaño de letra y densidad visual.</p>
+      </div>
+    </div>
+
+    <div class="pref-row">
+      <div>
+        <h3>Tema de la aplicación</h3>
+        <p>Modo claro, oscuro o automático según el sistema.</p>
+      </div>
       <div class="chip-group">
-        <button
-          [class.active]="prefs.fontSize === 'small'"
-          (click)="setFontSize('small')"
-        >
-          Pequeña
-        </button>
-
-        <button
-          [class.active]="prefs.fontSize === 'medium'"
-          (click)="setFontSize('medium')"
-        >
-          Normal
-        </button>
-
-        <button
-          [class.active]="prefs.fontSize === 'large'"
-          (click)="setFontSize('large')"
-        >
-          Grande
-        </button>
+        <button [class.active]="prefs.theme === 'light'" (click)="setTheme('light')">Claro</button>
+        <button [class.active]="prefs.theme === 'dark'" (click)="setTheme('dark')">Oscuro</button>
+        <button [class.active]="prefs.theme === 'system'" (click)="setTheme('system')">Sistema</button>
       </div>
     </div>
 
     <div class="pref-row">
       <div>
         <h3>Color del sistema</h3>
-        <p>Define el color principal de botones y elementos activos.</p>
+        <p>Color principal de botones y elementos activos.</p>
       </div>
-
       <div class="color-group">
-        <button
-          class="color red"
-          [class.selected]="prefs.accentColor === 'red'"
-          (click)="setAccentColor('red')"
-        ></button>
-
-        <button
-          class="color dark-red"
-          [class.selected]="prefs.accentColor === 'darkRed'"
-          (click)="setAccentColor('darkRed')"
-        ></button>
-
-        <button
-          class="color gray"
-          [class.selected]="prefs.accentColor === 'gray'"
-          (click)="setAccentColor('gray')"
-        ></button>
+        <button class="color red" [class.selected]="prefs.accentColor === 'red'" (click)="setAccentColor('red')"></button>
+        <button class="color dark-red" [class.selected]="prefs.accentColor === 'darkRed'" (click)="setAccentColor('darkRed')"></button>
+        <button class="color gray" [class.selected]="prefs.accentColor === 'gray'" (click)="setAccentColor('gray')"></button>
       </div>
+    </div>
+
+    <div class="pref-row">
+      <div>
+        <h3>Tamaño de fuente</h3>
+        <p>Afecta textos, formularios y contenido del sistema.</p>
+      </div>
+      <div class="chip-group">
+        <button [class.active]="prefs.fontSize === 'small'" (click)="setFontSize('small')">Pequeña</button>
+        <button [class.active]="prefs.fontSize === 'medium'" (click)="setFontSize('medium')">Normal</button>
+        <button [class.active]="prefs.fontSize === 'large'" (click)="setFontSize('large')">Grande</button>
+        <button [class.active]="prefs.fontSize === 'extralarge'" (click)="setFontSize('extralarge')">Extra</button>
+      </div>
+    </div>
+
+    <div class="pref-row">
+      <div>
+        <h3>Densidad de tarjetas</h3>
+        <p>Espacio entre elementos en formularios y listas.</p>
+      </div>
+      <div class="chip-group">
+        <button [class.active]="prefs.cardDensity === 'compact'" (click)="setCardDensity('compact')">Compacto</button>
+        <button [class.active]="prefs.cardDensity === 'normal'" (click)="setCardDensity('normal')">Normal</button>
+        <button [class.active]="prefs.cardDensity === 'comfortable'" (click)="setCardDensity('comfortable')">Cómodo</button>
+      </div>
+    </div>
+
+    <div class="pref-row">
+      <div>
+        <h3>Animaciones</h3>
+        <p>Transiciones y micro-interacciones visuales.</p>
+      </div>
+      <label class="switch">
+        <input type="checkbox" [ngModel]="prefs.showAnimations" (ngModelChange)="update({ showAnimations: $event })" />
+        <span></span>
+      </label>
+    </div>
+
+    <div class="pref-row">
+      <div>
+        <h3>Sidebar compacto</h3>
+        <p>Reduce el menú lateral para ganar espacio.</p>
+      </div>
+      <label class="switch">
+        <input type="checkbox" [ngModel]="prefs.compactSidebar" (ngModelChange)="update({ compactSidebar: $event })" />
+        <span></span>
+      </label>
+    </div>
+
+    <div class="pref-row">
+      <div>
+        <h3>Imágenes de productos</h3>
+        <p>Muestra miniaturas en listas y documentos.</p>
+      </div>
+      <label class="switch">
+        <input type="checkbox" [ngModel]="prefs.showProductImages" (ngModelChange)="update({ showProductImages: $event })" />
+        <span></span>
+      </label>
     </div>
   </section>
 
   <section class="profile-card">
-    <h2>Restablecer</h2>
-    <p>Vuelve a la configuración inicial del sistema.</p>
+    <div class="section-title">
+      <span>🛒</span>
+      <div>
+        <h2>Pedidos y carrito</h2>
+        <p>Comportamiento al crear y gestionar pedidos.</p>
+      </div>
+    </div>
 
-    <button class="reset-btn" (click)="reset()">
-      Restablecer preferencias
-    </button>
+    <div class="pref-row">
+      <div>
+        <h3>Guardar carrito por defecto</h3>
+        <p>Qué hacer cuando confirmas el carrito.</p>
+      </div>
+      <select [ngModel]="prefs.defaultSaveMode" (ngModelChange)="update({ defaultSaveMode: $event })">
+        <option value="ask">Preguntar siempre</option>
+        <option value="draft">Siempre borrador</option>
+        <option value="order">Siempre pedido</option>
+      </select>
+    </div>
+
+    <div class="pref-row">
+      <div>
+        <h3>Confirmar antes de eliminar</h3>
+        <p>Muestra confirmación antes de borrar datos.</p>
+      </div>
+      <label class="switch">
+        <input type="checkbox" [ngModel]="prefs.confirmBeforeDelete" (ngModelChange)="update({ confirmBeforeDelete: $event })" />
+        <span></span>
+      </label>
+    </div>
+
+    <div class="pref-row">
+      <div>
+        <h3>Expandir ítems automáticamente</h3>
+        <p>Muestra detalles al abrir historial.</p>
+      </div>
+      <label class="switch">
+        <input type="checkbox" [ngModel]="prefs.autoExpandOrderItems" (ngModelChange)="update({ autoExpandOrderItems: $event })" />
+        <span></span>
+      </label>
+    </div>
+
+    <div class="pref-row">
+      <div>
+        <h3>Mostrar desglose de IVA</h3>
+        <p>Muestra subtotal, descuentos e IVA por separado.</p>
+      </div>
+      <label class="switch">
+        <input type="checkbox" [ngModel]="prefs.showTaxBreakdown" (ngModelChange)="update({ showTaxBreakdown: $event })" />
+        <span></span>
+      </label>
+    </div>
+
+    <div class="pref-row">
+      <div>
+        <h3>Verificar stock al confirmar</h3>
+        <p>Consulta disponibilidad antes de crear un pedido.</p>
+      </div>
+      <label class="switch">
+        <input type="checkbox" [ngModel]="prefs.warnStockBeforeOrder" (ngModelChange)="update({ warnStockBeforeOrder: $event })" />
+        <span></span>
+      </label>
+    </div>
+
+    <div class="pref-row">
+      <div>
+        <h3>Descuento global por defecto</h3>
+        <p>Prellena el descuento al crear pedidos.</p>
+      </div>
+      <input class="small-input" type="number" min="0" max="100" [ngModel]="prefs.defaultGlobalDiscount" (ngModelChange)="update({ defaultGlobalDiscount: +$event })" />
+    </div>
+
+    <div class="pref-row">
+      <div>
+        <h3>Pedidos por página</h3>
+        <p>Cantidad visible en el historial.</p>
+      </div>
+      <select [ngModel]="prefs.ordersPageSize" (ngModelChange)="update({ ordersPageSize: +$event })">
+        <option [ngValue]="5">5</option>
+        <option [ngValue]="10">10</option>
+        <option [ngValue]="20">20</option>
+        <option [ngValue]="50">50</option>
+      </select>
+    </div>
   </section>
+
+  <section class="profile-card">
+    <div class="section-title">
+      <span>📄</span>
+      <div>
+        <h2>PDF y documentos</h2>
+        <p>Personalización de documentos impresos.</p>
+      </div>
+    </div>
+
+    <div class="pref-row">
+      <div>
+        <h3>Nombre de empresa en PDF</h3>
+        <p>Aparece en el encabezado de documentos.</p>
+      </div>
+      <input type="text" [ngModel]="prefs.pdfCompanyName" (ngModelChange)="update({ pdfCompanyName: $event })" />
+    </div>
+
+    <div class="pref-row">
+      <div>
+        <h3>Texto de pie de página</h3>
+        <p>Nota o aviso legal al pie.</p>
+      </div>
+      <input type="text" [ngModel]="prefs.pdfFooterText" (ngModelChange)="update({ pdfFooterText: $event })" />
+    </div>
+
+    <div class="pref-row">
+      <div>
+        <h3>Descargar PDF automáticamente</h3>
+        <p>Descarga el PDF al guardar documentos.</p>
+      </div>
+      <label class="switch">
+        <input type="checkbox" [ngModel]="prefs.pdfAutoDownload" (ngModelChange)="update({ pdfAutoDownload: $event })" />
+        <span></span>
+      </label>
+    </div>
+  </section>
+
+  <section class="profile-card">
+    <div class="section-title">
+      <span>🌎</span>
+      <div>
+        <h2>Regional y formato</h2>
+        <p>Moneda, fechas e idioma.</p>
+      </div>
+    </div>
+
+    <div class="pref-row">
+      <div>
+        <h3>Moneda</h3>
+      </div>
+      <select [ngModel]="prefs.currency" (ngModelChange)="update({ currency: $event })">
+        <option value="USD">USD — Dólar</option>
+        <option value="EUR">EUR — Euro</option>
+        <option value="COP">COP — Peso colombiano</option>
+        <option value="PEN">PEN — Sol peruano</option>
+      </select>
+    </div>
+
+    <div class="pref-row">
+      <div>
+        <h3>Formato de fecha</h3>
+      </div>
+      <select [ngModel]="prefs.dateFormat" (ngModelChange)="update({ dateFormat: $event })">
+        <option value="DD/MM/YYYY">DD/MM/YYYY</option>
+        <option value="MM/DD/YYYY">MM/DD/YYYY</option>
+        <option value="YYYY-MM-DD">YYYY-MM-DD</option>
+      </select>
+    </div>
+
+    <div class="pref-row">
+      <div>
+        <h3>Idioma</h3>
+      </div>
+      <select [ngModel]="prefs.language" (ngModelChange)="update({ language: $event })">
+        <option value="es">Español</option>
+        <option value="en">English</option>
+      </select>
+    </div>
+  </section>
+
+  <section class="profile-card">
+    <div class="section-title">
+      <span>🔔</span>
+      <div>
+        <h2>Notificaciones y alertas</h2>
+        <p>Sonidos, vibración y avisos del sistema.</p>
+      </div>
+    </div>
+
+    <div class="pref-row">
+      <div>
+        <h3>Sonido</h3>
+        <p>Beep en acciones importantes.</p>
+      </div>
+      <label class="switch">
+        <input type="checkbox" [ngModel]="prefs.soundEnabled" (ngModelChange)="update({ soundEnabled: $event })" />
+        <span></span>
+      </label>
+    </div>
+
+    <div class="pref-row">
+      <div>
+        <h3>Vibración</h3>
+        <p>Retroalimentación háptica en móvil.</p>
+      </div>
+      <label class="switch">
+        <input type="checkbox" [ngModel]="prefs.vibrationEnabled" (ngModelChange)="update({ vibrationEnabled: $event })" />
+        <span></span>
+      </label>
+    </div>
+
+    <div class="pref-row">
+      <div>
+        <h3>Umbral de stock bajo</h3>
+        <p>Alerta si el stock es menor al número indicado.</p>
+      </div>
+      <input class="small-input" type="number" min="0" [ngModel]="prefs.lowStockWarningThreshold" (ngModelChange)="update({ lowStockWarningThreshold: +$event })" />
+    </div>
+
+    <div class="pref-row">
+      <div>
+        <h3>Banner sin conexión</h3>
+        <p>Muestra aviso cuando no hay internet.</p>
+      </div>
+      <label class="switch">
+        <input type="checkbox" [ngModel]="prefs.showOfflineBanner" (ngModelChange)="update({ showOfflineBanner: $event })" />
+        <span></span>
+      </label>
+    </div>
+  </section>
+
+  <section class="profile-card">
+    <div class="section-title">
+      <span>🛡️</span>
+      <div>
+        <h2>Datos y privacidad</h2>
+        <p>Retención de historial y seguridad local.</p>
+      </div>
+    </div>
+
+    <div class="pref-row">
+      <div>
+        <h3>Conservar historial</h3>
+        <p>0 significa conservar siempre.</p>
+      </div>
+      <input class="small-input" type="number" min="0" [ngModel]="prefs.keepHistoryDays" (ngModelChange)="update({ keepHistoryDays: +$event })" />
+    </div>
+
+    <div class="pref-row">
+      <div>
+        <h3>PIN de acceso</h3>
+        <p>Solicita PIN al abrir la aplicación.</p>
+      </div>
+      <label class="switch">
+        <input type="checkbox" [ngModel]="prefs.requirePinOnOpen" (ngModelChange)="update({ requirePinOnOpen: $event })" />
+        <span></span>
+      </label>
+    </div>
+  </section>
+
+  <section class="info-footer">
+    <strong>Información:</strong>
+    Las preferencias se guardan localmente por ahora. Luego se podrán sincronizar con la API.
+  </section>
+
+  <div class="modal-backdrop" *ngIf="showResetConfirm">
+    <div class="modal">
+      <h2>¿Restablecer preferencias?</h2>
+      <p>Volverás a la configuración inicial. Esta acción no se puede deshacer.</p>
+
+      <div class="modal-actions">
+        <button class="danger" (click)="reset()">Restablecer</button>
+        <button (click)="showResetConfirm = false">Cancelar</button>
+      </div>
+    </div>
+  </div>
 </div>

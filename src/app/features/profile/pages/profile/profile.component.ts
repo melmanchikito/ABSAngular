@@ -1,17 +1,21 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { PreferencesService } from '../../../../core/services/preferences.service';
 import { AuthService } from '../../../../core/services/auth.service';
-import { AccentColor, AppTheme, FontSize } from '../../../../core/models/preferences.model';
+import { AccentColor, AppTheme, CardDensity, FontSize } from '../../../../core/models/preferences.model';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.scss'
 })
 export class ProfileComponent {
+  savedBadge = false;
+  showResetConfirm = false;
+
   constructor(
     public readonly preferencesService: PreferencesService,
     private readonly authService: AuthService
@@ -29,19 +33,37 @@ export class ProfileComponent {
     return this.authService.getEmail() || 'correo@empresa.com';
   }
 
+  update(data: Partial<typeof this.prefs>): void {
+    this.preferencesService.update(data);
+    this.flashSaved();
+  }
+
   setTheme(theme: AppTheme): void {
-    this.preferencesService.setTheme(theme);
+    this.update({ theme });
   }
 
   setFontSize(fontSize: FontSize): void {
-    this.preferencesService.setFontSize(fontSize);
+    this.update({ fontSize });
   }
 
-  setAccentColor(color: AccentColor): void {
-    this.preferencesService.setAccentColor(color);
+  setAccentColor(accentColor: AccentColor): void {
+    this.update({ accentColor });
+  }
+
+  setCardDensity(cardDensity: CardDensity): void {
+    this.update({ cardDensity });
   }
 
   reset(): void {
     this.preferencesService.reset();
+    this.showResetConfirm = false;
+    this.flashSaved();
+  }
+
+  private flashSaved(): void {
+    this.savedBadge = true;
+    setTimeout(() => {
+      this.savedBadge = false;
+    }, 1500);
   }
 }
