@@ -1,22 +1,32 @@
 <div class="fondo" [class.sidebar-collapsed]="sidebarCollapsed">
+
+  <!-- SIDEBAR -->
   <section class="card_sidebar">
     <button class="toggle-sidebar" type="button" (click)="toggleSidebar()">
       <span>{{ sidebarCollapsed ? '☰' : '✕' }}</span>
     </button>
-
     <app-sidebar
       [collapsed]="sidebarCollapsed"
       (selectSection)="onSelectSection($event)"
     ></app-sidebar>
   </section>
 
+  <!-- CONTENIDO DERECHO -->
   <div class="right_content">
+
+    <!-- HEADER — solo aquí, una sola vez -->
     <section class="card_header">
-      <app-header [img]="img" [username]="username"></app-header>
+      <app-header
+        [img]="img"
+        [username]="username"
+        [isOnline]="isOnline"
+        [networkType]="networkType"
+      ></app-header>
     </section>
 
     <main class="card_main">
       <router-outlet></router-outlet>
     </main>
+
   </div>
 </div>

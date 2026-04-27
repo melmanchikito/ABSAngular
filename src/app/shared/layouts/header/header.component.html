@@ -1,37 +1,66 @@
 <header class="card_header">
   <div class="card_user">
+
+    <!-- ① MENÚ -->
     <div class="card_menu">
-      <select>
-        <option value="">Mantenimiento</option>
-      </select>
-      <select>
-        <option value="">Documentos</option>
-      </select>
-      <select>
-        <option value="">Procesos</option>
-      </select>
-      <select>
-        <option value="">Informes</option>
-      </select>
+      <select><option value="">Mantenimiento</option></select>
+      <select><option value="">Documentos</option></select>
+      <select><option value="">Procesos</option></select>
+      <select><option value="">Informes</option></select>
     </div>
-
+     <!-- ③ BUSCADOR
+         .card_input siempre en el DOM.
+         En desktop (>1350px): siempre visible via CSS.
+         En tablet/mobile (≤1350px): show/hide con clase .show + animación Angular.
+         La animación @searchSlide solo actúa cuando el elemento entra/sale del DOM,
+         pero aquí usamos [class.show] para no romper el layout en desktop. -->
+    <div
+  class="card_input"
+  [class.show]="searchState === 'open'"
+  [@searchSlide]="searchState"
+>
+  <div class="search-wrap">
+    <span class="searchIcon">🔎</span>
+    <input
+      type="text"
+      placeholder="¿Qué estás buscando?"
+      [tabindex]="searchState === 'open' ? 0 : -1"
+    />
+  </div>
+</div>
+    <!-- ② PERFIL -->
     <div class="card_profile">
-      <div class="card_input">
-        <span class="searchIcon">🔎</span>
-        <input placeholder="¿Qué estás buscando?" />
-      </div>
 
-      <div class="card_info">
-        <img
-          [src]="img || 'assets/auth/perfil.webp'"
-          alt="Foto de perfil"
-          class="image"
-        />
+      <!-- Botón toggle: solo visible en ≤1350px y font-large/extralarge -->
+      <button
+  *ngIf="isSearchCollapsible"
+  class="search-toggle"
+  [class.active]="showSearch"
+  type="button"
+  (click)="toggleSearch()"
+  [attr.aria-label]="showSearch ? 'Ocultar buscador' : 'Mostrar buscador'"
+  [attr.aria-expanded]="showSearch"
+>
+  <span class="toggle-icon">
+    {{ showSearch ? '▲' : '🔎' }}
+  </span>
+</button>
 
+      <div class="user-box">
+        <img [src]="img || 'assets/auth/perfil.webp'" alt="Foto de perfil" class="image" />
         <div class="card_text">
-          <p>{{ username || 'Usuario' }}</p>
+          <p class="username">{{ username || 'Usuario' }}</p>
         </div>
       </div>
+
+      <div class="network-box" [class.offline]="!isOnline">
+        <span class="network-icon">{{ isOnline ? '📶' : '📡' }}</span>
+        <span class="network-text">{{ networkType }}</span>
+      </div>
+
     </div>
+
+   
+
   </div>
 </header>

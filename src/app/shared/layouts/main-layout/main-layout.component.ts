@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 import { SidebarComponent } from '../sidebar/sidebar.component';
@@ -12,12 +12,30 @@ import { AuthService } from '../../../core/services/auth.service';
   templateUrl: './main-layout.component.html',
   styleUrl: './main-layout.component.scss'
 })
-export class MainLayoutComponent {
+export class MainLayoutComponent implements OnInit, OnDestroy {
   activeSection = 'HelpDesk';
   sidebarCollapsed = false;
 
+  // ─── Red ────────────────────────────────────────────────
+  isOnline: boolean = navigator.onLine;
+  networkType: string = navigator.onLine ? 'Con internet' : 'Sin internet';
+
+  private onlineHandler  = () => { this.isOnline = true;  this.networkType = 'Con internet';  };
+  private offlineHandler = () => { this.isOnline = false; this.networkType = 'Sin internet'; };
+
   constructor(private readonly authService: AuthService) {}
 
+  ngOnInit(): void {
+    window.addEventListener('online',  this.onlineHandler);
+    window.addEventListener('offline', this.offlineHandler);
+  }
+
+  ngOnDestroy(): void {
+    window.removeEventListener('online',  this.onlineHandler);
+    window.removeEventListener('offline', this.offlineHandler);
+  }
+
+  // ─── Sidebar ─────────────────────────────────────────────
   toggleSidebar(): void {
     this.sidebarCollapsed = !this.sidebarCollapsed;
   }
@@ -26,11 +44,12 @@ export class MainLayoutComponent {
     this.activeSection = section;
   }
 
+  // ─── Getters desde AuthService ───────────────────────────
   get username(): string {
     return this.authService.getName() || 'Usuario';
   }
 
-  get img(): string | null {
-    return localStorage.getItem('profileImage');
-  }
+  get img(): string {
+  return localStorage.getItem('profileImage') ?? '';
+}
 }

@@ -45,6 +45,9 @@ export class SidebarComponent {
   }
 
   get permissions(): string[] {
-    return this.permissionsService.getPermissionsSnapshot()?.permissions ?? ['HelpDesk'];
-  }
+  const permissions =
+    this.permissionsService.getPermissionsSnapshot()?.permissions ?? [];
+
+  return permissions.length > 0 ? permissions : ['HelpDesk'];
+}
 }

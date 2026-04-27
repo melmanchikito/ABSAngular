@@ -12,17 +12,18 @@ export const routes: Routes = [
     loadChildren: () =>
       import('./features/auth/auth.routes').then((m) => m.AUTH_ROUTES)
   },
-  /*{
+  {
     path: 'main',
     canActivate: [authGuard],
     loadChildren: () =>
       import('./features/main/main.routes').then((m) => m.MAIN_ROUTES)
-  },*/
+  },
+/*
   {
   path: 'main',
   loadChildren: () =>
     import('./features/main/main.routes').then((m) => m.MAIN_ROUTES)
-},
+},*/
   {
     path: '**',
     redirectTo: 'auth/login'

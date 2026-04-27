@@ -3,54 +3,127 @@
   width: 100%;
 }
 
+/* ─── BASE ─────────────────────────────────────────────── */
+
 .card_header {
   width: 100%;
-  height: 100%;
+  min-height: 72px;
+  height: auto;
   color: var(--abs-text);
-  padding: 0 4rem;
+  padding: 0.75rem 4rem;
 }
 
 .card_user {
-  display: grid;
-  grid-template-columns: minmax(420px, 1.2fr) minmax(420px, 1fr);
+  display: flex;
   align-items: center;
-  gap: 1.5rem;
+  gap: clamp(0.5rem, 1vw, 1rem);
   width: 100%;
-  height: 100%;
+  flex-wrap: nowrap;
 }
+
+/* ─── MENÚ ──────────────────────────────────────────────── */
 
 .card_menu {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(120px, 1fr));
-  gap: .75rem;
-  width: 100%;
+  display: flex;
+  gap: 0.75rem;
+  flex: 1 1 auto;
+  min-width: 0;
+
+  select {
+    flex: 1 1 120px;
+    min-width: 115px;
+    height: clamp(36px, 4vw, 40px);
+    padding: 0 0.75rem;
+    border: 1px solid var(--abs-border);
+    border-radius: 10px;
+    background: var(--abs-surface);
+    font-size: var(--abs-font-size);
+    color: var(--abs-text);
+    outline: none;
+  }
 }
 
-.card_menu select {
-  width: 100%;
-  height: 40px;
-  padding: 0 .75rem;
-  border: 1px solid var(--abs-border);
-  border-radius: 10px;
-  background: var(--abs-surface);
-  font-size: 14px;
-  color: var(--abs-text);
-  outline: none;
-}
+/* ─── PERFIL ─────────────────────────────────────────────── */
 
 .card_profile {
-  display: grid;
-  grid-template-columns: minmax(260px, 1fr) auto;
+  display: flex;
   align-items: center;
-  gap: 1.5rem;
-  width: 100%;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  flex: 0 0 auto;
 }
 
+/* ─── BOTÓN TOGGLE — oculto en desktop, visible en tablet/mobile ── */
+
+.search-toggle {
+  display: none;       /* oculto por defecto en desktop */
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--abs-border);
+  background: var(--abs-surface);
+  color: var(--abs-text);
+  border-radius: 10px;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.2s ease, border-color 0.2s ease;
+
+  &:hover {
+    background: var(--abs-surface-hover, var(--abs-border));
+  }
+}
+
+.toggle-icon {
+  display: inline-block;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  .search-toggle.active & {
+    transform: rotate(180deg);
+  }
+}
+
+/* ─── BUSCADOR ───────────────────────────────────────────── */
+
+/* DESKTOP (>1350px): siempre visible, inline en la fila */
 .card_input {
+  flex: 1 1 260px;
+  min-width: 220px;
+  max-width: 380px;
+  /* En desktop la animación no aplica — siempre visible */
+  overflow: visible ;
+  height: auto ;
+  opacity: 1 ;
+}
+
+.search-wrap {
   position: relative;
   width: 100%;
-  max-width: 420px;
-  justify-self: end;
+  padding: 2px 0;
+
+  input {
+    width: 100%;
+    height: clamp(36px, 4vw, 40px);
+    background: var(--abs-surface);
+    color: var(--abs-text);
+    border-radius: 10px;
+    border: 2px solid var(--abs-border);
+    padding-left: 2.2rem;
+    padding-right: 1rem;
+    font-size: var(--abs-font-size);
+    box-sizing: border-box;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+    &:focus {
+      outline: none;
+      border-color: var(--abs-primary, #3b82f6);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--abs-primary, #3b82f6) 20%, transparent);
+    }
+
+    &::placeholder {
+      color: var(--abs-text-muted);
+    }
+  }
 }
 
 .searchIcon {
@@ -60,128 +133,268 @@
   transform: translateY(-50%);
   color: var(--abs-text-muted);
   pointer-events: none;
+  font-size: 15px;
+  line-height: 1;
 }
 
-.card_input input {
-  width: 100%;
-  height: 40px;
-  background: var(--abs-surface);
-  color: var(--abs-text);
-  border-radius: 10px;
-  border: 2px solid var(--abs-border);
-  padding-left: 2.2rem;
-  padding-right: 1rem;
-}
-
-.card_input input::placeholder {
-  color: var(--abs-text-muted);
-}
-
-.card_info {
-  display: flex;
-  align-items: center;
-  gap: .6rem;
-  min-width: 150px;
-}
+/* ─── USUARIO ────────────────────────────────────────────── */
 
 .user-box {
-  justify-self: end;
   display: flex;
   align-items: center;
   gap: 12px;
-  padding-left: 24px;
-  padding-right: 12px;
-}
-
-.card_text {
-  color: var(--abs-text);
-  font-size: 14px;
-}
-
-.card_text p {
-  margin: 0;
-  white-space: nowrap;
+  flex: 0 0 auto;
 }
 
 .image {
   border-radius: 50%;
-  width: 46px;
-  height: 46px;
+  width: clamp(38px, 4vw, 46px);
+  height: clamp(38px, 4vw, 46px);
   object-fit: cover;
 }
 
-@media (max-width: 1200px) {
-  .card_user {
-    grid-template-columns: 1fr;
-    gap: .75rem;
-    padding: .5rem 0;
-  }
+.card_text p,
+.username {
+  margin: 0;
+  white-space: nowrap;
+  font-weight: 700;
+  color: var(--abs-text);
+}
 
-  .card_profile {
-    grid-template-columns: 1fr auto;
-  }
+/* ─── RED ────────────────────────────────────────────────── */
 
-  .card_input {
-    justify-self: stretch;
-    max-width: 100%;
+.network-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  flex: 0 0 auto;
+  min-width: 120px;
+  height: 38px;
+  padding: 0 0.8rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--abs-success) 14%, transparent);
+  color: var(--abs-success);
+  border: 1px solid color-mix(in srgb, var(--abs-success) 35%, transparent);
+  font-size: var(--abs-font-size);
+  font-weight: 700;
+  white-space: nowrap;
+
+  &.offline {
+    background: color-mix(in srgb, var(--abs-error) 14%, transparent);
+    color: var(--abs-error);
+    border-color: color-mix(in srgb, var(--abs-error) 35%, transparent);
   }
 }
 
-@media (max-width: 768px) {
-  .card_menu {
-    display: flex;
-    overflow-x: auto;
-    gap: .5rem;
-    padding-bottom: .2rem;
-    scrollbar-width: thin;
+.network-icon {
+  font-size: 15px;
+  line-height: 1;
+}
+
+/* ─── TABLET / LAPTOP  ≤ 1350px ─────────────────────────── */
+/* Aquí el buscador pasa a ser togglable                     */
+
+@media (max-width: 1350px) {
+  .card_header {
+    padding: 0.75rem 1rem;
   }
 
+  .card_user {
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .card_menu {
+    flex: 1 1 100%;
+    min-width: 0;
+    order: 1;
+  }
+
+  .card_profile {
+    flex: 1 1 100%;
+    min-width: 0;
+    justify-content: flex-start;
+    gap: 0.6rem;
+    order: 2;
+  }
+
+  /* Botón toggle: visible en tablet/mobile */
+  .search-toggle {
+    display: flex;
+  }
+
+  /* Buscador: en tablet pasa a tercera fila animada */
+  .card_input {
+    flex: 1 1 100%;
+    min-width: 0;
+    max-width: 100%;
+    order: 3;
+    /* Restaurar el control de la animación (anula los !important de desktop) */
+    overflow: hidden !important;
+  }
+}
+
+/* ─── TABLET  ≤ 1024px ──────────────────────────────────── */
+
+@media (max-width: 1024px) {
   .card_menu select {
-    flex: 0 0 145px;
-    height: 38px;
+    flex: 1 1 100px;
+    min-width: 95px;
     font-size: 13px;
   }
 
-  .card_profile {
-    grid-template-columns: 1fr auto;
-    gap: .75rem;
-  }
+  .card_profile { gap: 0.5rem; }
+  .card_text    { display: none; }
+  .network-text { display: none; }
 
-  .card_input input {
+  .network-box {
+    min-width: 38px;
+    width: 38px;
     height: 38px;
+    padding: 0;
   }
 
-  .image {
-    width: 40px;
-    height: 40px;
+  .card_input { flex: 1 1 180px; }
+}
+
+/* ─── FUENTE GRANDE / EXTRA GRANDE ──────────────────────── */
+
+:host-context(.font-large),
+:host-context(.font-extralarge) {
+  .card_user {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      "menu    profile"
+      "search  search";
+    align-items: center;
+    gap: 0 1rem;
+    flex-wrap: unset;
   }
 
-  .card_text {
-    display: none;
+  .card_menu {
+    grid-area: menu;
+    min-width: 0;
+    flex: unset;
+    order: unset;
   }
 
-  .card_info {
-    min-width: auto;
+  .card_profile {
+    grid-area: profile;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: nowrap;
+    gap: 0.75rem;
+    min-width: max-content;
+    flex: unset;
+    order: unset;
   }
 
-  .user-box {
-    padding-left: 8px;
-    padding-right: 4px;
+  .search-toggle {
+    display: flex;
+    order: 0;
+  }
+
+  .user-box    { order: 1; }
+  .network-box { order: 2; }
+
+  .card_input {
+    grid-area: search;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    flex: unset;
+    order: unset;
+    overflow: hidden ;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .search-wrap {
+    width: min(100%, 620px);
   }
 }
 
-@media (max-width: 480px) {
+/* ─── MOBILE ≤ 768px ─────────────────────────────────────── */
+
+@media (max-width: 768px) {
+  .card_header { padding: 0.75rem 1rem; }
+
   .card_user {
-    gap: .6rem;
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+    "menu profile"
+      "search search";
+    gap: 0.6rem 0.75rem;
+  }
+
+  .card_menu {
+    flex: 1 1 100%;
+    min-width: 0;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    gap: 0.5rem;
+    padding-bottom: 0.2rem;
+    scrollbar-width: thin;
+    order: 1;
+
+    select {
+      flex: 0 0 140px;
+      height: 38px;
+      font-size: 13px;
+    }
   }
 
   .card_profile {
-    grid-template-columns: 1fr 40px;
-    gap: .6rem;
+    flex: 1 1 100%;
+    min-width: 0;
+    justify-content: space-between;
+    gap: 0.5rem;
+    order: 2;
   }
 
+  .search-toggle { display: flex; order: 0; }
+  .user-box      { order: 1; }
+
+  .network-box {
+    order: 2;
+    min-width: 38px;
+    width: 38px;
+    height: 38px;
+    padding: 0;
+  }
+
+  .card_input {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    display: flex;
+    justify-content: center;
+
+  }
+  .card_input .search-wrap {
+    width: min(100%, 620px);
+  }
+  .card_text,
+  .network-text { display: none; }
+}
+
+/* ─── MOBILE PEQUEÑO ≤ 480px ────────────────────────────── */
+
+@media (max-width: 480px) {
+  .card_header { padding: 0.5rem 0.6rem; }
+
   .card_menu select {
-    flex-basis: 132px;
+    flex-basis: 128px;
     font-size: 12px;
+  }
+
+  .image {
+    width: 38px;
+    height: 38px;
   }
 }

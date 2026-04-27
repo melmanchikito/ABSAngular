@@ -5,8 +5,11 @@
   background: var(--abs-bg);
 }
 
+/* =========================
+   SIDEBAR
+========================= */
 .card_sidebar {
-  width: 240px;
+  width: 220px;
   height: 100dvh;
   background: var(--abs-sidebar-bg);
   color: var(--abs-text);
@@ -22,15 +25,18 @@
   transition: width 0.3s ease;
 }
 
+/* =========================
+   BOTON TOGGLE
+========================= */
 .toggle-sidebar {
   position: absolute;
-  top: 18px;
-  right: -20px;
+  top: 14px;
+  right: -16px;
 
-  width: 42px;
-  height: 42px;
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
-  border: 2px solid #ffffff;
+  border: 2px solid #fff;
 
   background: var(--abs-primary);
   color: #fff;
@@ -42,30 +48,40 @@
   align-items: center;
   justify-content: center;
 
-  font-size: 18px;
+  font-size: 15px;
   font-weight: 700;
 
   box-shadow: 0 8px 18px rgba(0, 0, 0, .18);
   transition: all 0.25s ease;
 }
+
 .toggle-sidebar:hover {
   background: var(--abs-primary-hover);
   transform: scale(1.08);
 }
 
+/* =========================
+   CONTENIDO DERECHO
+========================= */
 .right_content {
-  margin-left: 240px;
+  margin-left: 220px;
   display: flex;
   flex-direction: column;
-  width: calc(100% - 240px);
+  width: calc(100% - 220px);
   min-height: 100dvh;
   background: var(--abs-bg);
-  transition: margin-left 0.3s ease, width 0.3s ease;
-
-  padding-left: 18px;
+  transition:
+    margin-left 0.3s ease,
+    width 0.3s ease;
+  padding-left: 10px;
 }
+
+/* =========================
+   HEADER
+========================= */
 .card_header {
   min-height: 72px;
+  height: auto;
   background: var(--abs-header-bg);
   color: var(--abs-text);
   display: flex;
@@ -77,6 +93,9 @@
   z-index: 10;
 }
 
+/* =========================
+   MAIN
+========================= */
 .card_main {
   flex: 1;
   overflow-y: auto;
@@ -84,6 +103,9 @@
   color: var(--abs-text);
 }
 
+/* =========================
+   SIDEBAR COLAPSADO
+========================= */
 .sidebar-collapsed .card_sidebar {
   width: 76px;
 }
@@ -91,9 +113,12 @@
 .sidebar-collapsed .right_content {
   margin-left: 76px;
   width: calc(100% - 76px);
-  padding-left: 24px;
+  padding-left: 14px;
 }
 
+/* =========================
+   TABLET
+========================= */
 @media (max-width: 1024px) {
   .card_sidebar {
     width: 210px;
@@ -114,6 +139,9 @@
   }
 }
 
+/* =========================
+   MOBILE
+========================= */
 @media (max-width: 768px) {
   .fondo {
     display: block;
@@ -135,21 +163,42 @@
     margin-left: 0;
     width: 100%;
     min-height: auto;
+    padding-left: 0;
   }
 
   .toggle-sidebar {
     top: 14px;
     right: 14px;
+    width: 32px;
+    height: 32px;
+    font-size: 14px;
   }
 
   .card_header {
     min-height: auto;
-    padding: .75rem;
+    height: auto;
+    padding: 0;
     position: relative;
   }
 
   .card_main {
     min-height: auto;
     overflow: visible;
+  }
+}
+
+/* =========================
+   EXTRA SMALL
+========================= */
+@media (max-width: 480px) {
+  .toggle-sidebar {
+    width: 30px;
+    height: 30px;
+    font-size: 13px;
+  }
+
+  .right_content,
+  .sidebar-collapsed .right_content {
+    padding-left: 0;
   }
 }
