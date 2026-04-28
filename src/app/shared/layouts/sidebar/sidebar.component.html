@@ -6,22 +6,47 @@
   <div class="card_options">
     <nav>
       <ul>
-        <li
-          *ngFor="let perm of permissions"
-          class="item"
-          [class.active]="activePerm === perm"
-          (click)="onSelect(perm)"
-          [title]="collapsed ? perm : ''"
-        >
-          <span class="icon">{{ permissionIcons[perm] || '⚙️' }}</span>
-          <span class="item-text">{{ perm }}</span>
-        </li>
+        <ng-container *ngFor="let area of areas">
+          <li
+            class="item"
+            [class.active]="activeArea === area.name"
+            (click)="toggleArea(area)"
+            [title]="collapsed ? area.name : ''"
+          >
+            <span class="icon">{{ area.icon }}</span>
+            <span class="item-text">{{ area.name }}</span>
+
+            <span
+              class="arrow"
+              *ngIf="area.children.length && !collapsed"
+              [class.open]="expandedArea === area.name"
+            >
+              ▸
+            </span>
+          </li>
+
+          <div
+            class="submenu"
+            *ngIf="expandedArea === area.name && area.children.length && !collapsed"
+          >
+            <button
+              type="button"
+              class="submenu-item"
+              *ngFor="let child of area.children"
+              [class.submenu-active]="activeChild === child.label"
+              (click)="selectChild(area, child)"
+            >
+              <span class="submenu-dot"></span>
+              <span>{{ child.label }}</span>
+            </button>
+          </div>
+        </ng-container>
 
         <li class="separator"></li>
 
         <li
           class="item"
-          [class.active]="activePerm === 'Perfil'"
+          [class.active]="activeArea === 'Perfil'"
           (click)="goToProfile()"
           [title]="collapsed ? 'Perfil' : ''"
         >
@@ -34,7 +59,7 @@
           (click)="logout()"
           [title]="collapsed ? 'Cerrar Sesión' : ''"
         >
-          <span class="icon">↩</span>
+          <span class="icon">↩️</span>
           <span class="item-text">Cerrar Sesión</span>
         </li>
       </ul>

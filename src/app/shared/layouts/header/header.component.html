@@ -54,9 +54,17 @@
       </div>
 
       <div class="network-box" [class.offline]="!isOnline">
-        <span class="network-icon">{{ isOnline ? '📶' : '📡' }}</span>
-        <span class="network-text">{{ networkType }}</span>
-      </div>
+    <lucide-angular
+      class="network-icon"
+      [img]="networkIcon"
+      [size]="17"
+      [strokeWidth]="2.4"
+    ></lucide-angular>
+
+    <span class="network-text">
+      {{ networkType }}
+    </span>
+  </div>
 
     </div>
 

@@ -1,5 +1,6 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { LucideAngularModule, Wifi, WifiOff, EthernetPort } from 'lucide-angular';
 import {
   trigger,
   state,
@@ -11,7 +12,7 @@ import {
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, LucideAngularModule],
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss'],
   animations: [
@@ -23,17 +24,14 @@ import {
         paddingTop: '0px',
         paddingBottom: '0px'
       })),
-
       state('open', style({
         height: '*',
         opacity: 1,
         overflow: 'hidden'
       })),
-
       transition('closed => open', [
         animate('300ms cubic-bezier(0.4, 0, 0.2, 1)')
       ]),
-
       transition('open => closed', [
         animate('220ms cubic-bezier(0.4, 0, 1, 1)')
       ])
@@ -44,8 +42,13 @@ export class HeaderComponent implements OnInit, OnDestroy {
   @Input() img: string | null = null;
   @Input() username: string | null = null;
 
+  readonly Wifi = Wifi;
+  readonly WifiOff = WifiOff;
+  readonly EthernetPort = EthernetPort;
+
   isOnline = navigator.onLine;
   networkType = 'Con internet';
+  networkIcon = Wifi;
 
   showSearch = false;
   isSearchCollapsible = false;
@@ -74,7 +77,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
     window.removeEventListener('online', this.updateNetworkStatus);
     window.removeEventListener('offline', this.updateNetworkStatus);
     window.removeEventListener('resize', this.updateSearchMode);
-
     this.observer?.disconnect();
   }
 
@@ -102,7 +104,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
       root.classList.contains('font-extralarge');
 
     const isSmallScreen = window.innerWidth <= 1350;
-
     const nextValue = isLargeFont || isSmallScreen;
 
     if (this.isSearchCollapsible !== nextValue) {
@@ -115,22 +116,20 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.isOnline = navigator.onLine;
 
     if (!this.isOnline) {
-      this.networkType = 'Sin internet';
+      this.networkType = '';
+      this.networkIcon = WifiOff;
       return;
     }
 
     const connection = (navigator as any).connection;
 
-    if (connection?.type === 'wifi') {
-      this.networkType = 'WiFi';
-      return;
-    }
-
     if (connection?.type === 'ethernet') {
       this.networkType = 'Cable';
+      this.networkIcon = EthernetPort;
       return;
     }
 
-    this.networkType = 'Con internet';
+    this.networkType = connection?.type === 'wifi' ? 'WiFi' : '';
+    this.networkIcon = Wifi;
   };
 }

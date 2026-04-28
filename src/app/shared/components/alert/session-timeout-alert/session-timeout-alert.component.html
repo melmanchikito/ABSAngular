@@ -1,0 +1,57 @@
+<div class="session-backdrop" *ngIf="warningVisible">
+  <section class="session-card">
+    <div class="session-title">
+      <span class="session-icon">!</span>
+
+      <h2>
+        {{ sessionExpired ? 'Sesión vencida' : 'Sesión inactiva' }}
+      </h2>
+    </div>
+
+    <p class="session-message" *ngIf="!sessionExpired">
+       Tu sesión está inactiva. Presiona
+        <strong>Continuar sesión</strong>
+    </p>
+
+    <p class="session-message" *ngIf="sessionExpired">
+      El tiempo de espera finalizó.
+      Por seguridad, debes volver a iniciar sesión.
+    </p>
+
+    <div class="countdown-box" *ngIf="!sessionExpired">
+      <span>Tiempo restante para continuar</span>
+      <strong>{{ formattedTime }}</strong>
+    </div>
+
+    <div class="session-actions" *ngIf="!sessionExpired">
+      <button
+        type="button"
+        class="btn-secondary"
+        (click)="logoutNow()"
+        [disabled]="isLoggingOut"
+      >
+        Cerrar sesión
+      </button>
+
+      <button
+        type="button"
+        class="btn-primary"
+        (click)="continueSession()"
+        [disabled]="isLoggingOut"
+      >
+        Continuar sesión
+      </button>
+    </div>
+
+    <div class="session-actions expired" *ngIf="sessionExpired">
+      <button
+        type="button"
+        class="btn-primary"
+        (click)="logoutNow()"
+        [disabled]="isLoggingOut"
+      >
+        Cerrar sesión
+      </button>
+    </div>
+  </section>
+</div>

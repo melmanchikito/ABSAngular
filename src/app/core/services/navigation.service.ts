@@ -11,7 +11,9 @@ export class NavigationService {
   goToLogin(): Promise<boolean> {
     return this.router.navigate([APP_ROUTES.login]);
   }
-
+  goToSystemArea(): Promise<boolean> {
+  return this.router.navigate(['/main/system-area']);
+}
   goToRecoverPassword(): Promise<boolean> {
     return this.router.navigate([APP_ROUTES.recoverPassword]);
   }

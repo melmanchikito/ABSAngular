@@ -1,0 +1,164 @@
+.session-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.48);
+  backdrop-filter: blur(5px);
+}
+
+.session-card {
+  width: min(100%, 400px);
+  background: var(--abs-surface);
+  color: var(--abs-text);
+  border: 1px solid var(--abs-border);
+  border-radius: 16px;
+  padding: 1.1rem;
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.32);
+  animation: sessionIn 0.25s ease-out;
+}
+
+.session-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  margin-bottom: 0.7rem;
+}
+
+.session-icon {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--abs-primary) 14%, transparent);
+  color: var(--abs-primary);
+  border: 1px solid color-mix(in srgb, var(--abs-primary) 35%, transparent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.session-title h2 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--abs-text);
+  line-height: 1.2;
+}
+
+.session-message {
+  margin: 0;
+  color: var(--abs-text-muted);
+  font-size: 0.9rem;
+  line-height: 1.45;
+  text-align: center;
+}
+
+.session-message strong {
+  color: var(--abs-text);
+}
+
+.countdown-box {
+  margin: 0.9rem auto;
+  width: 100%;
+  border-radius: 12px;
+  padding: 0.75rem;
+  background: var(--abs-surface-soft);
+  border: 1px solid var(--abs-border);
+  text-align: center;
+}
+
+.countdown-box span {
+  display: block;
+  font-size: 0.78rem;
+  color: var(--abs-text-muted);
+  margin-bottom: 0.2rem;
+}
+
+.countdown-box strong {
+  display: block;
+  font-size: 1.55rem;
+  color: var(--abs-primary);
+  letter-spacing: 1px;
+}
+
+.session-actions {
+  display: flex;
+  justify-content: center;
+  gap: 0.7rem;
+  margin-top: 0.85rem;
+}
+
+.session-actions button {
+  flex: 1;
+  border-radius: 10px;
+  padding: 0.72rem 1rem;
+  cursor: pointer;
+  font-weight: 700;
+  transition: all 0.22s ease;
+}
+
+.session-actions button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  border: none;
+  background: var(--abs-primary);
+  color: #fff;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--abs-primary-hover);
+  transform: translateY(-1px);
+}
+
+.btn-secondary {
+  background: var(--abs-surface-soft);
+  color: var(--abs-text);
+  border: 1px solid var(--abs-border);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--abs-primary) 8%, var(--abs-surface-soft));
+}
+
+.session-actions.expired .btn-primary {
+  width: 100%;
+  flex: unset;
+}
+
+@keyframes sessionIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.97);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (max-width: 480px) {
+  .session-card {
+    width: min(100%, 340px);
+    padding: 1rem;
+  }
+
+  .session-actions {
+    flex-direction: column;
+  }
+
+  .countdown-box strong {
+    font-size: 1.4rem;
+  }
+}
