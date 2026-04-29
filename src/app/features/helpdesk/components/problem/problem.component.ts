@@ -1,10 +1,21 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { forkJoin } from 'rxjs';
+
 import { AssistFormService } from '../../state/assist-form.service';
 import { MasterDataService } from '../../services/master-data.service';
-import { Category, Problem } from '../../../../core/models/master-data.model';
+import {
+  Category,
+  HelpdeskFormData,
+  Problem
+} from '../../../../core/models/master-data.model';
 import { countChar } from '../../../../core/utils/validators.utils';
+
+type TicketTextField =
+  | 'issue_description'
+  | 'solution_description'
+  | 'observation';
 
 @Component({
   selector: 'app-problem',
@@ -17,43 +28,89 @@ export class ProblemComponent implements OnInit {
   categories: Category[] = [];
   problems: Problem[] = [];
 
+  isLoading = false;
+  loadError = '';
+
   constructor(
     public readonly assistFormService: AssistFormService,
     private readonly masterDataService: MasterDataService
   ) {}
 
   ngOnInit(): void {
-    this.masterDataService.getCategories().subscribe((data) => this.categories = data);
-    this.masterDataService.getProblems().subscribe((data) => this.problems = data);
+    this.loadProblemData();
   }
 
-  get form() {
+  get form(): HelpdeskFormData {
     return this.assistFormService.snapshot;
   }
 
-  get filteredProblems(): Problem[] {
-    return this.form.selectedCategory?.id
-      ? this.problems.filter((p) => p.category_id === this.form.selectedCategory?.id)
-      : this.problems;
+  get categoryId(): number | undefined {
+    return this.form.selectedCategory?.id;
   }
 
-  onCategoryChange(categoryId: number): void {
+  get filteredProblems(): Problem[] {
+    if (!this.categoryId) {
+      return this.problems;
+    }
+
+    return this.problems.filter(
+      (problem) => problem.category_id === this.categoryId
+    );
+  }
+
+  private loadProblemData(): void {
+    this.isLoading = true;
+    this.loadError = '';
+
+    forkJoin({
+      categories: this.masterDataService.getCategories(),
+      problems: this.masterDataService.getProblems()
+    }).subscribe({
+      next: ({ categories, problems }) => {
+        this.categories = categories;
+        this.problems = problems;
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Error cargando categorías y problemas:', error);
+        this.loadError = 'No se pudieron cargar las categorías y problemas.';
+        this.isLoading = false;
+      }
+    });
+  }
+
+  onCategoryChange(value: string | number): void {
+    const categoryId = Number(value);
+
     const category = this.categories.find((c) => c.id === categoryId);
+
     this.assistFormService.setSelectedCategory(category);
     this.assistFormService.setSelectedProblem(undefined);
   }
 
-  onProblemChange(problemId: number): void {
+  onProblemChange(value: string | number): void {
+    const problemId = Number(value);
+
     const problem = this.problems.find((p) => p.id === problemId);
+
     this.assistFormService.setSelectedProblem(problem);
   }
 
-  onTextChange(field: 'issue_description' | 'solution_description' | 'observation', value: string): void {
-    this.assistFormService.setSelectedTicketDt({ [field]: value });
-    this.assistFormService.setCharCount({ [field]: countChar(value) });
+  onTextChange(field: TicketTextField, value: string): void {
+    const textValue = value ?? '';
+
+    this.assistFormService.setSelectedTicketDt({
+      [field]: textValue
+    });
+
+    this.assistFormService.setCharCount({
+      [field]: countChar(textValue)
+    });
   }
 
   onRemoteChange(value: boolean): void {
-    this.assistFormService.setSelectedTicketDt({ is_remote: value });
+    this.assistFormService.setSelectedTicketDt({
+      is_remote: value
+    });
   }
 }

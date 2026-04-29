@@ -1,5 +1,8 @@
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { Observable, catchError, map, of } from 'rxjs';
+import { environment } from '../../../../environments/environment';
+import { ApiResponse } from '../../../core/models/api-response.model';
 import {
   Branch,
   Category,
@@ -10,96 +13,137 @@ import {
   Problem
 } from '../../../core/models/master-data.model';
 
+interface ListResponse<T> {
+  list: T[];
+}
+
 @Injectable({
   providedIn: 'root'
 })
 export class MasterDataService {
+  private readonly apiUrl = environment.apiUrl;
+
+  constructor(private readonly http: HttpClient) {}
+
   getEmployees(): Observable<Employee[]> {
-    return of([
-      { id: 1, code: 'EMP001', name: 'Juan Pérez', company_id: 1, branch_id: 1, department_id: 1 },
-      { id: 2, code: 'EMP002', name: 'Ana Gómez', company_id: 1, branch_id: 2, department_id: 2 },
-      { id: 3, code: 'EMP003', name: 'Carlos Ruiz', company_id: 2, branch_id: 3, department_id: 3 }
-    ]);
+    return this.getList<Employee>(
+      '/store/employee/select',
+      'Error cargando empleados'
+    );
   }
 
   getCompanies(): Observable<Company[]> {
-    return of([
-      { id: 1, code: 'COM01', name: 'ABS Matriz' },
-      { id: 2, code: 'COM02', name: 'ABS Sucursal' }
-    ]);
+    return this.getList<Company>(
+      '/store/company/select',
+      'Error cargando compañías'
+    );
   }
 
   getBranches(): Observable<Branch[]> {
-    return of([
-      { id: 1, code: 'SUC01', name: 'Guayaquil', company_id: 1, location_id: 1 },
-      { id: 2, code: 'SUC02', name: 'Durán', company_id: 1, location_id: 2 },
-      { id: 3, code: 'SUC03', name: 'Quito', company_id: 2, location_id: 3 }
-    ]);
+    return this.getList<Branch>(
+      '/store/branch/select',
+      'Error cargando sucursales'
+    );
   }
 
   getDepartments(): Observable<Department[]> {
-    return of([
-      { id: 1, code: 'DEP01', name: 'Sistemas' },
-      { id: 2, code: 'DEP02', name: 'Contabilidad' },
-      { id: 3, code: 'DEP03', name: 'Compras' }
-    ]);
+    return this.getList<Department>(
+      '/store/department/select',
+      'Error cargando departamentos'
+    );
   }
 
   getCategories(): Observable<Category[]> {
-    return of([
-      { id: 1, code: 'CAT01', name: 'Hardware', description: 'Problemas físicos' },
-      { id: 2, code: 'CAT02', name: 'Software', description: 'Problemas lógicos' }
-    ]);
+    return this.getList<Category>(
+      '/store/category/select',
+      'Error cargando categorías'
+    );
   }
 
   getProblems(): Observable<Problem[]> {
-    return of([
-      { id: 1, code: 'PRO01', name: 'No enciende', description: 'Equipo no enciende', category_id: 1 },
-      { id: 2, code: 'PRO02', name: 'Pantalla azul', description: 'Error del sistema', category_id: 2 },
-      { id: 3, code: 'PRO03', name: 'Sin internet', description: 'Conectividad', category_id: 2 }
-    ]);
+    return this.getList<Problem>(
+      '/store/problem/select',
+      'Error cargando problemas'
+    );
   }
 
   getEquipmentWithDevices(employeeId: number): Observable<EquipmentWithDevices[]> {
-    return of([
-      {
-        id: 1,
-        code: 'EQ01',
-        name: 'Laptop Dell',
-        responsible_id: employeeId,
-        devices: [
-          {
-            id: 11,
-            code: 'DEV01',
-            name: 'Laptop Dell Latitude',
-            type: 'Laptop',
-            description: 'Equipo principal',
-            state: 'Activo',
-            model: 'Latitude 5420',
-            serial_number: 'ABC123',
-            assignment_at: '2026-04-20',
-            last_maintenance_at: '2026-04-10',
-            components: [
-              {
-                id: 111,
-                code: 'COMP01',
-                name: 'RAM 16GB',
-                type: 'Memoria',
-                state: 'Activa',
-                assignment_at: '2026-04-20'
-              },
-              {
-                id: 112,
-                code: 'COMP02',
-                name: 'SSD 512GB',
-                type: 'Disco',
-                state: 'Activo',
-                assignment_at: '2026-04-20'
-              }
-            ]
+    if (!employeeId || employeeId <= 0) {
+      return of([]);
+    }
+
+    const params = new HttpParams().set('employee_id', String(employeeId));
+
+    return this.http
+      .get<ApiResponse<ListResponse<EquipmentWithDevices>>>(
+        `${this.apiUrl}/store/equipment/select-total`,
+        {
+          headers: this.getAuthHeaders(),
+          params,
+          withCredentials: true
+        }
+      )
+      .pipe(
+        map((response) => {
+          if ('error_code' in response) {
+            console.error('Error API cargando equipos:', response.message);
+            return [];
           }
-        ]
+
+         return response.data?.list ?? []; 
+        }),
+        catchError((error) => {
+          console.error('Error cargando equipos con dispositivos:', error);
+          return of([]);
+        })
+      );
+  }
+private extractList<T>(response: any): T[] {
+  return response?.data?.list ?? response?.Data?.list ?? [];
+}
+  private getList<T>(endpoint: string, errorMessage: string): Observable<T[]> {
+  return this.http
+    .get<any>(
+      `${this.apiUrl}${endpoint}`,
+      {
+        headers: this.getAuthHeaders(),
+        withCredentials: true
       }
-    ]);
+    )
+    .pipe(
+      map((response) => {
+        if (response?.error_code) {
+          console.error(errorMessage, response.message);
+          return [];
+        }
+
+        return this.extractList<T>(response);
+      }),
+      catchError((error) => {
+        console.error(errorMessage, error);
+        return of([]);
+      })
+    );
+}
+
+  private getAuthHeaders(): HttpHeaders {
+    const token = localStorage.getItem('token') || '';
+
+    const headers: Record<string, string> = {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+      'X-Device-Platform': 'web',
+      'X-Device-Id': localStorage.getItem('device_id') || 'web-device',
+      'X-Device-Fingerprint':
+        localStorage.getItem('device_fingerprint') || 'web-fingerprint'
+    };
+
+    if (token) {
+      headers['Authorization'] = token.startsWith('Bearer ')
+        ? token
+        : `Bearer ${token}`;
+    }
+
+    return new HttpHeaders(headers);
   }
 }

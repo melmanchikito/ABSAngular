@@ -4,18 +4,29 @@
     <h1>Registro de problema</h1>
   </div>
 
-  <form class="form">
+  <div class="loading-box" *ngIf="isLoading">
+    Cargando categorías y problemas...
+  </div>
+
+  <div class="loading-box error-box" *ngIf="!isLoading && loadError">
+    {{ loadError }}
+  </div>
+
+  <form class="form" *ngIf="!isLoading && !loadError">
     <div class="row">
       <div class="options">
         <label for="category">Categoría:</label>
+
         <select
           id="category"
-          [ngModel]="form.selectedCategory?.id"
-          (ngModelChange)="onCategoryChange(+$event)"
           name="category"
+          [ngModel]="form.selectedCategory?.id || ''"
+          (ngModelChange)="onCategoryChange($event)"
+          required
         >
-          <option [ngValue]="undefined" disabled>Seleccione una categoría</option>
-          <option *ngFor="let item of categories" [ngValue]="item.id">
+          <option value="" disabled>Seleccione una categoría</option>
+
+          <option *ngFor="let item of categories" [value]="item.id">
             {{ item.code }} - {{ item.name }}
           </option>
         </select>
@@ -23,17 +34,20 @@
 
       <div class="options">
         <label for="problem">Problema:</label>
+
         <select
           id="problem"
-          [ngModel]="form.selectedProblem?.id"
-          (ngModelChange)="onProblemChange(+$event)"
           name="problem"
-          [disabled]="!form.selectedCategory?.id"
+          [ngModel]="form.selectedProblem?.id || ''"
+          (ngModelChange)="onProblemChange($event)"
+          [disabled]="!categoryId"
+          required
         >
-          <option [ngValue]="undefined" disabled>
-            {{ form.selectedCategory?.id ? 'Seleccione un problema' : 'Seleccione una categoría primero' }}
+          <option value="" disabled>
+            {{ categoryId ? 'Seleccione un problema' : 'Seleccione una categoría primero' }}
           </option>
-          <option *ngFor="let item of filteredProblems" [ngValue]="item.id">
+
+          <option *ngFor="let item of filteredProblems" [value]="item.id">
             {{ item.code }} - {{ item.name }}
           </option>
         </select>
@@ -42,59 +56,78 @@
 
     <div class="options">
       <label for="description">Descripción:</label>
+
       <div class="textareaWrapper">
         <textarea
           id="description"
+          name="issue_description"
           class="inputper"
           maxlength="255"
-          [ngModel]="form.selectedTicketDt?.issue_description"
+          placeholder="Ingrese una descripción detallada del problema"
+          [ngModel]="form.selectedTicketDt?.issue_description || ''"
           (ngModelChange)="onTextChange('issue_description', $event)"
-          name="issue_description"
+          required
         ></textarea>
-        <span class="helperText">{{ form.charCount.issue_description }}/255</span>
+
+        <span class="helperText">
+          {{ form.charCount.issue_description || 0 }}/255
+        </span>
       </div>
     </div>
 
     <div class="options">
       <label for="solution">Detalle de la solución:</label>
+
       <div class="textareaWrapper">
         <textarea
           id="solution"
+          name="solution_description"
           class="inputper"
           maxlength="255"
-          [ngModel]="form.selectedTicketDt?.solution_description"
+          placeholder="Describa la solución brindada al usuario"
+          [ngModel]="form.selectedTicketDt?.solution_description || ''"
           (ngModelChange)="onTextChange('solution_description', $event)"
-          name="solution_description"
+          required
         ></textarea>
-        <span class="helperText">{{ form.charCount.solution_description }}/255</span>
+
+        <span class="helperText">
+          {{ form.charCount.solution_description || 0 }}/255
+        </span>
       </div>
     </div>
 
     <div class="row">
       <div class="options">
         <label for="observation">Observación:</label>
+
         <div class="textareaWrapper">
           <textarea
             id="observation"
+            name="observation"
             class="inputper"
             maxlength="255"
-            [ngModel]="form.selectedTicketDt?.observation"
+            placeholder="Agregue observaciones o comentarios relevantes"
+            [ngModel]="form.selectedTicketDt?.observation || ''"
             (ngModelChange)="onTextChange('observation', $event)"
-            name="observation"
+            required
           ></textarea>
-          <span class="helperText">{{ form.charCount.observation }}/255</span>
+
+          <span class="helperText">
+            {{ form.charCount.observation || 0 }}/255
+          </span>
         </div>
       </div>
 
       <div class="utils">
         <div class="card_chk">
           <label for="remote">Atención remota:</label>
+
           <input
             id="remote"
             type="checkbox"
-            [ngModel]="form.selectedTicketDt?.is_remote"
-            (ngModelChange)="onRemoteChange($event)"
             name="is_remote"
+            [ngModel]="form.selectedTicketDt?.is_remote || false"
+            (ngModelChange)="onRemoteChange($event)"
           />
         </div>
       </div>

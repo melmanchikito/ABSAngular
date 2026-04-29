@@ -2,22 +2,46 @@
   <header class="header">
     <div class="card_device">
       <label for="device">Equipo:</label>
+
       <select
         id="device"
-        [ngModel]="selectedDeviceId"
-        (ngModelChange)="onDeviceChange(+$event)"
         name="device"
+        [ngModel]="selectedDeviceId"
+        (ngModelChange)="onDeviceChange($event)"
+        [disabled]="isLoadingEquipments || !equipmentOwnerId"
+        required
       >
-        <option [ngValue]="undefined">Seleccione un equipo</option>
-        <option *ngFor="let item of devices" [ngValue]="item.id">
+        <option value="">
+          {{ isLoadingEquipments ? 'Cargando equipos...' : 'Seleccione un equipo' }}
+        </option>
+
+        <option *ngFor="let item of devices" [value]="item.id">
           {{ item.code }} - {{ item.name }}
         </option>
       </select>
+
+      <small class="equipment-message" *ngIf="equipmentError">
+        {{ equipmentError }}
+      </small>
     </div>
 
     <div class="card_options_equipments">
-      <button class="addBtn" type="button">Agregar Equipo</button>
-      <button class="deleteBtn" type="button">Eliminar Equipo</button>
+      <button
+        class="addBtn"
+        type="button"
+        (click)="addEquipment()"
+      >
+        Agregar Equipo
+      </button>
+
+      <button
+        class="deleteBtn"
+        type="button"
+        (click)="deleteEquipment()"
+        [disabled]="!selectedDevice"
+      >
+        Eliminar Equipo
+      </button>
     </div>
   </header>
 
@@ -56,31 +80,55 @@
       <label>Componentes</label>
 
       <div class="componentList">
-        <div class="componentCard" *ngIf="!selectedDevice?.components?.length">
-          <span>No hay componentes</span>
-        </div>
+        <ng-container *ngIf="selectedDevice?.components?.length; else noComponents">
+          <div
+            class="componentCard"
+            *ngFor="let component of selectedDevice?.components"
+            [class.activeCard]="activeComponentId === component.id"
+            (click)="toggleComponent(component.id)"
+          >
+            <div class="cardHeader">
+              <p>{{ component.name }}</p>
 
-        <div
-          class="componentCard"
-          *ngFor="let c of selectedDevice?.components"
-          (click)="toggleComponent(c.id)"
-        >
-          <div class="cardHeader">
-            <p>{{ c.name }}</p>
-            <button class="iconCard" type="button" (click)="$event.stopPropagation()">🗑</button>
-          </div>
+              <button
+                class="iconCard"
+                type="button"
+                title="Eliminar componente"
+                (click)="deleteComponent($event, component)"
+              >
+                🗑
+              </button>
+            </div>
 
-          <div class="detailSection" *ngIf="activeComponentId === c.id">
-            <h3>Detalle de Componente:</h3>
-            <p>Nombre: {{ c.name || 'No encontrado' }}</p>
-            <p>Tipo: {{ c.type || 'No encontrado' }}</p>
-            <p>Estado: {{ c.state || 'No encontrado' }}</p>
-            <p>Fecha de asignación: {{ c.assignment_at || 'No encontrado' }}</p>
+            <div class="detailSection" *ngIf="activeComponentId === component.id">
+              <h3>Detalle de Componente:</h3>
+
+              <p>Nombre: {{ component.name || 'No encontrado' }}</p>
+              <p>Tipo: {{ component.type || 'No encontrado' }}</p>
+              <p>Estado: {{ component.state || 'No encontrado' }}</p>
+              <p>
+                Fecha de asignación:
+                {{ component.assignment_at || 'No encontrado' }}
+              </p>
+            </div>
           </div>
-        </div>
+        </ng-container>
+
+        <ng-template #noComponents>
+          <div class="componentCard empty-card">
+            <span>No hay componentes</span>
+          </div>
+        </ng-template>
       </div>
 
-      <button class="addBtn" type="button">Agregar componente</button>
+      <button
+        class="addBtn"
+        type="button"
+        (click)="addComponent()"
+        [disabled]="!selectedDevice"
+      >
+        Agregar componente
+      </button>
     </section>
   </div>
 </div>

@@ -236,3 +236,20 @@
     font-size: 14px;
   }
 }
+.loading-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 160px;
+  color: var(--abs-text-muted);
+  font-weight: 700;
+  border: 1.5px dashed color-mix(in srgb, var(--abs-border) 85%, #6b7280);
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--abs-surface-soft) 82%, transparent);
+}
+
+.error-box {
+  color: var(--abs-error);
+  border-color: color-mix(in srgb, var(--abs-error) 55%, var(--abs-border));
+  background: color-mix(in srgb, var(--abs-error) 8%, var(--abs-surface));
+}
