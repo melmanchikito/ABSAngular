@@ -1,8 +1,20 @@
+:host {
+  --sidebar-open: 220px;
+  --sidebar-tablet: 210px;
+  --sidebar-collapsed: 76px;
+  --layout-gap: 24px;
+}
 .fondo {
   display: flex;
   width: 100%;
   min-height: 100dvh;
-  background: var(--abs-bg);
+  background:
+    radial-gradient(
+      circle at top right,
+      color-mix(in srgb, var(--abs-primary) 7%, transparent),
+      transparent 34%
+    ),
+    var(--abs-bg);
 }
 
 /* =========================
@@ -18,15 +30,15 @@
   top: 0;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, .12);
-  border-right: 1px solid var(--abs-border);
+  box-shadow: var(--abs-shadow-sm, 0 4px 14px rgba(0, 0, 0, 0.08));
+  border-right: 1px solid var(--abs-border-soft, var(--abs-border));
   z-index: 20;
   padding-top: 8px;
-  transition: width 0.3s ease;
+  transition: width 0.3s ease, box-shadow 0.25s ease;
 }
 
 /* =========================
-   BOTON TOGGLE
+   BOTÓN TOGGLE
 ========================= */
 .toggle-sidebar {
   position: absolute;
@@ -36,7 +48,7 @@
   width: 34px;
   height: 34px;
   border-radius: 50%;
-  border: 2px solid #fff;
+  border: 2px solid var(--abs-surface);
 
   background: var(--abs-primary);
   color: #fff;
@@ -51,7 +63,7 @@
   font-size: 15px;
   font-weight: 700;
 
-  box-shadow: 0 8px 18px rgba(0, 0, 0, .18);
+  box-shadow: var(--abs-shadow-md, 0 10px 25px rgba(0, 0, 0, 0.18));
   transition: all 0.25s ease;
 }
 
@@ -60,20 +72,26 @@
   transform: scale(1.08);
 }
 
+.toggle-sidebar:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--abs-primary) 28%, transparent);
+  outline-offset: 2px;
+}
+
 /* =========================
    CONTENIDO DERECHO
 ========================= */
 .right_content {
-  margin-left: 220px;
+  margin-left: calc(var(--sidebar-open) + var(--layout-gap));
   display: flex;
   flex-direction: column;
-  width: calc(100% - 220px);
+  width: calc(100% - var(--sidebar-open) - var(--layout-gap));
   min-height: 100dvh;
-  background: var(--abs-bg);
+  background: transparent;
   transition:
     margin-left 0.3s ease,
     width 0.3s ease;
-  padding-left: 10px;
+  padding-left: 0;
+  box-sizing: border-box;
 }
 
 /* =========================
@@ -82,25 +100,27 @@
 .card_header {
   min-height: 72px;
   height: auto;
-  background: var(--abs-header-bg);
+  background: transparent;
   color: var(--abs-text);
   display: flex;
   align-items: center;
   padding: 0;
-  border-bottom: 2px solid var(--abs-border);
+  border-bottom: none;
+  box-shadow: none;
   position: sticky;
   top: 0;
   z-index: 10;
 }
-
 /* =========================
    MAIN
 ========================= */
 .card_main {
   flex: 1;
   overflow-y: auto;
-  background: var(--abs-bg);
+  background: transparent;
   color: var(--abs-text);
+  padding: 1rem;
+  min-height: calc(100dvh - 72px);
 }
 
 /* =========================
@@ -111,9 +131,9 @@
 }
 
 .sidebar-collapsed .right_content {
-  margin-left: 76px;
-  width: calc(100% - 76px);
-  padding-left: 14px;
+  margin-left: calc(var(--sidebar-collapsed) + var(--layout-gap));
+  width: calc(100% - var(--sidebar-collapsed) - var(--layout-gap));
+  padding-left: 0;
 }
 
 /* =========================
@@ -125,8 +145,8 @@
   }
 
   .right_content {
-    margin-left: 210px;
-    width: calc(100% - 210px);
+    margin-left: calc(var(--sidebar-tablet) + var(--layout-gap));
+    width: calc(100% - var(--sidebar-tablet) - var(--layout-gap));
   }
 
   .sidebar-collapsed .card_sidebar {
@@ -134,8 +154,12 @@
   }
 
   .sidebar-collapsed .right_content {
-    margin-left: 76px;
-    width: calc(100% - 76px);
+    margin-left: calc(var(--sidebar-collapsed) + var(--layout-gap));
+    width: calc(100% - var(--sidebar-collapsed) - var(--layout-gap));
+  }
+
+  .card_main {
+    padding: 0.85rem;
   }
 }
 
@@ -145,6 +169,7 @@
 @media (max-width: 768px) {
   .fondo {
     display: block;
+    min-height: 100dvh;
   }
 
   .card_sidebar {
@@ -152,6 +177,9 @@
     top: 0;
     width: 100%;
     height: auto;
+    box-shadow: var(--abs-shadow-sm, 0 4px 14px rgba(0, 0, 0, 0.08));
+    border-right: none;
+    border-bottom: 1px solid var(--abs-border-soft, var(--abs-border));
   }
 
   .sidebar-collapsed .card_sidebar {
@@ -179,11 +207,13 @@
     height: auto;
     padding: 0;
     position: relative;
+    box-shadow: var(--abs-shadow-xs, 0 1px 3px rgba(0, 0, 0, 0.06));
   }
 
   .card_main {
     min-height: auto;
     overflow: visible;
+    padding: 0.85rem;
   }
 }
 
@@ -200,5 +230,9 @@
   .right_content,
   .sidebar-collapsed .right_content {
     padding-left: 0;
+  }
+
+  .card_main {
+    padding: 0.7rem;
   }
 }

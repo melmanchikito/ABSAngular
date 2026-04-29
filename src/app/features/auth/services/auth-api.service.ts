@@ -100,14 +100,20 @@ export class AuthApiService {
       };
     }
 
+    const loginToken = this.extractToken(data);
+    const loginUserId = data.user_id || 0;
+    const loginName = data.name || 'Usuario';
+
     this.authService.login({
-      token: data.token || '',
-      userId: data.user_id || 0,
-      nameUsuario: data.name || '',
+      token: loginToken,
+      userId: loginUserId,
+      nameUsuario: loginName,
       email
     });
 
-    const permissionsResponse = await this.handlePermissions(data.user_id || 0);
+    this.saveAuthData(loginToken, loginUserId, loginName, email);
+
+    const permissionsResponse = await this.handlePermissions(loginUserId);
 
     if (!permissionsResponse.success) {
       return {
@@ -177,10 +183,20 @@ export class AuthApiService {
 
     this.authService.setIsLogin('false');
     this.authService.logout();
+
+    this.clearAuthData();
+
     await this.navigationService.goToLogin();
   }
 
-  async handleRecover(email: string): Promise<{ success: boolean; error?: string; message?: string; route?: 'two-factor' | 'new-password' }> {
+  async handleRecover(
+    email: string
+  ): Promise<{
+    success: boolean;
+    error?: string;
+    message?: string;
+    route?: 'two-factor' | 'new-password';
+  }> {
     const response = await firstValueFrom(
       this.http.post<ApiResponse<ValidateEmailResponse>>(
         `${this.apiUrl}/validate-email`,
@@ -280,7 +296,12 @@ export class AuthApiService {
     otpCode: string,
     email: string,
     userId: number
-  ): Promise<{ success: boolean; error?: string; message?: string; route?: 'main' | 'login' }> {
+  ): Promise<{
+    success: boolean;
+    error?: string;
+    message?: string;
+    route?: 'main' | 'login';
+  }> {
     const isLogin = this.authService.getIsLogin() === 'true';
     const url = isLogin
       ? `${this.apiUrl}/validate-login-2fa`
@@ -310,7 +331,7 @@ export class AuthApiService {
     }
 
     if (isLogin) {
-      const token = response.data?.token || '';
+      const token = this.extractToken(response.data);
       const storedUserId = Number(this.authService.getUserId() || 0);
       const nameUsuario = this.authService.getName() || 'Usuario';
 
@@ -320,6 +341,8 @@ export class AuthApiService {
         nameUsuario,
         email
       });
+
+      this.saveAuthData(token, storedUserId, nameUsuario, email);
 
       const permissionsResponse = await this.handlePermissions(storedUserId);
 
@@ -342,5 +365,62 @@ export class AuthApiService {
       message: 'Validación correcta. Continúa con la recuperación.',
       route: 'login'
     };
+  }
+
+  private extractToken(data: unknown): string {
+    if (!data || typeof data !== 'object') {
+      return '';
+    }
+
+    const objectData = data as Record<string, unknown>;
+
+    const token =
+      objectData['token'] ||
+      objectData['access_token'] ||
+      objectData['accessToken'] ||
+      objectData['jwt'] ||
+      objectData['jwt_token'] ||
+      objectData['authorization'];
+
+    if (typeof token === 'string') {
+      return token.replace('Bearer ', '').replaceAll('"', '').trim();
+    }
+
+    const auth = objectData['auth'];
+    if (auth && typeof auth === 'object') {
+      const authData = auth as Record<string, unknown>;
+      const authToken = authData['token'];
+
+      if (typeof authToken === 'string') {
+        return authToken.replace('Bearer ', '').replaceAll('"', '').trim();
+      }
+    }
+
+    const nestedData = objectData['data'];
+    if (nestedData && typeof nestedData === 'object') {
+      return this.extractToken(nestedData);
+    }
+
+    return '';
+  }
+
+  private saveAuthData(token: string, userId: number, name: string, email: string): void {
+    if (token) {
+      localStorage.setItem('token', token);
+    } else {
+      console.warn('Login exitoso, pero la API no devolvió token.');
+    }
+
+    localStorage.setItem('user_id', String(userId));
+    localStorage.setItem('username', name || 'Usuario');
+    localStorage.setItem('email', email);
+  }
+
+  private clearAuthData(): void {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user_id');
+    localStorage.removeItem('username');
+    localStorage.removeItem('email');
+    localStorage.removeItem('profileImageUrl');
   }
 }

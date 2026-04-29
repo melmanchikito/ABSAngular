@@ -1,12 +1,22 @@
-<app-stepper
-  [steps]="steps"
-  [activeStep]="activeStep"
-  (activeStepChange)="setActiveStep($event)"
->
-  <div class="content">
+<div class="content">
+  <div class="assist-toolbar">
+    <button
+      class="back-system-btn"
+      type="button"
+      (click)="goToSystemArea()"
+    >
+      ← Volver a Área del Sistema
+    </button>
+  </div>
+
+  <app-stepper
+    [steps]="steps"
+    [activeStep]="activeStep"
+    (activeStepChange)="setActiveStep($event)"
+  >
     <app-clients *ngIf="activeStep === 0"></app-clients>
     <app-equipment *ngIf="activeStep === 1"></app-equipment>
     <app-problem *ngIf="activeStep === 2"></app-problem>
     <app-confirm *ngIf="activeStep === 3"></app-confirm>
-  </div>
-</app-stepper>
+  </app-stepper>
+</div>

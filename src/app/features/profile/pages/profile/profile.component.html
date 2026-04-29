@@ -14,9 +14,37 @@
   </section>
 
   <section class="profile-card user-card">
-    <div class="avatar">
-      <img src="assets/auth/perfil.webp" alt="Perfil" />
-    </div>
+    <div class="avatar profile-avatar">
+  <img
+    [src]="profileImageUrl || 'assets/auth/perfil.webp'"
+    alt="Foto de perfil"
+  />
+
+  <input
+    #imageInput
+    type="file"
+    accept="image/*"
+    hidden
+    (change)="onImageSelected($event)"
+  />
+
+  <button
+    type="button"
+    class="change-photo-btn"
+    (click)="openImagePicker(imageInput)"
+    [disabled]="isUploadingImage"
+  >
+    {{ isUploadingImage ? 'Subiendo...' : 'Cambiar foto' }}
+  </button>
+</div>
+
+<p class="image-success" *ngIf="imageMessage">
+  {{ imageMessage }}
+</p>
+
+<p class="image-error" *ngIf="imageError">
+  {{ imageError }}
+</p>
 
     <div class="user-info">
       <h2>{{ username }}</h2>

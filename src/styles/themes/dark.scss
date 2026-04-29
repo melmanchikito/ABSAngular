@@ -1,19 +1,50 @@
 [data-theme='dark'] {
-  --abs-bg: #111827;
-  --abs-surface: #1f2937;
-  --abs-surface-soft: #374151;
-  --abs-text: #f9fafb;
-  --abs-text-muted: #d1d5db;
-  --abs-border: #4b5563;
+  color-scheme: dark;
 
-  --abs-primary: #c72026;
-  --abs-primary-hover: #eb484e;
+  /* Fondos principales */
+  --abs-bg: #0f1724;
+  --abs-bg-soft: #111c2b;
 
-  --abs-sidebar-bg: #1f2937;
-  --abs-header-bg: #111827;
+  /* Superficies */
+  --abs-surface: #182334;
+  --abs-surface-soft: #202d3f;
+  --abs-surface-hover: #2b3a50;
 
-  --abs-error: #dc2626;
-  --abs-warning: #f59e0b;
-  --abs-success: #16a34a;
-  --abs-info: #3b82f6;
+  /* Layout */
+  --abs-sidebar-bg: #111827;
+  --abs-header-bg: rgba(15, 23, 36, 0.94);
+
+  /* Textos */
+  --abs-text: #f8fafc;
+  --abs-text-muted: #b6c2d2;
+  --abs-text-soft: #8d9aab;
+
+  /* Bordes */
+  --abs-border: #314054;
+  --abs-border-soft: #263447;
+
+  /* Marca ABS */
+  --abs-primary: #e3343a;
+  --abs-primary-hover: #ff4a50;
+  --abs-primary-soft: rgba(227, 52, 58, 0.16);
+
+  /* Estados */
+  --abs-success: #22c55e;
+  --abs-error: #ef4444;
+  --abs-warning: #facc15;
+  --abs-info: #60a5fa;
+
+  /* Sombras */
+  --abs-shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.28);
+  --abs-shadow-sm: 0 6px 14px rgba(0, 0, 0, 0.30);
+  --abs-shadow-md: 0 14px 32px rgba(0, 0, 0, 0.36);
+  --abs-shadow-lg: 0 24px 60px rgba(0, 0, 0, 0.45);
+
+  /* Inputs */
+  --abs-input-bg: #162234;
+  --abs-input-border: #3a4a60;
+
+  /* Scroll */
+  --abs-scroll-track: #111827;
+  --abs-scroll-thumb: #3a4a60;
 }

@@ -1,0 +1,60 @@
+<section class="system-page">
+  <div class="page-header">
+    <div>
+      <span class="eyebrow">Módulo</span>
+      <h1>Área del Sistema</h1>
+      <p>
+        Selecciona una categoría para visualizar sus opciones disponibles.
+      </p>
+    </div>
+  </div>
+
+  <div class="section-buttons">
+    <button
+      *ngFor="let section of sections"
+      type="button"
+      class="section-btn"
+      [class.active]="activeSection === section.key"
+      (click)="selectSection(section.key)"
+    >
+      <span class="section-icon">{{ section.icon }}</span>
+
+      <span class="section-info">
+        <strong>{{ section.label }}</strong>
+        <small>{{ section.description }}</small>
+      </span>
+    </button>
+  </div>
+
+  <div class="content-card">
+    <div class="content-header">
+      <div>
+        <h2>{{ activeTitle }}</h2>
+        <p>{{ activeDescription }}</p>
+      </div>
+
+      <span class="counter">
+        {{ data[activeSection].length }} opciones
+      </span>
+    </div>
+
+    <div class="options-grid">
+      <button
+        *ngFor="let option of data[activeSection]"
+        type="button"
+        class="option-card"
+        [class.helpdesk-card]="option.route === 'helpdesk'"
+        (click)="selectOption(option)"
+      >
+        <span class="option-icon">{{ option.icon }}</span>
+
+        <span class="option-content">
+          <strong>{{ option.label }}</strong>
+          <small>{{ option.description }}</small>
+        </span>
+
+        <span class="option-arrow">›</span>
+      </button>
+    </div>
+  </div>
+</section>

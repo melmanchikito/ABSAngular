@@ -5,6 +5,7 @@ import { ClientsComponent } from '../../components/clients/clients.component';
 import { EquipmentComponent } from '../../components/equipment/equipment.component';
 import { ProblemComponent } from '../../components/problem/problem.component';
 import { ConfirmComponent } from '../../components/confirm/confirm.component';
+import { NavigationService } from '../../../../core/services/navigation.service';
 
 @Component({
   selector: 'app-assist',
@@ -30,7 +31,15 @@ export class AssistComponent {
     { label: 'Confirmar', icon: '📨' }
   ];
 
+  constructor(
+    private readonly navigationService: NavigationService
+  ) {}
+
   setActiveStep(step: number): void {
     this.activeStep = step;
+  }
+
+  goToSystemArea(): void {
+    void this.navigationService.goToSystemArea();
   }
 }

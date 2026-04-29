@@ -112,3 +112,56 @@ textarea {
 ::-webkit-scrollbar-thumb:hover {
   background: var(--abs-text-muted);
 }
+html,
+body {
+  background: var(--abs-bg);
+  color: var(--abs-text);
+}
+
+body {
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease;
+}
+
+/* Suaviza todos los cambios de tema */
+* {
+  transition:
+    background-color 0.22s ease,
+    border-color 0.22s ease,
+    color 0.22s ease,
+    box-shadow 0.22s ease;
+}
+
+/* Inputs globales */
+input,
+select,
+textarea {
+  background: var(--abs-input-bg);
+  color: var(--abs-text);
+  border-color: var(--abs-input-border);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--abs-text-soft);
+}
+
+/* Scrollbar global */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--abs-scroll-track);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--abs-scroll-thumb);
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--abs-primary);
+}

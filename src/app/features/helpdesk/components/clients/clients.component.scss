@@ -1,10 +1,18 @@
-.card {
-  background: var(--abs-surface);
+:host {
+  display: block;
+  width: 100%;
+  min-height: 100%;
+  background: transparent;
   color: var(--abs-text);
-  border: 1px solid var(--abs-border);
-  border-radius: 14px;
+}
+
+.card {
+  background: color-mix(in srgb, var(--abs-surface) 94%, var(--abs-bg));
+  color: var(--abs-text);
+  border: 1.5px solid color-mix(in srgb, var(--abs-border) 86%, #6b7280);
+  border-radius: 18px;
   padding: 25px 30px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.18);
+  box-shadow: var(--abs-shadow-sm, 0 6px 18px rgba(15, 23, 42, 0.08));
   width: 100%;
   max-width: 1080px;
   min-height: 480px;
@@ -16,13 +24,16 @@
   align-items: center;
   justify-content: center;
   gap: 12px;
-  margin-bottom: 25px;
+  margin-bottom: 24px;
+  padding-bottom: 1rem;
   color: var(--abs-text-muted);
+  border-bottom: 1.5px solid color-mix(in srgb, var(--abs-border) 86%, #6b7280);
 }
 
 .card_tittle h1 {
+  margin: 0;
   font-size: 20px;
-  font-weight: 500;
+  font-weight: 700;
   color: var(--abs-text);
 }
 
@@ -41,33 +52,41 @@
 .card_chk label {
   font-size: 13px;
   color: var(--abs-text-muted);
-  font-weight: 500;
-  margin-left: 2%;
+  font-weight: 700;
+  margin-left: 0.25rem;
+  margin-bottom: 0.35rem;
 }
 
 .card_options input,
 .card_options select {
   width: 100%;
   padding: 12px 14px;
-  border: 1.5px solid var(--abs-border);
-  border-radius: 10px;
-  background: var(--abs-surface-soft);
-  margin-top: 1%;
-  margin-bottom: 2%;
+  border: 1.5px solid color-mix(in srgb, var(--abs-border) 86%, #6b7280);
+  border-radius: 12px;
+  background: var(--abs-input-bg, var(--abs-surface-soft));
+  margin-top: 0;
+  margin-bottom: 0.35rem;
   font-size: 15px;
   color: var(--abs-text);
   outline: none;
   transition: all 0.25s ease;
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: inherit;
+  box-shadow: var(--abs-shadow-xs, 0 1px 3px rgba(15, 23, 42, 0.06));
 }
 
 .card_options input:hover,
-.card_options select:hover,
+.card_options select:hover {
+  border-color: color-mix(in srgb, var(--abs-primary) 45%, var(--abs-border));
+  background: color-mix(in srgb, var(--abs-surface) 96%, var(--abs-bg));
+}
+
 .card_options input:focus,
 .card_options select:focus {
   border-color: var(--abs-primary);
   background: var(--abs-surface);
-  box-shadow: 0 0 6px color-mix(in srgb, var(--abs-primary) 25%, transparent);
+  box-shadow:
+    0 0 0 3px color-mix(in srgb, var(--abs-primary) 16%, transparent),
+    var(--abs-shadow-xs, 0 1px 3px rgba(15, 23, 42, 0.06));
 }
 
 .card_options select option {
@@ -79,20 +98,36 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-top: 8%;
-  margin-bottom: 6%;
+  margin-top: 0.75rem;
+  margin-bottom: 0.75rem;
+  min-height: 48px;
+  padding: 0.8rem;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--abs-surface-soft) 82%, transparent);
+  border: 1.5px solid color-mix(in srgb, var(--abs-border) 86%, #6b7280);
+}
+
+.card_chk label {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
 }
 
 .card_chk input[type='checkbox'] {
   appearance: none;
   width: 18px;
+  min-width: 18px;
   height: 18px;
-  border: 2px solid var(--abs-border);
+  border: 2px solid color-mix(in srgb, var(--abs-border) 82%, #6b7280);
   border-radius: 6px;
   background: var(--abs-surface);
   cursor: pointer;
   position: relative;
   transition: all 0.25s ease;
+}
+
+.card_chk input[type='checkbox']:hover {
+  border-color: var(--abs-primary);
 }
 
 .card_chk input[type='checkbox']:checked {
@@ -106,14 +141,35 @@
   color: #fff;
   position: absolute;
   left: 2px;
-  top: 0;
+  top: -1px;
 }
 
 .alert {
-  color: #ef4444 !important;
+  color: var(--abs-error) !important;
   font-size: 12px !important;
+  font-weight: 700;
+  margin-top: 0.15rem;
 }
 
+/* MODO OSCURO */
+:host-context([data-theme='dark']) .card,
+:host-context([data-theme='dark']) .card_tittle,
+:host-context([data-theme='dark']) .card_options input,
+:host-context([data-theme='dark']) .card_options select,
+:host-context([data-theme='dark']) .card_chk {
+  border-color: #46566b;
+}
+
+:host-context([data-theme='dark']) .card {
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.35);
+}
+
+:host-context([data-theme='dark']) .card_options input,
+:host-context([data-theme='dark']) .card_options select {
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.22);
+}
+
+/* RESPONSIVE */
 @media (max-width: 768px) {
   .card {
     padding: 20px;
@@ -128,5 +184,21 @@
   .card_chk {
     margin-top: 0;
     margin-bottom: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .card {
+    padding: 16px;
+    border-radius: 16px;
+  }
+
+  .card_tittle h1 {
+    font-size: 18px;
+  }
+
+  .card_options input,
+  .card_options select {
+    font-size: 14px;
   }
 }

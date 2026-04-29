@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 import { MainLayoutComponent } from '../../shared/layouts/main-layout/main-layout.component';
-
+import { SystemAreaComponent } from '../system/pages/system-area.component';
 export const MAIN_ROUTES: Routes = [
   {
     path: '',
@@ -20,6 +20,10 @@ export const MAIN_ROUTES: Routes = [
         path: 'profile',
         loadChildren: () =>
           import('../profile/profile.routes').then((m) => m.PROFILE_ROUTES)
+      },
+      {
+        path: 'system-area',
+        component: SystemAreaComponent
       }
     ]
   }

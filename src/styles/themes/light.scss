@@ -1,20 +1,51 @@
 :root,
 [data-theme='light'] {
-  --abs-bg: #ffffff;
+  color-scheme: light;
+
+  /* Fondos principales */
+  --abs-bg: #eef1f5;
+  --abs-bg-soft: #f5f7fa;
+
+  /* Superficies */
   --abs-surface: #ffffff;
-  --abs-surface-soft: #f3f4f6;
-  --abs-text: #171717;
-  --abs-text-muted: #666666;
-  --abs-border: #dddddd;
+  --abs-surface-soft: #f7f8fb;
+  --abs-surface-hover: #eef2f7;
 
-  --abs-primary: #c72026;
-  --abs-primary-hover: #eb484e;
-
+  /* Layout */
   --abs-sidebar-bg: #ffffff;
-  --abs-header-bg: #ffffff;
+  --abs-header-bg: rgba(255, 255, 255, 0.92);
 
-  --abs-error: #dc2626;
-  --abs-warning: #f59e0b;
+  /* Textos */
+  --abs-text: #111827;
+  --abs-text-muted: #6b7280;
+  --abs-text-soft: #9ca3af;
+
+  /* Bordes */
+  --abs-border: #d8dee8;
+  --abs-border-soft: #e8edf3;
+
+  /* Marca ABS */
+  --abs-primary: #c72026;
+  --abs-primary-hover: #a9141a;
+  --abs-primary-soft: rgba(199, 32, 38, 0.12);
+
+  /* Estados */
   --abs-success: #16a34a;
-  --abs-info: #3b82f6;
+  --abs-error: #dc2626;
+  --abs-warning: #d97706;
+  --abs-info: #2563eb;
+
+  /* Sombras profesionales */
+  --abs-shadow-xs: 0 1px 2px rgba(15, 23, 42, 0.06);
+  --abs-shadow-sm: 0 4px 10px rgba(15, 23, 42, 0.08);
+  --abs-shadow-md: 0 10px 25px rgba(15, 23, 42, 0.10);
+  --abs-shadow-lg: 0 18px 45px rgba(15, 23, 42, 0.14);
+
+  /* Inputs */
+  --abs-input-bg: #ffffff;
+  --abs-input-border: #cfd6e2;
+
+  /* Scroll */
+  --abs-scroll-track: #eef1f5;
+  --abs-scroll-thumb: #c5cedb;
 }
