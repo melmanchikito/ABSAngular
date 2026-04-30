@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { Subscription } from 'rxjs';
 import { PreferencesService } from '../../../../core/services/preferences.service';
 import { AuthService } from '../../../../core/services/auth.service';
 import { AccentColor, AppTheme, CardDensity, FontSize } from '../../../../core/models/preferences.model';
@@ -13,7 +14,7 @@ import { ProfileImageService } from '../../services/profile-image.service';
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.scss'
 })
-export class ProfileComponent implements OnInit {
+export class ProfileComponent implements OnInit, OnDestroy {
   savedBadge = false;
   showResetConfirm = false;
 
@@ -22,6 +23,10 @@ export class ProfileComponent implements OnInit {
   imageMessage = '';
   imageError = '';
 
+  private imageSubscription?: Subscription;
+  private imageMessageTimer?: ReturnType<typeof setTimeout>;
+  private savedBadgeTimer?: ReturnType<typeof setTimeout>;
+
   constructor(
     public readonly preferencesService: PreferencesService,
     private readonly authService: AuthService,
@@ -29,11 +34,23 @@ export class ProfileComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.profileImageService.imageUrl$.subscribe((imageUrl) => {
+    this.imageSubscription = this.profileImageService.imageUrl$.subscribe((imageUrl) => {
       this.profileImageUrl = imageUrl;
     });
 
     this.profileImageService.loadUserImage().subscribe();
+  }
+
+  ngOnDestroy(): void {
+    this.imageSubscription?.unsubscribe();
+
+    if (this.imageMessageTimer) {
+      clearTimeout(this.imageMessageTimer);
+    }
+
+    if (this.savedBadgeTimer) {
+      clearTimeout(this.savedBadgeTimer);
+    }
   }
 
   get prefs() {
@@ -108,7 +125,7 @@ export class ProfileComponent implements OnInit {
         this.isUploadingImage = false;
         input.value = '';
 
-        setTimeout(() => {
+        this.imageMessageTimer = setTimeout(() => {
           this.imageMessage = '';
         }, 1800);
       },
@@ -128,7 +145,7 @@ export class ProfileComponent implements OnInit {
 
   private flashSaved(): void {
     this.savedBadge = true;
-    setTimeout(() => {
+    this.savedBadgeTimer = setTimeout(() => {
       this.savedBadge = false;
     }, 1500);
   }

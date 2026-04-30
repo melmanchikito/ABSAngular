@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable, catchError, map, of } from 'rxjs';
 import { environment } from '../../../../environments/environment';
-import { ApiResponse } from '../../../core/models/api-response.model';
+import { ApiResponse, ApiResponseError } from '../../../core/models/api-response.model';
 import {
   Branch,
   Category,
@@ -16,6 +16,12 @@ import {
 interface ListResponse<T> {
   list: T[];
 }
+
+interface LegacyListResponse<T> {
+  Data?: ListResponse<T>;
+}
+
+type MasterDataResponse<T> = ApiResponse<ListResponse<T>> | LegacyListResponse<T>;
 
 @Injectable({
   providedIn: 'root'
@@ -75,7 +81,7 @@ export class MasterDataService {
     const params = new HttpParams().set('employee_id', String(employeeId));
 
     return this.http
-      .get<ApiResponse<ListResponse<EquipmentWithDevices>>>(
+      .get<MasterDataResponse<EquipmentWithDevices>>(
         `${this.apiUrl}/store/equipment/select-total`,
         {
           headers: this.getAuthHeaders(),
@@ -85,12 +91,12 @@ export class MasterDataService {
       )
       .pipe(
         map((response) => {
-          if ('error_code' in response) {
+          if (this.isApiError(response)) {
             console.error('Error API cargando equipos:', response.message);
             return [];
           }
 
-         return response.data?.list ?? []; 
+          return this.extractList<EquipmentWithDevices>(response);
         }),
         catchError((error) => {
           console.error('Error cargando equipos con dispositivos:', error);
@@ -98,33 +104,47 @@ export class MasterDataService {
         })
       );
   }
-private extractList<T>(response: any): T[] {
-  return response?.data?.list ?? response?.Data?.list ?? [];
-}
-  private getList<T>(endpoint: string, errorMessage: string): Observable<T[]> {
-  return this.http
-    .get<any>(
-      `${this.apiUrl}${endpoint}`,
-      {
-        headers: this.getAuthHeaders(),
-        withCredentials: true
-      }
-    )
-    .pipe(
-      map((response) => {
-        if (response?.error_code) {
-          console.error(errorMessage, response.message);
-          return [];
-        }
 
-        return this.extractList<T>(response);
-      }),
-      catchError((error) => {
-        console.error(errorMessage, error);
-        return of([]);
-      })
-    );
-}
+  private getList<T>(endpoint: string, errorMessage: string): Observable<T[]> {
+    return this.http
+      .get<MasterDataResponse<T>>(
+        `${this.apiUrl}${endpoint}`,
+        {
+          headers: this.getAuthHeaders(),
+          withCredentials: true
+        }
+      )
+      .pipe(
+        map((response) => {
+          if (this.isApiError(response)) {
+            console.error(errorMessage, response.message);
+            return [];
+          }
+
+          return this.extractList<T>(response);
+        }),
+        catchError((error) => {
+          console.error(errorMessage, error);
+          return of([]);
+        })
+      );
+  }
+
+  private extractList<T>(response: MasterDataResponse<T>): T[] {
+    if ('data' in response && response.data?.list) {
+      return response.data.list;
+    }
+
+    if ('Data' in response && response.Data?.list) {
+      return response.Data.list;
+    }
+
+    return [];
+  }
+
+  private isApiError<T>(response: MasterDataResponse<T>): response is ApiResponseError {
+    return 'error_code' in response;
+  }
 
   private getAuthHeaders(): HttpHeaders {
     const token = localStorage.getItem('token') || '';

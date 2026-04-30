@@ -4,6 +4,14 @@ import { LucideAngularModule, Wifi, WifiOff, EthernetPort } from 'lucide-angular
 import { Subscription } from 'rxjs';
 import { ProfileImageService } from '../../../features/profile/services/profile-image.service';
 
+interface BrowserNetworkInformation {
+  type?: string;
+}
+
+interface NavigatorWithConnection extends Navigator {
+  connection?: BrowserNetworkInformation;
+}
+
 @Component({
   selector: 'app-header',
   standalone: true,
@@ -59,7 +67,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const connection = (navigator as any).connection;
+    const connection = (navigator as NavigatorWithConnection).connection;
 
     if (connection?.type === 'ethernet') {
       this.networkType = 'Cable';
