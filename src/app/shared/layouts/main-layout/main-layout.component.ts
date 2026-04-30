@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 import { SidebarComponent } from '../sidebar/sidebar.component';
@@ -6,39 +6,48 @@ import { HeaderComponent } from '../header/header.component';
 import { AuthService } from '../../../core/services/auth.service';
 import { SessionTimeoutAlertComponent } from '../../components/alert/session-timeout-alert/session-timeout-alert.component';
 
-
 @Component({
   selector: 'app-main-layout',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, SidebarComponent, HeaderComponent, SessionTimeoutAlertComponent],
+  imports: [
+    CommonModule,
+    RouterOutlet,
+    SidebarComponent,
+    HeaderComponent,
+    SessionTimeoutAlertComponent
+  ],
   templateUrl: './main-layout.component.html',
   styleUrl: './main-layout.component.scss'
 })
-
 export class MainLayoutComponent implements OnInit, OnDestroy {
   activeSection = 'HelpDesk';
   sidebarCollapsed = false;
 
-  // ─── Red ────────────────────────────────────────────────
-  isOnline: boolean = navigator.onLine;
-  networkType: string = navigator.onLine ? 'Con internet' : 'Sin internet';
+  isOnline = navigator.onLine;
+  networkType = navigator.onLine ? 'Con internet' : 'Sin internet';
 
-  private onlineHandler  = () => { this.isOnline = true;  this.networkType = 'Con internet';  };
-  private offlineHandler = () => { this.isOnline = false; this.networkType = 'Sin internet'; };
+  private onlineHandler = () => {
+    this.isOnline = true;
+    this.networkType = 'Con internet';
+  };
+
+  private offlineHandler = () => {
+    this.isOnline = false;
+    this.networkType = 'Sin internet';
+  };
 
   constructor(private readonly authService: AuthService) {}
 
   ngOnInit(): void {
-    window.addEventListener('online',  this.onlineHandler);
+    window.addEventListener('online', this.onlineHandler);
     window.addEventListener('offline', this.offlineHandler);
   }
 
   ngOnDestroy(): void {
-    window.removeEventListener('online',  this.onlineHandler);
+    window.removeEventListener('online', this.onlineHandler);
     window.removeEventListener('offline', this.offlineHandler);
   }
 
-  // ─── Sidebar ─────────────────────────────────────────────
   toggleSidebar(): void {
     this.sidebarCollapsed = !this.sidebarCollapsed;
   }
@@ -47,12 +56,11 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
     this.activeSection = section;
   }
 
-  // ─── Getters desde AuthService ───────────────────────────
   get username(): string {
     return this.authService.getName() || 'Usuario';
   }
 
   get img(): string {
-  return localStorage.getItem('profileImage') ?? '';
-}
+    return localStorage.getItem('profileImage') ?? '';
+  }
 }
