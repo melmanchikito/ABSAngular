@@ -1,73 +1,85 @@
-<div class="background_login">
-  <section class="login_form">
-    <div class="card_form">
-      <div class="login_img">
-        <img
-          class="img"
-          src="assets/auth/LogoAR.svg"
-          alt="Logo ABS"
-        />
+<main class="auth-shell">
+  <section class="auth-stage">
+    <div class="brand-panel">
+      <img class="brand-logo" src="assets/auth/LogoAR.svg" alt="Logo ABS" />
+      <div class="brand-copy">
+        <span>ABS</span>
+        <h1>Acceso al sistema</h1>
+        <p>Ingresa con tus credenciales corporativas.</p>
+      </div>
+    </div>
+
+    <section class="auth-card" aria-labelledby="login-title">
+      <div class="card-header">
+        <img class="card-logo" src="assets/auth/LogoAR.svg" alt="Logo ABS" />
+        <div>
+          <p class="eyebrow">Bienvenido</p>
+          <h2 id="login-title">Iniciar sesión</h2>
+        </div>
       </div>
 
-      <form class="form" [formGroup]="form" (ngSubmit)="onSubmit()">
-        <div class="tittle">
-          <h1>INGRESAR</h1>
-          <p>Por favor ingrese sus datos</p>
+      <form class="auth-form" [formGroup]="form" (ngSubmit)="onSubmit()">
+        <div class="alert error" *ngIf="errorMessage">
+          <lucide-angular [img]="alertIcon" [size]="18" [strokeWidth]="2.4"></lucide-angular>
+          <span>{{ errorMessage }}</span>
         </div>
 
-        <div class="card_auth">
-          <div class="alert error" *ngIf="errorMessage">
-            {{ errorMessage }}
-          </div>
+        <div class="alert info" *ngIf="infoMessage">
+          <lucide-angular [img]="infoIcon" [size]="18" [strokeWidth]="2.4"></lucide-angular>
+          <span>{{ infoMessage }}</span>
+        </div>
 
-          <div class="alert info" *ngIf="infoMessage">
-            {{ infoMessage }}
-          </div>
-
-          <div class="card_user">
-            <label class="card_label" for="email">Usuario:</label>
+        <label class="field" for="email">
+          <span>Usuario</span>
+          <div class="input-wrap">
+            <lucide-angular class="field-icon" [img]="mailIcon" [size]="18" [strokeWidth]="2.2"></lucide-angular>
             <input
               id="email"
               type="email"
               placeholder="abc@autoradiador.com"
-              class="card_input"
+              autocomplete="username"
               formControlName="email"
             />
           </div>
+        </label>
 
-          <div class="card_password">
-            <label class="card_label" for="password">Contraseña:</label>
+        <label class="field" for="password">
+          <span>Contraseña</span>
+          <div class="input-wrap">
+            <lucide-angular class="field-icon" [img]="lockIcon" [size]="18" [strokeWidth]="2.2"></lucide-angular>
             <input
               id="password"
-              type="password"
-              placeholder="Ingrese su contraseña"
+              [type]="showPassword ? 'text' : 'password'"
+              placeholder="Ingresa tu contraseña"
               autocomplete="current-password"
-              class="card_input"
               formControlName="password"
               (copy)="$event.preventDefault()"
               (paste)="$event.preventDefault()"
             />
-          </div>
-
-          <div class="card_opciones">
-            <div class="card_recoverpass">
-              <a
-                href="#"
-                class="card_opcion"
-                (click)="goToRecoverPassword($event)"
-              >
-                Olvidé mi contraseña
-              </a>
-            </div>
-          </div>
-
-          <div class="card_button">
-            <button class="botonlogin" type="submit">
-              Ingresar
+            <button
+              class="icon-button"
+              type="button"
+              (click)="togglePasswordVisibility()"
+              [attr.aria-label]="showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+            >
+              <lucide-angular
+                [img]="showPassword ? eyeOffIcon : eyeIcon"
+                [size]="18"
+                [strokeWidth]="2.2"
+              ></lucide-angular>
             </button>
           </div>
+        </label>
+
+        <div class="form-row">
+          <a href="#" (click)="goToRecoverPassword($event)">Olvidé mi contraseña</a>
         </div>
+
+        <button class="primary-action" type="submit" [disabled]="isSubmitting">
+          <lucide-angular [img]="loginIcon" [size]="18" [strokeWidth]="2.4"></lucide-angular>
+          {{ isSubmitting ? 'Ingresando...' : 'Ingresar' }}
+        </button>
       </form>
-    </div>
+    </section>
   </section>
-</div>
+</main>
