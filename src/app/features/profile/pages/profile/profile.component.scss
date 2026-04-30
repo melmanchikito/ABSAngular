@@ -41,6 +41,9 @@
 }
 
 .saved {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
   color: var(--abs-success);
   font-weight: 700;
 }
@@ -123,8 +126,7 @@
   margin-bottom: 1rem;
 }
 
-.section-title span {
-  font-size: 1.35rem;
+.section-icon {
   width: 34px;
   min-width: 34px;
   height: 34px;
@@ -133,6 +135,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  color: var(--abs-primary);
 }
 
 .section-title h2 {
@@ -567,6 +570,9 @@ input[type="number"],
 }
 
 .change-photo-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
   border: 1.5px solid color-mix(in srgb, var(--abs-border) 86%, #6b7280);
   background: color-mix(in srgb, var(--abs-surface) 94%, var(--abs-bg));
   color: var(--abs-text);

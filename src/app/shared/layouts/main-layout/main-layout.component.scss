@@ -60,7 +60,6 @@
   align-items: center;
   justify-content: center;
 
-  font-size: 15px;
   font-weight: 700;
 
   box-shadow: var(--abs-shadow-md, 0 10px 25px rgba(0, 0, 0, 0.18));
@@ -75,6 +74,12 @@
 .toggle-sidebar:focus-visible {
   outline: 3px solid color-mix(in srgb, var(--abs-primary) 28%, transparent);
   outline-offset: 2px;
+}
+
+.toggle-sidebar lucide-angular {
+  width: 18px;
+  height: 18px;
+  display: inline-flex;
 }
 
 /* =========================

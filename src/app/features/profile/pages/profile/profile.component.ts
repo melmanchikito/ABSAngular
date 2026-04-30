@@ -1,6 +1,18 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import {
+  Bell,
+  Check,
+  Earth,
+  FileText,
+  LucideAngularModule,
+  Palette,
+  RefreshCcw,
+  ShieldCheck,
+  ShoppingCart,
+  Upload
+} from 'lucide-angular';
 import { Subscription } from 'rxjs';
 import { PreferencesService } from '../../../../core/services/preferences.service';
 import { AuthService } from '../../../../core/services/auth.service';
@@ -10,11 +22,21 @@ import { ProfileImageService } from '../../services/profile-image.service';
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, LucideAngularModule],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.scss'
 })
 export class ProfileComponent implements OnInit, OnDestroy {
+  readonly bellIcon = Bell;
+  readonly checkIcon = Check;
+  readonly documentsIcon = FileText;
+  readonly privacyIcon = ShieldCheck;
+  readonly regionalIcon = Earth;
+  readonly syncIcon = RefreshCcw;
+  readonly appearanceIcon = Palette;
+  readonly ordersIcon = ShoppingCart;
+  readonly uploadIcon = Upload;
+
   savedBadge = false;
   showResetConfirm = false;
 

@@ -1,6 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
+import { LucideAngularModule, Menu, X } from 'lucide-angular';
 import { SidebarComponent } from '../sidebar/sidebar.component';
 import { HeaderComponent } from '../header/header.component';
 import { AuthService } from '../../../core/services/auth.service';
@@ -11,6 +12,7 @@ import { SessionTimeoutAlertComponent } from '../../components/alert/session-tim
   standalone: true,
   imports: [
     CommonModule,
+    LucideAngularModule,
     RouterOutlet,
     SidebarComponent,
     HeaderComponent,
@@ -22,6 +24,8 @@ import { SessionTimeoutAlertComponent } from '../../components/alert/session-tim
 export class MainLayoutComponent implements OnInit, OnDestroy {
   activeSection = 'HelpDesk';
   sidebarCollapsed = false;
+  menuIcon = Menu;
+  closeIcon = X;
 
   isOnline = navigator.onLine;
   networkType = navigator.onLine ? 'Con internet' : 'Sin internet';

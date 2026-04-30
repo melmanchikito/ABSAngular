@@ -1,6 +1,6 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { LucideAngularModule, Wifi, WifiOff, EthernetPort } from 'lucide-angular';
+import { LucideAngularModule, Search, Wifi, WifiOff, EthernetPort } from 'lucide-angular';
 import { Subscription } from 'rxjs';
 import { ProfileImageService } from '../../../features/profile/services/profile-image.service';
 
@@ -26,6 +26,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   isOnline = navigator.onLine;
   networkType = 'Con internet';
   networkIcon = Wifi;
+  searchIcon = Search;
 
   profileImageUrl: string | null = null;
 

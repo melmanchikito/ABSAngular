@@ -6,7 +6,14 @@
     </div>
 
     <div class="header-actions">
-      <span class="saved" *ngIf="savedBadge">✓ Guardado</span>
+      <span class="saved" *ngIf="savedBadge">
+        <lucide-angular
+          [img]="checkIcon"
+          [size]="16"
+          [strokeWidth]="2.6"
+        ></lucide-angular>
+        Guardado
+      </span>
       <button class="reset-top" type="button" (click)="showResetConfirm = true">
         Restablecer todo
       </button>
@@ -15,47 +22,57 @@
 
   <section class="profile-card user-card">
     <div class="avatar profile-avatar">
-  <img
-    [src]="profileImageUrl || 'assets/auth/perfil.webp'"
-    alt="Foto de perfil"
-  />
+      <img
+        [src]="profileImageUrl || 'assets/auth/perfil.webp'"
+        alt="Foto de perfil"
+      />
 
-  <input
-    #imageInput
-    type="file"
-    accept="image/*"
-    hidden
-    (change)="onImageSelected($event)"
-  />
+      <input
+        #imageInput
+        type="file"
+        accept="image/*"
+        hidden
+        (change)="onImageSelected($event)"
+      />
 
-  <button
-    type="button"
-    class="change-photo-btn"
-    (click)="openImagePicker(imageInput)"
-    [disabled]="isUploadingImage"
-  >
-    {{ isUploadingImage ? 'Subiendo...' : 'Cambiar foto' }}
-  </button>
-</div>
-
-<p class="image-success" *ngIf="imageMessage">
-  {{ imageMessage }}
-</p>
-
-<p class="image-error" *ngIf="imageError">
-  {{ imageError }}
-</p>
+      <button
+        type="button"
+        class="change-photo-btn"
+        (click)="openImagePicker(imageInput)"
+        [disabled]="isUploadingImage"
+      >
+        <lucide-angular
+          [img]="uploadIcon"
+          [size]="15"
+          [strokeWidth]="2.4"
+        ></lucide-angular>
+        {{ isUploadingImage ? 'Subiendo...' : 'Cambiar foto' }}
+      </button>
+    </div>
 
     <div class="user-info">
       <h2>{{ username }}</h2>
       <p>{{ email }}</p>
       <span>Usuario ABS</span>
     </div>
+
+    <p class="image-success" *ngIf="imageMessage">
+      {{ imageMessage }}
+    </p>
+
+    <p class="image-error" *ngIf="imageError">
+      {{ imageError }}
+    </p>
   </section>
 
   <section class="profile-card">
     <div class="section-title">
-      <span>🔄</span>
+      <lucide-angular
+        class="section-icon"
+        [img]="syncIcon"
+        [size]="20"
+        [strokeWidth]="2.3"
+      ></lucide-angular>
       <div>
         <h2>Sincronización</h2>
         <p>Cómo y cuándo se envían los datos pendientes.</p>
@@ -122,7 +139,12 @@
 
   <section class="profile-card">
     <div class="section-title">
-      <span>🎨</span>
+      <lucide-angular
+        class="section-icon"
+        [img]="appearanceIcon"
+        [size]="20"
+        [strokeWidth]="2.3"
+      ></lucide-angular>
       <div>
         <h2>Apariencia</h2>
         <p>Tema, colores, tamaño de letra y densidad visual.</p>
@@ -146,48 +168,53 @@
         <h3>Color del sistema</h3>
         <p>Color principal de botones y elementos activos.</p>
       </div>
-    <div class="theme-grid">
-    <button type="button"
-    class="theme-option abs-red"
-    [class.selected]="prefs.accentColor === 'absRed'"
-    (click)="setAccentColor('absRed')"
-  >
-    <span></span>
-    <strong>Rojo ABS</strong>
-    <small>Marca principal</small>
-  </button>
+      <div class="theme-grid">
+        <button
+          type="button"
+          class="theme-option abs-red"
+          [class.selected]="prefs.accentColor === 'absRed'"
+          (click)="setAccentColor('absRed')"
+        >
+          <span></span>
+          <strong>Rojo ABS</strong>
+          <small>Marca principal</small>
+        </button>
 
-  <button type="button"
-    class="theme-option executive-red"
-    [class.selected]="prefs.accentColor === 'executiveRed'"
-    (click)="setAccentColor('executiveRed')"
-  >
-    <span></span>
-    <strong>Rojo ejecutivo</strong>
-    <small>Formal y elegante</small>
-  </button>
+        <button
+          type="button"
+          class="theme-option executive-red"
+          [class.selected]="prefs.accentColor === 'executiveRed'"
+          (click)="setAccentColor('executiveRed')"
+        >
+          <span></span>
+          <strong>Rojo ejecutivo</strong>
+          <small>Formal y elegante</small>
+        </button>
 
-  <button type="button"
-    class="theme-option enterprise-gray"
-    [class.selected]="prefs.accentColor === 'enterpriseGray'"
-    (click)="setAccentColor('enterpriseGray')"
-  >
-    <span></span>
-    <strong>Gris empresarial</strong>
-    <small>Neutro y serio</small>
-  </button>
+        <button
+          type="button"
+          class="theme-option enterprise-gray"
+          [class.selected]="prefs.accentColor === 'enterpriseGray'"
+          (click)="setAccentColor('enterpriseGray')"
+        >
+          <span></span>
+          <strong>Gris empresarial</strong>
+          <small>Neutro y serio</small>
+        </button>
 
-  <button type="button"
-    class="theme-option premium-night"
-    [class.selected]="prefs.accentColor === 'premiumNight'"
-    (click)="setAccentColor('premiumNight')"
-  >
-    <span></span>
-    <strong>Nocturno premium</strong>
-    <small>Rojo, dorado y gris oscuro</small>
-  </button>
-</div>
-</div>
+        <button
+          type="button"
+          class="theme-option premium-night"
+          [class.selected]="prefs.accentColor === 'premiumNight'"
+          (click)="setAccentColor('premiumNight')"
+        >
+          <span></span>
+          <strong>Nocturno premium</strong>
+          <small>Rojo, dorado y gris oscuro</small>
+        </button>
+      </div>
+    </div>
+
     <div class="pref-row">
       <div>
         <h3>Tamaño de fuente</h3>
@@ -249,7 +276,12 @@
 
   <section class="profile-card">
     <div class="section-title">
-      <span>🛒</span>
+      <lucide-angular
+        class="section-icon"
+        [img]="ordersIcon"
+        [size]="20"
+        [strokeWidth]="2.3"
+      ></lucide-angular>
       <div>
         <h2>Pedidos y carrito</h2>
         <p>Comportamiento al crear y gestionar pedidos.</p>
@@ -336,7 +368,12 @@
 
   <section class="profile-card">
     <div class="section-title">
-      <span>📄</span>
+      <lucide-angular
+        class="section-icon"
+        [img]="documentsIcon"
+        [size]="20"
+        [strokeWidth]="2.3"
+      ></lucide-angular>
       <div>
         <h2>PDF y documentos</h2>
         <p>Personalización de documentos impresos.</p>
@@ -373,7 +410,12 @@
 
   <section class="profile-card">
     <div class="section-title">
-      <span>🌎</span>
+      <lucide-angular
+        class="section-icon"
+        [img]="regionalIcon"
+        [size]="20"
+        [strokeWidth]="2.3"
+      ></lucide-angular>
       <div>
         <h2>Regional y formato</h2>
         <p>Moneda, fechas e idioma.</p>
@@ -385,10 +427,10 @@
         <h3>Moneda</h3>
       </div>
       <select [ngModel]="prefs.currency" (ngModelChange)="update({ currency: $event })">
-        <option value="USD">USD — Dólar</option>
-        <option value="EUR">EUR — Euro</option>
-        <option value="COP">COP — Peso colombiano</option>
-        <option value="PEN">PEN — Sol peruano</option>
+        <option value="USD">USD - Dólar</option>
+        <option value="EUR">EUR - Euro</option>
+        <option value="COP">COP - Peso colombiano</option>
+        <option value="PEN">PEN - Sol peruano</option>
       </select>
     </div>
 
@@ -416,7 +458,12 @@
 
   <section class="profile-card">
     <div class="section-title">
-      <span>🔔</span>
+      <lucide-angular
+        class="section-icon"
+        [img]="bellIcon"
+        [size]="20"
+        [strokeWidth]="2.3"
+      ></lucide-angular>
       <div>
         <h2>Notificaciones y alertas</h2>
         <p>Sonidos, vibración y avisos del sistema.</p>
@@ -467,7 +514,12 @@
 
   <section class="profile-card">
     <div class="section-title">
-      <span>🛡️</span>
+      <lucide-angular
+        class="section-icon"
+        [img]="privacyIcon"
+        [size]="20"
+        [strokeWidth]="2.3"
+      ></lucide-angular>
       <div>
         <h2>Datos y privacidad</h2>
         <p>Retención de historial y seguridad local.</p>

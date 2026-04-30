@@ -1,7 +1,20 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import {
+  Building2,
+  ChartColumn,
+  ChevronRight,
+  CircleDollarSign,
+  LogOut,
+  LucideAngularModule,
+  MonitorCog,
+  Settings,
+  UserRound
+} from 'lucide-angular';
 import { AuthApiService } from '../../../features/auth/services/auth-api.service';
 import { NavigationService } from '../../../core/services/navigation.service';
+
+type SidebarIcon = typeof CircleDollarSign;
 
 interface SidebarChild {
   label: string;
@@ -10,14 +23,14 @@ interface SidebarChild {
 
 interface SidebarArea {
   name: string;
-  icon: string;
+  icon: SidebarIcon;
   children: SidebarChild[];
 }
 
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, LucideAngularModule],
   templateUrl: './sidebar.component.html',
   styleUrl: './sidebar.component.scss'
 })
@@ -29,20 +42,24 @@ export class SidebarComponent {
   activeChild: string | null = null;
   expandedArea: string | null = null;
 
+  readonly chevronRightIcon = ChevronRight;
+  readonly profileIcon = UserRound;
+  readonly logoutIcon = LogOut;
+
   readonly areas: SidebarArea[] = [
     {
       name: 'Área Financiera',
-      icon: '💰',
+      icon: CircleDollarSign,
       children: []
     },
     {
       name: 'Área Administrativa',
-      icon: '🏢',
+      icon: Building2,
       children: []
     },
     {
       name: 'Área Operativa',
-      icon: '⚙️',
+      icon: Settings,
       children: [
         { label: 'Clientes' },
         { label: 'Legal' },
@@ -62,7 +79,7 @@ export class SidebarComponent {
     },
     {
       name: 'Área Gerencial',
-      icon: '📊',
+      icon: ChartColumn,
       children: [
         { label: 'Gerencial' },
         { label: 'Business Intelligence' }
@@ -70,7 +87,7 @@ export class SidebarComponent {
     },
     {
       name: 'Área del Sistema',
-      icon: '🖥️',
+      icon: MonitorCog,
       children: [
         { label: 'Desarrollo', route: 'system-area' },
         { label: 'Generales', route: 'system-area' },

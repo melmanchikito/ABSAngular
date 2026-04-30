@@ -71,10 +71,11 @@
   position: absolute;
   left: 12px;
   top: 50%;
+  width: 18px;
+  height: 18px;
   transform: translateY(-50%);
   color: var(--abs-text-muted);
   pointer-events: none;
-  font-size: 15px;
   line-height: 1;
 }
 

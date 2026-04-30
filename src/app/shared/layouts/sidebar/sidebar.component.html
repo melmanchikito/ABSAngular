@@ -13,16 +13,22 @@
             (click)="toggleArea(area)"
             [title]="collapsed ? area.name : ''"
           >
-            <span class="icon">{{ area.icon }}</span>
+            <lucide-angular
+              class="icon"
+              [img]="area.icon"
+              [size]="18"
+              [strokeWidth]="2.2"
+            ></lucide-angular>
             <span class="item-text">{{ area.name }}</span>
 
-            <span
+            <lucide-angular
               class="arrow"
               *ngIf="area.children.length && !collapsed"
               [class.open]="expandedArea === area.name"
-            >
-              ▸
-            </span>
+              [img]="chevronRightIcon"
+              [size]="16"
+              [strokeWidth]="2.4"
+            ></lucide-angular>
           </li>
 
           <div
@@ -50,7 +56,12 @@
           (click)="goToProfile()"
           [title]="collapsed ? 'Perfil' : ''"
         >
-          <span class="icon">👤</span>
+          <lucide-angular
+            class="icon"
+            [img]="profileIcon"
+            [size]="18"
+            [strokeWidth]="2.2"
+          ></lucide-angular>
           <span class="item-text">Perfil</span>
         </li>
 
@@ -59,7 +70,12 @@
           (click)="logout()"
           [title]="collapsed ? 'Cerrar Sesión' : ''"
         >
-          <span class="icon">↩️</span>
+          <lucide-angular
+            class="icon"
+            [img]="logoutIcon"
+            [size]="18"
+            [strokeWidth]="2.2"
+          ></lucide-angular>
           <span class="item-text">Cerrar Sesión</span>
         </li>
       </ul>

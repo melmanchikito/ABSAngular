@@ -1,7 +1,11 @@
 <div class="fondo" [class.sidebar-collapsed]="sidebarCollapsed">
   <section class="card_sidebar">
     <button class="toggle-sidebar" type="button" (click)="toggleSidebar()">
-      <span>{{ sidebarCollapsed ? '☰' : '×' }}</span>
+      <lucide-angular
+        [img]="sidebarCollapsed ? menuIcon : closeIcon"
+        [size]="18"
+        [strokeWidth]="2.6"
+      ></lucide-angular>
     </button>
 
     <app-sidebar
