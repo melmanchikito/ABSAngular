@@ -26,7 +26,7 @@
 .brand-panel {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: center;
   padding: clamp(1.25rem, 4vw, 3rem);
   color: #fff;
 }
@@ -45,16 +45,16 @@
 .eyebrow {
   display: block;
   color: #c72026;
-  font-size: 0.78rem;
+  font-size: 1.5rem;
   font-weight: 800;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.15em;
   text-transform: uppercase;
 }
 
 .brand-copy h1 {
-  margin: 0.5rem 0 0;
-  font-size: clamp(2.35rem, 5vw, 4.6rem);
-  line-height: 0.95;
+   margin-top: 1.5rem;
+  font-size: clamp(5rem, 8vw, 8.5rem);
+  line-height: 0.9;
   color: #fff;
 }
 
