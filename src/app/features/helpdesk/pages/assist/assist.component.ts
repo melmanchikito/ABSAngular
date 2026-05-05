@@ -131,7 +131,7 @@ export class AssistComponent {
         );
 
       case 3:
-        return form.requestImages.length > 0;
+        return true;
 
       case 4:
         return this.arePreviousStepsValid(4);
@@ -146,7 +146,7 @@ export class AssistComponent {
       'Completa todos los datos del solicitante antes de continuar.',
       'Selecciona un equipo antes de pasar al problema.',
       'Completa categoría, problema, descripción, solución y observación.',
-      'Agrega al menos una imagen de la solicitud antes de confirmar.',
+      'Puedes agregar imágenes o continuar sin adjuntos.',
       'Revisa la información antes de guardar.'
     ];
 

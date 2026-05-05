@@ -38,6 +38,12 @@
   text-align: center;
 }
 
+.upload-actions {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
 .upload-zone {
   min-height: 170px;
   display: flex;
@@ -69,6 +75,10 @@
 }
 
 .upload-zone input {
+  display: none;
+}
+
+.camera-zone {
   display: none;
 }
 
@@ -151,6 +161,22 @@
   color: var(--abs-error);
   border-color: color-mix(in srgb, var(--abs-error) 55%, var(--abs-border));
   background: color-mix(in srgb, var(--abs-error) 8%, var(--abs-surface));
+}
+
+@media (max-width: 900px) {
+  .upload-actions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .camera-zone {
+    display: flex;
+  }
+}
+
+@media (max-width: 560px) {
+  .upload-actions {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 480px) {

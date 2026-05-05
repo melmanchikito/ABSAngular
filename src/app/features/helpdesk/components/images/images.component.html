@@ -9,25 +9,44 @@
   </div>
 
   <p class="subtitle">
-    Agrega evidencias visuales del caso. Puedes subir varias imágenes antes de confirmar.
+    Las imágenes son opcionales. Puede adjuntar evidencias visuales o continuar sin agregar archivos.
   </p>
 
-  <label class="upload-zone" for="requestImages">
-    <lucide-angular
-      [img]="imagePlusIcon"
-      [size]="34"
-      [strokeWidth]="2.2"
-    ></lucide-angular>
-    <strong>Seleccionar imágenes</strong>
-    <span>JPG, PNG o WEBP. Máximo 3 MB por archivo.</span>
-    <input
-      id="requestImages"
-      type="file"
-      accept="image/*"
-      multiple
-      (change)="onFilesSelected($event)"
-    />
-  </label>
+  <div class="upload-actions">
+    <label class="upload-zone" for="requestImages">
+      <lucide-angular
+        [img]="imagePlusIcon"
+        [size]="34"
+        [strokeWidth]="2.2"
+      ></lucide-angular>
+      <strong>Seleccionar imágenes</strong>
+      <span>JPG, PNG o WEBP. Máximo 3 MB por archivo.</span>
+      <input
+        id="requestImages"
+        type="file"
+        accept="image/*"
+        multiple
+        (change)="onFilesSelected($event)"
+      />
+    </label>
+
+    <label class="upload-zone camera-zone" for="captureImage">
+      <lucide-angular
+        [img]="cameraIcon"
+        [size]="34"
+        [strokeWidth]="2.2"
+      ></lucide-angular>
+      <strong>Tomar foto</strong>
+      <span>Disponible en celular o tablet con cámara.</span>
+      <input
+        id="captureImage"
+        type="file"
+        accept="image/*"
+        capture="environment"
+        (change)="onFilesSelected($event)"
+      />
+    </label>
+  </div>
 
   <div class="error-box" *ngIf="errorMessage">
     {{ errorMessage }}
@@ -57,7 +76,7 @@
 
   <ng-template #emptyState>
     <div class="empty-state">
-      No hay imágenes agregadas todavía.
+      No hay imágenes agregadas todavía. Puede continuar al siguiente paso.
     </div>
   </ng-template>
 </div>
