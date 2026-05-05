@@ -44,6 +44,11 @@
   background: color-mix(in srgb, var(--abs-primary) 8%, transparent);
 }
 
+.stepButton:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
 .active {
   color: var(--abs-primary);
   font-weight: bold;
@@ -51,8 +56,24 @@
   border-bottom: 3px solid var(--abs-primary);
 }
 
+.completed {
+  color: var(--abs-success);
+}
+
 .stepIcon {
-  font-size: 20px;
+  width: 20px;
+  height: 20px;
+  color: currentColor;
+}
+
+.step-alert {
+  padding: 0.85rem 1rem;
+  border-radius: 12px;
+  border: 1px solid color-mix(in srgb, var(--abs-error) 35%, var(--abs-border));
+  background: color-mix(in srgb, var(--abs-error) 8%, var(--abs-surface));
+  color: var(--abs-error);
+  font-weight: 700;
+  font-size: 0.92rem;
 }
 
 .footerNav {

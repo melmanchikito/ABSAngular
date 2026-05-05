@@ -16,7 +16,7 @@ import { PermissionsService } from '../../../core/services/permissions.service';
 import { NavigationService } from '../../../core/services/navigation.service';
 
 interface PermissionsApiResponse {
-  user_id?: number;
+  user_id?: number | string;
   priority_permissions?: string[];
   permissions?: string[];
 }
@@ -46,6 +46,7 @@ export class AuthApiService {
       this.http.post<ApiResponse<LoginResponse>>(
         `${this.apiUrl}/login`,
         { email, password }
+        
       ).pipe(
         catchError((error) =>
           of({
@@ -56,7 +57,8 @@ export class AuthApiService {
         )
       )
     );
-
+    //debugger;
+      
     if ('error_code' in response) {
       return {
         success: false,
@@ -65,6 +67,7 @@ export class AuthApiService {
     }
 
     const data = response.data;
+    
 
     if (!data) {
       return {
@@ -112,7 +115,7 @@ export class AuthApiService {
     });
 
     this.saveAuthData(loginToken, loginUserId, loginName, email);
-
+    this.authService.setIsLogin('true');
     const permissionsResponse = await this.handlePermissions(loginUserId);
 
     if (!permissionsResponse.success) {
@@ -128,49 +131,47 @@ export class AuthApiService {
     };
   }
 
-  async handlePermissions(userId: number): Promise<{ success: boolean; error?: string }> {
+async handlePermissions(userId: number): Promise<{ success: boolean; error?: string }> {
+  try {
     const response = await firstValueFrom(
       this.http.get<ApiResponse<PermissionsApiResponse>>(
         `${this.apiUrl}/user-permissions_module`,
-        { params: { user_id: userId } }
-      ).pipe(
-        catchError((error) =>
-          of({
-            code: error.status ?? 0,
-            error_code: 'FETCH_ERROR',
-            message: error.error?.message ?? 'Error al consultar permisos'
-          })
-        )
+        { params: { user_id: String(userId) } }
       )
     );
 
-    if ('error_code' in response) {
-      return {
-        success: false,
-        error: response.message || 'No se pudieron cargar los permisos'
-      };
-    }
+    const apiResponse = response as {
+      code?: number;
+      message?: string;
+      data?: PermissionsApiResponse;
+      error_code?: string;
+    };
 
-    const data = response.data;
-
-    if (!data) {
-      return {
-        success: false,
-        error: 'No se recibió información de permisos'
-      };
-    }
+    const data = apiResponse.data;
 
     const permissions: UserPermissions = {
-      id: data.user_id,
-      priorityPermissions: data.priority_permissions,
-      permissions: data.permissions
+      id: Number(data?.user_id ?? userId),
+      priorityPermissions: data?.priority_permissions ?? [],
+      permissions: data?.permissions ?? []
+    };
+
+    this.permissionsService.setPermissions(permissions);
+
+    return { success: true };
+  } catch (error) {
+    console.warn('No se pudieron cargar permisos. Se usarán permisos vacíos.', error);
+
+    const permissions: UserPermissions = {
+      id: userId,
+      priorityPermissions: [],
+      permissions: []
     };
 
     this.permissionsService.setPermissions(permissions);
 
     return { success: true };
   }
-
+}
   async handleLogout(): Promise<void> {
     await firstValueFrom(
       this.http.post<ApiResponse<LogoutResponse>>(
@@ -319,8 +320,11 @@ export class AuthApiService {
             error_code: 'FETCH_ERROR',
             message: error.error?.message ?? 'Error al validar OTP'
           })
+          
         )
+        
       )
+      
     );
 
     if ('error_code' in response) {
@@ -329,11 +333,16 @@ export class AuthApiService {
         error: response.message || 'No se pudo validar el código OTP'
       };
     }
+// PONLO AQUÍ
+
 
     if (isLogin) {
       const token = this.extractToken(response.data);
       const storedUserId = Number(this.authService.getUserId() || 0);
       const nameUsuario = this.authService.getName() || 'Usuario';
+
+
+       
 
       this.authService.login({
         token,

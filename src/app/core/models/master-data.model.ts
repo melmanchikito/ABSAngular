@@ -119,6 +119,28 @@ export interface TicketDt {
   is_remote?: boolean;
 }
 
+export interface RequestImage {
+  id: string;
+  name: string;
+  type: string;
+  size: number;
+  dataUrl: string;
+}
+
+export interface AddedEquipment {
+  id: string;
+  name: string;
+  code?: string;
+  description?: string;
+}
+
+export interface RemovedEquipment {
+  id: string;
+  device: Partial<Device>;
+  reason: string;
+  removedAt: string;
+}
+
 export interface HelpdeskFormData {
   employeeId?: number;
   ownerId?: number;
@@ -133,6 +155,9 @@ export interface HelpdeskFormData {
   selectedCategory?: Partial<Category>;
   selectedProblem?: Partial<Problem>;
   selectedTicketDt?: Partial<TicketDt>;
+  requestImages: RequestImage[];
+  addedEquipments: AddedEquipment[];
+  removedEquipments: RemovedEquipment[];
   charCount: {
     issue_description: number;
     solution_description: number;

@@ -26,24 +26,144 @@
     </div>
 
     <div class="card_options_equipments">
-      <button
-        class="addBtn"
-        type="button"
-        (click)="addEquipment()"
-      >
-        Agregar Equipo
+      <button class="addBtn" type="button" (click)="addEquipment()">
+        <lucide-angular [img]="addIcon" [size]="18" aria-hidden="true"></lucide-angular>
+        Agregar equipo
       </button>
 
       <button
         class="deleteBtn"
         type="button"
         (click)="deleteEquipment()"
-        [disabled]="!selectedDevice"
+        [disabled]="!devices.length"
       >
-        Eliminar Equipo
+        <lucide-angular [img]="trashIcon" [size]="18" aria-hidden="true"></lucide-angular>
+        Eliminar equipo
       </button>
     </div>
   </header>
+
+  <section class="equipment-panel" *ngIf="showAddEquipmentPanel">
+    <div class="panel-title">
+      <lucide-angular [img]="monitorIcon" [size]="20" aria-hidden="true"></lucide-angular>
+      <h3>Agregar equipo a la solicitud</h3>
+      <button class="closePanel" type="button" title="Cerrar" (click)="cancelAddEquipment()">
+        <lucide-angular [img]="closeIcon" [size]="18" aria-hidden="true"></lucide-angular>
+      </button>
+    </div>
+
+    <div class="panel-grid">
+      <label>
+        Código
+        <input
+          type="text"
+          name="newEquipmentCode"
+          [(ngModel)]="addEquipmentForm.code"
+          placeholder="Ej. EQ-001"
+        />
+      </label>
+
+      <label>
+        Nombre del equipo
+        <input
+          type="text"
+          name="newEquipmentName"
+          [(ngModel)]="addEquipmentForm.name"
+          placeholder="Nombre del equipo"
+          required
+        />
+      </label>
+
+      <label class="panel-wide">
+        Descripción
+        <textarea
+          name="newEquipmentDescription"
+          [(ngModel)]="addEquipmentForm.description"
+          rows="3"
+          placeholder="Detalle del equipo que se agregará"
+        ></textarea>
+      </label>
+    </div>
+
+    <p class="panel-error" *ngIf="addEquipmentError">{{ addEquipmentError }}</p>
+
+    <div class="panel-actions">
+      <button class="secondaryBtn" type="button" (click)="cancelAddEquipment()">Cancelar</button>
+      <button class="addBtn" type="button" (click)="confirmAddEquipment()">Guardar equipo</button>
+    </div>
+  </section>
+
+  <section class="equipment-panel danger-panel" *ngIf="showRemoveEquipmentPanel">
+    <div class="panel-title">
+      <lucide-angular [img]="trashIcon" [size]="20" aria-hidden="true"></lucide-angular>
+      <h3>Eliminar equipo de la solicitud</h3>
+      <button class="closePanel" type="button" title="Cerrar" (click)="cancelRemoveEquipment()">
+        <lucide-angular [img]="closeIcon" [size]="18" aria-hidden="true"></lucide-angular>
+      </button>
+    </div>
+
+    <div class="panel-grid">
+      <label>
+        Equipo a eliminar
+        <select name="removeDeviceId" [(ngModel)]="removeEquipmentForm.deviceId" required>
+          <option value="">Seleccione un equipo</option>
+          <option *ngFor="let item of devices" [value]="item.id">
+            {{ item.code }} - {{ item.name }}
+          </option>
+        </select>
+      </label>
+
+      <label class="panel-wide">
+        Motivo de eliminación
+        <textarea
+          name="removeReason"
+          [(ngModel)]="removeEquipmentForm.reason"
+          rows="3"
+          placeholder="Describa por qué se elimina el equipo"
+          required
+        ></textarea>
+      </label>
+    </div>
+
+    <p class="panel-error" *ngIf="removeEquipmentError">{{ removeEquipmentError }}</p>
+
+    <div class="panel-actions">
+      <button class="secondaryBtn" type="button" (click)="cancelRemoveEquipment()">Cancelar</button>
+      <button class="deleteBtn" type="button" (click)="confirmRemoveEquipment()">Confirmar eliminación</button>
+    </div>
+  </section>
+
+  <section class="request-changes" *ngIf="addedEquipments.length || removedEquipments.length">
+    <div class="change-list" *ngIf="addedEquipments.length">
+      <h3>Equipos agregados</h3>
+      <article class="change-item" *ngFor="let item of addedEquipments">
+        <div>
+          <strong>{{ item.name }}</strong>
+          <span>{{ item.code || 'Sin código' }}</span>
+          <p>{{ item.description || 'Sin descripción' }}</p>
+        </div>
+
+        <button class="iconCard" type="button" title="Quitar" (click)="removeAddedEquipment(item.id)">
+          <lucide-angular [img]="trashIcon" [size]="16" aria-hidden="true"></lucide-angular>
+        </button>
+      </article>
+    </div>
+
+    <div class="change-list" *ngIf="removedEquipments.length">
+      <h3>Equipos por eliminar</h3>
+      <article class="change-item" *ngFor="let item of removedEquipments">
+        <div>
+          <strong>{{ item.device.name || 'Equipo sin nombre' }}</strong>
+          <span>{{ item.device.code || 'Sin código' }}</span>
+          <p>{{ item.reason }}</p>
+        </div>
+
+        <button class="iconCard" type="button" title="Quitar" (click)="removeRemovedEquipment(item.id)">
+          <lucide-angular [img]="trashIcon" [size]="16" aria-hidden="true"></lucide-angular>
+        </button>
+      </article>
+    </div>
+  </section>
 
   <div class="detail">
     <section>
@@ -96,20 +216,17 @@
                 title="Eliminar componente"
                 (click)="deleteComponent($event, component)"
               >
-                🗑
+                <lucide-angular [img]="trashIcon" [size]="16" aria-hidden="true"></lucide-angular>
               </button>
             </div>
 
             <div class="detailSection" *ngIf="activeComponentId === component.id">
-              <h3>Detalle de Componente:</h3>
+              <h3>Detalle de componente:</h3>
 
               <p>Nombre: {{ component.name || 'No encontrado' }}</p>
               <p>Tipo: {{ component.type || 'No encontrado' }}</p>
               <p>Estado: {{ component.state || 'No encontrado' }}</p>
-              <p>
-                Fecha de asignación:
-                {{ component.assignment_at || 'No encontrado' }}
-              </p>
+              <p>Fecha de asignación: {{ component.assignment_at || 'No encontrado' }}</p>
             </div>
           </div>
         </ng-container>
@@ -121,12 +238,10 @@
         </ng-template>
       </div>
 
-      <button
-        class="addBtn"
-        type="button"
-        (click)="addComponent()"
-        [disabled]="!selectedDevice"
-      >
+      <p class="equipment-message" *ngIf="componentMessage">{{ componentMessage }}</p>
+
+      <button class="addBtn" type="button" (click)="addComponent()" [disabled]="!selectedDevice">
+        <lucide-angular [img]="addIcon" [size]="18" aria-hidden="true"></lucide-angular>
         Agregar componente
       </button>
     </section>

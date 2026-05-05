@@ -1,46 +1,112 @@
 <div class="card">
   <div class="card_tittle">
-    <span>📨</span>
+    <lucide-angular [img]="checkIcon" [size]="24" aria-hidden="true"></lucide-angular>
     <h1>Confirmar información</h1>
   </div>
 
-  <p class="subtitle">Revisa los datos antes de guardar el ticket.</p>
+  <p class="subtitle">Revise los datos antes de guardar el ticket.</p>
 
   <div class="resume">
     <div class="block">
-      <h3>Datos generales</h3>
-      <p><strong>Empleado ID:</strong> {{ assistFormService.snapshot.employeeId || 'No seleccionado' }}</p>
-      <p><strong>Dueño del equipo:</strong> {{ assistFormService.snapshot.isOwner ? 'Sí' : 'No' }}</p>
-      <p><strong>Prioridad:</strong> {{ assistFormService.snapshot.priority || 'No seleccionada' }}</p>
-      <p><strong>Inicio:</strong> {{ assistFormService.snapshot.dateInit }}</p>
-      <p><strong>Cierre:</strong> {{ assistFormService.snapshot.dateEnd }}</p>
+      <h3>
+        <lucide-angular [img]="userIcon" [size]="18" aria-hidden="true"></lucide-angular>
+        Datos generales
+      </h3>
+      <p><strong>Empleado ID:</strong> {{ form.employeeId || 'No seleccionado' }}</p>
+      <p><strong>Dueño del equipo:</strong> {{ form.isOwner ? 'Sí' : 'No' }}</p>
+      <p><strong>Prioridad:</strong> {{ form.priority || 'No seleccionada' }}</p>
+      <p><strong>Inicio:</strong> {{ form.dateInit }}</p>
+      <p><strong>Cierre:</strong> {{ form.dateEnd }}</p>
     </div>
 
     <div class="block">
-      <h3>Equipo</h3>
-      <p><strong>Equipo:</strong> {{ assistFormService.snapshot.selectedDevice?.name || 'No seleccionado' }}</p>
-      <p><strong>Código:</strong> {{ assistFormService.snapshot.selectedDevice?.code || 'No seleccionado' }}</p>
-      <p><strong>Modelo:</strong> {{ assistFormService.snapshot.selectedDevice?.model || 'No registrado' }}</p>
-      <p><strong>Serie:</strong> {{ assistFormService.snapshot.selectedDevice?.serial_number || 'No registrada' }}</p>
+      <h3>
+        <lucide-angular [img]="monitorIcon" [size]="18" aria-hidden="true"></lucide-angular>
+        Equipo
+      </h3>
+      <p><strong>Equipo:</strong> {{ form.selectedDevice?.name || 'No seleccionado' }}</p>
+      <p><strong>Código:</strong> {{ form.selectedDevice?.code || 'No seleccionado' }}</p>
+      <p><strong>Modelo:</strong> {{ form.selectedDevice?.model || 'No registrado' }}</p>
+      <p><strong>Serie:</strong> {{ form.selectedDevice?.serial_number || 'No registrada' }}</p>
     </div>
 
     <div class="block">
-      <h3>Problema</h3>
-      <p><strong>Categoría:</strong> {{ assistFormService.snapshot.selectedCategory?.name || 'No seleccionada' }}</p>
-      <p><strong>Problema:</strong> {{ assistFormService.snapshot.selectedProblem?.name || 'No seleccionado' }}</p>
-      <p><strong>Remoto:</strong> {{ assistFormService.snapshot.selectedTicketDt?.is_remote ? 'Sí' : 'No' }}</p>
+      <h3>
+        <lucide-angular [img]="wrenchIcon" [size]="18" aria-hidden="true"></lucide-angular>
+        Problema
+      </h3>
+      <p><strong>Categoría:</strong> {{ form.selectedCategory?.name || 'No seleccionada' }}</p>
+      <p><strong>Problema:</strong> {{ form.selectedProblem?.name || 'No seleccionado' }}</p>
+      <p><strong>Remoto:</strong> {{ form.selectedTicketDt?.is_remote ? 'Sí' : 'No' }}</p>
     </div>
 
     <div class="block">
-      <h3>Descripciones</h3>
-      <p><strong>Descripción:</strong> {{ assistFormService.snapshot.selectedTicketDt?.issue_description || 'Sin descripción' }}</p>
-      <p><strong>Solución:</strong> {{ assistFormService.snapshot.selectedTicketDt?.solution_description || 'Sin solución' }}</p>
-      <p><strong>Observación:</strong> {{ assistFormService.snapshot.selectedTicketDt?.observation || 'Sin observación' }}</p>
+      <h3>
+        <lucide-angular [img]="clipboardIcon" [size]="18" aria-hidden="true"></lucide-angular>
+        Descripciones
+      </h3>
+      <p><strong>Descripción:</strong> {{ form.selectedTicketDt?.issue_description || 'Sin descripción' }}</p>
+      <p><strong>Solución:</strong> {{ form.selectedTicketDt?.solution_description || 'Sin solución' }}</p>
+      <p><strong>Observación:</strong> {{ form.selectedTicketDt?.observation || 'Sin observación' }}</p>
+    </div>
+
+    <div class="block full-block">
+      <h3>
+        <lucide-angular [img]="imageIcon" [size]="18" aria-hidden="true"></lucide-angular>
+        Imágenes de la solicitud
+      </h3>
+
+      <div class="image-list" *ngIf="form.requestImages.length; else noImages">
+        <article class="image-item" *ngFor="let image of form.requestImages">
+          <img [src]="image.dataUrl" [alt]="image.name" />
+          <div>
+            <strong>{{ image.name }}</strong>
+            <span>{{ formatSize(image.size) }}</span>
+          </div>
+        </article>
+      </div>
+
+      <ng-template #noImages>
+        <p>No se agregaron imágenes.</p>
+      </ng-template>
+    </div>
+
+    <div
+      class="block full-block"
+      *ngIf="form.addedEquipments.length || form.removedEquipments.length"
+    >
+      <h3>
+        <lucide-angular [img]="monitorIcon" [size]="18" aria-hidden="true"></lucide-angular>
+        Cambios de equipo
+      </h3>
+
+      <div class="changes-grid">
+        <div *ngIf="form.addedEquipments.length">
+          <h4>Agregados</h4>
+          <article class="change-item" *ngFor="let item of form.addedEquipments">
+            <strong>{{ item.name }}</strong>
+            <span>{{ item.code || 'Sin código' }}</span>
+            <p>{{ item.description || 'Sin descripción' }}</p>
+          </article>
+        </div>
+
+        <div *ngIf="form.removedEquipments.length">
+          <h4>Por eliminar</h4>
+          <article class="change-item" *ngFor="let item of form.removedEquipments">
+            <strong>{{ item.device.name || 'Equipo sin nombre' }}</strong>
+            <span>{{ item.device.code || 'Sin código' }}</span>
+            <p>{{ item.reason }}</p>
+          </article>
+        </div>
+      </div>
     </div>
   </div>
 
+  <p class="save-message" *ngIf="saveMessage">{{ saveMessage }}</p>
+
   <div class="actions">
-    <button class="btnSave" type="button">
+    <button class="btnSave" type="button" [disabled]="!canSave" (click)="saveTicket()">
+      <lucide-angular [img]="saveIcon" [size]="18" aria-hidden="true"></lucide-angular>
       Guardar ticket
     </button>
   </div>

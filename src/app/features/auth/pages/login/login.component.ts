@@ -59,35 +59,39 @@ export class LoginComponent {
 
     const email = this.form.get('email')?.value ?? '';
     const password = this.form.get('password')?.value ?? '';
+try {
+  const result = await this.authApiService.handleLogin(email, password);
 
-    try {
-      const result = await this.authApiService.handleLogin(email, password);
+  console.log('RESULTADO LOGIN COMPONENT:', result);
 
-      if (!result.success) {
-        this.errorMessage = result.error || 'No se pudo iniciar sesión';
-        return;
-      }
+  if (!result.success) {
+    this.errorMessage = result.error || 'No se pudo iniciar sesión';
+    return;
+  }
 
-      if (result.message) {
-        this.infoMessage = result.message;
-      }
+  if (result.message) {
+    this.infoMessage = result.message;
+  }
 
-      if (result.route === 'new-password') {
-        await this.navigationService.goToNewPassword();
-        return;
-      }
+  if (result.route === 'new-password') {
+    console.log('NAVEGANDO A NEW PASSWORD');
+    await this.navigationService.goToNewPassword();
+    return;
+  }
 
-      if (result.route === 'two-factor') {
-        await this.navigationService.goToTwoFactor();
-        return;
-      }
+  if (result.route === 'two-factor') {
+    console.log('NAVEGANDO A TWO FACTOR');
+    await this.navigationService.goToTwoFactor();
+    return;
+  }
 
-      if (result.route === 'main') {
-        await this.navigationService.goToMain();
-      }
-    } finally {
-      this.isSubmitting = false;
-    }
+  if (result.route === 'main') {
+    console.log('NAVEGANDO A MAIN');
+    await this.navigationService.goToMain();
+  }
+} finally {
+  this.isSubmitting = false;
+}
   }
 
   togglePasswordVisibility(): void {

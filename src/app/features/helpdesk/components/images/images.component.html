@@ -1,0 +1,63 @@
+<div class="card">
+  <div class="card_tittle">
+    <lucide-angular
+      [img]="cameraIcon"
+      [size]="22"
+      [strokeWidth]="2.4"
+    ></lucide-angular>
+    <h1>Imágenes de la solicitud</h1>
+  </div>
+
+  <p class="subtitle">
+    Agrega evidencias visuales del caso. Puedes subir varias imágenes antes de confirmar.
+  </p>
+
+  <label class="upload-zone" for="requestImages">
+    <lucide-angular
+      [img]="imagePlusIcon"
+      [size]="34"
+      [strokeWidth]="2.2"
+    ></lucide-angular>
+    <strong>Seleccionar imágenes</strong>
+    <span>JPG, PNG o WEBP. Máximo 3 MB por archivo.</span>
+    <input
+      id="requestImages"
+      type="file"
+      accept="image/*"
+      multiple
+      (change)="onFilesSelected($event)"
+    />
+  </label>
+
+  <div class="error-box" *ngIf="errorMessage">
+    {{ errorMessage }}
+  </div>
+
+  <section class="image-grid" *ngIf="images.length; else emptyState">
+    <article class="image-card" *ngFor="let image of images">
+      <img [src]="image.dataUrl" [alt]="image.name" />
+      <div class="image-meta">
+        <strong>{{ image.name }}</strong>
+        <span>{{ formatSize(image.size) }}</span>
+      </div>
+      <button
+        type="button"
+        class="delete-image"
+        title="Eliminar imagen"
+        (click)="removeImage(image.id)"
+      >
+        <lucide-angular
+          [img]="trashIcon"
+          [size]="17"
+          [strokeWidth]="2.3"
+        ></lucide-angular>
+      </button>
+    </article>
+  </section>
+
+  <ng-template #emptyState>
+    <div class="empty-state">
+      No hay imágenes agregadas todavía.
+    </div>
+  </ng-template>
+</div>

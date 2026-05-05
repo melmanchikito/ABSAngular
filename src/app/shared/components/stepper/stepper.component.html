@@ -4,12 +4,23 @@
       *ngFor="let step of steps; let i = index"
       class="stepButton"
       [class.active]="activeStep === i"
+      [class.completed]="i < activeStep"
+      [disabled]="!isStepEnabled(i)"
       (click)="setStep(i)"
     >
-      <span class="stepIcon">{{ step.icon }}</span>
+      <lucide-angular
+        class="stepIcon"
+        [img]="step.icon"
+        [size]="20"
+        [strokeWidth]="2.3"
+      ></lucide-angular>
       <span>{{ step.label }}</span>
     </button>
   </header>
+
+  <div class="step-alert" *ngIf="validationMessage">
+    {{ validationMessage }}
+  </div>
 
   <ng-content></ng-content>
 
@@ -36,7 +47,7 @@
       <button
         class="navButton"
         (click)="nextStep()"
-        [disabled]="activeStep === steps.length - 1"
+        [disabled]="activeStep === steps.length - 1 || !canGoNext"
       >
         Siguiente
       </button>

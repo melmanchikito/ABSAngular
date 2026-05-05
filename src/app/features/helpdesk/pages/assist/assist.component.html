@@ -5,18 +5,22 @@
       type="button"
       (click)="goToSystemArea()"
     >
-      ← Volver a Área del Sistema
+      Volver al Área del Sistema
     </button>
   </div>
 
   <app-stepper
     [steps]="steps"
     [activeStep]="activeStep"
+    [canGoNext]="canGoNext"
+    [enabledSteps]="enabledSteps"
+    [validationMessage]="validationMessage"
     (activeStepChange)="setActiveStep($event)"
   >
     <app-clients *ngIf="activeStep === 0"></app-clients>
     <app-equipment *ngIf="activeStep === 1"></app-equipment>
     <app-problem *ngIf="activeStep === 2"></app-problem>
-    <app-confirm *ngIf="activeStep === 3"></app-confirm>
+    <app-images *ngIf="activeStep === 3"></app-images>
+    <app-confirm *ngIf="activeStep === 4" [canSave]="canSave"></app-confirm>
   </app-stepper>
 </div>

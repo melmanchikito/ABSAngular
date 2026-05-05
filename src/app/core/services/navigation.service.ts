@@ -12,7 +12,7 @@ export class NavigationService {
     return this.router.navigate([APP_ROUTES.login]);
   }
   goToSystemArea(): Promise<boolean> {
-  return this.router.navigate(['/main/system-area']);
+  return this.router.navigate([APP_ROUTES.systemarea]);
 }
   goToRecoverPassword(): Promise<boolean> {
     return this.router.navigate([APP_ROUTES.recoverPassword]);
