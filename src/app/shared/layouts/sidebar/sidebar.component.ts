@@ -13,17 +13,19 @@ import {
 } from 'lucide-angular';
 import { AuthApiService } from '../../../features/auth/services/auth-api.service';
 import { NavigationService } from '../../../core/services/navigation.service';
+import { SystemAreaKey } from '../../../features/system-area/models/system-area.model';
 
 type SidebarIcon = typeof CircleDollarSign;
 
 interface SidebarChild {
   label: string;
-  route?: 'system-area';
+  areaKey?: SystemAreaKey;
 }
 
 interface SidebarArea {
   name: string;
   icon: SidebarIcon;
+  areaKey?: SystemAreaKey;
   children: SidebarChild[];
 }
 
@@ -50,50 +52,55 @@ export class SidebarComponent {
     {
       name: 'Área Financiera',
       icon: CircleDollarSign,
+      areaKey: 'financiera',
       children: []
     },
     {
       name: 'Área Administrativa',
       icon: Building2,
+      areaKey: 'administrativa',
       children: []
     },
     {
       name: 'Área Operativa',
       icon: Settings,
+      areaKey: 'operativa',
       children: [
-        { label: 'Clientes' },
-        { label: 'Legal' },
-        { label: 'Cobranzas' },
-        { label: 'Productos' },
-        { label: 'Análisis de productos' },
-        { label: 'Compras' },
-        { label: 'Importaciones' },
-        { label: 'Logística & bodega' },
-        { label: 'Ventas' },
-        { label: 'Servicio al cliente' },
-        { label: 'Comisiones y bonos' },
-        { label: 'Servientrega' },
-        { label: 'Marketing' },
-        { label: 'Material Promocional' }
+        { label: 'Clientes', areaKey: 'operativa' },
+        { label: 'Legal', areaKey: 'operativa' },
+        { label: 'Cobranzas', areaKey: 'operativa' },
+        { label: 'Productos', areaKey: 'operativa' },
+        { label: 'Análisis de productos', areaKey: 'operativa' },
+        { label: 'Compras', areaKey: 'operativa' },
+        { label: 'Importaciones', areaKey: 'operativa' },
+        { label: 'Logística & bodega', areaKey: 'operativa' },
+        { label: 'Ventas', areaKey: 'operativa' },
+        { label: 'Servicio al cliente', areaKey: 'operativa' },
+        { label: 'Comisiones y bonos', areaKey: 'operativa' },
+        { label: 'Servientrega', areaKey: 'operativa' },
+        { label: 'Marketing', areaKey: 'operativa' },
+        { label: 'Material Promocional', areaKey: 'operativa' }
       ]
     },
     {
       name: 'Área Gerencial',
       icon: ChartColumn,
+      areaKey: 'gerencial',
       children: [
-        { label: 'Gerencial' },
-        { label: 'Business Intelligence' }
+        { label: 'Gerencial', areaKey: 'gerencial' },
+        { label: 'Business Intelligence', areaKey: 'gerencial' }
       ]
     },
     {
       name: 'Área del Sistema',
       icon: MonitorCog,
+      areaKey: 'sistema',
       children: [
-        { label: 'Desarrollo', route: 'system-area' },
-        { label: 'Generales', route: 'system-area' },
-        { label: 'Corrección de datos', route: 'system-area' },
-        { label: 'Help Desk', route: 'system-area' },
-        { label: 'Seguridad', route: 'system-area' }
+        { label: 'Desarrollo', areaKey: 'sistema' },
+        { label: 'Generales', areaKey: 'sistema' },
+        { label: 'Corrección de datos', areaKey: 'sistema' },
+        { label: 'Help Desk', areaKey: 'sistema' },
+        { label: 'Seguridad', areaKey: 'sistema' }
       ]
     }
   ];
@@ -106,6 +113,10 @@ export class SidebarComponent {
   toggleArea(area: SidebarArea): void {
     this.activeArea = area.name;
     this.selectSection.emit(area.name);
+
+    if (area.areaKey) {
+      void this.navigationService.goToArea(area.areaKey);
+    }
 
     if (!area.children.length) {
       this.expandedArea = null;
@@ -121,8 +132,8 @@ export class SidebarComponent {
     this.activeChild = child.label;
     this.selectSection.emit(child.label);
 
-    if (child.route === 'system-area') {
-      void this.navigationService.goToSystemArea();
+    if (child.areaKey) {
+      void this.navigationService.goToArea(child.areaKey);
     }
   }
 

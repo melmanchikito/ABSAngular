@@ -1,0 +1,73 @@
+<section class="system-page">
+  <div class="page-header">
+    <div class="page-title">
+      <span class="eyebrow">Módulo</span>
+      <div class="title-row">
+        <span class="title-icon">
+          <lucide-angular [img]="area.icon" [size]="22" [strokeWidth]="2.3"></lucide-angular>
+        </span>
+        <h1>{{ area.title }}</h1>
+      </div>
+      <p>{{ area.subtitle }}</p>
+    </div>
+  </div>
+
+  <div class="section-buttons">
+    <button
+      *ngFor="let category of area.categories"
+      type="button"
+      class="section-btn"
+      [class.active]="activeCategory === category.key"
+      (click)="selectCategory(category)"
+    >
+      <span class="section-icon">
+        <lucide-angular [img]="category.icon" [size]="20" [strokeWidth]="2.3"></lucide-angular>
+      </span>
+
+      <span class="section-info">
+        <strong>{{ category.label }}</strong>
+        <small>{{ category.description }}</small>
+      </span>
+    </button>
+  </div>
+
+  <div class="content-card">
+    <div class="content-header">
+      <div>
+        <h2>{{ activeCategoryConfig.label }}</h2>
+        <p>{{ activeCategoryConfig.description }}</p>
+      </div>
+
+      <span class="counter">
+        {{ activeOptions.length }} opciones
+      </span>
+    </div>
+
+    <div class="options-grid" *ngIf="activeOptions.length; else emptyState">
+      <button
+        *ngFor="let option of activeOptions"
+        type="button"
+        class="option-card"
+        [class.option-card-link]="option.route"
+        (click)="selectOption(option)"
+      >
+        <span class="option-icon">
+          <lucide-angular [img]="option.icon" [size]="19" [strokeWidth]="2.3"></lucide-angular>
+        </span>
+
+        <span class="option-content">
+          <strong>{{ option.label }}</strong>
+          <small>{{ option.description }}</small>
+        </span>
+
+        <span class="option-arrow">›</span>
+      </button>
+    </div>
+
+    <ng-template #emptyState>
+      <div class="empty-state">
+        No hay opciones configuradas para esta categoría.
+      </div>
+    </ng-template>
+  </div>
+</section>

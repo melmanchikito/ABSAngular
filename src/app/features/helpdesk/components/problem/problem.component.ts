@@ -4,12 +4,12 @@ import { FormsModule } from '@angular/forms';
 import { forkJoin } from 'rxjs';
 
 import { AssistFormService } from '../../state/assist-form.service';
-import { MasterDataService } from '../../services/master-data.service';
+import { HelpdeskDataService } from '../../services/helpdesk-data.service';
 import {
   Category,
   HelpdeskFormData,
   Problem
-} from '../../../../core/models/master-data.model';
+} from '../../models/helpdesk.model';
 import { countChar } from '../../../../core/utils/validators.utils';
 
 type TicketTextField =
@@ -33,7 +33,7 @@ export class ProblemComponent implements OnInit {
 
   constructor(
     public readonly assistFormService: AssistFormService,
-    private readonly masterDataService: MasterDataService
+    private readonly helpdeskDataService: HelpdeskDataService
   ) {}
 
   ngOnInit(): void {
@@ -63,8 +63,8 @@ export class ProblemComponent implements OnInit {
     this.loadError = '';
 
     forkJoin({
-      categories: this.masterDataService.getCategories(),
-      problems: this.masterDataService.getProblems()
+      categories: this.helpdeskDataService.getCategories(),
+      problems: this.helpdeskDataService.getProblems()
     }).subscribe({
       next: ({ categories, problems }) => {
         this.categories = categories;

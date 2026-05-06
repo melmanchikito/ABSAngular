@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { Camera, ImagePlus, LucideAngularModule, Trash2 } from 'lucide-angular';
 import { AssistFormService } from '../../state/assist-form.service';
-import { RequestImage } from '../../../../core/models/master-data.model';
+import { RequestImage } from '../../models/helpdesk.model';
 
 @Component({
   selector: 'app-images',

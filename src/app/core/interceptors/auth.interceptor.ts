@@ -5,7 +5,7 @@ import { CookieService } from '../services/cookie.service';
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const cookieService = inject(CookieService);
 
-  const token = cookieService.getCookie('authToken');
+  const token = getToken(cookieService);
 
   if (!token) {
     return next(req);
@@ -19,3 +19,25 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(cloned);
 };
+
+function getToken(cookieService: CookieService): string {
+  const storedToken =
+    localStorage.getItem('token') ||
+    sessionStorage.getItem('token') ||
+    cookieService.getCookie('authToken') ||
+    localStorage.getItem('authToken') ||
+    sessionStorage.getItem('authToken');
+
+  return normalizeToken(storedToken);
+}
+
+function normalizeToken(token: string | null): string {
+  if (!token) {
+    return '';
+  }
+
+  return token
+    .replace(/^Bearer\s+/i, '')
+    .replaceAll('"', '')
+    .trim();
+}

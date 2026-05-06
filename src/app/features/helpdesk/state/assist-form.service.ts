@@ -10,7 +10,7 @@ import {
   RemovedEquipment,
   RequestImage,
   TicketDt
-} from '../../../core/models/master-data.model';
+} from '../models/helpdesk.model';
 
 @Injectable({
   providedIn: 'root'

@@ -26,7 +26,7 @@
     </div>
 
     <div class="card_options_equipments">
-      <button class="addBtn" type="button" (click)="addEquipment()">
+      <button class="addBtn" type="button" (click)="addEquipment()" [disabled]="isSavingEquipment">
         <lucide-angular [img]="addIcon" [size]="18" aria-hidden="true"></lucide-angular>
         Agregar equipo
       </button>
@@ -35,18 +35,22 @@
         class="deleteBtn"
         type="button"
         (click)="deleteEquipment()"
-        [disabled]="!devices.length"
+        [disabled]="!devices.length || isCancelingEquipment"
       >
         <lucide-angular [img]="trashIcon" [size]="18" aria-hidden="true"></lucide-angular>
-        Eliminar equipo
+        Anular equipo
       </button>
     </div>
   </header>
 
+  <p class="equipment-action-message" *ngIf="equipmentActionMessage">
+    {{ equipmentActionMessage }}
+  </p>
+
   <section class="equipment-panel" *ngIf="showAddEquipmentPanel">
     <div class="panel-title">
       <lucide-angular [img]="monitorIcon" [size]="20" aria-hidden="true"></lucide-angular>
-      <h3>Agregar equipo a la solicitud</h3>
+      <h3>Crear equipo en la base de datos</h3>
       <button class="closePanel" type="button" title="Cerrar" (click)="cancelAddEquipment()">
         <lucide-angular [img]="closeIcon" [size]="18" aria-hidden="true"></lucide-angular>
       </button>
@@ -54,12 +58,23 @@
 
     <div class="panel-grid">
       <label>
+        Equipo base
+        <select name="newEquipmentGroup" [(ngModel)]="addEquipmentForm.equipmentId" required>
+          <option value="">Seleccione equipo base</option>
+          <option *ngFor="let item of equipments" [value]="item.id">
+            {{ item.code }} - {{ item.name }}
+          </option>
+        </select>
+      </label>
+
+      <label>
         Código
         <input
           type="text"
           name="newEquipmentCode"
           [(ngModel)]="addEquipmentForm.code"
-          placeholder="Ej. EQ-001"
+          placeholder="Ej. EMP-001"
+          required
         />
       </label>
 
@@ -69,8 +84,48 @@
           type="text"
           name="newEquipmentName"
           [(ngModel)]="addEquipmentForm.name"
-          placeholder="Nombre del equipo"
+          placeholder="Equipo desarrollo"
           required
+        />
+      </label>
+
+      <label>
+        Modelo
+        <input
+          type="text"
+          name="newEquipmentModel"
+          [(ngModel)]="addEquipmentForm.model"
+          placeholder="Modelo"
+        />
+      </label>
+
+      <label>
+        Tipo
+        <input
+          type="text"
+          name="newEquipmentType"
+          [(ngModel)]="addEquipmentForm.type"
+          placeholder="Tipo"
+        />
+      </label>
+
+      <label>
+        Estado
+        <input
+          type="text"
+          name="newEquipmentState"
+          [(ngModel)]="addEquipmentForm.state"
+          placeholder="Estado"
+        />
+      </label>
+
+      <label>
+        Serie
+        <input
+          type="text"
+          name="newEquipmentSerial"
+          [(ngModel)]="addEquipmentForm.serialNumber"
+          placeholder="Número de serie"
         />
       </label>
 
@@ -88,15 +143,24 @@
     <p class="panel-error" *ngIf="addEquipmentError">{{ addEquipmentError }}</p>
 
     <div class="panel-actions">
-      <button class="secondaryBtn" type="button" (click)="cancelAddEquipment()">Cancelar</button>
-      <button class="addBtn" type="button" (click)="confirmAddEquipment()">Guardar equipo</button>
+      <button
+        class="secondaryBtn"
+        type="button"
+        (click)="cancelAddEquipment()"
+        [disabled]="isSavingEquipment"
+      >
+        Cancelar
+      </button>
+      <button class="addBtn" type="button" (click)="confirmAddEquipment()" [disabled]="isSavingEquipment">
+        {{ isSavingEquipment ? 'Guardando...' : 'Guardar equipo' }}
+      </button>
     </div>
   </section>
 
   <section class="equipment-panel danger-panel" *ngIf="showRemoveEquipmentPanel">
     <div class="panel-title">
       <lucide-angular [img]="trashIcon" [size]="20" aria-hidden="true"></lucide-angular>
-      <h3>Eliminar equipo de la solicitud</h3>
+      <h3>Anular equipo</h3>
       <button class="closePanel" type="button" title="Cerrar" (click)="cancelRemoveEquipment()">
         <lucide-angular [img]="closeIcon" [size]="18" aria-hidden="true"></lucide-angular>
       </button>
@@ -104,7 +168,7 @@
 
     <div class="panel-grid">
       <label>
-        Equipo a eliminar
+        Equipo a anular
         <select name="removeDeviceId" [(ngModel)]="removeEquipmentForm.deviceId" required>
           <option value="">Seleccione un equipo</option>
           <option *ngFor="let item of devices" [value]="item.id">
@@ -114,12 +178,12 @@
       </label>
 
       <label class="panel-wide">
-        Motivo de eliminación
+        Motivo de anulación
         <textarea
           name="removeReason"
           [(ngModel)]="removeEquipmentForm.reason"
           rows="3"
-          placeholder="Describa por qué se elimina el equipo"
+          placeholder="Describa por qué se anula el equipo"
           required
         ></textarea>
       </label>
@@ -128,29 +192,123 @@
     <p class="panel-error" *ngIf="removeEquipmentError">{{ removeEquipmentError }}</p>
 
     <div class="panel-actions">
-      <button class="secondaryBtn" type="button" (click)="cancelRemoveEquipment()">Cancelar</button>
-      <button class="deleteBtn" type="button" (click)="confirmRemoveEquipment()">Confirmar eliminación</button>
+      <button
+        class="secondaryBtn"
+        type="button"
+        (click)="cancelRemoveEquipment()"
+        [disabled]="isCancelingEquipment"
+      >
+        Cancelar
+      </button>
+      <button
+        class="deleteBtn"
+        type="button"
+        (click)="confirmRemoveEquipment()"
+        [disabled]="isCancelingEquipment"
+      >
+        {{ isCancelingEquipment ? 'Anulando...' : 'Confirmar anulación' }}
+      </button>
     </div>
   </section>
 
-  <section class="request-changes" *ngIf="addedEquipments.length || removedEquipments.length">
-    <div class="change-list" *ngIf="addedEquipments.length">
-      <h3>Equipos agregados</h3>
-      <article class="change-item" *ngFor="let item of addedEquipments">
-        <div>
-          <strong>{{ item.name }}</strong>
-          <span>{{ item.code || 'Sin código' }}</span>
-          <p>{{ item.description || 'Sin descripción' }}</p>
-        </div>
-
-        <button class="iconCard" type="button" title="Quitar" (click)="removeAddedEquipment(item.id)">
-          <lucide-angular [img]="trashIcon" [size]="16" aria-hidden="true"></lucide-angular>
-        </button>
-      </article>
+  <section class="equipment-panel" *ngIf="showAddComponentPanel">
+    <div class="panel-title">
+      <lucide-angular [img]="addIcon" [size]="20" aria-hidden="true"></lucide-angular>
+      <h3>Crear componente para {{ selectedDevice?.name || 'el equipo seleccionado' }}</h3>
+      <button class="closePanel" type="button" title="Cerrar" (click)="cancelAddComponent()">
+        <lucide-angular [img]="closeIcon" [size]="18" aria-hidden="true"></lucide-angular>
+      </button>
     </div>
 
-    <div class="change-list" *ngIf="removedEquipments.length">
-      <h3>Equipos por eliminar</h3>
+    <div class="panel-grid">
+      <label>
+        Código
+        <input
+          type="text"
+          name="newComponentCode"
+          [(ngModel)]="addComponentForm.code"
+          placeholder="Ej. CMP-001"
+          required
+        />
+      </label>
+
+      <label>
+        Nombre
+        <input
+          type="text"
+          name="newComponentName"
+          [(ngModel)]="addComponentForm.name"
+          placeholder="Memoria RAM"
+          required
+        />
+      </label>
+
+      <label>
+        Modelo
+        <input type="text" name="newComponentModel" [(ngModel)]="addComponentForm.model" />
+      </label>
+
+      <label>
+        Tipo
+        <input type="text" name="newComponentType" [(ngModel)]="addComponentForm.type" />
+      </label>
+
+      <label>
+        Estado
+        <input type="text" name="newComponentState" [(ngModel)]="addComponentForm.state" />
+      </label>
+
+      <label>
+        Serie
+        <input type="text" name="newComponentSerial" [(ngModel)]="addComponentForm.serialNumber" />
+      </label>
+
+      <label>
+        Capacidad
+        <input type="text" name="newComponentCapacity" [(ngModel)]="addComponentForm.capacity" />
+      </label>
+
+      <label>
+        Voltios
+        <input type="text" name="newComponentVolts" [(ngModel)]="addComponentForm.volts" />
+      </label>
+
+      <label>
+        Amperios
+        <input type="text" name="newComponentAmps" [(ngModel)]="addComponentForm.amps" />
+      </label>
+
+      <label>
+        Watts
+        <input type="text" name="newComponentWatts" [(ngModel)]="addComponentForm.watts" />
+      </label>
+
+      <label class="checkbox-field panel-wide">
+        <input type="checkbox" name="newComponentReusable" [(ngModel)]="addComponentForm.reusable" />
+        Reutilizable
+      </label>
+    </div>
+
+    <p class="panel-error" *ngIf="addComponentError">{{ addComponentError }}</p>
+
+    <div class="panel-actions">
+      <button
+        class="secondaryBtn"
+        type="button"
+        (click)="cancelAddComponent()"
+        [disabled]="isSavingComponent"
+      >
+        Cancelar
+      </button>
+      <button class="addBtn" type="button" (click)="confirmAddComponent()" [disabled]="isSavingComponent">
+        {{ isSavingComponent ? 'Guardando...' : 'Guardar componente' }}
+      </button>
+    </div>
+  </section>
+
+  <section class="request-changes" *ngIf="removedEquipments.length">
+    <div class="change-list">
+      <h3>Equipos anulados</h3>
       <article class="change-item" *ngFor="let item of removedEquipments">
         <div>
           <strong>{{ item.device.name || 'Equipo sin nombre' }}</strong>
@@ -240,7 +398,12 @@
 
       <p class="equipment-message" *ngIf="componentMessage">{{ componentMessage }}</p>
 
-      <button class="addBtn" type="button" (click)="addComponent()" [disabled]="!selectedDevice">
+      <button
+        class="addBtn"
+        type="button"
+        (click)="addComponent()"
+        [disabled]="!selectedDevice || isSavingComponent"
+      >
         <lucide-angular [img]="addIcon" [size]="18" aria-hidden="true"></lucide-angular>
         Agregar componente
       </button>

@@ -82,7 +82,7 @@
 
       <div class="changes-grid">
         <div *ngIf="form.addedEquipments.length">
-          <h4>Agregados</h4>
+          <h4>Creados</h4>
           <article class="change-item" *ngFor="let item of form.addedEquipments">
             <strong>{{ item.name }}</strong>
             <span>{{ item.code || 'Sin código' }}</span>
@@ -91,7 +91,7 @@
         </div>
 
         <div *ngIf="form.removedEquipments.length">
-          <h4>Por eliminar</h4>
+          <h4>Anulados</h4>
           <article class="change-item" *ngFor="let item of form.removedEquipments">
             <strong>{{ item.device.name || 'Equipo sin nombre' }}</strong>
             <span>{{ item.device.code || 'Sin código' }}</span>

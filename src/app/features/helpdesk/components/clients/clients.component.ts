@@ -3,9 +3,9 @@ import { CommonModule } from '@angular/common';
 import { forkJoin } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 
-import { MasterDataService } from '../../services/master-data.service';
+import { HelpdeskDataService } from '../../services/helpdesk-data.service';
 import { AssistFormService } from '../../state/assist-form.service';
-import { Branch, Company, Department, Employee } from '../../../../core/models/master-data.model';
+import { Branch, Company, Department, Employee } from '../../models/helpdesk.model';
 import { validateDate } from '../../../../core/utils/validators.utils';
 
 @Component({
@@ -29,7 +29,7 @@ export class ClientsComponent implements OnInit {
 
   constructor(
     public readonly assistFormService: AssistFormService,
-    private readonly masterDataService: MasterDataService
+    private readonly helpdeskDataService: HelpdeskDataService
   ) {}
 
   ngOnInit(): void {
@@ -46,10 +46,10 @@ export class ClientsComponent implements OnInit {
     this.loadError = '';
 
     forkJoin({
-      employees: this.masterDataService.getEmployees(),
-      companies: this.masterDataService.getCompanies(),
-      branches: this.masterDataService.getBranches(),
-      departments: this.masterDataService.getDepartments()
+      employees: this.helpdeskDataService.getEmployees(),
+      companies: this.helpdeskDataService.getCompanies(),
+      branches: this.helpdeskDataService.getBranches(),
+      departments: this.helpdeskDataService.getDepartments()
     }).subscribe({
       next: ({ employees, companies, branches, departments }) => {
         this.employees = employees;
