@@ -25,17 +25,31 @@ export const MAIN_ROUTES: Routes = [
       },
       {
         path: 'system-area',
-        redirectTo: 'area/sistema',
+        redirectTo: 'area/sistema/help-desk',
         pathMatch: 'full'
       },
       {
         path: 'area',
-        redirectTo: 'area/sistema',
+        redirectTo: 'area/sistema/help-desk',
         pathMatch: 'full'
       },
       {
-        path: 'area/sistema/mantenimientos/empresas',
+        path: 'area/sistema',
+        redirectTo: 'area/sistema/help-desk',
+        pathMatch: 'full'
+      },
+      {
+        path: 'area/sistema/help-desk/mantenimientos/empresas',
         component: CompanyMaintenanceComponent
+      },
+      {
+        path: 'area/sistema/mantenimientos/empresas',
+        redirectTo: 'area/sistema/help-desk/mantenimientos/empresas',
+        pathMatch: 'full'
+      },
+      {
+        path: 'area/:areaKey/:submoduleKey',
+        component: SystemAreaComponent
       },
       {
         path: 'area/:areaKey',

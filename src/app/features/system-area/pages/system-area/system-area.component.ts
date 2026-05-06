@@ -4,15 +4,18 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LucideAngularModule } from 'lucide-angular';
 import {
+  DEFAULT_SYSTEM_SUBMODULE_KEY,
   DEFAULT_SYSTEM_AREA_KEY,
   isSystemAreaKey,
+  isSystemAreaSubmoduleKey,
   SYSTEM_AREA_CONFIG
 } from '../../config/system-area.config';
 import {
   SystemAreaCategory,
   SystemAreaCategoryKey,
   SystemAreaConfig,
-  SystemAreaOption
+  SystemAreaOption,
+  SystemAreaSubmodule
 } from '../../models/system-area.model';
 
 @Component({
@@ -24,6 +27,7 @@ import {
 })
 export class SystemAreaComponent {
   area: SystemAreaConfig = SYSTEM_AREA_CONFIG[DEFAULT_SYSTEM_AREA_KEY];
+  submodule: SystemAreaSubmodule | null = null;
   activeCategory: SystemAreaCategoryKey = 'mantenimientos';
 
   private readonly destroyRef = inject(DestroyRef);
@@ -36,22 +40,59 @@ export class SystemAreaComponent {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((params) => {
         const areaKey = params.get('areaKey');
+        const submoduleKey = params.get('submoduleKey');
 
         if (!isSystemAreaKey(areaKey)) {
-          this.area = SYSTEM_AREA_CONFIG[DEFAULT_SYSTEM_AREA_KEY];
-          this.activeCategory = this.area.categories[0]?.key ?? 'mantenimientos';
+          void this.router.navigate([
+            '/main/area',
+            DEFAULT_SYSTEM_AREA_KEY,
+            DEFAULT_SYSTEM_SUBMODULE_KEY
+          ]);
           return;
         }
 
         this.area = SYSTEM_AREA_CONFIG[areaKey];
-        this.activeCategory = this.area.categories[0]?.key ?? 'mantenimientos';
+
+        if (this.area.submodules?.length && !submoduleKey) {
+          void this.router.navigate([
+            '/main/area',
+            areaKey,
+            this.area.defaultSubmoduleKey ?? DEFAULT_SYSTEM_SUBMODULE_KEY
+          ]);
+          return;
+        }
+
+        if (submoduleKey && !isSystemAreaSubmoduleKey(areaKey, submoduleKey)) {
+          void this.router.navigate([
+            '/main/area',
+            areaKey,
+            this.area.defaultSubmoduleKey ?? DEFAULT_SYSTEM_SUBMODULE_KEY
+          ]);
+          return;
+        }
+
+        this.submodule =
+          this.area.submodules?.find((item) => item.key === submoduleKey) ?? null;
+        this.activeCategory = this.categories[0]?.key ?? 'mantenimientos';
       });
+  }
+
+  get categories(): SystemAreaCategory[] {
+    return this.submodule?.categories ?? this.area.categories;
+  }
+
+  get pageIcon() {
+    return this.submodule?.icon ?? this.area.icon;
+  }
+
+  get pageSubtitle(): string {
+    return this.submodule?.description ?? this.area.subtitle;
   }
 
   get activeCategoryConfig(): SystemAreaCategory {
     return (
-      this.area.categories.find((category) => category.key === this.activeCategory) ??
-      this.area.categories[0]
+      this.categories.find((category) => category.key === this.activeCategory) ??
+      this.categories[0]
     );
   }
 

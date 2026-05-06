@@ -7,6 +7,6 @@ export const APP_ROUTES = {
   main: 'main',
   helpdesk: 'main/helpdesk',
   profile: 'main/profile' ,
-  systemarea: 'main/area/sistema',
+  systemarea: 'main/area/sistema/help-desk',
   area: 'main/area',
 } as const;

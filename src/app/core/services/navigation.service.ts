@@ -1,7 +1,10 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { APP_ROUTES } from '../constants/app-routes.constants';
-import { SystemAreaKey } from '../../features/system-area/models/system-area.model';
+import {
+  SystemAreaKey,
+  SystemAreaSubmoduleKey
+} from '../../features/system-area/models/system-area.model';
 
 @Injectable({
   providedIn: 'root'
@@ -13,11 +16,18 @@ export class NavigationService {
     return this.router.navigate([APP_ROUTES.login]);
   }
   goToSystemArea(): Promise<boolean> {
-    return this.goToArea('sistema');
+    return this.goToAreaSubmodule('sistema', 'help-desk');
   }
 
   goToArea(area: SystemAreaKey): Promise<boolean> {
     return this.router.navigate([APP_ROUTES.area, area]);
+  }
+
+  goToAreaSubmodule(
+    area: SystemAreaKey,
+    submodule: SystemAreaSubmoduleKey
+  ): Promise<boolean> {
+    return this.router.navigate([APP_ROUTES.area, area, submodule]);
   }
   goToRecoverPassword(): Promise<boolean> {
     return this.router.navigate([APP_ROUTES.recoverPassword]);

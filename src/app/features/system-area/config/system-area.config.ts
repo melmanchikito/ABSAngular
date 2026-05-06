@@ -36,7 +36,8 @@ import {
 import {
   SystemAreaCategory,
   SystemAreaConfig,
-  SystemAreaKey
+  SystemAreaKey,
+  SystemAreaSubmoduleKey
 } from '../models/system-area.model';
 
 const systemCategories: SystemAreaCategory[] = [
@@ -50,7 +51,7 @@ const systemCategories: SystemAreaCategory[] = [
         label: 'Empresas',
         description: 'Administración de empresas registradas.',
         icon: Building2,
-        route: '/main/area/sistema/mantenimientos/empresas'
+        route: '/main/area/sistema/help-desk/mantenimientos/empresas'
       },
       { label: 'Entidades', description: 'Gestión de entidades relacionadas.', icon: Landmark },
       { label: 'Proveedores', description: 'Registro y control de proveedores.', icon: Handshake },
@@ -115,13 +116,171 @@ const systemCategories: SystemAreaCategory[] = [
   }
 ];
 
+const createSystemSubmoduleCategories = (
+  submoduleLabel: string,
+  maintenanceOptions: SystemAreaCategory['options'],
+  documentOptions: SystemAreaCategory['options'],
+  processOptions: SystemAreaCategory['options'],
+  reportOptions: SystemAreaCategory['options']
+): SystemAreaCategory[] => [
+  {
+    key: 'mantenimientos',
+    label: 'Mantenimientos',
+    icon: Wrench,
+    description: `Catalogos y parametros de ${submoduleLabel}`,
+    options: maintenanceOptions
+  },
+  {
+    key: 'documentos',
+    label: 'Documentos',
+    icon: FileText,
+    description: `Documentos propios de ${submoduleLabel}`,
+    options: documentOptions
+  },
+  {
+    key: 'procesos',
+    label: 'Procesos',
+    icon: Settings,
+    description: `Procesos operativos de ${submoduleLabel}`,
+    options: processOptions
+  },
+  {
+    key: 'informes',
+    label: 'Informes',
+    icon: BarChart3,
+    description: `Informes y consultas de ${submoduleLabel}`,
+    options: reportOptions
+  }
+];
+
+const systemDevelopmentCategories = createSystemSubmoduleCategories(
+  'Desarrollo',
+  [
+    { label: 'Ambientes', description: 'Configuracion de entornos de trabajo.', icon: MonitorCog },
+    { label: 'Versiones', description: 'Control de versiones liberadas.', icon: Tags },
+    { label: 'Repositorios', description: 'Registro de repositorios tecnicos.', icon: Database }
+  ],
+  [
+    { label: 'Especificaciones', description: 'Documentacion funcional y tecnica.', icon: FileText },
+    { label: 'Actas de cambios', description: 'Soporte documental de cambios.', icon: FileCheck2 }
+  ],
+  [
+    { label: 'Control de cambios', description: 'Seguimiento de cambios del sistema.', icon: ClipboardCheck },
+    { label: 'Validacion QA', description: 'Revision y validacion de entregables.', icon: ShieldCheck }
+  ],
+  [
+    { label: 'Cambios por periodo', description: 'Resumen de cambios por fechas.', icon: FileBarChart },
+    { label: 'Estado de versiones', description: 'Consulta de versiones activas.', icon: ChartColumn }
+  ]
+);
+
+const systemGeneralCategories = createSystemSubmoduleCategories(
+  'Generales',
+  [
+    { label: 'Empresas generales', description: 'Parametros generales de empresas.', icon: Building2 },
+    { label: 'Ubicaciones generales', description: 'Ubicaciones de uso transversal.', icon: MapPin },
+    { label: 'Opciones generales', description: 'Configuracion general del sistema.', icon: Settings }
+  ],
+  [
+    { label: 'Documentos generales', description: 'Consulta de documentos compartidos.', icon: FileText },
+    { label: 'Formatos internos', description: 'Plantillas institucionales.', icon: ScrollText }
+  ],
+  [
+    { label: 'Procesos generales', description: 'Flujos generales del sistema.', icon: LayoutDashboard },
+    { label: 'Aprobaciones generales', description: 'Aprobaciones comunes entre areas.', icon: ClipboardCheck }
+  ],
+  [
+    { label: 'Resumen general', description: 'Reporte transversal del sistema.', icon: FileBarChart },
+    { label: 'Indicadores generales', description: 'Metricas principales del sistema.', icon: Gauge }
+  ]
+);
+
+const systemCorrectionCategories = createSystemSubmoduleCategories(
+  'Correccion de datos',
+  [
+    { label: 'Reglas de correccion', description: 'Parametros para depuracion de datos.', icon: Settings },
+    { label: 'Campos auditables', description: 'Campos sujetos a revision.', icon: Database }
+  ],
+  [
+    { label: 'Solicitudes de correccion', description: 'Documentos de solicitud de cambios.', icon: ClipboardList },
+    { label: 'Evidencias', description: 'Soportes de ajustes realizados.', icon: FileCheck2 }
+  ],
+  [
+    { label: 'Validacion de datos', description: 'Revision de datos corregidos.', icon: ClipboardCheck },
+    { label: 'Ajustes masivos', description: 'Proceso de ajuste de informacion.', icon: Wrench }
+  ],
+  [
+    { label: 'Historial de correcciones', description: 'Consulta historica de ajustes.', icon: FileBarChart },
+    { label: 'Errores frecuentes', description: 'Resumen de incidencias de datos.', icon: ChartColumn }
+  ]
+);
+
+const systemSecurityCategories = createSystemSubmoduleCategories(
+  'Seguridad',
+  [
+    { label: 'Usuarios', description: 'Administracion de usuarios del sistema.', icon: Users },
+    { label: 'Roles', description: 'Configuracion de roles y permisos.', icon: ShieldCheck },
+    { label: 'Permisos', description: 'Asignacion de accesos por modulo.', icon: MonitorCog }
+  ],
+  [
+    { label: 'Politicas de seguridad', description: 'Documentos normativos de seguridad.', icon: ScrollText },
+    { label: 'Actas de accesos', description: 'Soporte de cambios de permisos.', icon: FileCheck2 }
+  ],
+  [
+    { label: 'Revision de accesos', description: 'Validacion periodica de permisos.', icon: ClipboardCheck },
+    { label: 'Auditoria de sesiones', description: 'Seguimiento de actividad de usuarios.', icon: ShieldCheck }
+  ],
+  [
+    { label: 'Accesos por usuario', description: 'Reporte de permisos asignados.', icon: FileBarChart },
+    { label: 'Actividad de seguridad', description: 'Indicadores de eventos de seguridad.', icon: ChartColumn }
+  ]
+);
+
 export const SYSTEM_AREA_CONFIG: Record<SystemAreaKey, SystemAreaConfig> = {
   sistema: {
     key: 'sistema',
     title: 'Área del Sistema',
     subtitle: 'Selecciona una categoría para visualizar sus opciones disponibles.',
     icon: MonitorCog,
-    categories: systemCategories
+    categories: systemCategories,
+    defaultSubmoduleKey: 'help-desk',
+    submodules: [
+      {
+        key: 'desarrollo',
+        label: 'Desarrollo',
+        description: 'Gestion tecnica de cambios, versiones y validaciones.',
+        icon: MonitorCog,
+        categories: systemDevelopmentCategories
+      },
+      {
+        key: 'generales',
+        label: 'Generales',
+        description: 'Parametros y procesos generales del sistema.',
+        icon: Settings,
+        categories: systemGeneralCategories
+      },
+      {
+        key: 'correccion-datos',
+        label: 'Correccion de datos',
+        description: 'Control de solicitudes, validaciones y ajustes de informacion.',
+        icon: Database,
+        categories: systemCorrectionCategories
+      },
+      {
+        key: 'help-desk',
+        label: 'Help Desk',
+        description: 'Soporte, equipos, componentes y tickets de asistencia.',
+        icon: TicketCheck,
+        categories: systemCategories
+      },
+      {
+        key: 'seguridad',
+        label: 'Seguridad',
+        description: 'Usuarios, roles, permisos y auditoria de accesos.',
+        icon: ShieldCheck,
+        categories: systemSecurityCategories
+      }
+    ]
   },
   gerencial: {
     key: 'gerencial',
@@ -332,7 +491,18 @@ export const SYSTEM_AREA_CONFIG: Record<SystemAreaKey, SystemAreaConfig> = {
 };
 
 export const DEFAULT_SYSTEM_AREA_KEY: SystemAreaKey = 'sistema';
+export const DEFAULT_SYSTEM_SUBMODULE_KEY: SystemAreaSubmoduleKey = 'help-desk';
 
 export function isSystemAreaKey(value: string | null): value is SystemAreaKey {
   return Boolean(value && value in SYSTEM_AREA_CONFIG);
+}
+
+export function isSystemAreaSubmoduleKey(
+  areaKey: SystemAreaKey,
+  value: string | null
+): value is SystemAreaSubmoduleKey {
+  return Boolean(
+    value &&
+      SYSTEM_AREA_CONFIG[areaKey].submodules?.some((submodule) => submodule.key === value)
+  );
 }

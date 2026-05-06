@@ -4,17 +4,22 @@
       <span class="eyebrow">Módulo</span>
       <div class="title-row">
         <span class="title-icon">
-          <lucide-angular [img]="area.icon" [size]="22" [strokeWidth]="2.3"></lucide-angular>
+          <lucide-angular [img]="pageIcon" [size]="22" [strokeWidth]="2.3"></lucide-angular>
         </span>
-        <h1>{{ area.title }}</h1>
+        <div>
+          <h1>{{ area.title }}</h1>
+          <span class="submodule-label" *ngIf="submodule">
+            Submodulo: {{ submodule.label }}
+          </span>
+        </div>
       </div>
-      <p>{{ area.subtitle }}</p>
+      <p>{{ pageSubtitle }}</p>
     </div>
   </div>
 
   <div class="section-buttons">
     <button
-      *ngFor="let category of area.categories"
+      *ngFor="let category of categories"
       type="button"
       class="section-btn"
       [class.active]="activeCategory === category.key"
