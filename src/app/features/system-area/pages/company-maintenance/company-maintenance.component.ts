@@ -3,10 +3,13 @@ import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
   Building2,
+  ChevronLeft,
+  ChevronRight,
   CirclePlus,
   Edit3,
   LucideAngularModule,
   RefreshCcw,
+  Search,
   Trash2,
   X
 } from 'lucide-angular';
@@ -19,6 +22,7 @@ import {
 import { CompanyMaintenanceService } from '../../services/company-maintenance.service';
 
 type CompanyModalMode = 'create' | 'edit';
+type CompanyStatusFilter = 'all' | 'active' | 'inactive';
 type BackendErrorBody = Record<string, unknown>;
 
 interface CompanyForm {
@@ -46,13 +50,19 @@ interface EditCompanyForm {
 export class CompanyMaintenanceComponent implements OnInit {
   readonly buildingIcon = Building2;
   readonly addIcon = CirclePlus;
+  readonly chevronLeftIcon = ChevronLeft;
+  readonly chevronRightIcon = ChevronRight;
   readonly editIcon = Edit3;
   readonly refreshIcon = RefreshCcw;
+  readonly searchIcon = Search;
   readonly trashIcon = Trash2;
   readonly closeIcon = X;
 
   companies: Company[] = [];
-  selectedCompanyId: number | null = null;
+  searchTerm = '';
+  statusFilter: CompanyStatusFilter = 'all';
+  currentPage = 1;
+  readonly pageSize = 5;
   isLoading = false;
   isSaving = false;
   successMessage = '';
@@ -85,28 +95,71 @@ export class CompanyMaintenanceComponent implements OnInit {
     this.loadCompanies();
   }
 
-  get selectedCompany(): Company | null {
-    if (!this.selectedCompanyId) {
-      return null;
-    }
-
-    return this.companies.find((company) => company.id === this.selectedCompanyId) ?? null;
-  }
-
   get modalTitle(): string {
     return this.modalMode === 'create' ? 'Nueva empresa' : 'Editar empresa';
   }
 
-  loadCompanies(selectedCompanyId: number | null = this.selectedCompanyId): void {
+  get totalCompanies(): number {
+    return this.companies.length;
+  }
+
+  get activeCompanies(): number {
+    return this.companies.filter((company) => !company.canceled).length;
+  }
+
+  get inactiveCompanies(): number {
+    return this.companies.filter((company) => company.canceled).length;
+  }
+
+  get filteredCompanies(): Company[] {
+    const term = this.searchTerm.trim().toLowerCase();
+
+    return this.companies.filter((company) => {
+      const matchesStatus =
+        this.statusFilter === 'all' ||
+        (this.statusFilter === 'active' && !company.canceled) ||
+        (this.statusFilter === 'inactive' && company.canceled);
+
+      if (!matchesStatus) {
+        return false;
+      }
+
+      if (!term) {
+        return true;
+      }
+
+      return [
+        company.code,
+        company.name,
+        company.phone ?? '',
+        company.email ?? ''
+      ].some((value) => value.toLowerCase().includes(term));
+    });
+  }
+
+  get totalPages(): number {
+    return Math.max(1, Math.ceil(this.filteredCompanies.length / this.pageSize));
+  }
+
+  get paginatedCompanies(): Company[] {
+    const safePage = Math.min(this.currentPage, this.totalPages);
+    const start = (safePage - 1) * this.pageSize;
+
+    return this.filteredCompanies.slice(start, start + this.pageSize);
+  }
+
+  get showingCount(): number {
+    return this.paginatedCompanies.length;
+  }
+
+  loadCompanies(): void {
     this.isLoading = true;
     this.errorMessage = '';
 
     this.companyService.getCompanies().subscribe({
       next: (companies) => {
         this.companies = companies;
-        this.selectedCompanyId = companies.some((company) => company.id === selectedCompanyId)
-          ? selectedCompanyId
-          : null;
+        this.currentPage = Math.min(this.currentPage, this.totalPages);
         this.isLoading = false;
       },
       error: (error) => {
@@ -114,6 +167,22 @@ export class CompanyMaintenanceComponent implements OnInit {
         this.isLoading = false;
       }
     });
+  }
+
+  onFiltersChange(): void {
+    this.currentPage = 1;
+  }
+
+  previousPage(): void {
+    this.currentPage = Math.max(1, this.currentPage - 1);
+  }
+
+  nextPage(): void {
+    this.currentPage = Math.min(this.totalPages, this.currentPage + 1);
+  }
+
+  getCompanyInitial(company: Company): string {
+    return (company.name || company.code || '?').trim().charAt(0).toUpperCase();
   }
 
   openCreateModal(): void {
@@ -266,8 +335,7 @@ export class CompanyMaintenanceComponent implements OnInit {
     console.log('Payload actualizar empresa:', JSON.stringify(payload, null, 2));
 
     this.companyService.updateCompany(payload).subscribe({
-      next: () =>
-        this.afterSuccessfulSave('Empresa actualizada correctamente.', this.editingCompany?.id ?? null),
+      next: () => this.afterSuccessfulSave('Empresa actualizada correctamente.'),
       error: (error) => {
         console.error('Error actualizando empresa:', error);
         console.error('Respuesta backend:', (error as { error?: unknown }).error);
@@ -309,8 +377,7 @@ export class CompanyMaintenanceComponent implements OnInit {
         this.isSaving = false;
         this.companyToCancel = null;
         this.successMessage = 'Empresa anulada correctamente.';
-        this.selectedCompanyId = null;
-        this.loadCompanies(null);
+        this.loadCompanies();
       },
       error: (error) => {
         this.isSaving = false;
@@ -323,12 +390,12 @@ export class CompanyMaintenanceComponent implements OnInit {
     return value || 'Sin registro';
   }
 
-  private afterSuccessfulSave(message: string, selectedCompanyId: number | null = null): void {
+  private afterSuccessfulSave(message: string): void {
     this.isSaving = false;
     this.modalOpen = false;
     this.editingCompany = null;
     this.successMessage = message;
-    this.loadCompanies(selectedCompanyId);
+    this.loadCompanies();
   }
 
   private handleSaveError(error: unknown, fallback: string): void {

@@ -24,109 +24,159 @@
   <div class="message success" *ngIf="successMessage">{{ successMessage }}</div>
   <div class="message error" *ngIf="errorMessage">{{ errorMessage }}</div>
 
-  <section class="selector-card">
-    <div class="selector-header">
-      <div>
-        <h2>Empresas registradas</h2>
-        <p>Seleccione una empresa para ver sus datos.</p>
-      </div>
+  <section class="metrics-grid">
+    <article class="metric-card">
+      <strong>{{ totalCompanies }}</strong>
+      <span>Total</span>
+    </article>
 
-      <button type="button" class="ghost-btn" (click)="loadCompanies()" [disabled]="isLoading">
+    <article class="metric-card active">
+      <strong>{{ activeCompanies }}</strong>
+      <span>Activas</span>
+    </article>
+
+    <article class="metric-card inactive">
+      <strong>{{ inactiveCompanies }}</strong>
+      <span>Inactivas</span>
+    </article>
+  </section>
+
+  <section class="table-card">
+    <div class="table-toolbar">
+      <label class="search-box">
+        <lucide-angular [img]="searchIcon" [size]="18" [strokeWidth]="2.3"></lucide-angular>
+        <input
+          type="search"
+          name="companySearch"
+          [(ngModel)]="searchTerm"
+          (ngModelChange)="onFiltersChange()"
+          placeholder="Buscar empresa..."
+          autocomplete="off"
+        />
+      </label>
+
+      <select
+        class="filter-select"
+        name="companyStatus"
+        [(ngModel)]="statusFilter"
+        (ngModelChange)="onFiltersChange()"
+      >
+        <option value="all">Todos los estados</option>
+        <option value="active">Activas</option>
+        <option value="inactive">Inactivas</option>
+      </select>
+
+      <button type="button" class="ghost-btn refresh-btn" (click)="loadCompanies()" [disabled]="isLoading">
         <lucide-angular [img]="refreshIcon" [size]="17" [strokeWidth]="2.3"></lucide-angular>
         Actualizar
       </button>
     </div>
 
-    <div class="selector-body">
-      <label class="select-field">
-        <span>Seleccione una empresa</span>
-        <select
-          name="selectedCompany"
-          [(ngModel)]="selectedCompanyId"
-          [disabled]="isLoading || !companies.length"
-        >
-          <option [ngValue]="null">Seleccione una empresa</option>
-          <option *ngFor="let company of companies" [ngValue]="company.id">
-            {{ company.code }} - {{ company.name }}
-          </option>
-        </select>
-      </label>
+    <div class="table-shell">
+      <table class="company-table">
+        <thead>
+          <tr>
+            <th>Codigo</th>
+            <th>Nombre</th>
+            <th>Telefono</th>
+            <th>Correo</th>
+            <th>Estado</th>
+            <th>Fecha creacion</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
 
-      <div class="empty-state" *ngIf="isLoading">Cargando empresas...</div>
+        <tbody>
+          <tr *ngIf="isLoading">
+            <td colspan="7" class="table-state">Cargando empresas...</td>
+          </tr>
 
-      <div class="empty-state" *ngIf="!isLoading && !companies.length">
-        No existen empresas registradas.
-      </div>
+          <tr *ngIf="!isLoading && !companies.length">
+            <td colspan="7" class="table-state">No existen empresas registradas.</td>
+          </tr>
 
-      <div class="empty-state" *ngIf="!isLoading && companies.length && !selectedCompany">
-        Seleccione una empresa para ver sus datos.
-      </div>
+          <tr *ngIf="!isLoading && companies.length && !filteredCompanies.length">
+            <td colspan="7" class="table-state">No se encontraron empresas con los filtros aplicados.</td>
+          </tr>
 
-      <article class="detail-card" *ngIf="selectedCompany as company">
-        <div class="detail-header">
-          <div>
-            <span class="eyebrow">Detalle</span>
-            <h2>{{ company.name }}</h2>
-          </div>
+          <tr *ngFor="let company of paginatedCompanies">
+            <td>
+              <span class="code-badge">{{ company.code }}</span>
+            </td>
+            <td>
+              <div class="company-name">
+                <span class="company-avatar">{{ getCompanyInitial(company) }}</span>
+                <strong>{{ company.name }}</strong>
+              </div>
+            </td>
+            <td>{{ company.phone || 'Sin registro' }}</td>
+            <td>
+              <span class="email-text">{{ company.email || 'Sin registro' }}</span>
+            </td>
+            <td>
+              <span class="status-pill" [class.canceled]="company.canceled">
+                {{ company.canceled ? 'Inactiva' : 'Activa' }}
+              </span>
+            </td>
+            <td>{{ formatDate(company.created_at) }}</td>
+            <td>
+              <div class="actions-cell">
+                <button
+                  type="button"
+                  class="icon-action"
+                  title="Editar empresa"
+                  aria-label="Editar empresa"
+                  (click)="openEditModal(company)"
+                >
+                  <lucide-angular [img]="editIcon" [size]="17" [strokeWidth]="2.3"></lucide-angular>
+                </button>
 
-          <span class="status-pill" [class.canceled]="company.canceled">
-            {{ company.canceled ? 'Anulada' : 'Activa' }}
-          </span>
-        </div>
-
-        <dl class="detail-list">
-          <div class="detail-row">
-            <dt>Codigo</dt>
-            <dd>{{ company.code }}</dd>
-          </div>
-          <div class="detail-row">
-            <dt>Nombre</dt>
-            <dd>{{ company.name }}</dd>
-          </div>
-          <div class="detail-row">
-            <dt>Telefono</dt>
-            <dd>{{ company.phone || 'Sin registro' }}</dd>
-          </div>
-          <div class="detail-row">
-            <dt>Correo</dt>
-            <dd>{{ company.email || 'Sin registro' }}</dd>
-          </div>
-          <div class="detail-row">
-            <dt>Sitio web</dt>
-            <dd>{{ company.website || 'Sin registro' }}</dd>
-          </div>
-          <div class="detail-row">
-            <dt>Estado</dt>
-            <dd>{{ company.canceled ? 'Anulada' : 'Activa' }}</dd>
-          </div>
-          <div class="detail-row">
-            <dt>Fecha creacion</dt>
-            <dd>{{ formatDate(company.created_at) }}</dd>
-          </div>
-          <div class="detail-row">
-            <dt>Fecha actualizacion</dt>
-            <dd>{{ formatDate(company.updated_at) }}</dd>
-          </div>
-        </dl>
-
-        <div class="detail-actions">
-          <button type="button" class="ghost-btn" (click)="openEditModal(company)">
-            <lucide-angular [img]="editIcon" [size]="17" [strokeWidth]="2.3"></lucide-angular>
-            Editar
-          </button>
-
-          <button
-            type="button"
-            class="danger-btn"
-            [disabled]="company.canceled"
-            (click)="askCancel(company)"
-          >
-            <lucide-angular [img]="trashIcon" [size]="17" [strokeWidth]="2.3"></lucide-angular>
-            Borrar
-          </button>
-        </div>
-      </article>
+                <button
+                  type="button"
+                  class="icon-action danger"
+                  title="Borrar empresa"
+                  aria-label="Borrar empresa"
+                  [disabled]="company.canceled"
+                  (click)="askCancel(company)"
+                >
+                  <lucide-angular [img]="trashIcon" [size]="17" [strokeWidth]="2.3"></lucide-angular>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
+
+    <footer class="pagination-bar">
+      <span>Mostrando {{ showingCount }} de {{ filteredCompanies.length }} empresas</span>
+
+      <div class="pagination-actions">
+        <button
+          type="button"
+          class="page-btn"
+          title="Pagina anterior"
+          aria-label="Pagina anterior"
+          [disabled]="currentPage === 1"
+          (click)="previousPage()"
+        >
+          <lucide-angular [img]="chevronLeftIcon" [size]="16" [strokeWidth]="2.5"></lucide-angular>
+        </button>
+
+        <strong>{{ currentPage }} / {{ totalPages }}</strong>
+
+        <button
+          type="button"
+          class="page-btn"
+          title="Pagina siguiente"
+          aria-label="Pagina siguiente"
+          [disabled]="currentPage === totalPages"
+          (click)="nextPage()"
+        >
+          <lucide-angular [img]="chevronRightIcon" [size]="16" [strokeWidth]="2.5"></lucide-angular>
+        </button>
+      </div>
+    </footer>
   </section>
 
   <div class="modal-backdrop" *ngIf="modalOpen">
