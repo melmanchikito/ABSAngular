@@ -1,0 +1,312 @@
+<section class="company-page">
+  <header class="page-header">
+    <div class="page-title">
+      <span class="eyebrow">Area del Sistema</span>
+
+      <div class="title-row">
+        <span class="title-icon">
+          <lucide-angular [img]="buildingIcon" [size]="22" [strokeWidth]="2.3"></lucide-angular>
+        </span>
+
+        <div>
+          <h1>Mantenimiento - Empresas</h1>
+          <p>Administra las empresas registradas en el sistema.</p>
+        </div>
+      </div>
+    </div>
+
+    <button type="button" class="primary-btn" (click)="openCreateModal()">
+      <lucide-angular [img]="addIcon" [size]="18" [strokeWidth]="2.4"></lucide-angular>
+      Nueva empresa
+    </button>
+  </header>
+
+  <div class="message success" *ngIf="successMessage">{{ successMessage }}</div>
+  <div class="message error" *ngIf="errorMessage">{{ errorMessage }}</div>
+
+  <section class="selector-card">
+    <div class="selector-header">
+      <div>
+        <h2>Empresas registradas</h2>
+        <p>Seleccione una empresa para ver sus datos.</p>
+      </div>
+
+      <button type="button" class="ghost-btn" (click)="loadCompanies()" [disabled]="isLoading">
+        <lucide-angular [img]="refreshIcon" [size]="17" [strokeWidth]="2.3"></lucide-angular>
+        Actualizar
+      </button>
+    </div>
+
+    <div class="selector-body">
+      <label class="select-field">
+        <span>Seleccione una empresa</span>
+        <select
+          name="selectedCompany"
+          [(ngModel)]="selectedCompanyId"
+          [disabled]="isLoading || !companies.length"
+        >
+          <option [ngValue]="null">Seleccione una empresa</option>
+          <option *ngFor="let company of companies" [ngValue]="company.id">
+            {{ company.code }} - {{ company.name }}
+          </option>
+        </select>
+      </label>
+
+      <div class="empty-state" *ngIf="isLoading">Cargando empresas...</div>
+
+      <div class="empty-state" *ngIf="!isLoading && !companies.length">
+        No existen empresas registradas.
+      </div>
+
+      <div class="empty-state" *ngIf="!isLoading && companies.length && !selectedCompany">
+        Seleccione una empresa para ver sus datos.
+      </div>
+
+      <article class="detail-card" *ngIf="selectedCompany as company">
+        <div class="detail-header">
+          <div>
+            <span class="eyebrow">Detalle</span>
+            <h2>{{ company.name }}</h2>
+          </div>
+
+          <span class="status-pill" [class.canceled]="company.canceled">
+            {{ company.canceled ? 'Anulada' : 'Activa' }}
+          </span>
+        </div>
+
+        <dl class="detail-list">
+          <div class="detail-row">
+            <dt>Codigo</dt>
+            <dd>{{ company.code }}</dd>
+          </div>
+          <div class="detail-row">
+            <dt>Nombre</dt>
+            <dd>{{ company.name }}</dd>
+          </div>
+          <div class="detail-row">
+            <dt>Telefono</dt>
+            <dd>{{ company.phone || 'Sin registro' }}</dd>
+          </div>
+          <div class="detail-row">
+            <dt>Correo</dt>
+            <dd>{{ company.email || 'Sin registro' }}</dd>
+          </div>
+          <div class="detail-row">
+            <dt>Sitio web</dt>
+            <dd>{{ company.website || 'Sin registro' }}</dd>
+          </div>
+          <div class="detail-row">
+            <dt>Estado</dt>
+            <dd>{{ company.canceled ? 'Anulada' : 'Activa' }}</dd>
+          </div>
+          <div class="detail-row">
+            <dt>Fecha creacion</dt>
+            <dd>{{ formatDate(company.created_at) }}</dd>
+          </div>
+          <div class="detail-row">
+            <dt>Fecha actualizacion</dt>
+            <dd>{{ formatDate(company.updated_at) }}</dd>
+          </div>
+        </dl>
+
+        <div class="detail-actions">
+          <button type="button" class="ghost-btn" (click)="openEditModal(company)">
+            <lucide-angular [img]="editIcon" [size]="17" [strokeWidth]="2.3"></lucide-angular>
+            Editar
+          </button>
+
+          <button
+            type="button"
+            class="danger-btn"
+            [disabled]="company.canceled"
+            (click)="askCancel(company)"
+          >
+            <lucide-angular [img]="trashIcon" [size]="17" [strokeWidth]="2.3"></lucide-angular>
+            Borrar
+          </button>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <div class="modal-backdrop" *ngIf="modalOpen">
+    <section class="modal-panel" role="dialog" aria-modal="true" [attr.aria-label]="modalTitle">
+      <header class="modal-header">
+        <div>
+          <span class="eyebrow">{{ modalMode === 'create' ? 'Crear' : 'Editar' }}</span>
+          <h2>{{ modalTitle }}</h2>
+        </div>
+
+        <button
+          type="button"
+          class="close-btn"
+          title="Cerrar"
+          aria-label="Cerrar"
+          (click)="closeModal()"
+          [disabled]="isSaving"
+        >
+          <lucide-angular [img]="closeIcon" [size]="18" [strokeWidth]="2.4"></lucide-angular>
+        </button>
+      </header>
+
+      <form class="company-form" (ngSubmit)="saveCompany()">
+        <label class="field" *ngIf="modalMode === 'create'">
+          <span>Codigo</span>
+          <input
+            type="text"
+            name="companyCode"
+            [(ngModel)]="companyForm.code"
+            placeholder="EMP-001"
+            autocomplete="off"
+            required
+          />
+        </label>
+
+        <label class="field" *ngIf="modalMode === 'create'">
+          <span>Nombre</span>
+          <input
+            type="text"
+            name="companyName"
+            [(ngModel)]="companyForm.name"
+            placeholder="Nombre de la empresa"
+            autocomplete="off"
+            required
+          />
+        </label>
+
+        <label class="field" *ngIf="modalMode === 'create'">
+          <span>Telefono</span>
+          <input
+            type="tel"
+            name="companyPhone"
+            [(ngModel)]="companyForm.phone"
+            placeholder="0999999999"
+            autocomplete="tel"
+            required
+          />
+        </label>
+
+        <label class="field" *ngIf="modalMode === 'create'">
+          <span>Email</span>
+          <input
+            type="email"
+            name="companyEmail"
+            [(ngModel)]="companyForm.email"
+            placeholder="empresa@correo.com"
+            autocomplete="email"
+            required
+          />
+        </label>
+
+        <label class="field" *ngIf="modalMode === 'create'">
+          <span>Sitio web</span>
+          <input
+            type="url"
+            name="companyWebsite"
+            [(ngModel)]="companyForm.website"
+            placeholder="https://empresa.com"
+            autocomplete="url"
+            required
+          />
+        </label>
+
+        <label class="field" *ngIf="modalMode === 'edit'">
+          <span>Codigo</span>
+          <input
+            type="text"
+            name="editCompanyCode"
+            [(ngModel)]="editCompanyForm.code"
+            placeholder="EMP-001"
+            autocomplete="off"
+            required
+          />
+        </label>
+
+        <label class="field" *ngIf="modalMode === 'edit'">
+          <span>Nombre</span>
+          <input
+            type="text"
+            name="editCompanyName"
+            [(ngModel)]="editCompanyForm.name"
+            placeholder="Nombre de la empresa"
+            autocomplete="off"
+            required
+          />
+        </label>
+
+        <label class="field" *ngIf="modalMode === 'edit'">
+          <span>Telefono</span>
+          <input
+            type="tel"
+            name="editCompanyPhone"
+            [(ngModel)]="editCompanyForm.phone"
+            placeholder="0999999999"
+            autocomplete="tel"
+            required
+          />
+        </label>
+
+        <label class="field" *ngIf="modalMode === 'edit'">
+          <span>Correo</span>
+          <input
+            type="email"
+            name="editCompanyEmail"
+            [(ngModel)]="editCompanyForm.email"
+            placeholder="empresa@correo.com"
+            autocomplete="email"
+            required
+          />
+        </label>
+
+        <div class="message error compact" *ngIf="formError">{{ formError }}</div>
+
+        <footer class="modal-actions">
+          <button type="button" class="ghost-btn" (click)="closeModal()" [disabled]="isSaving">
+            Cancelar
+          </button>
+
+          <button type="submit" class="primary-btn" [disabled]="isSaving">
+            {{ isSaving ? 'Guardando...' : 'Guardar' }}
+          </button>
+        </footer>
+      </form>
+    </section>
+  </div>
+
+  <div class="modal-backdrop" *ngIf="companyToCancel">
+    <section class="modal-panel confirm-panel" role="dialog" aria-modal="true" aria-label="Anular empresa">
+      <header class="modal-header">
+        <div>
+          <span class="eyebrow">Confirmacion</span>
+          <h2>Anular empresa</h2>
+        </div>
+
+        <button
+          type="button"
+          class="close-btn"
+          title="Cerrar"
+          aria-label="Cerrar"
+          (click)="closeCancelConfirm()"
+          [disabled]="isSaving"
+        >
+          <lucide-angular [img]="closeIcon" [size]="18" [strokeWidth]="2.4"></lucide-angular>
+        </button>
+      </header>
+
+      <p class="confirm-text">
+        Esta seguro de que desea borrar esta empresa? La empresa
+        <strong>{{ companyToCancel.name }}</strong> quedara anulada y no se eliminara fisicamente.
+      </p>
+
+      <footer class="modal-actions">
+        <button type="button" class="ghost-btn" (click)="closeCancelConfirm()" [disabled]="isSaving">
+          Cancelar
+        </button>
+
+        <button type="button" class="danger-btn" (click)="confirmCancel()" [disabled]="isSaving">
+          {{ isSaving ? 'Anulando...' : 'Anular empresa' }}
+        </button>
+      </footer>
+    </section>
+  </div>
+</section>

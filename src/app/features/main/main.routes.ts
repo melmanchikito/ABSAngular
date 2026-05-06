@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { MainLayoutComponent } from '../../shared/layouts/main-layout/main-layout.component';
+import { CompanyMaintenanceComponent } from '../system-area/pages/company-maintenance/company-maintenance.component';
 import { SystemAreaComponent } from '../system-area/pages/system-area/system-area.component';
 
 export const MAIN_ROUTES: Routes = [
@@ -31,6 +32,10 @@ export const MAIN_ROUTES: Routes = [
         path: 'area',
         redirectTo: 'area/sistema',
         pathMatch: 'full'
+      },
+      {
+        path: 'area/sistema/mantenimientos/empresas',
+        component: CompanyMaintenanceComponent
       },
       {
         path: 'area/:areaKey',

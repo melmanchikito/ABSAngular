@@ -46,7 +46,12 @@ const systemCategories: SystemAreaCategory[] = [
     icon: Wrench,
     description: 'Catálogos y parámetros del sistema',
     options: [
-      { label: 'Empresas', description: 'Administración de empresas registradas.', icon: Building2 },
+      {
+        label: 'Empresas',
+        description: 'Administración de empresas registradas.',
+        icon: Building2,
+        route: '/main/area/sistema/mantenimientos/empresas'
+      },
       { label: 'Entidades', description: 'Gestión de entidades relacionadas.', icon: Landmark },
       { label: 'Proveedores', description: 'Registro y control de proveedores.', icon: Handshake },
       { label: 'Ubicaciones', description: 'Configuración de ubicaciones físicas.', icon: MapPin },
