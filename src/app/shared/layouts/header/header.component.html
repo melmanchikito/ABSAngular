@@ -17,6 +17,102 @@
     </div>
 
     <div class="card_profile">
+      <div class="header-trays">
+        <div class="tray-wrap">
+          <button
+            type="button"
+            class="tray-btn"
+            title="Notificaciones"
+            aria-label="Notificaciones"
+            [class.active]="activePanel === 'notifications'"
+            (click)="togglePanel('notifications', $event)"
+          >
+            <lucide-angular [img]="notificationIcon" [size]="19" [strokeWidth]="2.35"></lucide-angular>
+            <span class="tray-badge" *ngIf="unreadNotifications">{{ unreadNotifications }}</span>
+          </button>
+
+          <section
+            class="tray-panel"
+            *ngIf="activePanel === 'notifications'"
+            (click)="keepPanelOpen($event)"
+          >
+            <header class="panel-head">
+              <div>
+                <h3>Notificaciones</h3>
+                <span>{{ unreadNotifications }} nuevas</span>
+              </div>
+            </header>
+
+            <div class="panel-list" *ngIf="notifications.length; else emptyNotifications">
+              <article
+                class="notification-item"
+                *ngFor="let notification of notifications"
+                [class.unread]="notification.unread"
+              >
+                <span class="item-icon">
+                  <lucide-angular [img]="notification.icon" [size]="17" [strokeWidth]="2.3"></lucide-angular>
+                </span>
+                <span class="item-content">
+                  <strong>{{ notification.title }}</strong>
+                  <small>{{ notification.description }}</small>
+                  <em>{{ notification.time }}</em>
+                </span>
+              </article>
+            </div>
+
+            <ng-template #emptyNotifications>
+              <div class="panel-empty">No tienes notificaciones.</div>
+            </ng-template>
+
+            <button type="button" class="panel-action">Ver todas</button>
+          </section>
+        </div>
+
+        <div class="tray-wrap">
+          <button
+            type="button"
+            class="tray-btn"
+            title="Cumpleaños"
+            aria-label="Cumpleaños"
+            [class.active]="activePanel === 'birthdays'"
+            (click)="togglePanel('birthdays', $event)"
+          >
+            <lucide-angular [img]="birthdayIcon" [size]="19" [strokeWidth]="2.35"></lucide-angular>
+            <span class="tray-badge" *ngIf="todayBirthdays">{{ todayBirthdays }}</span>
+          </button>
+
+          <section
+            class="tray-panel"
+            *ngIf="activePanel === 'birthdays'"
+            (click)="keepPanelOpen($event)"
+          >
+            <header class="panel-head">
+              <div>
+                <h3>Cumpleaños</h3>
+                <span>{{ todayBirthdays }} hoy</span>
+              </div>
+            </header>
+
+            <div class="panel-list" *ngIf="birthdays.length; else emptyBirthdays">
+              <article class="birthday-item" *ngFor="let birthday of birthdays">
+                <span class="birthday-avatar">{{ getInitial(birthday.name) }}</span>
+                <span class="item-content">
+                  <strong>{{ birthday.name }}</strong>
+                  <small>{{ birthday.area }}</small>
+                  <em>{{ birthday.dateLabel }}</em>
+                </span>
+              </article>
+            </div>
+
+            <ng-template #emptyBirthdays>
+              <div class="panel-empty">No hay cumpleaños para mostrar.</div>
+            </ng-template>
+
+            <button type="button" class="panel-action">Ver calendario</button>
+          </section>
+        </div>
+      </div>
+
       <div class="user-box">
         <img
           [src]="displayImage"
