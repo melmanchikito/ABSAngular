@@ -55,7 +55,12 @@ const systemCategories: SystemAreaCategory[] = [
       },
       { label: 'Entidades', description: 'Gestión de entidades relacionadas.', icon: Landmark },
       { label: 'Proveedores', description: 'Registro y control de proveedores.', icon: Handshake },
-      { label: 'Ubicaciones', description: 'Configuración de ubicaciones físicas.', icon: MapPin },
+      {
+        label: 'Ubicaciones',
+        description: 'Configuración de ubicaciones físicas.',
+        icon: MapPin,
+        route: '/main/area/sistema/help-desk/mantenimientos/ubicaciones'
+      },
       { label: 'Tipos de equipos', description: 'Clasificación de equipos.', icon: HardDrive },
       { label: 'Grupos', description: 'Agrupación de elementos del sistema.', icon: Boxes },
       { label: 'Marcas', description: 'Mantenimiento de marcas.', icon: Tags },

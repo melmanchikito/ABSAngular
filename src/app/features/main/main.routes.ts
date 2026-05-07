@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { MainLayoutComponent } from '../../shared/layouts/main-layout/main-layout.component';
 import { CompanyMaintenanceComponent } from '../system-area/pages/company-maintenance/company-maintenance.component';
+import { LocationMaintenanceComponent } from '../system-area/pages/location-maintenance/location-maintenance.component';
 import { SystemAreaComponent } from '../system-area/pages/system-area/system-area.component';
 
 export const MAIN_ROUTES: Routes = [
@@ -43,8 +44,17 @@ export const MAIN_ROUTES: Routes = [
         component: CompanyMaintenanceComponent
       },
       {
+        path: 'area/sistema/help-desk/mantenimientos/ubicaciones',
+        component: LocationMaintenanceComponent
+      },
+      {
         path: 'area/sistema/mantenimientos/empresas',
         redirectTo: 'area/sistema/help-desk/mantenimientos/empresas',
+        pathMatch: 'full'
+      },
+      {
+        path: 'area/sistema/mantenimientos/ubicaciones',
+        redirectTo: 'area/sistema/help-desk/mantenimientos/ubicaciones',
         pathMatch: 'full'
       },
       {

@@ -1,0 +1,392 @@
+<section class="location-page">
+  <header class="page-header">
+    <div class="page-title">
+      <span class="eyebrow">Area del Sistema</span>
+
+      <div class="title-row">
+        <span class="title-icon">
+          <lucide-angular [img]="mapIcon" [size]="22" [strokeWidth]="2.3"></lucide-angular>
+        </span>
+
+        <div>
+          <h1>Mantenimiento - Ubicaciones</h1>
+          <p>Administra las ubicaciones fisicas registradas en el sistema.</p>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="message success" *ngIf="successMessage">{{ successMessage }}</div>
+  <div class="message error" *ngIf="errorMessage">{{ errorMessage }}</div>
+
+  <section class="actions-bar">
+    <label class="search-box">
+      <lucide-angular [img]="searchIcon" [size]="18" [strokeWidth]="2.3"></lucide-angular>
+      <input
+        type="search"
+        name="locationSearch"
+        [(ngModel)]="searchTerm"
+        (ngModelChange)="onFiltersChange()"
+        placeholder="Buscar por codigo, nombre o direccion..."
+        autocomplete="off"
+      />
+    </label>
+
+    <div class="filter-pills" aria-label="Filtro por estado">
+      <button
+        type="button"
+        class="filter-pill"
+        [class.active]="statusFilter === 'all'"
+        (click)="setStatusFilter('all')"
+      >
+        Todas
+      </button>
+      <button
+        type="button"
+        class="filter-pill"
+        [class.active]="statusFilter === 'active'"
+        (click)="setStatusFilter('active')"
+      >
+        Activas
+      </button>
+      <button
+        type="button"
+        class="filter-pill"
+        [class.active]="statusFilter === 'inactive'"
+        (click)="setStatusFilter('inactive')"
+      >
+        Inactivas
+      </button>
+    </div>
+
+    <button type="button" class="primary-btn new-btn" (click)="openCreateModal()">
+      <lucide-angular [img]="addIcon" [size]="18" [strokeWidth]="2.4"></lucide-angular>
+      Nueva
+    </button>
+  </section>
+
+  <section class="content-grid">
+    <article class="list-panel">
+      <header class="panel-header">
+        <div>
+          <span class="eyebrow">Listado</span>
+          <h2>Ubicaciones</h2>
+        </div>
+        <span class="counter">{{ filteredLocations.length }} registros</span>
+      </header>
+
+      <div class="location-list">
+        <div class="empty-state" *ngIf="isLoading">Cargando ubicaciones...</div>
+
+        <div class="empty-state" *ngIf="!isLoading && !locations.length">
+          No existen ubicaciones registradas.
+        </div>
+
+        <div class="empty-state" *ngIf="!isLoading && locations.length && !filteredLocations.length">
+          No se encontraron ubicaciones con los filtros aplicados.
+        </div>
+
+        <button
+          *ngFor="let location of paginatedLocations"
+          type="button"
+          class="location-item"
+          [class.selected]="selectedLocationId === location.id"
+          (click)="selectLocation(location)"
+        >
+          <span class="location-avatar">{{ getLocationInitial(location) }}</span>
+
+          <span class="location-content">
+            <span class="location-main">
+              <strong>{{ location.name }}</strong>
+              <span class="status-pill" [class.canceled]="location.canceled">
+                {{ location.canceled ? 'Inactiva' : 'Activa' }}
+              </span>
+            </span>
+
+            <small>{{ location.address || 'Sin direccion registrada' }}</small>
+            <span class="location-meta">
+              <span>{{ location.code }}</span>
+              <span>{{ formatDate(location.created_at) }}</span>
+            </span>
+
+            <span class="item-actions">
+              <button
+                type="button"
+                class="mini-action"
+                title="Editar ubicacion"
+                aria-label="Editar ubicacion"
+                (click)="$event.stopPropagation(); openEditModal(location)"
+              >
+                <lucide-angular [img]="editIcon" [size]="16" [strokeWidth]="2.3"></lucide-angular>
+              </button>
+
+              <button
+                type="button"
+                class="mini-action danger"
+                title="Borrar ubicacion"
+                aria-label="Borrar ubicacion"
+                [disabled]="location.canceled"
+                (click)="$event.stopPropagation(); askCancel(location)"
+              >
+                <lucide-angular [img]="trashIcon" [size]="16" [strokeWidth]="2.3"></lucide-angular>
+              </button>
+            </span>
+          </span>
+        </button>
+      </div>
+
+      <footer class="pagination-bar">
+        <span>Mostrando {{ showingCount }} de {{ filteredLocations.length }} ubicaciones</span>
+
+        <div class="pagination-actions">
+          <button
+            type="button"
+            class="page-btn"
+            title="Pagina anterior"
+            aria-label="Pagina anterior"
+            [disabled]="currentPage === 1"
+            (click)="previousPage()"
+          >
+            <lucide-angular [img]="chevronLeftIcon" [size]="16" [strokeWidth]="2.5"></lucide-angular>
+          </button>
+
+          <strong>{{ currentPage }} / {{ totalPages }}</strong>
+
+          <button
+            type="button"
+            class="page-btn"
+            title="Pagina siguiente"
+            aria-label="Pagina siguiente"
+            [disabled]="currentPage === totalPages"
+            (click)="nextPage()"
+          >
+            <lucide-angular [img]="chevronRightIcon" [size]="16" [strokeWidth]="2.5"></lucide-angular>
+          </button>
+        </div>
+      </footer>
+    </article>
+
+    <aside class="detail-panel">
+      <ng-container *ngIf="selectedLocation as location; else emptyDetail">
+        <div class="detail-hero">
+          <span class="detail-avatar">{{ getLocationInitial(location) }}</span>
+          <div>
+            <span class="eyebrow">Detalle ubicacion</span>
+            <h2>{{ location.name }}</h2>
+            <p>{{ location.address }}</p>
+          </div>
+        </div>
+
+        <dl class="detail-list">
+          <div>
+            <dt>Estado</dt>
+            <dd>
+              <span class="status-pill" [class.canceled]="location.canceled">
+                {{ location.canceled ? 'Inactiva' : 'Activa' }}
+              </span>
+            </dd>
+          </div>
+          <div>
+            <dt>Codigo</dt>
+            <dd>{{ location.code }}</dd>
+          </div>
+          <div>
+            <dt>Fecha creacion</dt>
+            <dd>{{ formatDate(location.created_at) }}</dd>
+          </div>
+          <div>
+            <dt>Hora</dt>
+            <dd>{{ formatTime(location.created_at) }}</dd>
+          </div>
+          <div>
+            <dt>Actualizacion</dt>
+            <dd>{{ formatDate(location.updated_at) }}</dd>
+          </div>
+        </dl>
+
+        <div class="detail-actions">
+          <button type="button" class="ghost-btn" (click)="openEditModal(location)">
+            <lucide-angular [img]="editIcon" [size]="17" [strokeWidth]="2.3"></lucide-angular>
+            Editar
+          </button>
+
+          <button
+            type="button"
+            class="danger-btn"
+            [disabled]="location.canceled"
+            (click)="askCancel(location)"
+          >
+            <lucide-angular [img]="trashIcon" [size]="17" [strokeWidth]="2.3"></lucide-angular>
+            Borrar
+          </button>
+        </div>
+      </ng-container>
+
+      <ng-template #emptyDetail>
+        <div class="empty-detail">
+          Seleccione una ubicacion para ver sus datos.
+        </div>
+      </ng-template>
+    </aside>
+  </section>
+
+  <section class="map-section">
+    <header class="panel-header">
+      <div>
+        <span class="eyebrow">Mapa Leaflet</span>
+        <h2>Referencia visual</h2>
+      </div>
+      <span class="map-note">Centro: Guayaquil</span>
+    </header>
+
+    <div #locationsMap id="locationsMap" class="map-view"></div>
+  </section>
+
+  <div class="modal-backdrop" *ngIf="modalOpen">
+    <section class="modal-panel" role="dialog" aria-modal="true" [attr.aria-label]="modalTitle">
+      <header class="modal-header">
+        <div>
+          <span class="eyebrow">{{ modalMode === 'create' ? 'Crear' : 'Editar' }}</span>
+          <h2>{{ modalTitle }}</h2>
+        </div>
+
+        <button
+          type="button"
+          class="close-btn"
+          title="Cerrar"
+          aria-label="Cerrar"
+          (click)="closeModal()"
+          [disabled]="isSaving"
+        >
+          <lucide-angular [img]="closeIcon" [size]="18" [strokeWidth]="2.4"></lucide-angular>
+        </button>
+      </header>
+
+      <form class="location-form" (ngSubmit)="saveLocation()">
+        <label class="field" *ngIf="modalMode === 'create'">
+          <span>Codigo</span>
+          <input
+            type="text"
+            name="locationCode"
+            [(ngModel)]="locationForm.code"
+            placeholder="DEP-001"
+            autocomplete="off"
+            required
+          />
+        </label>
+
+        <label class="field" *ngIf="modalMode === 'edit'">
+          <span>Codigo</span>
+          <input type="text" name="editLocationCode" [(ngModel)]="editLocationForm.code" readonly />
+        </label>
+
+        <label class="field" *ngIf="modalMode === 'create'">
+          <span>Nombre</span>
+          <input
+            type="text"
+            name="locationName"
+            [(ngModel)]="locationForm.name"
+            placeholder="Administracion"
+            autocomplete="off"
+            required
+          />
+        </label>
+
+        <label class="field" *ngIf="modalMode === 'edit'">
+          <span>Nombre</span>
+          <input
+            type="text"
+            name="editLocationName"
+            [(ngModel)]="editLocationForm.name"
+            placeholder="Administracion"
+            autocomplete="off"
+            required
+          />
+        </label>
+
+        <label class="field" *ngIf="modalMode === 'create'">
+          <span>Direccion</span>
+          <textarea
+            name="locationAddress"
+            [(ngModel)]="locationForm.address"
+            placeholder="Calle Falsa 123"
+            rows="3"
+            required
+          ></textarea>
+        </label>
+
+        <label class="field" *ngIf="modalMode === 'edit'">
+          <span>Direccion</span>
+          <textarea
+            name="editLocationAddress"
+            [(ngModel)]="editLocationForm.address"
+            placeholder="Calle Falsa 123"
+            rows="3"
+            required
+          ></textarea>
+        </label>
+
+        <div class="form-map-block">
+          <div class="form-map-header">
+            <div>
+              <strong>Punto visual en mapa</strong>
+              <small>Este punto no se envia al backend.</small>
+            </div>
+            <span>{{ formatPoint(formPoint) }}</span>
+          </div>
+
+          <div #formMap class="form-map"></div>
+        </div>
+
+        <div class="message error compact" *ngIf="formError">{{ formError }}</div>
+
+        <footer class="modal-actions">
+          <button type="button" class="ghost-btn" (click)="closeModal()" [disabled]="isSaving">
+            Cancelar
+          </button>
+
+          <button type="submit" class="primary-btn" [disabled]="isSaving">
+            {{ isSaving ? 'Guardando...' : 'Guardar' }}
+          </button>
+        </footer>
+      </form>
+    </section>
+  </div>
+
+  <div class="modal-backdrop" *ngIf="locationToCancel">
+    <section class="modal-panel confirm-panel" role="dialog" aria-modal="true" aria-label="Anular ubicacion">
+      <header class="modal-header">
+        <div>
+          <span class="eyebrow">Confirmacion</span>
+          <h2>Anular ubicacion</h2>
+        </div>
+
+        <button
+          type="button"
+          class="close-btn"
+          title="Cerrar"
+          aria-label="Cerrar"
+          (click)="closeCancelConfirm()"
+          [disabled]="isSaving"
+        >
+          <lucide-angular [img]="closeIcon" [size]="18" [strokeWidth]="2.4"></lucide-angular>
+        </button>
+      </header>
+
+      <p class="confirm-text">
+        Esta seguro de que desea borrar esta ubicacion?
+        <strong>{{ locationToCancel.name }}</strong> quedara anulada y no se eliminara fisicamente.
+      </p>
+
+      <footer class="modal-actions">
+        <button type="button" class="ghost-btn" (click)="closeCancelConfirm()" [disabled]="isSaving">
+          Cancelar
+        </button>
+
+        <button type="button" class="danger-btn" (click)="confirmCancel()" [disabled]="isSaving">
+          {{ isSaving ? 'Anulando...' : 'Anular ubicacion' }}
+        </button>
+      </footer>
+    </section>
+  </div>
+</section>

@@ -13,7 +13,7 @@ export class SessionTimeoutAlertComponent implements OnInit, OnDestroy {
   private readonly idleLimitMs = 10 * 60 * 1000;
   //private readonly idleLimitMs = 10 * 1000;
   private readonly warningLimitSeconds = 5 * 60;
-  //private readonly warningLimitSeconds = 15;
+  //private readonly warningLimitSeconds = 60;
 
   private idleTimer: ReturnType<typeof setTimeout> | null = null;
   private countdownTimer: ReturnType<typeof setInterval> | null = null;
