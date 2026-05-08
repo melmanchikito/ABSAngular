@@ -1,5 +1,7 @@
 import { Routes } from '@angular/router';
 import { MainLayoutComponent } from '../../shared/layouts/main-layout/main-layout.component';
+import { HomeComponent } from '../home/pages/home/home.component';
+import { MailComponent } from '../mail/pages/mail/mail.component';
 import { CompanyMaintenanceComponent } from '../system-area/pages/company-maintenance/company-maintenance.component';
 import { LocationMaintenanceComponent } from '../system-area/pages/location-maintenance/location-maintenance.component';
 import { SystemAreaComponent } from '../system-area/pages/system-area/system-area.component';
@@ -11,13 +13,26 @@ export const MAIN_ROUTES: Routes = [
     children: [
       {
         path: '',
-        redirectTo: 'helpdesk',
+        redirectTo: 'home',
+        pathMatch: 'full'
+      },
+      {
+        path: 'home',
+        component: HomeComponent
+      },
+      {
+        path: 'inicio',
+        redirectTo: 'home',
         pathMatch: 'full'
       },
       {
         path: 'helpdesk',
         loadChildren: () =>
           import('../helpdesk/helpdesk.routes').then((m) => m.HELPDESK_ROUTES)
+      },
+      {
+        path: 'correo',
+        component: MailComponent
       },
       {
         path: 'profile',

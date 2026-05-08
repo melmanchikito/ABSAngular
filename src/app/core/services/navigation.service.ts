@@ -19,6 +19,10 @@ export class NavigationService {
     return this.goToAreaSubmodule('sistema', 'configuracion');
   }
 
+  goToHome(): Promise<boolean> {
+    return this.router.navigate([APP_ROUTES.home]);
+  }
+
   goToArea(area: SystemAreaKey): Promise<boolean> {
     return this.router.navigate([APP_ROUTES.area, area]);
   }
@@ -42,7 +46,7 @@ export class NavigationService {
   }
 
   goToMain(): Promise<boolean> {
-    return this.router.navigate([APP_ROUTES.main]);
+    return this.goToHome();
   }
 
   goToHelpdesk(): Promise<boolean> {
@@ -51,5 +55,9 @@ export class NavigationService {
 
   goToProfile(): Promise<boolean> {
     return this.router.navigate([APP_ROUTES.profile]);
+  }
+
+  goToMail(): Promise<boolean> {
+    return this.router.navigate([APP_ROUTES.mail]);
   }
 }

@@ -7,9 +7,9 @@ import {
   CircleDollarSign,
   LogOut,
   LucideAngularModule,
+  Mail,
   MonitorCog,
   Package,
-  UserRound,
   Users
 } from 'lucide-angular';
 import { filter } from 'rxjs';
@@ -51,7 +51,7 @@ export class SidebarComponent {
   expandedArea: string | null = null;
 
   readonly chevronRightIcon = ChevronRight;
-  readonly profileIcon = UserRound;
+  readonly mailIcon = Mail;
   readonly logoutIcon = LogOut;
 
   readonly areas: SidebarArea[] = [
@@ -168,13 +168,13 @@ export class SidebarComponent {
     }
   }
 
-  goToProfile(): void {
-    this.activeArea = 'Perfil';
+  goToMail(): void {
+    this.activeArea = 'Correo';
     this.activeChild = null;
     this.expandedArea = null;
-    this.selectSection.emit('Perfil');
+    this.selectSection.emit('Correo');
 
-    void this.navigationService.goToProfile();
+    void this.navigationService.goToMail();
   }
 
   async logout(): Promise<void> {
@@ -219,6 +219,13 @@ export class SidebarComponent {
         this.activeChild = 'Help Desk';
       }
 
+      return;
+    }
+
+    if (normalizedUrl.startsWith('/main/correo')) {
+      this.activeArea = 'Correo';
+      this.activeChild = null;
+      this.expandedArea = null;
       return;
     }
   }

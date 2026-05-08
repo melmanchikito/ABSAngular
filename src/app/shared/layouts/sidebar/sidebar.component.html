@@ -52,23 +52,23 @@
 
         <li
           class="item"
-          [class.active]="activeArea === 'Perfil'"
-          (click)="goToProfile()"
-          [title]="collapsed ? 'Perfil' : ''"
+          [class.active]="activeArea === 'Correo'"
+          (click)="goToMail()"
+          [title]="collapsed ? 'Correo' : ''"
         >
           <lucide-angular
             class="icon"
-            [img]="profileIcon"
+            [img]="mailIcon"
             [size]="18"
             [strokeWidth]="2.2"
           ></lucide-angular>
-          <span class="item-text">Perfil</span>
+          <span class="item-text">Correo</span>
         </li>
 
         <li
           class="item"
           (click)="logout()"
-          [title]="collapsed ? 'Cerrar Sesión' : ''"
+          [title]="collapsed ? 'Cerrar sesion' : ''"
         >
           <lucide-angular
             class="icon"
@@ -76,7 +76,7 @@
             [size]="18"
             [strokeWidth]="2.2"
           ></lucide-angular>
-          <span class="item-text">Cerrar Sesión</span>
+          <span class="item-text">Cerrar sesion</span>
         </li>
       </ul>
     </nav>

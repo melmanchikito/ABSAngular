@@ -4,16 +4,22 @@ import {
   Bell,
   Cake,
   CheckCircle2,
+  ChevronDown,
   ClipboardList,
+  LogOut,
   LucideAngularModule,
+  Mail,
   Search,
   Settings,
+  UserRound,
   Wifi,
   WifiOff,
   EthernetPort
 } from 'lucide-angular';
 import { Subscription } from 'rxjs';
 import { ProfileImageService } from '../../../features/profile/services/profile-image.service';
+import { NavigationService } from '../../../core/services/navigation.service';
+import { AuthApiService } from '../../../features/auth/services/auth-api.service';
 
 interface BrowserNetworkInformation {
   type?: string;
@@ -23,7 +29,7 @@ interface NavigatorWithConnection extends Navigator {
   connection?: BrowserNetworkInformation;
 }
 
-type HeaderPanel = 'notifications' | 'birthdays' | null;
+type HeaderPanel = 'notifications' | 'birthdays' | 'user' | null;
 
 interface HeaderNotification {
   title: string;
@@ -56,6 +62,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
   searchIcon = Search;
   notificationIcon = Bell;
   birthdayIcon = Cake;
+  chevronIcon = ChevronDown;
+  logoutIcon = LogOut;
+  mailIcon = Mail;
+  userIcon = UserRound;
   activePanel: HeaderPanel = null;
 
   profileImageUrl: string | null = null;
@@ -100,6 +110,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
   private imageSubscription?: Subscription;
 
   constructor(
+    private readonly authApiService: AuthApiService,
+    private readonly navigationService: NavigationService,
     private readonly profileImageService: ProfileImageService
   ) {}
 
@@ -150,6 +162,24 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   getInitial(name: string): string {
     return name.trim().charAt(0).toUpperCase();
+  }
+
+  goToProfile(event: MouseEvent): void {
+    event.stopPropagation();
+    this.activePanel = null;
+    void this.navigationService.goToProfile();
+  }
+
+  goToMail(event: MouseEvent): void {
+    event.stopPropagation();
+    this.activePanel = null;
+    void this.navigationService.goToMail();
+  }
+
+  async logout(event: MouseEvent): Promise<void> {
+    event.stopPropagation();
+    this.activePanel = null;
+    await this.authApiService.handleLogout();
   }
 
   updateNetworkStatus = (): void => {

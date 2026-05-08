@@ -11,7 +11,7 @@
 
         <input
           type="text"
-          placeholder="¿Qué estás buscando?"
+          placeholder="Que estas buscando?"
         />
       </div>
     </div>
@@ -72,8 +72,8 @@
           <button
             type="button"
             class="tray-btn"
-            title="Cumpleaños"
-            aria-label="Cumpleaños"
+            title="Cumpleanos"
+            aria-label="Cumpleanos"
             [class.active]="activePanel === 'birthdays'"
             (click)="togglePanel('birthdays', $event)"
           >
@@ -88,7 +88,7 @@
           >
             <header class="panel-head">
               <div>
-                <h3>Cumpleaños</h3>
+                <h3>Cumpleanos</h3>
                 <span>{{ todayBirthdays }} hoy</span>
               </div>
             </header>
@@ -105,7 +105,7 @@
             </div>
 
             <ng-template #emptyBirthdays>
-              <div class="panel-empty">No hay cumpleaños para mostrar.</div>
+              <div class="panel-empty">No hay cumpleanos para mostrar.</div>
             </ng-template>
 
             <button type="button" class="panel-action">Ver calendario</button>
@@ -113,18 +113,63 @@
         </div>
       </div>
 
-      <div class="user-box">
-        <img
-          [src]="displayImage"
-          alt="Foto de perfil"
-          class="image"
-        />
+      <div class="user-wrap">
+        <button
+          type="button"
+          class="user-box"
+          [class.active]="activePanel === 'user'"
+          aria-label="Menu de usuario"
+          (click)="togglePanel('user', $event)"
+        >
+          <img
+            [src]="displayImage"
+            alt="Foto de perfil"
+            class="image"
+          />
 
-        <div class="card_text">
-          <p class="username">
-            {{ username || 'Usuario' }}
-          </p>
-        </div>
+          <div class="card_text">
+            <p class="username">
+              {{ username || 'Usuario' }}
+            </p>
+          </div>
+
+          <lucide-angular
+            class="user-chevron"
+            [class.open]="activePanel === 'user'"
+            [img]="chevronIcon"
+            [size]="16"
+            [strokeWidth]="2.5"
+          ></lucide-angular>
+        </button>
+
+        <section
+          class="user-menu"
+          *ngIf="activePanel === 'user'"
+          (click)="keepPanelOpen($event)"
+        >
+          <header class="user-menu-head">
+            <img [src]="displayImage" alt="Foto de perfil" class="menu-image" />
+            <div>
+              <strong>{{ username || 'Usuario' }}</strong>
+              <small>Cuenta ABS</small>
+            </div>
+          </header>
+
+          <button type="button" class="user-menu-item" (click)="goToProfile($event)">
+            <lucide-angular [img]="userIcon" [size]="17" [strokeWidth]="2.3"></lucide-angular>
+            Perfil
+          </button>
+
+          <button type="button" class="user-menu-item" (click)="goToMail($event)">
+            <lucide-angular [img]="mailIcon" [size]="17" [strokeWidth]="2.3"></lucide-angular>
+            Correo
+          </button>
+
+          <button type="button" class="user-menu-item danger" (click)="logout($event)">
+            <lucide-angular [img]="logoutIcon" [size]="17" [strokeWidth]="2.3"></lucide-angular>
+            Cerrar sesion
+          </button>
+        </section>
       </div>
 
       <div

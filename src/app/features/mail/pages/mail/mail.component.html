@@ -1,0 +1,53 @@
+<section class="mail-page page-shell">
+  <header class="mail-header">
+    <div>
+      <span class="eyebrow">Correo</span>
+      <h1>Bandeja de correo</h1>
+      <p>Vista preparada para centralizar mensajes y comunicaciones internas.</p>
+    </div>
+
+    <span class="header-icon">
+      <lucide-angular [img]="mailIcon" [size]="23" [strokeWidth]="2.4"></lucide-angular>
+    </span>
+  </header>
+
+  <section class="mail-grid">
+    <article class="mail-card">
+      <span class="mail-icon">
+        <lucide-angular [img]="inboxIcon" [size]="20" [strokeWidth]="2.4"></lucide-angular>
+      </span>
+      <div>
+        <strong>Entrada</strong>
+        <small>Mensajes recibidos y avisos del sistema.</small>
+      </div>
+    </article>
+
+    <article class="mail-card">
+      <span class="mail-icon">
+        <lucide-angular [img]="sendIcon" [size]="20" [strokeWidth]="2.4"></lucide-angular>
+      </span>
+      <div>
+        <strong>Enviados</strong>
+        <small>Comunicaciones emitidas desde ABS.</small>
+      </div>
+    </article>
+  </section>
+
+  <section class="mail-panel">
+    <header>
+      <h2>Mensajes recientes</h2>
+      <span>{{ messages.length }} items</span>
+    </header>
+
+    <article class="message-item" *ngFor="let message of messages">
+      <span class="mail-icon">
+        <lucide-angular [img]="mailIcon" [size]="18" [strokeWidth]="2.35"></lucide-angular>
+      </span>
+      <div>
+        <strong>{{ message.title }}</strong>
+        <small>{{ message.detail }}</small>
+      </div>
+      <em>{{ message.time }}</em>
+    </article>
+  </section>
+</section>

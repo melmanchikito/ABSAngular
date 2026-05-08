@@ -262,6 +262,10 @@
   background: color-mix(in srgb, var(--abs-primary) 13%, var(--abs-surface));
 }
 
+.user-wrap {
+  position: relative;
+}
+
 .user-box {
   display: flex;
   align-items: center;
@@ -270,12 +274,113 @@
   padding: 0.25rem 0.55rem 0.25rem 0.25rem;
   border-radius: 999px;
   border: 1.5px solid transparent;
+  background: transparent;
+  color: var(--abs-text);
+  cursor: pointer;
+  font: inherit;
   transition: all 0.22s ease;
 }
 
-.user-box:hover {
+.user-box:hover,
+.user-box.active {
   background: color-mix(in srgb, var(--abs-surface-soft) 75%, transparent);
   border-color: color-mix(in srgb, var(--abs-border) 80%, transparent);
+}
+
+.user-chevron {
+  color: var(--abs-text-muted);
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.user-chevron.open {
+  color: var(--abs-primary);
+  transform: rotate(180deg);
+}
+
+.user-menu {
+  position: absolute;
+  top: calc(100% + 0.7rem);
+  right: 0;
+  z-index: 55;
+  width: min(260px, calc(100vw - 1.5rem));
+  overflow: hidden;
+  border-radius: 16px;
+  border: 1.5px solid color-mix(in srgb, var(--abs-border) 88%, #6b7280);
+  background: color-mix(in srgb, var(--abs-surface) 96%, var(--abs-bg));
+  color: var(--abs-text);
+  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.2);
+  animation: trayIn 0.18s ease;
+}
+
+.user-menu-head {
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr);
+  gap: 0.75rem;
+  align-items: center;
+  padding: 1rem;
+  border-bottom: 1.5px solid color-mix(in srgb, var(--abs-border) 82%, transparent);
+}
+
+.menu-image {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1.5px solid color-mix(in srgb, var(--abs-border) 80%, transparent);
+}
+
+.user-menu-head strong,
+.user-menu-head small {
+  display: block;
+}
+
+.user-menu-head strong {
+  overflow: hidden;
+  color: var(--abs-text);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.user-menu-head small {
+  margin-top: 0.18rem;
+  color: var(--abs-text-muted);
+  font-weight: 800;
+}
+
+.user-menu-item {
+  width: 100%;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0 1rem;
+  border: 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--abs-border) 68%, transparent);
+  background: transparent;
+  color: var(--abs-text);
+  cursor: pointer;
+  font: inherit;
+  font-weight: 800;
+  text-align: left;
+  transition: all 0.2s ease;
+}
+
+.user-menu-item:last-child {
+  border-bottom: 0;
+}
+
+.user-menu-item:hover {
+  background: color-mix(in srgb, var(--abs-primary) 9%, var(--abs-surface));
+  color: var(--abs-primary);
+}
+
+.user-menu-item.danger {
+  color: color-mix(in srgb, var(--abs-error) 86%, var(--abs-text));
+}
+
+.user-menu-item.danger:hover {
+  background: color-mix(in srgb, var(--abs-error) 11%, var(--abs-surface));
+  color: var(--abs-error);
 }
 
 .image {
@@ -342,7 +447,8 @@
 }
 
 :host-context([data-theme='dark']) .tray-btn,
-:host-context([data-theme='dark']) .tray-panel {
+:host-context([data-theme='dark']) .tray-panel,
+:host-context([data-theme='dark']) .user-menu {
   border-color: #47576b;
   box-shadow: 0 14px 34px rgba(0, 0, 0, 0.34);
 }
@@ -412,6 +518,10 @@
     display: none;
   }
 
+  .user-chevron {
+    display: none;
+  }
+
   .network-box {
     width: 38px;
     min-width: 38px;
@@ -434,6 +544,14 @@
   }
 
   .tray-panel {
+    position: fixed;
+    top: 126px;
+    left: 0.75rem;
+    right: 0.75rem;
+    width: auto;
+  }
+
+  .user-menu {
     position: fixed;
     top: 126px;
     left: 0.75rem;
@@ -470,6 +588,11 @@
   }
 
   .tray-panel {
+    left: 0.6rem;
+    right: 0.6rem;
+  }
+
+  .user-menu {
     left: 0.6rem;
     right: 0.6rem;
   }
