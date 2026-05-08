@@ -1,7 +1,7 @@
-<section class="location-page">
+<section class="location-page page-shell">
   <header class="page-header">
     <div class="page-title">
-      <span class="eyebrow">Area del Sistema</span>
+      <span class="eyebrow">Sistema</span>
 
       <div class="title-row">
         <span class="title-icon">
@@ -16,10 +16,10 @@
     </div>
   </header>
 
-  <div class="message success" *ngIf="successMessage">{{ successMessage }}</div>
-  <div class="message error" *ngIf="errorMessage">{{ errorMessage }}</div>
+  <div class="message success alert-success" *ngIf="successMessage">{{ successMessage }}</div>
+  <div class="message error alert-error" *ngIf="errorMessage">{{ errorMessage }}</div>
 
-  <section class="actions-bar">
+  <section class="actions-bar app-card">
     <label class="search-box">
       <lucide-angular [img]="searchIcon" [size]="18" [strokeWidth]="2.3"></lucide-angular>
       <input
@@ -59,14 +59,14 @@
       </button>
     </div>
 
-    <button type="button" class="primary-btn new-btn" (click)="openCreateModal()">
+    <button type="button" class="primary-btn btn-primary new-btn" (click)="openCreateModal()">
       <lucide-angular [img]="addIcon" [size]="18" [strokeWidth]="2.4"></lucide-angular>
       Nueva
     </button>
   </section>
 
   <section class="content-grid">
-    <article class="list-panel">
+    <article class="list-panel app-card">
       <header class="panel-header">
         <div>
           <span class="eyebrow">Listado</span>
@@ -98,7 +98,12 @@
           <span class="location-content">
             <span class="location-main">
               <strong>{{ location.name }}</strong>
-              <span class="status-pill" [class.canceled]="location.canceled">
+              <span
+                class="status-pill status-badge"
+                [class.canceled]="location.canceled"
+                [class.status-active]="!location.canceled"
+                [class.status-inactive]="location.canceled"
+              >
                 {{ location.canceled ? 'Inactiva' : 'Activa' }}
               </span>
             </span>
@@ -112,7 +117,7 @@
             <span class="item-actions">
               <button
                 type="button"
-                class="mini-action"
+                class="mini-action btn-icon"
                 title="Editar ubicacion"
                 aria-label="Editar ubicacion"
                 (click)="$event.stopPropagation(); openEditModal(location)"
@@ -122,7 +127,7 @@
 
               <button
                 type="button"
-                class="mini-action danger"
+                class="mini-action danger btn-icon"
                 title="Borrar ubicacion"
                 aria-label="Borrar ubicacion"
                 [disabled]="location.canceled"
@@ -141,7 +146,7 @@
         <div class="pagination-actions">
           <button
             type="button"
-            class="page-btn"
+            class="page-btn btn-icon"
             title="Pagina anterior"
             aria-label="Pagina anterior"
             [disabled]="currentPage === 1"
@@ -154,7 +159,7 @@
 
           <button
             type="button"
-            class="page-btn"
+            class="page-btn btn-icon"
             title="Pagina siguiente"
             aria-label="Pagina siguiente"
             [disabled]="currentPage === totalPages"
@@ -166,7 +171,7 @@
       </footer>
     </article>
 
-    <aside class="detail-panel">
+    <aside class="detail-panel app-card">
       <ng-container *ngIf="selectedLocation as location; else emptyDetail">
         <div class="detail-hero">
           <span class="detail-avatar">{{ getLocationInitial(location) }}</span>
@@ -181,7 +186,12 @@
           <div>
             <dt>Estado</dt>
             <dd>
-              <span class="status-pill" [class.canceled]="location.canceled">
+              <span
+                class="status-pill status-badge"
+                [class.canceled]="location.canceled"
+                [class.status-active]="!location.canceled"
+                [class.status-inactive]="location.canceled"
+              >
                 {{ location.canceled ? 'Inactiva' : 'Activa' }}
               </span>
             </dd>
@@ -205,14 +215,14 @@
         </dl>
 
         <div class="detail-actions">
-          <button type="button" class="ghost-btn" (click)="openEditModal(location)">
+          <button type="button" class="ghost-btn btn-outline" (click)="openEditModal(location)">
             <lucide-angular [img]="editIcon" [size]="17" [strokeWidth]="2.3"></lucide-angular>
             Editar
           </button>
 
           <button
             type="button"
-            class="danger-btn"
+            class="danger-btn btn-danger"
             [disabled]="location.canceled"
             (click)="askCancel(location)"
           >
@@ -230,7 +240,7 @@
     </aside>
   </section>
 
-  <section class="map-section">
+  <section class="map-section app-card">
     <header class="panel-header">
       <div>
         <span class="eyebrow">Mapa Leaflet</span>
@@ -341,11 +351,11 @@
         <div class="message error compact" *ngIf="formError">{{ formError }}</div>
 
         <footer class="modal-actions">
-          <button type="button" class="ghost-btn" (click)="closeModal()" [disabled]="isSaving">
+          <button type="button" class="ghost-btn btn-outline" (click)="closeModal()" [disabled]="isSaving">
             Cancelar
           </button>
 
-          <button type="submit" class="primary-btn" [disabled]="isSaving">
+          <button type="submit" class="primary-btn btn-primary" [disabled]="isSaving">
             {{ isSaving ? 'Guardando...' : 'Guardar' }}
           </button>
         </footer>
@@ -379,11 +389,11 @@
       </p>
 
       <footer class="modal-actions">
-        <button type="button" class="ghost-btn" (click)="closeCancelConfirm()" [disabled]="isSaving">
+        <button type="button" class="ghost-btn btn-outline" (click)="closeCancelConfirm()" [disabled]="isSaving">
           Cancelar
         </button>
 
-        <button type="button" class="danger-btn" (click)="confirmCancel()" [disabled]="isSaving">
+        <button type="button" class="danger-btn btn-danger" (click)="confirmCancel()" [disabled]="isSaving">
           {{ isSaving ? 'Anulando...' : 'Anular ubicacion' }}
         </button>
       </footer>

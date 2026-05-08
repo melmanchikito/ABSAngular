@@ -87,7 +87,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   readonly birthdays: HeaderBirthday[] = [
     {
       name: 'German Machado',
-      area: 'Area de Desarrollo',
+      area: 'Desarrollo',
       dateLabel: 'Hoy'
     },
     {

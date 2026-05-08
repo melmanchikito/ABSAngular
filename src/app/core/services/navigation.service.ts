@@ -16,7 +16,7 @@ export class NavigationService {
     return this.router.navigate([APP_ROUTES.login]);
   }
   goToSystemArea(): Promise<boolean> {
-    return this.goToAreaSubmodule('sistema', 'help-desk');
+    return this.goToAreaSubmodule('sistema', 'configuracion');
   }
 
   goToArea(area: SystemAreaKey): Promise<boolean> {

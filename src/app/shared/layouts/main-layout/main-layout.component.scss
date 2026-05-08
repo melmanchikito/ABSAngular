@@ -1,8 +1,8 @@
 :host {
-  --sidebar-open: 220px;
-  --sidebar-tablet: 210px;
-  --sidebar-collapsed: 76px;
-  --layout-gap: 24px;
+  --sidebar-open: var(--abs-sidebar-width, 220px);
+  --sidebar-tablet: var(--abs-sidebar-width-tablet, 210px);
+  --sidebar-collapsed: var(--abs-sidebar-width-collapsed, 76px);
+  --layout-gap: var(--abs-layout-gap, 24px);
 }
 .fondo {
   display: flex;
@@ -103,7 +103,7 @@
    HEADER
 ========================= */
 .card_header {
-  min-height: 72px;
+  min-height: var(--abs-header-height, 72px);
   height: auto;
   background: transparent;
   color: var(--abs-text);
@@ -125,7 +125,7 @@
   background: transparent;
   color: var(--abs-text);
   padding: 1rem;
-  min-height: calc(100dvh - 72px);
+  min-height: calc(100dvh - var(--abs-header-height, 72px));
 }
 
 /* =========================

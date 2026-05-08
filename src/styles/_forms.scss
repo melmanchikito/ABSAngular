@@ -1,0 +1,46 @@
+.form-group {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.form-label {
+  color: var(--abs-text);
+  font-size: 0.88rem;
+  font-weight: 800;
+}
+
+.form-control,
+.form-select {
+  width: 100%;
+  min-height: 44px;
+  border-radius: 12px;
+  border: 1.5px solid color-mix(in srgb, var(--abs-border) 82%, #6b7280);
+  outline: 0;
+  background: color-mix(in srgb, var(--abs-surface-soft) 90%, var(--abs-surface));
+  color: var(--abs-text);
+  font: inherit;
+}
+
+.form-control {
+  padding: 0.75rem 0.85rem;
+}
+
+.form-select {
+  padding: 0 0.85rem;
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: color-mix(in srgb, var(--abs-primary) 58%, var(--abs-border));
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--abs-primary) 13%, transparent);
+}
+
+.form-control::placeholder {
+  color: color-mix(in srgb, var(--abs-text-muted) 76%, transparent);
+}
+
+.field-error {
+  color: var(--abs-error);
+  font-size: 0.82rem;
+  font-weight: 800;
+}

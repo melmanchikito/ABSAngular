@@ -1,0 +1,41 @@
+:host {
+  display: block;
+}
+
+.stat-card {
+  min-height: 84px;
+  display: grid;
+  align-content: center;
+  gap: 0.2rem;
+  padding: 1rem;
+  border-radius: 16px;
+  border: 1.5px solid color-mix(in srgb, var(--abs-border) 82%, #6b7280);
+  background: color-mix(in srgb, var(--abs-surface) 94%, var(--abs-bg));
+  box-shadow: var(--abs-shadow-md);
+}
+
+.stat-card strong {
+  color: var(--abs-text);
+  font-size: 1.8rem;
+  line-height: 1;
+}
+
+.stat-card span {
+  color: var(--abs-text-muted);
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.stat-card.active {
+  border-color: color-mix(in srgb, var(--abs-success) 34%, var(--abs-border));
+}
+
+.stat-card.inactive {
+  border-color: color-mix(in srgb, var(--abs-error) 34%, var(--abs-border));
+}
+
+.stat-card.warning {
+  border-color: color-mix(in srgb, var(--abs-warning) 34%, var(--abs-border));
+}

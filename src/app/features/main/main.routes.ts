@@ -26,44 +26,74 @@ export const MAIN_ROUTES: Routes = [
       },
       {
         path: 'system-area',
-        redirectTo: 'area/sistema/help-desk',
+        redirectTo: 'modulo/sistema/configuracion',
         pathMatch: 'full'
       },
       {
         path: 'area',
-        redirectTo: 'area/sistema/help-desk',
+        redirectTo: 'modulo/sistema/configuracion',
         pathMatch: 'full'
       },
       {
         path: 'area/sistema',
-        redirectTo: 'area/sistema/help-desk',
+        redirectTo: 'modulo/sistema/configuracion',
+        pathMatch: 'full'
+      },
+      {
+        path: 'area/sistema/help-desk',
+        redirectTo: 'modulo/sistema/help-desk',
         pathMatch: 'full'
       },
       {
         path: 'area/sistema/help-desk/mantenimientos/empresas',
-        component: CompanyMaintenanceComponent
+        redirectTo: 'modulo/sistema/configuracion/mantenimientos/empresas',
+        pathMatch: 'full'
       },
       {
         path: 'area/sistema/help-desk/mantenimientos/ubicaciones',
-        component: LocationMaintenanceComponent
+        redirectTo: 'modulo/sistema/configuracion/mantenimientos/ubicaciones',
+        pathMatch: 'full'
       },
       {
         path: 'area/sistema/mantenimientos/empresas',
-        redirectTo: 'area/sistema/help-desk/mantenimientos/empresas',
+        redirectTo: 'modulo/sistema/configuracion/mantenimientos/empresas',
         pathMatch: 'full'
       },
       {
         path: 'area/sistema/mantenimientos/ubicaciones',
-        redirectTo: 'area/sistema/help-desk/mantenimientos/ubicaciones',
+        redirectTo: 'modulo/sistema/configuracion/mantenimientos/ubicaciones',
         pathMatch: 'full'
       },
       {
-        path: 'area/:areaKey/:submoduleKey',
+        path: 'modulo',
+        redirectTo: 'modulo/sistema/configuracion',
+        pathMatch: 'full'
+      },
+      {
+        path: 'modulo/sistema/configuracion/mantenimientos/empresas',
+        component: CompanyMaintenanceComponent
+      },
+      {
+        path: 'modulo/sistema/configuracion/mantenimientos/ubicaciones',
+        component: LocationMaintenanceComponent
+      },
+      {
+        path: 'modulo/:moduleKey/:submoduleKey',
         component: SystemAreaComponent
       },
       {
-        path: 'area/:areaKey',
+        path: 'modulo/:moduleKey',
         component: SystemAreaComponent
+      },
+      {
+        path: 'area/:areaKey/:submoduleKey',
+        redirectTo: 'modulo/:areaKey/:submoduleKey',
+        pathMatch: 'full'
+      },
+      {
+        path: 'area/:areaKey',
+        redirectTo: 'modulo/:areaKey',
+        pathMatch: 'full'
       }
     ]
   }

@@ -1,7 +1,7 @@
-<section class="system-page">
+<section class="system-page page-shell">
   <div class="page-header">
     <div class="page-title">
-      <span class="eyebrow">Módulo</span>
+      <span class="eyebrow">MODULO</span>
       <div class="title-row">
         <span class="title-icon">
           <lucide-angular [img]="pageIcon" [size]="22" [strokeWidth]="2.3"></lucide-angular>
@@ -36,7 +36,7 @@
     </button>
   </div>
 
-  <div class="content-card">
+  <div class="content-card app-card">
     <div class="content-header">
       <div>
         <h2>{{ activeCategoryConfig.label }}</h2>
@@ -65,13 +65,13 @@
           <small>{{ option.description }}</small>
         </span>
 
-        <span class="option-arrow">›</span>
+        <span class="option-arrow">&rsaquo;</span>
       </button>
     </div>
 
     <ng-template #emptyState>
       <div class="empty-state">
-        No hay opciones configuradas para esta categoría.
+        No hay opciones configuradas para esta categoria.
       </div>
     </ng-template>
   </div>

@@ -20,6 +20,9 @@ import {
   UpdateCompanyRequest
 } from '../../models/company-maintenance.model';
 import { CompanyMaintenanceService } from '../../services/company-maintenance.service';
+import { PageHeaderComponent } from '../../../../shared/components/page-header/page-header.component';
+import { StatCardComponent } from '../../../../shared/components/stat-card/stat-card.component';
+import { StatusBadgeComponent } from '../../../../shared/components/status-badge/status-badge.component';
 
 type CompanyModalMode = 'create' | 'edit';
 type CompanyStatusFilter = 'all' | 'active' | 'inactive';
@@ -43,7 +46,14 @@ interface EditCompanyForm {
 @Component({
   selector: 'app-company-maintenance',
   standalone: true,
-  imports: [CommonModule, FormsModule, LucideAngularModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    LucideAngularModule,
+    PageHeaderComponent,
+    StatCardComponent,
+    StatusBadgeComponent
+  ],
   templateUrl: './company-maintenance.component.html',
   styleUrl: './company-maintenance.component.scss'
 })

@@ -39,12 +39,12 @@ export class SystemAreaComponent {
     this.route.paramMap
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((params) => {
-        const areaKey = params.get('areaKey');
+        const areaKey = params.get('moduleKey') ?? params.get('areaKey');
         const submoduleKey = params.get('submoduleKey');
 
         if (!isSystemAreaKey(areaKey)) {
           void this.router.navigate([
-            '/main/area',
+            '/main/modulo',
             DEFAULT_SYSTEM_AREA_KEY,
             DEFAULT_SYSTEM_SUBMODULE_KEY
           ]);
@@ -55,7 +55,7 @@ export class SystemAreaComponent {
 
         if (this.area.submodules?.length && !submoduleKey) {
           void this.router.navigate([
-            '/main/area',
+            '/main/modulo',
             areaKey,
             this.area.defaultSubmoduleKey ?? DEFAULT_SYSTEM_SUBMODULE_KEY
           ]);
@@ -64,7 +64,7 @@ export class SystemAreaComponent {
 
         if (submoduleKey && !isSystemAreaSubmoduleKey(areaKey, submoduleKey)) {
           void this.router.navigate([
-            '/main/area',
+            '/main/modulo',
             areaKey,
             this.area.defaultSubmoduleKey ?? DEFAULT_SYSTEM_SUBMODULE_KEY
           ]);

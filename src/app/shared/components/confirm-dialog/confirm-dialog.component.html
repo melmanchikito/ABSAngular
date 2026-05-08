@@ -1,0 +1,22 @@
+<div class="app-modal-backdrop" *ngIf="open">
+  <section class="confirm-dialog app-modal" role="dialog" aria-modal="true" [attr.aria-label]="title">
+    <header class="modal-header">
+      <div>
+        <span class="eyebrow">Confirmacion</span>
+        <h2>{{ title }}</h2>
+      </div>
+    </header>
+
+    <p>{{ message }}</p>
+
+    <footer class="modal-footer">
+      <button type="button" class="btn-outline" (click)="cancel.emit()" [disabled]="loading">
+        {{ cancelLabel }}
+      </button>
+
+      <button type="button" class="btn-danger" (click)="confirm.emit()" [disabled]="loading">
+        {{ loading ? 'Procesando...' : confirmLabel }}
+      </button>
+    </footer>
+  </section>
+</div>

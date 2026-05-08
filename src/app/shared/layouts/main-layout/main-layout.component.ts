@@ -22,7 +22,7 @@ import { SessionTimeoutAlertComponent } from '../../components/alert/session-tim
   styleUrl: './main-layout.component.scss'
 })
 export class MainLayoutComponent implements OnInit, OnDestroy {
-  activeSection = 'HelpDesk';
+  activeSection = 'Sistema';
   sidebarCollapsed = false;
   menuIcon = Menu;
   closeIcon = X;

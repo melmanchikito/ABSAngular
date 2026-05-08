@@ -2,15 +2,15 @@ import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import {
-  Building2,
   ChartColumn,
   ChevronRight,
   CircleDollarSign,
   LogOut,
   LucideAngularModule,
   MonitorCog,
-  Settings,
-  UserRound
+  Package,
+  UserRound,
+  Users
 } from 'lucide-angular';
 import { filter } from 'rxjs';
 import { NavigationService } from '../../../core/services/navigation.service';
@@ -56,57 +56,68 @@ export class SidebarComponent {
 
   readonly areas: SidebarArea[] = [
     {
-      name: 'Area Financiera',
+      name: 'Finanzas',
       icon: CircleDollarSign,
-      areaKey: 'financiera',
-      children: []
-    },
-    {
-      name: 'Area Administrativa',
-      icon: Building2,
-      areaKey: 'administrativa',
-      children: []
-    },
-    {
-      name: 'Area Operativa',
-      icon: Settings,
-      areaKey: 'operativa',
+      areaKey: 'finanzas',
       children: [
-        { label: 'Clientes', areaKey: 'operativa' },
-        { label: 'Legal', areaKey: 'operativa' },
-        { label: 'Cobranzas', areaKey: 'operativa' },
-        { label: 'Productos', areaKey: 'operativa' },
-        { label: 'Analisis de productos', areaKey: 'operativa' },
-        { label: 'Compras', areaKey: 'operativa' },
-        { label: 'Importaciones', areaKey: 'operativa' },
-        { label: 'Logistica & bodega', areaKey: 'operativa' },
-        { label: 'Ventas', areaKey: 'operativa' },
-        { label: 'Servicio al cliente', areaKey: 'operativa' },
-        { label: 'Comisiones y bonos', areaKey: 'operativa' },
-        { label: 'Servientrega', areaKey: 'operativa' },
-        { label: 'Marketing', areaKey: 'operativa' },
-        { label: 'Material Promocional', areaKey: 'operativa' }
+        { label: 'Contable y SRI', areaKey: 'finanzas', submoduleKey: 'contable-sri' },
+        { label: 'Caja y Tesoreria', areaKey: 'finanzas', submoduleKey: 'caja-tesoreria' }
       ]
     },
     {
-      name: 'Area Gerencial',
+      name: 'RRHH',
+      icon: Users,
+      areaKey: 'rrhh',
+      children: [
+        { label: 'Empleado', areaKey: 'rrhh', submoduleKey: 'empleado' },
+        { label: 'Proveedores', areaKey: 'rrhh', submoduleKey: 'proveedores' },
+        { label: 'Administracion', areaKey: 'rrhh', submoduleKey: 'administracion' }
+      ]
+    },
+    {
+      name: 'Clientes',
+      icon: Users,
+      areaKey: 'clientes',
+      children: [
+        { label: 'Marketing', areaKey: 'clientes', submoduleKey: 'marketing' },
+        { label: 'Cobranza', areaKey: 'clientes', submoduleKey: 'cobranza' },
+        { label: 'Codigo IMP', areaKey: 'clientes', submoduleKey: 'codigo-imp' },
+        { label: 'Legal', areaKey: 'clientes', submoduleKey: 'legal' }
+      ]
+    },
+    {
+      name: 'Producto',
+      icon: Package,
+      areaKey: 'producto',
+      children: [
+        {
+          label: 'Produccion y Distribucion',
+          areaKey: 'producto',
+          submoduleKey: 'produccion-distribucion'
+        },
+        {
+          label: 'Compras e Importaciones',
+          areaKey: 'producto',
+          submoduleKey: 'compras-importaciones'
+        }
+      ]
+    },
+    {
+      name: 'Analisis',
       icon: ChartColumn,
-      areaKey: 'gerencial',
+      areaKey: 'analisis',
       children: [
-        { label: 'Gerencial', areaKey: 'gerencial' },
-        { label: 'Business Intelligence', areaKey: 'gerencial' }
+        { label: 'AM y R', areaKey: 'analisis', submoduleKey: 'am-r' }
       ]
     },
     {
-      name: 'Area del Sistema',
+      name: 'Sistema',
       icon: MonitorCog,
       areaKey: 'sistema',
       children: [
-        { label: 'Desarrollo', areaKey: 'sistema', submoduleKey: 'desarrollo' },
-        { label: 'Generales', areaKey: 'sistema', submoduleKey: 'generales' },
-        { label: 'Correccion de datos', areaKey: 'sistema', submoduleKey: 'correccion-datos' },
+        { label: 'Configuracion', areaKey: 'sistema', submoduleKey: 'configuracion' },
         { label: 'Help Desk', areaKey: 'sistema', submoduleKey: 'help-desk' },
-        { label: 'Seguridad', areaKey: 'sistema', submoduleKey: 'seguridad' }
+        { label: 'Developer', areaKey: 'sistema', submoduleKey: 'developer' }
       ]
     }
   ];
@@ -173,17 +184,26 @@ export class SidebarComponent {
   private syncActiveState(url: string): void {
     const normalizedUrl = url.split('?')[0].split('#')[0];
 
-    if (normalizedUrl.startsWith('/main/area/sistema')) {
-      const systemArea = this.areas.find((area) => area.areaKey === 'sistema');
-      const activeChild = systemArea?.children.find((child) =>
-        child.submoduleKey
-          ? normalizedUrl.includes(`/main/area/sistema/${child.submoduleKey}`)
-          : false
+    const moduleRoot = normalizedUrl.startsWith('/main/modulo/')
+      ? '/main/modulo'
+      : normalizedUrl.startsWith('/main/area/')
+        ? '/main/area'
+        : null;
+
+    if (moduleRoot) {
+      const activeArea = this.areas.find(
+        (area) => area.areaKey && normalizedUrl.startsWith(`${moduleRoot}/${area.areaKey}`)
       );
 
-      if (systemArea) {
-        this.activeArea = systemArea.name;
-        this.expandedArea = systemArea.name;
+      if (activeArea) {
+        const activeChild = activeArea.children.find((child) =>
+          child.submoduleKey
+            ? normalizedUrl.includes(`${moduleRoot}/${activeArea.areaKey}/${child.submoduleKey}`)
+            : false
+        );
+
+        this.activeArea = activeArea.name;
+        this.expandedArea = activeArea.name;
         this.activeChild = activeChild?.label ?? null;
       }
 
@@ -200,16 +220,6 @@ export class SidebarComponent {
       }
 
       return;
-    }
-
-    const activeArea = this.areas.find(
-      (area) => area.areaKey && normalizedUrl.startsWith(`/main/area/${area.areaKey}`)
-    );
-
-    if (activeArea) {
-      this.activeArea = activeArea.name;
-      this.expandedArea = activeArea.children.length ? activeArea.name : null;
-      this.activeChild = null;
     }
   }
 }

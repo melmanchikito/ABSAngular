@@ -1,0 +1,32 @@
+.status-badge,
+.code-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  white-space: nowrap;
+  font-weight: 900;
+}
+
+.status-badge {
+  padding: 0.32rem 0.68rem;
+  font-size: 0.78rem;
+}
+
+.status-active {
+  border: 1.5px solid color-mix(in srgb, var(--abs-success) 42%, var(--abs-border));
+  background: color-mix(in srgb, var(--abs-success) 12%, var(--abs-surface));
+  color: color-mix(in srgb, var(--abs-success) 82%, var(--abs-text));
+}
+
+.status-inactive {
+  border: 1.5px solid color-mix(in srgb, var(--abs-error) 44%, var(--abs-border));
+  background: color-mix(in srgb, var(--abs-error) 12%, var(--abs-surface));
+  color: color-mix(in srgb, var(--abs-error) 86%, var(--abs-text));
+}
+
+.status-warning {
+  border: 1.5px solid color-mix(in srgb, var(--abs-warning) 44%, var(--abs-border));
+  background: color-mix(in srgb, var(--abs-warning) 13%, var(--abs-surface));
+  color: color-mix(in srgb, var(--abs-warning) 78%, var(--abs-text));
+}

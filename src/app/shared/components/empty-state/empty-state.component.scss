@@ -1,0 +1,17 @@
+:host {
+  display: block;
+}
+
+.empty-state {
+  min-height: 90px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 14px;
+  border: 1.5px dashed color-mix(in srgb, var(--abs-border) 82%, #6b7280);
+  background: color-mix(in srgb, var(--abs-surface-soft) 90%, var(--abs-surface));
+  color: var(--abs-text-muted);
+  font-weight: 800;
+  text-align: center;
+}

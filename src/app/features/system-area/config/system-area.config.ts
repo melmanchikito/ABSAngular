@@ -7,6 +7,7 @@ import {
   CircleDollarSign,
   ClipboardCheck,
   ClipboardList,
+  Code2,
   Database,
   Factory,
   FileBarChart,
@@ -40,93 +41,14 @@ import {
   SystemAreaSubmoduleKey
 } from '../models/system-area.model';
 
-const systemCategories: SystemAreaCategory[] = [
-  {
-    key: 'mantenimientos',
-    label: 'Mantenimientos',
-    icon: Wrench,
-    description: 'Catálogos y parámetros del sistema',
-    options: [
-      {
-        label: 'Empresas',
-        description: 'Administración de empresas registradas.',
-        icon: Building2,
-        route: '/main/area/sistema/help-desk/mantenimientos/empresas'
-      },
-      { label: 'Entidades', description: 'Gestión de entidades relacionadas.', icon: Landmark },
-      { label: 'Proveedores', description: 'Registro y control de proveedores.', icon: Handshake },
-      {
-        label: 'Ubicaciones',
-        description: 'Configuración de ubicaciones físicas.',
-        icon: MapPin,
-        route: '/main/area/sistema/help-desk/mantenimientos/ubicaciones'
-      },
-      { label: 'Tipos de equipos', description: 'Clasificación de equipos.', icon: HardDrive },
-      { label: 'Grupos', description: 'Agrupación de elementos del sistema.', icon: Boxes },
-      { label: 'Marcas', description: 'Mantenimiento de marcas.', icon: Tags },
-      { label: 'Modelos', description: 'Mantenimiento de modelos.', icon: Package },
-      { label: 'Segmentación', description: 'Definición de segmentos internos.', icon: FolderKanban },
-      { label: 'Permisos de antivirus', description: 'Control de permisos relacionados a antivirus.', icon: ShieldCheck },
-      { label: 'Permisos de internet', description: 'Control de accesos a internet.', icon: MonitorCog },
-      { label: 'Software', description: 'Registro de software disponible.', icon: Database },
-      { label: 'Categoría', description: 'Clasificación por categorías.', icon: ClipboardList },
-      { label: 'Problemas', description: 'Catálogo de problemas frecuentes.', icon: TicketCheck },
-      { label: 'Opciones', description: 'Parámetros generales del sistema.', icon: Settings }
-    ]
-  },
-  {
-    key: 'documentos',
-    label: 'Documentos',
-    icon: FileText,
-    description: 'Gestión documental interna',
-    options: [
-      { label: 'Documentos generales', description: 'Consulta de documentos internos.', icon: FileText },
-      { label: 'Solicitudes', description: 'Gestión de solicitudes documentales.', icon: ClipboardList },
-      { label: 'Formatos internos', description: 'Plantillas y formatos institucionales.', icon: ScrollText },
-      { label: 'Actas', description: 'Registro y consulta de actas.', icon: FileCheck2 }
-    ]
-  },
-  {
-    key: 'procesos',
-    label: 'Procesos',
-    icon: Settings,
-    description: 'Flujos operativos del sistema',
-    options: [
-      { label: 'Bitácora de asistencia', description: 'Registro de asistencias del personal.', icon: ClipboardCheck },
-      { label: 'Control de datos por usuario', description: 'Control de información asociada a usuarios.', icon: Users },
-      { label: 'Ingreso de componentes', description: 'Registro de componentes nuevos.', icon: Package },
-      { label: 'Mantenimiento de componentes', description: 'Gestión y actualización de componentes.', icon: Wrench },
-      { label: 'Validación de ingreso de componentes', description: 'Revisión y validación de componentes ingresados.', icon: ClipboardCheck },
-      { label: 'Entrega y ajuste de equipos', description: 'Control de entrega y ajustes técnicos.', icon: Truck },
-      { label: 'Mantenimiento de equipos', description: 'Seguimiento de mantenimiento técnico.', icon: HardDrive },
-      {
-        label: 'HelpDesk',
-        description: 'Registro y seguimiento de tickets de soporte.',
-        icon: TicketCheck,
-        route: '/main/helpdesk'
-      }
-    ]
-  },
-  {
-    key: 'informes',
-    label: 'Informes',
-    icon: BarChart3,
-    description: 'Reportes y consultas',
-    options: [
-      { label: 'Historial de equipos', description: 'Consulta histórica de equipos.', icon: FileBarChart },
-      { label: 'TOP de asistencias soporte', description: 'Ranking de asistencias realizadas.', icon: ChartColumn },
-      { label: 'Informe Tickets', description: 'Reporte general de tickets.', icon: TicketCheck },
-      { label: 'Informe de Horas', description: 'Reporte de horas registradas.', icon: Gauge }
-    ]
-  }
-];
+const route = (path: string): string => `/main/modulo/${path}`;
 
-const createSystemSubmoduleCategories = (
+const createCategories = (
   submoduleLabel: string,
   maintenanceOptions: SystemAreaCategory['options'],
-  documentOptions: SystemAreaCategory['options'],
-  processOptions: SystemAreaCategory['options'],
-  reportOptions: SystemAreaCategory['options']
+  documentOptions: SystemAreaCategory['options'] = [],
+  processOptions: SystemAreaCategory['options'] = [],
+  reportOptions: SystemAreaCategory['options'] = []
 ): SystemAreaCategory[] => [
   {
     key: 'mantenimientos',
@@ -139,14 +61,14 @@ const createSystemSubmoduleCategories = (
     key: 'documentos',
     label: 'Documentos',
     icon: FileText,
-    description: `Documentos propios de ${submoduleLabel}`,
+    description: `Documentos de ${submoduleLabel}`,
     options: documentOptions
   },
   {
     key: 'procesos',
     label: 'Procesos',
     icon: Settings,
-    description: `Procesos operativos de ${submoduleLabel}`,
+    description: `Procesos de ${submoduleLabel}`,
     options: processOptions
   },
   {
@@ -158,345 +80,467 @@ const createSystemSubmoduleCategories = (
   }
 ];
 
-const systemDevelopmentCategories = createSystemSubmoduleCategories(
-  'Desarrollo',
+const configuracionCategories = createCategories(
+  'Configuracion',
   [
-    { label: 'Ambientes', description: 'Configuracion de entornos de trabajo.', icon: MonitorCog },
-    { label: 'Versiones', description: 'Control de versiones liberadas.', icon: Tags },
-    { label: 'Repositorios', description: 'Registro de repositorios tecnicos.', icon: Database }
+    {
+      label: 'Empresas',
+      description: 'Administracion de empresas registradas.',
+      icon: Building2,
+      route: route('sistema/configuracion/mantenimientos/empresas')
+    },
+    {
+      label: 'Ubicacion',
+      description: 'Configuracion de ubicaciones fisicas.',
+      icon: MapPin,
+      route: route('sistema/configuracion/mantenimientos/ubicaciones')
+    },
+    { label: 'Sucursal', description: 'Gestion de sucursales registradas.', icon: Landmark },
+    { label: 'Modulos', description: 'Configuracion de modulos del sistema.', icon: LayoutDashboard },
+    { label: 'Opciones', description: 'Opciones disponibles por modulo.', icon: Settings },
+    { label: 'Tipo de opciones', description: 'Clasificacion de opciones del sistema.', icon: Tags },
+    { label: 'Acciones', description: 'Permisos y acciones disponibles.', icon: ClipboardCheck },
+    { label: 'Areas', description: 'Grupos organizacionales internos.', icon: FolderKanban },
+    { label: 'Preferencia', description: 'Preferencias generales de operacion.', icon: Gauge }
   ],
   [
-    { label: 'Especificaciones', description: 'Documentacion funcional y tecnica.', icon: FileText },
-    { label: 'Actas de cambios', description: 'Soporte documental de cambios.', icon: FileCheck2 }
+    { label: 'Parametros generales', description: 'Documentos de referencia de configuracion.', icon: FileText },
+    { label: 'Actas de cambios', description: 'Soporte documental de ajustes realizados.', icon: FileCheck2 }
   ],
   [
-    { label: 'Control de cambios', description: 'Seguimiento de cambios del sistema.', icon: ClipboardCheck },
-    { label: 'Validacion QA', description: 'Revision y validacion de entregables.', icon: ShieldCheck }
+    { label: 'Auditoria de cambios', description: 'Revision de cambios aplicados.', icon: ShieldCheck },
+    { label: 'Validacion de parametros', description: 'Control de consistencia de configuraciones.', icon: ClipboardCheck }
   ],
   [
-    { label: 'Cambios por periodo', description: 'Resumen de cambios por fechas.', icon: FileBarChart },
-    { label: 'Estado de versiones', description: 'Consulta de versiones activas.', icon: ChartColumn }
+    { label: 'Resumen de configuracion', description: 'Consulta de parametros principales.', icon: FileBarChart },
+    { label: 'Cambios por periodo', description: 'Reporte de ajustes por fecha.', icon: ChartColumn }
   ]
 );
 
-const systemGeneralCategories = createSystemSubmoduleCategories(
-  'Generales',
+const helpDeskCategories = createCategories(
+  'Help Desk',
   [
-    { label: 'Empresas generales', description: 'Parametros generales de empresas.', icon: Building2 },
-    { label: 'Ubicaciones generales', description: 'Ubicaciones de uso transversal.', icon: MapPin },
-    { label: 'Opciones generales', description: 'Configuracion general del sistema.', icon: Settings }
+    { label: 'Categoria', description: 'Clasificacion de solicitudes de soporte.', icon: ClipboardList },
+    { label: 'Problemas', description: 'Catalogo de problemas frecuentes.', icon: TicketCheck },
+    { label: 'Helpdesk', description: 'Parametros de atencion y soporte.', icon: MonitorCog },
+    { label: 'Device', description: 'Registro y control de equipos.', icon: HardDrive },
+    { label: 'Componente', description: 'Registro y control de componentes.', icon: Package }
   ],
   [
-    { label: 'Documentos generales', description: 'Consulta de documentos compartidos.', icon: FileText },
-    { label: 'Formatos internos', description: 'Plantillas institucionales.', icon: ScrollText }
+    { label: 'Solicitudes', description: 'Documentos asociados a atencion de soporte.', icon: FileText },
+    { label: 'Evidencias', description: 'Archivos y soportes de los casos.', icon: FileCheck2 }
   ],
   [
-    { label: 'Procesos generales', description: 'Flujos generales del sistema.', icon: LayoutDashboard },
-    { label: 'Aprobaciones generales', description: 'Aprobaciones comunes entre areas.', icon: ClipboardCheck }
+    {
+      label: 'Ticket mantenimiento',
+      description: 'Registro y seguimiento de tickets de mantenimiento.',
+      icon: TicketCheck,
+      route: '/main/helpdesk'
+    },
+    { label: 'Entrega y ajuste de equipos', description: 'Control de entrega y cambios tecnicos.', icon: Truck },
+    { label: 'Mantenimiento de componentes', description: 'Gestion y actualizacion de componentes.', icon: Wrench }
   ],
   [
-    { label: 'Resumen general', description: 'Reporte transversal del sistema.', icon: FileBarChart },
-    { label: 'Indicadores generales', description: 'Metricas principales del sistema.', icon: Gauge }
-  ]
-);
-
-const systemCorrectionCategories = createSystemSubmoduleCategories(
-  'Correccion de datos',
-  [
-    { label: 'Reglas de correccion', description: 'Parametros para depuracion de datos.', icon: Settings },
-    { label: 'Campos auditables', description: 'Campos sujetos a revision.', icon: Database }
-  ],
-  [
-    { label: 'Solicitudes de correccion', description: 'Documentos de solicitud de cambios.', icon: ClipboardList },
-    { label: 'Evidencias', description: 'Soportes de ajustes realizados.', icon: FileCheck2 }
-  ],
-  [
-    { label: 'Validacion de datos', description: 'Revision de datos corregidos.', icon: ClipboardCheck },
-    { label: 'Ajustes masivos', description: 'Proceso de ajuste de informacion.', icon: Wrench }
-  ],
-  [
-    { label: 'Historial de correcciones', description: 'Consulta historica de ajustes.', icon: FileBarChart },
-    { label: 'Errores frecuentes', description: 'Resumen de incidencias de datos.', icon: ChartColumn }
-  ]
-);
-
-const systemSecurityCategories = createSystemSubmoduleCategories(
-  'Seguridad',
-  [
-    { label: 'Usuarios', description: 'Administracion de usuarios del sistema.', icon: Users },
-    { label: 'Roles', description: 'Configuracion de roles y permisos.', icon: ShieldCheck },
-    { label: 'Permisos', description: 'Asignacion de accesos por modulo.', icon: MonitorCog }
-  ],
-  [
-    { label: 'Politicas de seguridad', description: 'Documentos normativos de seguridad.', icon: ScrollText },
-    { label: 'Actas de accesos', description: 'Soporte de cambios de permisos.', icon: FileCheck2 }
-  ],
-  [
-    { label: 'Revision de accesos', description: 'Validacion periodica de permisos.', icon: ClipboardCheck },
-    { label: 'Auditoria de sesiones', description: 'Seguimiento de actividad de usuarios.', icon: ShieldCheck }
-  ],
-  [
-    { label: 'Accesos por usuario', description: 'Reporte de permisos asignados.', icon: FileBarChart },
-    { label: 'Actividad de seguridad', description: 'Indicadores de eventos de seguridad.', icon: ChartColumn }
+    { label: 'Informe Tickets', description: 'Reporte general de tickets.', icon: TicketCheck },
+    { label: 'Historial de equipos', description: 'Consulta historica de equipos.', icon: FileBarChart },
+    { label: 'TOP de asistencias soporte', description: 'Ranking de asistencias realizadas.', icon: ChartColumn }
   ]
 );
 
 export const SYSTEM_AREA_CONFIG: Record<SystemAreaKey, SystemAreaConfig> = {
-  sistema: {
-    key: 'sistema',
-    title: 'Área del Sistema',
-    subtitle: 'Selecciona una categoría para visualizar sus opciones disponibles.',
-    icon: MonitorCog,
-    categories: systemCategories,
-    defaultSubmoduleKey: 'help-desk',
+  finanzas: {
+    key: 'finanzas',
+    title: 'Finanzas',
+    subtitle: 'Gestion financiera, contable y de tesoreria.',
+    icon: CircleDollarSign,
+    categories: [],
+    defaultSubmoduleKey: 'contable-sri',
     submodules: [
       {
-        key: 'desarrollo',
-        label: 'Desarrollo',
-        description: 'Gestion tecnica de cambios, versiones y validaciones.',
-        icon: MonitorCog,
-        categories: systemDevelopmentCategories
+        key: 'contable-sri',
+        label: 'Contable y SRI',
+        description: 'Control contable, tributario y documentos fiscales.',
+        icon: Landmark,
+        categories: createCategories(
+          'Contable y SRI',
+          [
+            { label: 'Cuentas contables', description: 'Catalogo contable principal.', icon: Landmark },
+            { label: 'Centros de costo', description: 'Clasificacion de costos internos.', icon: FolderKanban },
+            { label: 'Retenciones', description: 'Parametros tributarios y retenciones.', icon: ReceiptText }
+          ],
+          [
+            { label: 'Facturas', description: 'Consulta y control de facturacion.', icon: ReceiptText },
+            { label: 'Comprobantes', description: 'Soporte documental contable.', icon: FileCheck2 }
+          ],
+          [
+            { label: 'Cierre contable', description: 'Proceso de cierre por periodo.', icon: ClipboardCheck },
+            { label: 'Conciliacion tributaria', description: 'Validacion de datos fiscales.', icon: Scale }
+          ],
+          [
+            { label: 'Estado financiero', description: 'Resumen financiero por periodo.', icon: FileBarChart },
+            { label: 'Indicadores contables', description: 'Metricas principales contables.', icon: ChartColumn }
+          ]
+        )
       },
       {
-        key: 'generales',
-        label: 'Generales',
-        description: 'Parametros y procesos generales del sistema.',
+        key: 'caja-tesoreria',
+        label: 'Caja y Tesoreria',
+        description: 'Control de caja, bancos, pagos y cobros.',
+        icon: CircleDollarSign,
+        categories: createCategories(
+          'Caja y Tesoreria',
+          [
+            { label: 'Cajas', description: 'Configuracion de cajas disponibles.', icon: CircleDollarSign },
+            { label: 'Bancos', description: 'Registro de bancos y cuentas.', icon: Landmark },
+            { label: 'Formas de pago', description: 'Metodos de pago permitidos.', icon: ReceiptText }
+          ],
+          [
+            { label: 'Recibos', description: 'Documentos de cobro y pago.', icon: FileText },
+            { label: 'Comprobantes bancarios', description: 'Soportes de movimientos bancarios.', icon: FileCheck2 }
+          ],
+          [
+            { label: 'Cuentas por cobrar', description: 'Gestion de cartera y cobros.', icon: CircleDollarSign },
+            { label: 'Cuentas por pagar', description: 'Control de obligaciones pendientes.', icon: ReceiptText },
+            { label: 'Conciliacion bancaria', description: 'Validacion de movimientos bancarios.', icon: Landmark }
+          ],
+          [
+            { label: 'Flujo de caja', description: 'Proyeccion y control de liquidez.', icon: LineChart },
+            { label: 'Cartera vencida', description: 'Analisis de cuentas pendientes.', icon: Gauge }
+          ]
+        )
+      }
+    ]
+  },
+  rrhh: {
+    key: 'rrhh',
+    title: 'RRHH',
+    subtitle: 'Gestion de personal, proveedores internos y administracion.',
+    icon: Users,
+    categories: [],
+    defaultSubmoduleKey: 'empleado',
+    submodules: [
+      {
+        key: 'empleado',
+        label: 'Empleado',
+        description: 'Informacion laboral, cargos y seguimiento de personal.',
+        icon: Users,
+        categories: createCategories(
+          'Empleado',
+          [
+            { label: 'Empleados', description: 'Registro de colaboradores.', icon: Users },
+            { label: 'Cargos', description: 'Catalogo de puestos internos.', icon: BriefcaseBusiness },
+            { label: 'Departamentos', description: 'Estructura organizacional.', icon: Building2 }
+          ],
+          [
+            { label: 'Contratos', description: 'Documentos laborales.', icon: ScrollText },
+            { label: 'Comunicados', description: 'Avisos internos para colaboradores.', icon: FileText }
+          ],
+          [
+            { label: 'Solicitudes internas', description: 'Tramites del personal.', icon: ClipboardCheck },
+            { label: 'Revision de asistencia', description: 'Control de asistencia.', icon: Gauge }
+          ],
+          [
+            { label: 'Nomina por periodo', description: 'Resumen de nomina.', icon: FileBarChart },
+            { label: 'Asistencia por empleado', description: 'Reporte de asistencia.', icon: ChartColumn }
+          ]
+        )
+      },
+      {
+        key: 'proveedores',
+        label: 'Proveedores',
+        description: 'Gestion de proveedores relacionados con RRHH.',
+        icon: Handshake,
+        categories: createCategories(
+          'Proveedores',
+          [
+            { label: 'Proveedores', description: 'Registro de proveedores.', icon: Handshake },
+            { label: 'Servicios contratados', description: 'Servicios vinculados al personal.', icon: ClipboardList }
+          ],
+          [
+            { label: 'Contratos de servicio', description: 'Documentos de proveedores.', icon: ScrollText }
+          ],
+          [
+            { label: 'Evaluacion de proveedores', description: 'Revision de desempeno.', icon: ClipboardCheck }
+          ],
+          [
+            { label: 'Proveedores activos', description: 'Consulta de proveedores vigentes.', icon: FileBarChart }
+          ]
+        )
+      },
+      {
+        key: 'administracion',
+        label: 'Administracion',
+        description: 'Procesos administrativos de recursos humanos.',
+        icon: Building2,
+        categories: createCategories(
+          'Administracion',
+          [
+            { label: 'Calendarios', description: 'Calendarios laborales y eventos.', icon: ClipboardList },
+            { label: 'Beneficios', description: 'Beneficios disponibles.', icon: Tags }
+          ],
+          [
+            { label: 'Politicas internas', description: 'Normas y documentos de RRHH.', icon: ScrollText }
+          ],
+          [
+            { label: 'Aprobaciones', description: 'Flujos de aprobacion interna.', icon: ClipboardCheck }
+          ],
+          [
+            { label: 'Indicadores RRHH', description: 'Metricas de gestion humana.', icon: ChartColumn }
+          ]
+        )
+      }
+    ]
+  },
+  clientes: {
+    key: 'clientes',
+    title: 'Clientes',
+    subtitle: 'Gestion comercial, cobranza, codigos y procesos legales.',
+    icon: Users,
+    categories: [],
+    defaultSubmoduleKey: 'marketing',
+    submodules: [
+      {
+        key: 'marketing',
+        label: 'Marketing',
+        description: 'Campanas, segmentacion y material promocional.',
+        icon: Gauge,
+        categories: createCategories(
+          'Marketing',
+          [
+            { label: 'Campanas', description: 'Registro de campanas comerciales.', icon: Gauge },
+            { label: 'Segmentacion', description: 'Clasificacion de clientes.', icon: FolderKanban },
+            { label: 'Material promocional', description: 'Recursos para promociones.', icon: Package }
+          ],
+          [
+            { label: 'Piezas comerciales', description: 'Documentos de campanas.', icon: FileText }
+          ],
+          [
+            { label: 'Lanzamiento de campana', description: 'Flujo de publicacion.', icon: ClipboardCheck }
+          ],
+          [
+            { label: 'Conversion por campana', description: 'Indicadores de marketing.', icon: ChartColumn }
+          ]
+        )
+      },
+      {
+        key: 'cobranza',
+        label: 'Cobranza',
+        description: 'Seguimiento de cartera y compromisos de pago.',
+        icon: CircleDollarSign,
+        categories: createCategories(
+          'Cobranza',
+          [
+            { label: 'Estados de cartera', description: 'Clasificacion de cartera.', icon: Tags },
+            { label: 'Gestores', description: 'Responsables de cobranza.', icon: Users }
+          ],
+          [
+            { label: 'Compromisos de pago', description: 'Documentos de acuerdos.', icon: FileCheck2 }
+          ],
+          [
+            { label: 'Gestion de cobranza', description: 'Seguimiento de cobros.', icon: ClipboardCheck }
+          ],
+          [
+            { label: 'Cartera vencida', description: 'Reporte de vencimientos.', icon: Gauge }
+          ]
+        )
+      },
+      {
+        key: 'codigo-imp',
+        label: 'Codigo IMP',
+        description: 'Control y seguimiento de codigos IMP.',
+        icon: Code2,
+        categories: createCategories(
+          'Codigo IMP',
+          [
+            { label: 'Codigos IMP', description: 'Catalogo de codigos IMP.', icon: Code2 },
+            { label: 'Tipos de codigo', description: 'Clasificacion de codigos.', icon: Tags }
+          ],
+          [
+            { label: 'Documentos IMP', description: 'Soporte documental asociado.', icon: FileText }
+          ],
+          [
+            { label: 'Validacion IMP', description: 'Revision de codigos registrados.', icon: ClipboardCheck }
+          ],
+          [
+            { label: 'Uso de codigos', description: 'Consulta de movimiento por codigo.', icon: FileBarChart }
+          ]
+        )
+      },
+      {
+        key: 'legal',
+        label: 'Legal',
+        description: 'Gestion documental y procesos legales de clientes.',
+        icon: Scale,
+        categories: createCategories(
+          'Legal',
+          [
+            { label: 'Tipos de caso', description: 'Clasificacion legal de casos.', icon: Tags },
+            { label: 'Abogados', description: 'Responsables legales.', icon: Users }
+          ],
+          [
+            { label: 'Contratos', description: 'Documentos legales.', icon: ScrollText },
+            { label: 'Actas', description: 'Actas y soportes legales.', icon: FileCheck2 }
+          ],
+          [
+            { label: 'Seguimiento legal', description: 'Control de casos legales.', icon: ClipboardCheck }
+          ],
+          [
+            { label: 'Casos por estado', description: 'Reporte de casos legales.', icon: FileBarChart }
+          ]
+        )
+      }
+    ]
+  },
+  producto: {
+    key: 'producto',
+    title: 'Producto',
+    subtitle: 'Control de produccion, distribucion, compras e importaciones.',
+    icon: Package,
+    categories: [],
+    defaultSubmoduleKey: 'produccion-distribucion',
+    submodules: [
+      {
+        key: 'produccion-distribucion',
+        label: 'Produccion y Distribucion',
+        description: 'Seguimiento de produccion, inventario y distribucion.',
+        icon: Factory,
+        categories: createCategories(
+          'Produccion y Distribucion',
+          [
+            { label: 'Productos', description: 'Catalogo de productos.', icon: Package },
+            { label: 'Bodegas', description: 'Ubicaciones logisticas y almacenes.', icon: Boxes },
+            { label: 'Rutas de distribucion', description: 'Rutas y cobertura logistica.', icon: Truck }
+          ],
+          [
+            { label: 'Ordenes de produccion', description: 'Documentos de produccion.', icon: ClipboardList },
+            { label: 'Guias de despacho', description: 'Soportes de entrega.', icon: Truck }
+          ],
+          [
+            { label: 'Produccion', description: 'Flujo productivo.', icon: Factory },
+            { label: 'Distribucion', description: 'Proceso de despacho y entrega.', icon: Truck }
+          ],
+          [
+            { label: 'Rotacion de inventario', description: 'Analisis de movimiento de stock.', icon: Boxes },
+            { label: 'Entregas por periodo', description: 'Indicadores de distribucion.', icon: ChartColumn }
+          ]
+        )
+      },
+      {
+        key: 'compras-importaciones',
+        label: 'Compras e Importaciones',
+        description: 'Gestion de compras, proveedores e importaciones.',
+        icon: ReceiptText,
+        categories: createCategories(
+          'Compras e Importaciones',
+          [
+            { label: 'Proveedores', description: 'Registro y control de proveedores.', icon: Handshake },
+            { label: 'Tipos de compra', description: 'Clasificacion de compras.', icon: Tags },
+            { label: 'Paises de origen', description: 'Origenes de importacion.', icon: MapPin }
+          ],
+          [
+            { label: 'Ordenes de compra', description: 'Documentos de adquisicion.', icon: ReceiptText },
+            { label: 'Documentos de importacion', description: 'Soportes de importacion.', icon: FileText }
+          ],
+          [
+            { label: 'Compras', description: 'Control de solicitudes y adquisiciones.', icon: ReceiptText },
+            { label: 'Importaciones', description: 'Seguimiento de importaciones.', icon: Truck }
+          ],
+          [
+            { label: 'Compras por proveedor', description: 'Resumen por proveedor.', icon: FileBarChart },
+            { label: 'Importaciones por estado', description: 'Seguimiento de estados.', icon: ChartColumn }
+          ]
+        )
+      }
+    ]
+  },
+  analisis: {
+    key: 'analisis',
+    title: 'Analisis',
+    subtitle: 'Indicadores, reportes y seguimiento analitico.',
+    icon: ChartColumn,
+    categories: [],
+    defaultSubmoduleKey: 'am-r',
+    submodules: [
+      {
+        key: 'am-r',
+        label: 'AM y R',
+        description: 'Analisis, medicion y reportes ejecutivos.',
+        icon: BarChart3,
+        categories: createCategories(
+          'AM y R',
+          [
+            { label: 'Indicadores KPI', description: 'Configuracion de indicadores clave.', icon: LineChart },
+            { label: 'Metas', description: 'Definicion de objetivos por periodo.', icon: Gauge }
+          ],
+          [
+            { label: 'Tableros', description: 'Documentacion de tableros e indicadores.', icon: FileText }
+          ],
+          [
+            { label: 'Seguimiento estrategico', description: 'Control de iniciativas prioritarias.', icon: LayoutDashboard },
+            { label: 'Revision de metricas', description: 'Validacion periodica de indicadores.', icon: ClipboardCheck }
+          ],
+          [
+            { label: 'Dashboard ejecutivo', description: 'Resumen de indicadores principales.', icon: ChartColumn },
+            { label: 'Cumplimiento de metas', description: 'Avance de objetivos.', icon: FileBarChart }
+          ]
+        )
+      }
+    ]
+  },
+  sistema: {
+    key: 'sistema',
+    title: 'Sistema',
+    subtitle: 'Configuracion, soporte y herramientas tecnicas.',
+    icon: MonitorCog,
+    categories: [],
+    defaultSubmoduleKey: 'configuracion',
+    submodules: [
+      {
+        key: 'configuracion',
+        label: 'Configuracion',
+        description: 'Catalogos base, preferencias y parametros del sistema.',
         icon: Settings,
-        categories: systemGeneralCategories
-      },
-      {
-        key: 'correccion-datos',
-        label: 'Correccion de datos',
-        description: 'Control de solicitudes, validaciones y ajustes de informacion.',
-        icon: Database,
-        categories: systemCorrectionCategories
+        categories: configuracionCategories
       },
       {
         key: 'help-desk',
         label: 'Help Desk',
-        description: 'Soporte, equipos, componentes y tickets de asistencia.',
+        description: 'Soporte, tickets, equipos y componentes.',
         icon: TicketCheck,
-        categories: systemCategories
+        categories: helpDeskCategories
       },
       {
-        key: 'seguridad',
-        label: 'Seguridad',
-        description: 'Usuarios, roles, permisos y auditoria de accesos.',
-        icon: ShieldCheck,
-        categories: systemSecurityCategories
-      }
-    ]
-  },
-  gerencial: {
-    key: 'gerencial',
-    title: 'Área Gerencial',
-    subtitle: 'Consulta indicadores, decisiones ejecutivas y controles gerenciales.',
-    icon: ChartColumn,
-    categories: [
-      {
-        key: 'mantenimientos',
-        label: 'Mantenimientos',
-        icon: Wrench,
-        description: 'Parámetros de gestión ejecutiva',
-        options: [
-          { label: 'Unidades de negocio', description: 'Estructura de análisis gerencial.', icon: Building2 },
-          { label: 'Metas corporativas', description: 'Definición de objetivos por periodo.', icon: Gauge },
-          { label: 'Indicadores KPI', description: 'Configuración de indicadores clave.', icon: LineChart }
-        ]
-      },
-      {
-        key: 'documentos',
-        label: 'Documentos',
-        icon: FileText,
-        description: 'Documentación gerencial',
-        options: [
-          { label: 'Actas de comité', description: 'Registro de reuniones directivas.', icon: FileCheck2 },
-          { label: 'Políticas ejecutivas', description: 'Normas y directrices gerenciales.', icon: ScrollText }
-        ]
-      },
-      {
-        key: 'procesos',
-        label: 'Procesos',
-        icon: Settings,
-        description: 'Flujos de aprobación y seguimiento',
-        options: [
-          { label: 'Aprobaciones gerenciales', description: 'Validación de decisiones críticas.', icon: ClipboardCheck },
-          { label: 'Seguimiento estratégico', description: 'Control de iniciativas prioritarias.', icon: LayoutDashboard }
-        ]
-      },
-      {
-        key: 'informes',
-        label: 'Informes',
-        icon: BarChart3,
-        description: 'Reportes ejecutivos',
-        options: [
-          { label: 'Dashboard gerencial', description: 'Resumen ejecutivo de indicadores.', icon: ChartColumn },
-          { label: 'Rentabilidad por área', description: 'Análisis financiero por unidad.', icon: CircleDollarSign },
-          { label: 'Cumplimiento de metas', description: 'Avance de objetivos estratégicos.', icon: FileBarChart }
-        ]
-      }
-    ]
-  },
-  operativa: {
-    key: 'operativa',
-    title: 'Área Operativa',
-    subtitle: 'Gestiona procesos de ventas, logística, clientes y operación diaria.',
-    icon: Settings,
-    categories: [
-      {
-        key: 'mantenimientos',
-        label: 'Mantenimientos',
-        icon: Wrench,
-        description: 'Catálogos operativos',
-        options: [
-          { label: 'Clientes', description: 'Registro y administración de clientes.', icon: Users },
-          { label: 'Productos', description: 'Catálogo operativo de productos.', icon: Package },
-          { label: 'Bodegas', description: 'Ubicaciones logísticas y almacenes.', icon: Boxes }
-        ]
-      },
-      {
-        key: 'documentos',
-        label: 'Documentos',
-        icon: FileText,
-        description: 'Documentación operativa',
-        options: [
-          { label: 'Órdenes de compra', description: 'Documentos de adquisición.', icon: ReceiptText },
-          { label: 'Guías de despacho', description: 'Soporte de entrega y logística.', icon: Truck },
-          { label: 'Reclamos de clientes', description: 'Registro documental de atención.', icon: ClipboardList }
-        ]
-      },
-      {
-        key: 'procesos',
-        label: 'Procesos',
-        icon: Settings,
-        description: 'Operación diaria',
-        options: [
-          { label: 'Ventas', description: 'Gestión de flujo comercial.', icon: BriefcaseBusiness },
-          { label: 'Compras', description: 'Control de solicitudes y adquisiciones.', icon: ReceiptText },
-          { label: 'Logística y bodega', description: 'Movimientos y despacho de productos.', icon: Truck },
-          { label: 'Servicio al cliente', description: 'Atención y seguimiento de casos.', icon: Users }
-        ]
-      },
-      {
-        key: 'informes',
-        label: 'Informes',
-        icon: BarChart3,
-        description: 'Reportes operativos',
-        options: [
-          { label: 'Ventas por periodo', description: 'Resumen comercial por fechas.', icon: ChartColumn },
-          { label: 'Rotación de inventario', description: 'Análisis de movimiento de stock.', icon: Boxes },
-          { label: 'Indicadores de servicio', description: 'Métricas de atención al cliente.', icon: Gauge }
-        ]
-      }
-    ]
-  },
-  administrativa: {
-    key: 'administrativa',
-    title: 'Área Administrativa',
-    subtitle: 'Administra recursos, documentos internos y procesos institucionales.',
-    icon: Building2,
-    categories: [
-      {
-        key: 'mantenimientos',
-        label: 'Mantenimientos',
-        icon: Wrench,
-        description: 'Parámetros administrativos',
-        options: [
-          { label: 'Departamentos', description: 'Estructura administrativa interna.', icon: Building2 },
-          { label: 'Cargos', description: 'Catálogo de roles y puestos.', icon: Users },
-          { label: 'Proveedores administrativos', description: 'Control de proveedores internos.', icon: Handshake }
-        ]
-      },
-      {
-        key: 'documentos',
-        label: 'Documentos',
-        icon: FileText,
-        description: 'Documentos administrativos',
-        options: [
-          { label: 'Contratos', description: 'Gestión de contratos institucionales.', icon: ScrollText },
-          { label: 'Comunicados', description: 'Documentos internos y avisos.', icon: FileText },
-          { label: 'Activos administrativos', description: 'Soporte documental de activos.', icon: ClipboardList }
-        ]
-      },
-      {
-        key: 'procesos',
-        label: 'Procesos',
-        icon: Settings,
-        description: 'Gestión administrativa',
-        options: [
-          { label: 'Solicitudes internas', description: 'Trámite y seguimiento de solicitudes.', icon: ClipboardCheck },
-          { label: 'Control de activos', description: 'Asignación y control administrativo.', icon: Boxes },
-          { label: 'Gestión legal', description: 'Procesos y seguimiento legal.', icon: Scale }
-        ]
-      },
-      {
-        key: 'informes',
-        label: 'Informes',
-        icon: BarChart3,
-        description: 'Reportes administrativos',
-        options: [
-          { label: 'Inventario administrativo', description: 'Estado de activos internos.', icon: FileBarChart },
-          { label: 'Solicitudes por estado', description: 'Seguimiento de trámites internos.', icon: LayoutDashboard }
-        ]
-      }
-    ]
-  },
-  financiera: {
-    key: 'financiera',
-    title: 'Área Financiera',
-    subtitle: 'Controla procesos financieros, reportes y documentación contable.',
-    icon: CircleDollarSign,
-    categories: [
-      {
-        key: 'mantenimientos',
-        label: 'Mantenimientos',
-        icon: Wrench,
-        description: 'Parámetros financieros',
-        options: [
-          { label: 'Cuentas contables', description: 'Catálogo contable principal.', icon: Landmark },
-          { label: 'Centros de costo', description: 'Clasificación de costos por área.', icon: FolderKanban },
-          { label: 'Formas de pago', description: 'Configuración de métodos de pago.', icon: ReceiptText }
-        ]
-      },
-      {
-        key: 'documentos',
-        label: 'Documentos',
-        icon: FileText,
-        description: 'Documentos financieros',
-        options: [
-          { label: 'Facturas', description: 'Consulta y control de facturación.', icon: ReceiptText },
-          { label: 'Comprobantes', description: 'Soporte documental contable.', icon: FileCheck2 },
-          { label: 'Retenciones', description: 'Documentos tributarios asociados.', icon: ScrollText }
-        ]
-      },
-      {
-        key: 'procesos',
-        label: 'Procesos',
-        icon: Settings,
-        description: 'Flujos financieros',
-        options: [
-          { label: 'Cuentas por cobrar', description: 'Gestión de cartera y cobros.', icon: CircleDollarSign },
-          { label: 'Cuentas por pagar', description: 'Control de obligaciones pendientes.', icon: ReceiptText },
-          { label: 'Conciliación bancaria', description: 'Validación de movimientos bancarios.', icon: Landmark }
-        ]
-      },
-      {
-        key: 'informes',
-        label: 'Informes',
-        icon: BarChart3,
-        description: 'Reportes financieros',
-        options: [
-          { label: 'Flujo de caja', description: 'Proyección y control de liquidez.', icon: LineChart },
-          { label: 'Estado financiero', description: 'Resumen financiero por periodo.', icon: FileBarChart },
-          { label: 'Cartera vencida', description: 'Análisis de cuentas pendientes.', icon: Gauge }
-        ]
+        key: 'developer',
+        label: 'Developer',
+        description: 'Herramientas tecnicas para desarrollo y mantenimiento.',
+        icon: Code2,
+        categories: createCategories(
+          'Developer',
+          [
+            { label: 'Ambientes', description: 'Configuracion de entornos de trabajo.', icon: MonitorCog },
+            { label: 'Versiones', description: 'Control de versiones liberadas.', icon: Tags },
+            { label: 'Repositorios', description: 'Registro de repositorios tecnicos.', icon: Database }
+          ],
+          [
+            { label: 'Especificaciones', description: 'Documentacion funcional y tecnica.', icon: FileText },
+            { label: 'Actas de cambios', description: 'Soporte documental de cambios.', icon: FileCheck2 }
+          ],
+          [
+            { label: 'Control de cambios', description: 'Seguimiento de cambios del sistema.', icon: ClipboardCheck },
+            { label: 'Validacion QA', description: 'Revision y validacion de entregables.', icon: ShieldCheck }
+          ],
+          [
+            { label: 'Cambios por periodo', description: 'Resumen de cambios por fechas.', icon: FileBarChart },
+            { label: 'Estado de versiones', description: 'Consulta de versiones activas.', icon: ChartColumn }
+          ]
+        )
       }
     ]
   }
 };
 
 export const DEFAULT_SYSTEM_AREA_KEY: SystemAreaKey = 'sistema';
-export const DEFAULT_SYSTEM_SUBMODULE_KEY: SystemAreaSubmoduleKey = 'help-desk';
+export const DEFAULT_SYSTEM_SUBMODULE_KEY: SystemAreaSubmoduleKey = 'configuracion';
 
 export function isSystemAreaKey(value: string | null): value is SystemAreaKey {
   return Boolean(value && value in SYSTEM_AREA_CONFIG);

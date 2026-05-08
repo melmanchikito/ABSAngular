@@ -176,40 +176,6 @@ button:disabled {
   margin-bottom: 1rem;
 }
 
-.metric-card {
-  min-height: 84px;
-  display: grid;
-  align-content: center;
-  gap: 0.2rem;
-  padding: 1rem;
-  border-radius: 16px;
-  border: 1.5px solid var(--company-border);
-  background: var(--company-card-bg);
-  box-shadow: var(--company-shadow);
-}
-
-.metric-card strong {
-  color: var(--abs-text);
-  font-size: 1.8rem;
-  line-height: 1;
-}
-
-.metric-card span {
-  color: var(--abs-text-muted);
-  font-size: 0.78rem;
-  font-weight: 900;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.metric-card.active {
-  border-color: color-mix(in srgb, var(--company-success) 34%, var(--company-border));
-}
-
-.metric-card.inactive {
-  border-color: color-mix(in srgb, var(--company-danger) 34%, var(--company-border));
-}
-
 .table-card {
   overflow: hidden;
   border: 1.5px solid var(--company-border);

@@ -1,0 +1,27 @@
+.app-card {
+  overflow: hidden;
+  border: 1.5px solid color-mix(in srgb, var(--abs-border) 82%, #6b7280);
+  border-radius: 18px;
+  background: color-mix(in srgb, var(--abs-surface) 94%, var(--abs-bg));
+  box-shadow: var(--abs-shadow-md);
+}
+
+.app-card-header,
+.app-card-body,
+.app-card-footer {
+  padding: 1rem;
+}
+
+.app-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  border-bottom: 1.5px solid color-mix(in srgb, var(--abs-border) 82%, #6b7280);
+}
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 0.85rem;
+}

@@ -95,23 +95,6 @@ textarea {
   font-family: inherit;
 }
 
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: var(--abs-bg);
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--abs-border);
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--abs-text-muted);
-}
 html,
 body {
   background: var(--abs-bg);
@@ -147,21 +130,3 @@ textarea::placeholder {
   color: var(--abs-text-soft);
 }
 
-/* Scrollbar global */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: var(--abs-scroll-track);
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--abs-scroll-thumb);
-  border-radius: 999px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--abs-primary);
-}

@@ -1,0 +1,27 @@
+.alert-success,
+.alert-error,
+.alert-warning {
+  margin-bottom: 0.85rem;
+  padding: 0.78rem 0.9rem;
+  border-radius: 12px;
+  border: 1.5px solid transparent;
+  font-weight: 700;
+}
+
+.alert-success {
+  border-color: color-mix(in srgb, var(--abs-success) 42%, var(--abs-border));
+  background: color-mix(in srgb, var(--abs-success) 12%, var(--abs-surface));
+  color: color-mix(in srgb, var(--abs-success) 82%, var(--abs-text));
+}
+
+.alert-error {
+  border-color: color-mix(in srgb, var(--abs-error) 46%, var(--abs-border));
+  background: color-mix(in srgb, var(--abs-error) 12%, var(--abs-surface));
+  color: color-mix(in srgb, var(--abs-error) 86%, var(--abs-text));
+}
+
+.alert-warning {
+  border-color: color-mix(in srgb, var(--abs-warning) 46%, var(--abs-border));
+  background: color-mix(in srgb, var(--abs-warning) 13%, var(--abs-surface));
+  color: color-mix(in srgb, var(--abs-warning) 82%, var(--abs-text));
+}

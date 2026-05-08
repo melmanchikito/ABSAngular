@@ -1,11 +1,12 @@
 import { LucideIconData } from 'lucide-angular';
 
 export type SystemAreaKey =
-  | 'sistema'
-  | 'gerencial'
-  | 'operativa'
-  | 'administrativa'
-  | 'financiera';
+  | 'finanzas'
+  | 'rrhh'
+  | 'clientes'
+  | 'producto'
+  | 'analisis'
+  | 'sistema';
 
 export type SystemAreaCategoryKey =
   | 'mantenimientos'
@@ -14,11 +15,21 @@ export type SystemAreaCategoryKey =
   | 'informes';
 
 export type SystemAreaSubmoduleKey =
-  | 'desarrollo'
-  | 'generales'
-  | 'correccion-datos'
+  | 'contable-sri'
+  | 'caja-tesoreria'
+  | 'empleado'
+  | 'proveedores'
+  | 'administracion'
+  | 'marketing'
+  | 'cobranza'
+  | 'codigo-imp'
+  | 'legal'
+  | 'produccion-distribucion'
+  | 'compras-importaciones'
+  | 'am-r'
+  | 'configuracion'
   | 'help-desk'
-  | 'seguridad';
+  | 'developer';
 
 export interface SystemAreaOption {
   label: string;

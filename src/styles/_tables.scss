@@ -1,0 +1,36 @@
+.table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.app-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.app-table th,
+.app-table td {
+  padding: 0.9rem 1rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--abs-border) 72%, transparent);
+  text-align: left;
+  vertical-align: middle;
+}
+
+.app-table th {
+  background: color-mix(in srgb, var(--abs-surface-soft) 82%, #000);
+  color: var(--abs-text-muted);
+  font-size: 0.74rem;
+  font-weight: 900;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.app-table tbody tr:hover {
+  background: color-mix(in srgb, var(--abs-primary) 7%, var(--abs-surface));
+}
+
+.table-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}

@@ -1,0 +1,89 @@
+.btn-primary,
+.btn-secondary,
+.btn-danger,
+.btn-outline,
+.btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+  transition:
+    transform 0.18s ease,
+    border-color 0.18s ease,
+    background 0.18s ease,
+    color 0.18s ease;
+}
+
+.btn-primary,
+.btn-secondary,
+.btn-danger,
+.btn-outline {
+  min-height: 42px;
+  gap: 0.45rem;
+  padding: 0 0.95rem;
+  border-radius: 11px;
+  white-space: nowrap;
+}
+
+.btn-primary {
+  background: var(--abs-primary);
+  color: #fff;
+}
+
+.btn-primary:hover {
+  background: var(--abs-primary-hover);
+}
+
+.btn-secondary,
+.btn-outline {
+  border: 1.5px solid color-mix(in srgb, var(--abs-border) 82%, #6b7280);
+  background: color-mix(in srgb, var(--abs-surface) 94%, var(--abs-bg));
+  color: var(--abs-text);
+}
+
+.btn-secondary:hover,
+.btn-outline:hover {
+  border-color: color-mix(in srgb, var(--abs-primary) 48%, var(--abs-border));
+  background: color-mix(in srgb, var(--abs-primary) 7%, var(--abs-surface));
+  color: var(--abs-primary);
+}
+
+.btn-danger {
+  background: var(--abs-error);
+  color: #fff;
+}
+
+.btn-danger:hover {
+  background: color-mix(in srgb, var(--abs-error) 86%, #000);
+}
+
+.btn-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  border: 1.5px solid color-mix(in srgb, var(--abs-border) 82%, #6b7280);
+  background: color-mix(in srgb, var(--abs-surface-soft) 90%, var(--abs-surface));
+  color: var(--abs-text);
+}
+
+.btn-primary:hover,
+.btn-danger:hover,
+.btn-outline:hover,
+.btn-secondary:hover,
+.btn-icon:hover {
+  transform: translateY(-1px);
+}
+
+button:disabled,
+.btn-primary:disabled,
+.btn-secondary:disabled,
+.btn-danger:disabled,
+.btn-outline:disabled,
+.btn-icon:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+  transform: none;
+}

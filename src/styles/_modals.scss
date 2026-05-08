@@ -1,0 +1,39 @@
+.app-modal-backdrop,
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background: rgba(2, 6, 23, 0.68);
+  backdrop-filter: blur(8px);
+}
+
+.app-modal,
+.modal-card {
+  width: min(520px, 100%);
+  border: 1.5px solid color-mix(in srgb, var(--abs-border) 82%, #6b7280);
+  border-radius: 18px;
+  background: color-mix(in srgb, var(--abs-surface) 94%, var(--abs-bg));
+  box-shadow: 0 22px 60px rgba(0, 0, 0, 0.36);
+}
+
+.modal-header,
+.modal-footer {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.modal-header {
+  justify-content: space-between;
+  padding: 1rem 1.1rem;
+  border-bottom: 1.5px solid color-mix(in srgb, var(--abs-border) 82%, #6b7280);
+}
+
+.modal-footer {
+  justify-content: flex-end;
+  padding: 1rem 1.1rem;
+}
