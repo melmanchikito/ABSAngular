@@ -120,6 +120,12 @@ const configuracionCategories = createCategories(
       route: route('sistema/configuracion/tipo-opciones')
     },
     {
+      label: 'User',
+      description: 'Administracion de usuarios del sistema.',
+      icon: Users,
+      route: route('sistema/configuracion/user')
+    },
+    {
       label: 'Acciones',
       description: 'Permisos y acciones disponibles.',
       icon: ClipboardCheck,

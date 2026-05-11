@@ -9,6 +9,7 @@ import { LocationMaintenanceComponent } from '../system-area/pages/location-main
 import { ModuleMaintenanceComponent } from '../system-area/pages/module-maintenance/module-maintenance.component';
 import { OptionMaintenanceComponent } from '../system-area/pages/option-maintenance/option-maintenance.component';
 import { OptionTypeMaintenanceComponent } from '../system-area/pages/maintenance/option-type-maintenance/option-type-maintenance.component';
+import { UserMaintenanceComponent } from '../system-area/pages/maintenance/user-maintenance/user-maintenance.component';
 import { ProductMaintenanceComponent } from '../system-area/pages/product-maintenance/product-maintenance.component';
 import { SystemAreaComponent } from '../system-area/pages/system-area/system-area.component';
 
@@ -117,6 +118,10 @@ export const MAIN_ROUTES: Routes = [
       {
         path: 'modulo/sistema/configuracion/tipo-opciones',
         component: OptionTypeMaintenanceComponent
+      },
+      {
+        path: 'modulo/sistema/configuracion/user',
+        component: UserMaintenanceComponent
       },
       {
         path: 'modulo/producto/produccion-distribucion/productos',
