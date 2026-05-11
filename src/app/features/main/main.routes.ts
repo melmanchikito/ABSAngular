@@ -8,6 +8,7 @@ import { CompanyMaintenanceComponent } from '../system-area/pages/company-mainte
 import { LocationMaintenanceComponent } from '../system-area/pages/location-maintenance/location-maintenance.component';
 import { ModuleMaintenanceComponent } from '../system-area/pages/module-maintenance/module-maintenance.component';
 import { OptionMaintenanceComponent } from '../system-area/pages/option-maintenance/option-maintenance.component';
+import { HelpdeskMaintenanceComponent } from '../system-area/pages/maintenance/helpdesk-maintenance/helpdesk-maintenance.component';
 import { OptionTypeMaintenanceComponent } from '../system-area/pages/maintenance/option-type-maintenance/option-type-maintenance.component';
 import { UserMaintenanceComponent } from '../system-area/pages/maintenance/user-maintenance/user-maintenance.component';
 import { ProductMaintenanceComponent } from '../system-area/pages/product-maintenance/product-maintenance.component';
@@ -33,9 +34,14 @@ export const MAIN_ROUTES: Routes = [
         pathMatch: 'full'
       },
       {
-        path: 'helpdesk',
+        path: 'tickets',
         loadChildren: () =>
-          import('../helpdesk/helpdesk.routes').then((m) => m.HELPDESK_ROUTES)
+          import('../tickets/tickets.routes').then((m) => m.TICKETS_ROUTES)
+      },
+      {
+        path: 'helpdesk',
+        redirectTo: 'tickets',
+        pathMatch: 'full'
       },
       {
         path: 'correo',
@@ -122,6 +128,10 @@ export const MAIN_ROUTES: Routes = [
       {
         path: 'modulo/sistema/configuracion/user',
         component: UserMaintenanceComponent
+      },
+      {
+        path: 'modulo/sistema/help-desk/mantenimientos/helpdesk',
+        component: HelpdeskMaintenanceComponent
       },
       {
         path: 'modulo/producto/produccion-distribucion/productos',

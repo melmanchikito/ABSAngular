@@ -116,7 +116,7 @@ export class SidebarComponent {
       areaKey: 'sistema',
       children: [
         { label: 'Configuracion', areaKey: 'sistema', submoduleKey: 'configuracion' },
-        { label: 'Help Desk', areaKey: 'sistema', submoduleKey: 'help-desk' },
+        { label: 'Helpdesk', areaKey: 'sistema', submoduleKey: 'help-desk' },
         { label: 'Developer', areaKey: 'sistema', submoduleKey: 'developer' }
       ]
     }
@@ -210,13 +210,13 @@ export class SidebarComponent {
       return;
     }
 
-    if (normalizedUrl.startsWith('/main/helpdesk')) {
+    if (normalizedUrl.startsWith('/main/tickets') || normalizedUrl.startsWith('/main/helpdesk')) {
       const systemArea = this.areas.find((area) => area.areaKey === 'sistema');
 
       if (systemArea) {
         this.activeArea = systemArea.name;
         this.expandedArea = systemArea.name;
-        this.activeChild = 'Help Desk';
+        this.activeChild = 'Helpdesk';
       }
 
       return;

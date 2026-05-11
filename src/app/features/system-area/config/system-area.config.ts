@@ -149,11 +149,16 @@ const configuracionCategories = createCategories(
 );
 
 const helpDeskCategories = createCategories(
-  'Help Desk',
+  'Helpdesk',
   [
     { label: 'Categoria', description: 'Clasificacion de solicitudes de soporte.', icon: ClipboardList },
     { label: 'Problemas', description: 'Catalogo de problemas frecuentes.', icon: TicketCheck },
-    { label: 'Helpdesk', description: 'Parametros de atencion y soporte.', icon: MonitorCog },
+    {
+      label: 'Helpdesk',
+      description: 'Parametros de atencion y soporte.',
+      icon: MonitorCog,
+      route: route('sistema/help-desk/mantenimientos/helpdesk')
+    },
     { label: 'Device', description: 'Registro y control de equipos.', icon: HardDrive },
     { label: 'Componente', description: 'Registro y control de componentes.', icon: Package }
   ],
@@ -163,10 +168,10 @@ const helpDeskCategories = createCategories(
   ],
   [
     {
-      label: 'Ticket mantenimiento',
+      label: 'Tickets',
       description: 'Registro y seguimiento de tickets de mantenimiento.',
       icon: TicketCheck,
-      route: '/main/helpdesk'
+      route: '/main/tickets'
     },
     { label: 'Entrega y ajuste de equipos', description: 'Control de entrega y cambios tecnicos.', icon: Truck },
     { label: 'Mantenimiento de componentes', description: 'Gestion y actualizacion de componentes.', icon: Wrench }
@@ -540,7 +545,7 @@ export const SYSTEM_AREA_CONFIG: Record<SystemAreaKey, SystemAreaConfig> = {
       },
       {
         key: 'help-desk',
-        label: 'Help Desk',
+        label: 'Helpdesk',
         description: 'Soporte, tickets, equipos y componentes.',
         icon: TicketCheck,
         categories: helpDeskCategories

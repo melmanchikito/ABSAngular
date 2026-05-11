@@ -49,8 +49,12 @@ export class NavigationService {
     return this.goToHome();
   }
 
+  goToTickets(): Promise<boolean> {
+    return this.router.navigate([APP_ROUTES.tickets]);
+  }
+
   goToHelpdesk(): Promise<boolean> {
-    return this.router.navigate([APP_ROUTES.helpdesk]);
+    return this.goToTickets();
   }
 
   goToProfile(): Promise<boolean> {

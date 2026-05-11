@@ -73,7 +73,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   readonly notifications: HeaderNotification[] = [
     {
       title: 'Ticket asignado',
-      description: 'Se te asigno un nuevo ticket de Help Desk.',
+      description: 'Se te asigno un nuevo ticket.',
       time: 'Hace 5 min',
       unread: true,
       icon: ClipboardList

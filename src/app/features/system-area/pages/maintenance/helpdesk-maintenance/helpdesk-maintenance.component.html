@@ -1,0 +1,326 @@
+<section class="helpdesk-page page-shell">
+  <app-page-header
+    eyebrow="Sistema"
+    title="Mantenimiento - Helpdesk"
+    subtitle="Administra los responsables de helpdesk registrados en el sistema."
+    [icon]="helpdeskIcon"
+  >
+    <button page-actions type="button" class="primary-btn btn-primary" (click)="openCreateModal()">
+      <lucide-angular [img]="addIcon" [size]="18" [strokeWidth]="2.4"></lucide-angular>
+      Nuevo
+    </button>
+  </app-page-header>
+
+  <div
+    class="toast"
+    *ngIf="toast() as currentToast"
+    [class.success]="currentToast.type === 'success'"
+    [class.error]="currentToast.type === 'error'"
+  >
+    {{ currentToast.message }}
+  </div>
+
+  <section class="summary-grid helpdesk-summary">
+    <app-stat-card label="Total helpdesk" [value]="totalHelpdesks()"></app-stat-card>
+    <app-stat-card label="Activos" [value]="activeHelpdesksCount()" tone="active"></app-stat-card>
+    <app-stat-card label="Inactivos" [value]="inactiveHelpdesksCount()" tone="inactive"></app-stat-card>
+  </section>
+
+  <section class="toolbar app-card">
+    <label class="search-box">
+      <lucide-angular [img]="searchIcon" [size]="18" [strokeWidth]="2.3"></lucide-angular>
+      <input
+        type="search"
+        [value]="searchTerm()"
+        (input)="updateSearchTerm($any($event.target).value)"
+        placeholder="Buscar por ID, nombre o usuario ID..."
+        autocomplete="off"
+      />
+    </label>
+
+    <div class="filter-pills" aria-label="Filtro por estado">
+      <button
+        type="button"
+        class="filter-pill"
+        [class.active]="statusFilter() === 'all'"
+        (click)="setStatusFilter('all')"
+      >
+        Todos
+      </button>
+      <button
+        type="button"
+        class="filter-pill"
+        [class.active]="statusFilter() === 'active'"
+        (click)="setStatusFilter('active')"
+      >
+        Activos
+      </button>
+      <button
+        type="button"
+        class="filter-pill"
+        [class.active]="statusFilter() === 'inactive'"
+        (click)="setStatusFilter('inactive')"
+      >
+        Inactivos
+      </button>
+    </div>
+
+    <button type="button" class="ghost-btn btn-outline refresh-btn" (click)="loadHelpdesks()" [disabled]="isLoading()">
+      <lucide-angular [img]="refreshIcon" [size]="17" [strokeWidth]="2.3"></lucide-angular>
+      Actualizar
+    </button>
+  </section>
+
+  <section class="content-grid">
+    <article class="helpdesk-panel app-card">
+      <header class="panel-header">
+        <div>
+          <span class="eyebrow">Listado</span>
+          <h2>Helpdesk</h2>
+        </div>
+        <span class="counter">{{ filteredHelpdesks().length }} registros</span>
+      </header>
+
+      <div class="table-shell table-wrapper">
+        <table class="helpdesk-table app-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Nombre</th>
+              <th>Usuario ID</th>
+              <th>Estado</th>
+              <th>Fecha creacion</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngIf="isLoading()">
+              <td colspan="6">
+                <app-empty-state message="Cargando helpdesk..." [icon]="helpdeskIcon"></app-empty-state>
+              </td>
+            </tr>
+
+            <tr *ngIf="!isLoading() && !helpdesks().length">
+              <td colspan="6">
+                <app-empty-state message="No existen registros de helpdesk." [icon]="helpdeskIcon"></app-empty-state>
+              </td>
+            </tr>
+
+            <tr *ngIf="!isLoading() && helpdesks().length && !filteredHelpdesks().length">
+              <td colspan="6">
+                <app-empty-state
+                  message="No se encontraron registros con los filtros aplicados."
+                  [icon]="searchIcon"
+                ></app-empty-state>
+              </td>
+            </tr>
+
+            <tr
+              *ngFor="let helpdesk of paginatedHelpdesks(); trackBy: trackByHelpdeskId"
+              class="helpdesk-row"
+              [class.selected]="selectedHelpdeskId() === helpdesk.id"
+              (click)="viewDetail(helpdesk)"
+            >
+              <td>
+                <span class="code-badge">#{{ helpdesk.id }}</span>
+              </td>
+              <td>
+                <div class="helpdesk-name">
+                  <span class="helpdesk-avatar">{{ getHelpdeskInitial(helpdesk) }}</span>
+                  <strong>{{ helpdesk.name }}</strong>
+                </div>
+              </td>
+              <td>{{ helpdesk.user_id }}</td>
+              <td>
+                <app-status-badge
+                  [label]="helpdesk.canceled ? 'Inactivo' : 'Activo'"
+                  [variant]="helpdesk.canceled ? 'inactive' : 'active'"
+                ></app-status-badge>
+              </td>
+              <td>{{ formatDate(helpdesk.created_at) }}</td>
+              <td>
+                <div class="actions-cell table-actions">
+                  <button
+                    type="button"
+                    class="icon-action btn-icon"
+                    title="Ver detalle"
+                    aria-label="Ver detalle"
+                    (click)="$event.stopPropagation(); viewDetail(helpdesk)"
+                  >
+                    <lucide-angular [img]="viewIcon" [size]="17" [strokeWidth]="2.3"></lucide-angular>
+                  </button>
+
+                  <button
+                    type="button"
+                    class="icon-action btn-icon"
+                    title="Editar helpdesk"
+                    aria-label="Editar helpdesk"
+                    (click)="$event.stopPropagation(); openEditModal(helpdesk)"
+                  >
+                    <lucide-angular [img]="editIcon" [size]="17" [strokeWidth]="2.3"></lucide-angular>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <footer class="pagination-bar">
+        <span>Mostrando {{ showingCount() }} de {{ filteredHelpdesks().length }} registros</span>
+
+        <div class="pagination-actions">
+          <button
+            type="button"
+            class="page-btn btn-icon"
+            title="Pagina anterior"
+            aria-label="Pagina anterior"
+            [disabled]="currentPage() === 1"
+            (click)="previousPage()"
+          >
+            <lucide-angular [img]="chevronLeftIcon" [size]="16" [strokeWidth]="2.5"></lucide-angular>
+          </button>
+
+          <strong>{{ currentPage() }} / {{ totalPages() }}</strong>
+
+          <button
+            type="button"
+            class="page-btn btn-icon"
+            title="Pagina siguiente"
+            aria-label="Pagina siguiente"
+            [disabled]="currentPage() === totalPages()"
+            (click)="nextPage()"
+          >
+            <lucide-angular [img]="chevronRightIcon" [size]="16" [strokeWidth]="2.5"></lucide-angular>
+          </button>
+        </div>
+      </footer>
+    </article>
+
+    <aside class="detail-panel app-card">
+      <ng-container *ngIf="selectedHelpdesk() as helpdesk; else emptyDetail">
+        <div class="detail-hero">
+          <span class="detail-avatar">{{ getHelpdeskInitial(helpdesk) }}</span>
+          <div>
+            <span class="eyebrow">Detalle helpdesk</span>
+            <h2>{{ helpdesk.name }}</h2>
+            <p>ID #{{ helpdesk.id }}</p>
+          </div>
+        </div>
+
+        <div class="alert-warning compact-alert" *ngIf="isLoadingDetail()">
+          Cargando detalle...
+        </div>
+
+        <dl class="detail-list">
+          <div>
+            <dt>ID</dt>
+            <dd>{{ helpdesk.id }}</dd>
+          </div>
+          <div>
+            <dt>Nombre</dt>
+            <dd>{{ helpdesk.name }}</dd>
+          </div>
+          <div>
+            <dt>Usuario ID</dt>
+            <dd>{{ helpdesk.user_id }}</dd>
+          </div>
+          <div>
+            <dt>Estado</dt>
+            <dd>
+              <app-status-badge
+                [label]="helpdesk.canceled ? 'Inactivo' : 'Activo'"
+                [variant]="helpdesk.canceled ? 'inactive' : 'active'"
+              ></app-status-badge>
+            </dd>
+          </div>
+          <div>
+            <dt>Fecha creacion</dt>
+            <dd>{{ formatDate(helpdesk.created_at) }}</dd>
+          </div>
+          <div>
+            <dt>Fecha actualizacion</dt>
+            <dd>{{ formatDate(helpdesk.updated_at) }}</dd>
+          </div>
+        </dl>
+
+        <div class="detail-actions">
+          <button type="button" class="ghost-btn btn-outline" (click)="openEditModal(helpdesk)">
+            <lucide-angular [img]="editIcon" [size]="17" [strokeWidth]="2.3"></lucide-angular>
+            Editar
+          </button>
+        </div>
+      </ng-container>
+
+      <ng-template #emptyDetail>
+        <app-empty-state
+          message="Seleccione un registro para ver sus datos."
+          [icon]="helpdeskIcon"
+        ></app-empty-state>
+      </ng-template>
+    </aside>
+  </section>
+
+  <div class="modal-backdrop" *ngIf="modalOpen()">
+    <section class="modal-panel" role="dialog" aria-modal="true" [attr.aria-label]="modalTitle()">
+      <header class="modal-header">
+        <div>
+          <span class="eyebrow">{{ modalMode() === 'create' ? 'Crear' : 'Editar' }}</span>
+          <h2>{{ modalTitle() }}</h2>
+        </div>
+
+        <button
+          type="button"
+          class="close-btn btn-icon"
+          title="Cerrar"
+          aria-label="Cerrar"
+          (click)="closeModal()"
+          [disabled]="isSaving()"
+        >
+          <lucide-angular [img]="closeIcon" [size]="18" [strokeWidth]="2.4"></lucide-angular>
+        </button>
+      </header>
+
+      <form class="helpdesk-form" [formGroup]="helpdeskForm" (ngSubmit)="saveHelpdesk()">
+        <div class="alert-warning compact-alert field-wide" *ngIf="isLoadingDetail()">
+          Cargando helpdesk seleccionado...
+        </div>
+
+        <label class="field">
+          <span>Nombre</span>
+          <input
+            type="text"
+            formControlName="name"
+            placeholder="Miguel Izquierdo"
+            autocomplete="off"
+          />
+          <small class="field-error" *ngIf="fieldInvalid('name')">{{ fieldMessage('name') }}</small>
+        </label>
+
+        <label class="field">
+          <span>Usuario ID</span>
+          <input
+            type="number"
+            formControlName="user_id"
+            placeholder="1"
+            min="1"
+          />
+          <small class="field-error" *ngIf="fieldInvalid('user_id')">{{ fieldMessage('user_id') }}</small>
+        </label>
+
+        <div class="alert-error compact-alert field-wide" *ngIf="formError()">{{ formError() }}</div>
+
+        <footer class="modal-actions field-wide">
+          <button type="button" class="ghost-btn btn-outline" (click)="closeModal()" [disabled]="isSaving()">
+            Cancelar
+          </button>
+
+          <button type="submit" class="primary-btn btn-primary" [disabled]="isSaving() || isLoadingDetail()">
+            {{ isSaving() ? 'Guardando...' : 'Guardar' }}
+          </button>
+        </footer>
+      </form>
+    </section>
+  </div>
+</section>

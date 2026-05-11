@@ -12,5 +12,6 @@ export const PERMISSION_ICONS: Record<string, string> = {
   'Marketing': '📣',
   'Analisis de Mercadeo y Rentabilidad': '📄',
   'Configuracion': '⚙️',
+  'Tickets': '🖥️',
   'HelpDesk': '🖥️'
 };

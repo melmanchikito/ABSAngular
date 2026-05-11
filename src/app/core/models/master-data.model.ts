@@ -1,1 +1,1 @@
-export * from '../../features/helpdesk/models/helpdesk.model';
+export * from '../../features/tickets/models/helpdesk.model';
