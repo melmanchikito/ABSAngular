@@ -1,0 +1,467 @@
+<section class="product-page page-shell">
+  <app-page-header
+    eyebrow="Producto"
+    title="Mantenimiento - Productos"
+    subtitle="Administra los productos registrados en el sistema."
+    [icon]="productIcon"
+  >
+    <button page-actions type="button" class="primary-btn btn-primary" (click)="openCreateModal()">
+      <lucide-angular [img]="addIcon" [size]="18" [strokeWidth]="2.4"></lucide-angular>
+      Nuevo producto
+    </button>
+  </app-page-header>
+
+  <div class="alert-success" *ngIf="successMessage">{{ successMessage }}</div>
+  <div class="alert-error" *ngIf="errorMessage">{{ errorMessage }}</div>
+
+  <section class="summary-grid product-summary">
+    <app-stat-card label="Total productos" [value]="totalProducts"></app-stat-card>
+    <app-stat-card label="Productos activos" [value]="activeProducts" tone="active"></app-stat-card>
+    <app-stat-card label="Productos inactivos" [value]="inactiveProducts" tone="inactive"></app-stat-card>
+  </section>
+
+  <section class="toolbar app-card">
+    <label class="search-box">
+      <lucide-angular [img]="searchIcon" [size]="18" [strokeWidth]="2.3"></lucide-angular>
+      <input
+        type="search"
+        name="productSearch"
+        [(ngModel)]="searchTerm"
+        (ngModelChange)="onFiltersChange()"
+        placeholder="Buscar por codigo, nombre, OEM, moneda o estado..."
+        autocomplete="off"
+      />
+    </label>
+
+    <div class="filter-pills" aria-label="Filtro por estado">
+      <button
+        type="button"
+        class="filter-pill"
+        [class.active]="statusFilter === 'all'"
+        (click)="setStatusFilter('all')"
+      >
+        Todos
+      </button>
+      <button
+        type="button"
+        class="filter-pill"
+        [class.active]="statusFilter === 'active'"
+        (click)="setStatusFilter('active')"
+      >
+        Activos
+      </button>
+      <button
+        type="button"
+        class="filter-pill"
+        [class.active]="statusFilter === 'inactive'"
+        (click)="setStatusFilter('inactive')"
+      >
+        Inactivos
+      </button>
+    </div>
+
+    <button type="button" class="ghost-btn btn-outline refresh-btn" (click)="loadProducts()" [disabled]="isLoading">
+      <lucide-angular [img]="refreshIcon" [size]="17" [strokeWidth]="2.3"></lucide-angular>
+      Actualizar
+    </button>
+  </section>
+
+  <section class="content-grid">
+    <article class="products-panel app-card">
+      <header class="panel-header">
+        <div>
+          <span class="eyebrow">Listado</span>
+          <h2>Productos</h2>
+        </div>
+        <span class="counter">{{ filteredProducts.length }} registros</span>
+      </header>
+
+      <div class="table-shell table-wrapper">
+        <table class="product-table app-table">
+          <thead>
+            <tr>
+              <th>Codigo</th>
+              <th>Nombre</th>
+              <th>Nombre corto</th>
+              <th>Descripcion</th>
+              <th>Costo</th>
+              <th>Precio mayor</th>
+              <th>Precio publico</th>
+              <th>OEM</th>
+              <th>Moneda</th>
+              <th>Estado</th>
+              <th>Fecha creacion</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngIf="isLoading">
+              <td colspan="12">
+                <app-empty-state message="Cargando productos..." [icon]="productIcon"></app-empty-state>
+              </td>
+            </tr>
+
+            <tr *ngIf="!isLoading && !products.length">
+              <td colspan="12">
+                <app-empty-state message="No existen productos registrados." [icon]="productIcon"></app-empty-state>
+              </td>
+            </tr>
+
+            <tr *ngIf="!isLoading && products.length && !filteredProducts.length">
+              <td colspan="12">
+                <app-empty-state
+                  message="No se encontraron productos con los filtros aplicados."
+                  [icon]="searchIcon"
+                ></app-empty-state>
+              </td>
+            </tr>
+
+            <tr
+              *ngFor="let product of paginatedProducts; trackBy: trackByProductId"
+              class="product-row"
+              [class.selected]="selectedProductId === product.id"
+              (click)="selectProduct(product)"
+            >
+              <td>
+                <span class="code-badge">{{ product.code }}</span>
+              </td>
+              <td>
+                <div class="product-name">
+                  <span class="product-avatar">{{ getProductInitial(product) }}</span>
+                  <strong>{{ product.name }}</strong>
+                </div>
+              </td>
+              <td>{{ product.short_name || 'Sin registro' }}</td>
+              <td>
+                <span class="description-text">{{ product.description || 'Sin descripcion' }}</span>
+              </td>
+              <td>{{ formatAmount(product.cost_price) }}</td>
+              <td>{{ formatAmount(product.price_mayor) }}</td>
+              <td>{{ formatAmount(product.price_public) }}</td>
+              <td>{{ product.oem || 'Sin registro' }}</td>
+              <td>{{ product.currency || 'Sin registro' }}</td>
+              <td>
+                <app-status-badge
+                  [label]="getStatusLabel(product)"
+                  [variant]="getStatusVariant(product)"
+                ></app-status-badge>
+              </td>
+              <td>{{ formatDate(product.created_at) }}</td>
+              <td>
+                <div class="actions-cell table-actions">
+                  <button
+                    type="button"
+                    class="icon-action btn-icon"
+                    title="Editar producto"
+                    aria-label="Editar producto"
+                    (click)="$event.stopPropagation(); openEditModal(product)"
+                  >
+                    <lucide-angular [img]="editIcon" [size]="17" [strokeWidth]="2.3"></lucide-angular>
+                  </button>
+
+                  <button
+                    type="button"
+                    class="icon-action danger btn-icon"
+                    title="Borrar producto"
+                    aria-label="Borrar producto"
+                    [disabled]="product.canceled"
+                    (click)="$event.stopPropagation(); askCancel(product)"
+                  >
+                    <lucide-angular [img]="trashIcon" [size]="17" [strokeWidth]="2.3"></lucide-angular>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <footer class="pagination-bar">
+        <span>Mostrando {{ showingCount }} de {{ filteredProducts.length }} productos</span>
+
+        <div class="pagination-actions">
+          <button
+            type="button"
+            class="page-btn btn-icon"
+            title="Pagina anterior"
+            aria-label="Pagina anterior"
+            [disabled]="currentPage === 1"
+            (click)="previousPage()"
+          >
+            <lucide-angular [img]="chevronLeftIcon" [size]="16" [strokeWidth]="2.5"></lucide-angular>
+          </button>
+
+          <strong>{{ currentPage }} / {{ totalPages }}</strong>
+
+          <button
+            type="button"
+            class="page-btn btn-icon"
+            title="Pagina siguiente"
+            aria-label="Pagina siguiente"
+            [disabled]="currentPage === totalPages"
+            (click)="nextPage()"
+          >
+            <lucide-angular [img]="chevronRightIcon" [size]="16" [strokeWidth]="2.5"></lucide-angular>
+          </button>
+        </div>
+      </footer>
+    </article>
+
+    <aside class="detail-panel app-card">
+      <ng-container *ngIf="selectedProduct as product; else emptyDetail">
+        <div class="detail-hero">
+          <span class="detail-avatar">{{ getProductInitial(product) }}</span>
+          <div>
+            <span class="eyebrow">Detalle producto</span>
+            <h2>{{ product.name }}</h2>
+            <p>{{ product.description || 'Sin descripcion' }}</p>
+          </div>
+        </div>
+
+        <dl class="detail-list">
+          <div>
+            <dt>Codigo</dt>
+            <dd>{{ product.code }}</dd>
+          </div>
+          <div>
+            <dt>Nombre</dt>
+            <dd>{{ product.name }}</dd>
+          </div>
+          <div>
+            <dt>Nombre corto</dt>
+            <dd>{{ product.short_name || 'Sin registro' }}</dd>
+          </div>
+          <div>
+            <dt>Descripcion</dt>
+            <dd>{{ product.description || 'Sin descripcion' }}</dd>
+          </div>
+          <div>
+            <dt>Costo</dt>
+            <dd>{{ formatAmount(product.cost_price) }}</dd>
+          </div>
+          <div>
+            <dt>Precio mayor</dt>
+            <dd>{{ formatAmount(product.price_mayor) }}</dd>
+          </div>
+          <div>
+            <dt>Precio publico</dt>
+            <dd>{{ formatAmount(product.price_public) }}</dd>
+          </div>
+          <div>
+            <dt>OEM</dt>
+            <dd>{{ product.oem || 'Sin registro' }}</dd>
+          </div>
+          <div>
+            <dt>Moneda</dt>
+            <dd>{{ product.currency || 'Sin registro' }}</dd>
+          </div>
+          <div>
+            <dt>Estado</dt>
+            <dd>
+              <app-status-badge
+                [label]="getStatusLabel(product)"
+                [variant]="getStatusVariant(product)"
+              ></app-status-badge>
+            </dd>
+          </div>
+          <div>
+            <dt>Fecha creacion</dt>
+            <dd>{{ formatDate(product.created_at) }}</dd>
+          </div>
+          <div>
+            <dt>Fecha actualizacion</dt>
+            <dd>{{ formatDate(product.updated_at) }}</dd>
+          </div>
+        </dl>
+
+        <div class="detail-actions">
+          <button type="button" class="ghost-btn btn-outline" (click)="openEditModal(product)">
+            <lucide-angular [img]="editIcon" [size]="17" [strokeWidth]="2.3"></lucide-angular>
+            Editar
+          </button>
+
+          <button
+            type="button"
+            class="danger-btn btn-danger"
+            [disabled]="product.canceled"
+            (click)="askCancel(product)"
+          >
+            <lucide-angular [img]="trashIcon" [size]="17" [strokeWidth]="2.3"></lucide-angular>
+            Borrar
+          </button>
+        </div>
+      </ng-container>
+
+      <ng-template #emptyDetail>
+        <app-empty-state
+          message="Seleccione un producto para ver sus datos."
+          [icon]="productIcon"
+        ></app-empty-state>
+      </ng-template>
+    </aside>
+  </section>
+
+  <div class="modal-backdrop" *ngIf="modalOpen">
+    <section class="modal-panel" role="dialog" aria-modal="true" [attr.aria-label]="modalTitle">
+      <header class="modal-header">
+        <div>
+          <span class="eyebrow">{{ modalMode === 'create' ? 'Crear' : 'Editar' }}</span>
+          <h2>{{ modalTitle }}</h2>
+        </div>
+
+        <button
+          type="button"
+          class="close-btn btn-icon"
+          title="Cerrar"
+          aria-label="Cerrar"
+          (click)="closeModal()"
+          [disabled]="isSaving"
+        >
+          <lucide-angular [img]="closeIcon" [size]="18" [strokeWidth]="2.4"></lucide-angular>
+        </button>
+      </header>
+
+      <form class="product-form" (ngSubmit)="saveProduct()">
+        <div class="alert-warning compact-alert" *ngIf="isLoadingDetail">Cargando producto seleccionado...</div>
+
+        <label class="field">
+          <span>Codigo</span>
+          <input
+            type="text"
+            name="productCode"
+            [(ngModel)]="productForm.code"
+            placeholder="PROD-001"
+            autocomplete="off"
+            required
+          />
+        </label>
+
+        <label class="field">
+          <span>Nombre</span>
+          <input
+            type="text"
+            name="productName"
+            [(ngModel)]="productForm.name"
+            placeholder="Nombre del producto"
+            autocomplete="off"
+            required
+          />
+        </label>
+
+        <label class="field">
+          <span>Nombre corto</span>
+          <input
+            type="text"
+            name="productShortName"
+            [(ngModel)]="productForm.short_name"
+            placeholder="Nombre corto"
+            autocomplete="off"
+            required
+          />
+        </label>
+
+        <label class="field field-wide">
+          <span>Descripcion</span>
+          <textarea
+            name="productDescription"
+            [(ngModel)]="productForm.description"
+            placeholder="Descripcion del producto"
+            rows="3"
+            required
+          ></textarea>
+        </label>
+
+        <label class="field">
+          <span>Costo</span>
+          <input
+            type="number"
+            name="productCostPrice"
+            [(ngModel)]="productForm.cost_price"
+            min="0"
+            step="0.01"
+            required
+          />
+        </label>
+
+        <label class="field">
+          <span>Precio mayor</span>
+          <input
+            type="number"
+            name="productPriceMayor"
+            [(ngModel)]="productForm.price_mayor"
+            min="0"
+            step="0.01"
+            required
+          />
+        </label>
+
+        <label class="field">
+          <span>Precio publico</span>
+          <input
+            type="number"
+            name="productPricePublic"
+            [(ngModel)]="productForm.price_public"
+            min="0"
+            step="0.01"
+            required
+          />
+        </label>
+
+        <label class="field">
+          <span>OEM</span>
+          <input
+            type="text"
+            name="productOem"
+            [(ngModel)]="productForm.oem"
+            placeholder="85595"
+            autocomplete="off"
+            required
+          />
+        </label>
+
+        <label class="field">
+          <span>Moneda</span>
+          <input
+            type="text"
+            name="productCurrency"
+            [(ngModel)]="productForm.currency"
+            placeholder="USD"
+            autocomplete="off"
+            maxlength="8"
+            required
+          />
+        </label>
+
+        <label class="field">
+          <span>Estado</span>
+          <select name="productStatus" class="form-select" [(ngModel)]="productForm.status" required>
+            <option *ngFor="let status of statusOptions" [value]="status">{{ status }}</option>
+          </select>
+        </label>
+
+        <div class="alert-error compact-alert field-wide" *ngIf="formError">{{ formError }}</div>
+
+        <footer class="modal-actions field-wide">
+          <button type="button" class="ghost-btn btn-outline" (click)="closeModal()" [disabled]="isSaving">
+            Cancelar
+          </button>
+
+          <button type="submit" class="primary-btn btn-primary" [disabled]="isSaving || isLoadingDetail">
+            {{ isSaving ? 'Guardando...' : 'Guardar' }}
+          </button>
+        </footer>
+      </form>
+    </section>
+  </div>
+
+  <app-confirm-dialog
+    [open]="!!productToCancel"
+    title="Anular producto"
+    [message]="cancelProductMessage"
+    confirmLabel="Anular producto"
+    [loading]="isSaving"
+    (confirm)="confirmCancel()"
+    (cancel)="closeCancelConfirm()"
+  ></app-confirm-dialog>
+</section>

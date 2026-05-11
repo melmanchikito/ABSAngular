@@ -27,6 +27,10 @@ import {
   UpdateLocationRequest
 } from '../../models/location-maintenance.model';
 import { LocationMaintenanceService } from '../../services/location-maintenance.service';
+import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog.component';
+import { EmptyStateComponent } from '../../../../shared/components/empty-state/empty-state.component';
+import { PageHeaderComponent } from '../../../../shared/components/page-header/page-header.component';
+import { StatusBadgeComponent } from '../../../../shared/components/status-badge/status-badge.component';
 
 type LocationModalMode = 'create' | 'edit';
 type LocationStatusFilter = 'all' | 'active' | 'inactive';
@@ -52,7 +56,15 @@ interface MapPoint {
 @Component({
   selector: 'app-location-maintenance',
   standalone: true,
-  imports: [CommonModule, FormsModule, LucideAngularModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    LucideAngularModule,
+    ConfirmDialogComponent,
+    EmptyStateComponent,
+    PageHeaderComponent,
+    StatusBadgeComponent
+  ],
   templateUrl: './location-maintenance.component.html',
   styleUrl: './location-maintenance.component.scss'
 })
@@ -146,6 +158,12 @@ export class LocationMaintenanceComponent implements OnInit, AfterViewInit, OnDe
     }
 
     return this.locations.find((location) => location.id === this.selectedLocationId) ?? null;
+  }
+
+  get cancelLocationMessage(): string {
+    const locationName = this.locationToCancel?.name ?? 'esta ubicacion';
+
+    return `Esta seguro de que desea borrar ${locationName}? Quedara anulada y no se eliminara fisicamente.`;
   }
 
   get filteredLocations(): LocationItem[] {

@@ -407,7 +407,12 @@ export const SYSTEM_AREA_CONFIG: Record<SystemAreaKey, SystemAreaConfig> = {
         categories: createCategories(
           'Produccion y Distribucion',
           [
-            { label: 'Productos', description: 'Catalogo de productos.', icon: Package },
+            {
+              label: 'Productos',
+              description: 'Catalogo de productos.',
+              icon: Package,
+              route: route('producto/produccion-distribucion/productos')
+            },
             { label: 'Bodegas', description: 'Ubicaciones logisticas y almacenes.', icon: Boxes },
             { label: 'Rutas de distribucion', description: 'Rutas y cobertura logistica.', icon: Truck }
           ],

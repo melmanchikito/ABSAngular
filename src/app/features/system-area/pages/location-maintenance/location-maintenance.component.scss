@@ -15,8 +15,6 @@
   --location-shadow: 0 10px 28px rgba(15, 23, 42, 0.12);
 }
 
-.page-header,
-.title-row,
 .actions-bar,
 .filter-pills,
 .panel-header,
@@ -34,16 +32,6 @@
   align-items: center;
 }
 
-.page-header {
-  margin-bottom: 1rem;
-  padding-bottom: 1rem;
-  border-bottom: 1.5px solid var(--location-border);
-}
-
-.page-title {
-  min-width: 0;
-}
-
 .eyebrow {
   display: inline-flex;
   margin-bottom: 0.35rem;
@@ -54,11 +42,6 @@
   text-transform: uppercase;
 }
 
-.title-row {
-  gap: 0.75rem;
-}
-
-.title-icon,
 .location-avatar,
 .detail-avatar {
   display: inline-flex;
@@ -70,27 +53,12 @@
   font-weight: 900;
 }
 
-.title-icon {
-  width: 42px;
-  height: 42px;
-  min-width: 42px;
-  border-radius: 14px;
-}
-
-h1,
 h2,
 p {
   margin: 0;
 }
 
-h1 {
-  color: var(--abs-text);
-  font-size: clamp(1.4rem, 2.3vw, 1.95rem);
-}
-
-.page-header p,
-.detail-hero p,
-.confirm-text {
+.detail-hero p {
   margin-top: 0.35rem;
   color: var(--abs-text-muted);
   line-height: 1.45;
@@ -167,63 +135,6 @@ h1 {
   border-color: color-mix(in srgb, var(--abs-primary) 52%, var(--location-border));
   background: color-mix(in srgb, var(--abs-primary) 12%, var(--abs-surface));
   color: var(--abs-primary);
-}
-
-.primary-btn,
-.ghost-btn,
-.danger-btn,
-.mini-action,
-.close-btn,
-.page-btn {
-  border: 0;
-  font: inherit;
-  cursor: pointer;
-  transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease;
-}
-
-.primary-btn,
-.ghost-btn,
-.danger-btn {
-  min-height: 42px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.45rem;
-  padding: 0 0.95rem;
-  border-radius: 11px;
-  font-weight: 800;
-  white-space: nowrap;
-}
-
-.primary-btn {
-  background: var(--abs-primary);
-  color: #fff;
-}
-
-.danger-btn {
-  background: var(--location-danger);
-  color: #fff;
-}
-
-.ghost-btn {
-  border: 1.5px solid var(--location-border);
-  background: var(--location-card-bg);
-  color: var(--abs-text);
-}
-
-.primary-btn:hover,
-.danger-btn:hover,
-.ghost-btn:hover,
-.mini-action:hover,
-.page-btn:hover,
-.close-btn:hover {
-  transform: translateY(-1px);
-}
-
-button:disabled {
-  cursor: not-allowed;
-  opacity: 0.55;
-  transform: none;
 }
 
 .message {
@@ -377,71 +288,9 @@ button:disabled {
   font-weight: 800;
 }
 
-.status-pill {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 999px;
-  white-space: nowrap;
-  padding: 0.3rem 0.62rem;
-  border: 1.5px solid color-mix(in srgb, var(--location-success) 42%, var(--location-border));
-  background: var(--location-success-soft);
-  color: color-mix(in srgb, var(--location-success) 82%, var(--abs-text));
-  font-size: 0.76rem;
-  font-weight: 900;
-}
-
-.status-pill.canceled {
-  border-color: color-mix(in srgb, var(--location-danger) 44%, var(--location-border));
-  background: var(--location-danger-soft);
-  color: color-mix(in srgb, var(--location-danger) 86%, var(--abs-text));
-}
-
 .item-actions {
   gap: 0.45rem;
   padding-top: 0.25rem;
-}
-
-.mini-action,
-.close-btn,
-.page-btn {
-  width: 36px;
-  height: 36px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 10px;
-  border: 1.5px solid var(--location-border);
-  background: var(--location-card-bg);
-  color: var(--abs-text);
-}
-
-.mini-action:hover,
-.close-btn:hover,
-.page-btn:hover {
-  border-color: color-mix(in srgb, var(--abs-primary) 46%, var(--location-border));
-  background: var(--location-hover-bg);
-  color: var(--abs-primary);
-}
-
-.mini-action.danger:hover {
-  border-color: color-mix(in srgb, var(--location-danger) 55%, var(--location-border));
-  background: var(--location-danger-soft);
-  color: var(--location-danger);
-}
-
-.empty-state,
-.empty-detail {
-  min-height: 140px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 14px;
-  border: 1.5px dashed var(--location-border);
-  background: var(--location-soft-bg);
-  color: var(--abs-text-muted);
-  font-weight: 800;
-  text-align: center;
 }
 
 .pagination-bar {
@@ -568,10 +417,6 @@ button:disabled {
   box-shadow: 0 22px 60px rgba(0, 0, 0, 0.36);
 }
 
-.confirm-panel {
-  width: min(460px, 100%);
-}
-
 .modal-header {
   justify-content: space-between;
   gap: 1rem;
@@ -633,18 +478,10 @@ button:disabled {
   font-weight: 800;
 }
 
-.confirm-text {
-  padding: 1.1rem 1.1rem 0;
-}
-
 .modal-actions {
   justify-content: flex-end;
   gap: 0.65rem;
   padding-top: 0.25rem;
-}
-
-.confirm-panel .modal-actions {
-  padding: 1.1rem;
 }
 
 :host ::ng-deep .leaflet-container {
@@ -727,13 +564,6 @@ button:disabled {
     padding: 0.85rem;
   }
 
-  .title-icon {
-    width: 38px;
-    height: 38px;
-    min-width: 38px;
-  }
-
-  .title-row,
   .detail-hero,
   .location-main {
     align-items: flex-start;

@@ -4,6 +4,7 @@ import { HomeComponent } from '../home/pages/home/home.component';
 import { MailComponent } from '../mail/pages/mail/mail.component';
 import { CompanyMaintenanceComponent } from '../system-area/pages/company-maintenance/company-maintenance.component';
 import { LocationMaintenanceComponent } from '../system-area/pages/location-maintenance/location-maintenance.component';
+import { ProductMaintenanceComponent } from '../system-area/pages/product-maintenance/product-maintenance.component';
 import { SystemAreaComponent } from '../system-area/pages/system-area/system-area.component';
 
 export const MAIN_ROUTES: Routes = [
@@ -91,6 +92,10 @@ export const MAIN_ROUTES: Routes = [
       {
         path: 'modulo/sistema/configuracion/mantenimientos/ubicaciones',
         component: LocationMaintenanceComponent
+      },
+      {
+        path: 'modulo/producto/produccion-distribucion/productos',
+        component: ProductMaintenanceComponent
       },
       {
         path: 'modulo/:moduleKey/:submoduleKey',

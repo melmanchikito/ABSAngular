@@ -23,6 +23,7 @@ import { CompanyMaintenanceService } from '../../services/company-maintenance.se
 import { PageHeaderComponent } from '../../../../shared/components/page-header/page-header.component';
 import { StatCardComponent } from '../../../../shared/components/stat-card/stat-card.component';
 import { StatusBadgeComponent } from '../../../../shared/components/status-badge/status-badge.component';
+import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog.component';
 
 type CompanyModalMode = 'create' | 'edit';
 type CompanyStatusFilter = 'all' | 'active' | 'inactive';
@@ -52,7 +53,8 @@ interface EditCompanyForm {
     LucideAngularModule,
     PageHeaderComponent,
     StatCardComponent,
-    StatusBadgeComponent
+    StatusBadgeComponent,
+    ConfirmDialogComponent
   ],
   templateUrl: './company-maintenance.component.html',
   styleUrl: './company-maintenance.component.scss'
@@ -160,6 +162,12 @@ export class CompanyMaintenanceComponent implements OnInit {
 
   get showingCount(): number {
     return this.paginatedCompanies.length;
+  }
+
+  get cancelCompanyMessage(): string {
+    const companyName = this.companyToCancel?.name ?? 'esta empresa';
+
+    return `Esta seguro de que desea borrar ${companyName}? Quedara anulada y no se eliminara fisicamente.`;
   }
 
   loadCompanies(): void {

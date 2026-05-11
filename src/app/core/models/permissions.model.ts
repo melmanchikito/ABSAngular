@@ -1,5 +1,7 @@
+export type PermissionKey = string;
+
 export interface UserPermissions {
   id?: number;
-  priorityPermissions?: string[];
-  permissions?: string[];
+  priorityPermissions?: PermissionKey[];
+  permissions?: PermissionKey[];
 }

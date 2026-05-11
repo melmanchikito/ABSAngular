@@ -303,40 +303,13 @@
     </section>
   </div>
 
-  <div class="modal-backdrop" *ngIf="companyToCancel">
-    <section class="modal-panel confirm-panel" role="dialog" aria-modal="true" aria-label="Anular empresa">
-      <header class="modal-header">
-        <div>
-          <span class="eyebrow">Confirmacion</span>
-          <h2>Anular empresa</h2>
-        </div>
-
-        <button
-          type="button"
-          class="close-btn"
-          title="Cerrar"
-          aria-label="Cerrar"
-          (click)="closeCancelConfirm()"
-          [disabled]="isSaving"
-        >
-          <lucide-angular [img]="closeIcon" [size]="18" [strokeWidth]="2.4"></lucide-angular>
-        </button>
-      </header>
-
-      <p class="confirm-text">
-        Esta seguro de que desea borrar esta empresa? La empresa
-        <strong>{{ companyToCancel.name }}</strong> quedara anulada y no se eliminara fisicamente.
-      </p>
-
-      <footer class="modal-actions">
-        <button type="button" class="ghost-btn btn-outline" (click)="closeCancelConfirm()" [disabled]="isSaving">
-          Cancelar
-        </button>
-
-        <button type="button" class="danger-btn btn-danger" (click)="confirmCancel()" [disabled]="isSaving">
-          {{ isSaving ? 'Anulando...' : 'Anular empresa' }}
-        </button>
-      </footer>
-    </section>
-  </div>
+  <app-confirm-dialog
+    [open]="!!companyToCancel"
+    title="Anular empresa"
+    [message]="cancelCompanyMessage"
+    confirmLabel="Anular empresa"
+    [loading]="isSaving"
+    (confirm)="confirmCancel()"
+    (cancel)="closeCancelConfirm()"
+  ></app-confirm-dialog>
 </section>

@@ -1,20 +1,10 @@
 <section class="location-page page-shell">
-  <header class="page-header">
-    <div class="page-title">
-      <span class="eyebrow">Sistema</span>
-
-      <div class="title-row">
-        <span class="title-icon">
-          <lucide-angular [img]="mapIcon" [size]="22" [strokeWidth]="2.3"></lucide-angular>
-        </span>
-
-        <div>
-          <h1>Mantenimiento - Ubicaciones</h1>
-          <p>Administra las ubicaciones fisicas registradas en el sistema.</p>
-        </div>
-      </div>
-    </div>
-  </header>
+  <app-page-header
+    eyebrow="Sistema"
+    title="Mantenimiento - Ubicaciones"
+    subtitle="Administra las ubicaciones fisicas registradas en el sistema."
+    [icon]="mapIcon"
+  ></app-page-header>
 
   <div class="message success alert-success" *ngIf="successMessage">{{ successMessage }}</div>
   <div class="message error alert-error" *ngIf="errorMessage">{{ errorMessage }}</div>
@@ -76,15 +66,23 @@
       </header>
 
       <div class="location-list">
-        <div class="empty-state" *ngIf="isLoading">Cargando ubicaciones...</div>
+        <app-empty-state
+          *ngIf="isLoading"
+          message="Cargando ubicaciones..."
+          [icon]="mapIcon"
+        ></app-empty-state>
 
-        <div class="empty-state" *ngIf="!isLoading && !locations.length">
-          No existen ubicaciones registradas.
-        </div>
+        <app-empty-state
+          *ngIf="!isLoading && !locations.length"
+          message="No existen ubicaciones registradas."
+          [icon]="mapIcon"
+        ></app-empty-state>
 
-        <div class="empty-state" *ngIf="!isLoading && locations.length && !filteredLocations.length">
-          No se encontraron ubicaciones con los filtros aplicados.
-        </div>
+        <app-empty-state
+          *ngIf="!isLoading && locations.length && !filteredLocations.length"
+          message="No se encontraron ubicaciones con los filtros aplicados."
+          [icon]="searchIcon"
+        ></app-empty-state>
 
         <button
           *ngFor="let location of paginatedLocations"
@@ -98,14 +96,10 @@
           <span class="location-content">
             <span class="location-main">
               <strong>{{ location.name }}</strong>
-              <span
-                class="status-pill status-badge"
-                [class.canceled]="location.canceled"
-                [class.status-active]="!location.canceled"
-                [class.status-inactive]="location.canceled"
-              >
-                {{ location.canceled ? 'Inactiva' : 'Activa' }}
-              </span>
+              <app-status-badge
+                [label]="location.canceled ? 'Inactiva' : 'Activa'"
+                [variant]="location.canceled ? 'inactive' : 'active'"
+              ></app-status-badge>
             </span>
 
             <small>{{ location.address || 'Sin direccion registrada' }}</small>
@@ -186,14 +180,10 @@
           <div>
             <dt>Estado</dt>
             <dd>
-              <span
-                class="status-pill status-badge"
-                [class.canceled]="location.canceled"
-                [class.status-active]="!location.canceled"
-                [class.status-inactive]="location.canceled"
-              >
-                {{ location.canceled ? 'Inactiva' : 'Activa' }}
-              </span>
+              <app-status-badge
+                [label]="location.canceled ? 'Inactiva' : 'Activa'"
+                [variant]="location.canceled ? 'inactive' : 'active'"
+              ></app-status-badge>
             </dd>
           </div>
           <div>
@@ -233,9 +223,10 @@
       </ng-container>
 
       <ng-template #emptyDetail>
-        <div class="empty-detail">
-          Seleccione una ubicacion para ver sus datos.
-        </div>
+        <app-empty-state
+          message="Seleccione una ubicacion para ver sus datos."
+          [icon]="mapIcon"
+        ></app-empty-state>
       </ng-template>
     </aside>
   </section>
@@ -262,7 +253,7 @@
 
         <button
           type="button"
-          class="close-btn"
+          class="close-btn btn-icon"
           title="Cerrar"
           aria-label="Cerrar"
           (click)="closeModal()"
@@ -363,40 +354,13 @@
     </section>
   </div>
 
-  <div class="modal-backdrop" *ngIf="locationToCancel">
-    <section class="modal-panel confirm-panel" role="dialog" aria-modal="true" aria-label="Anular ubicacion">
-      <header class="modal-header">
-        <div>
-          <span class="eyebrow">Confirmacion</span>
-          <h2>Anular ubicacion</h2>
-        </div>
-
-        <button
-          type="button"
-          class="close-btn"
-          title="Cerrar"
-          aria-label="Cerrar"
-          (click)="closeCancelConfirm()"
-          [disabled]="isSaving"
-        >
-          <lucide-angular [img]="closeIcon" [size]="18" [strokeWidth]="2.4"></lucide-angular>
-        </button>
-      </header>
-
-      <p class="confirm-text">
-        Esta seguro de que desea borrar esta ubicacion?
-        <strong>{{ locationToCancel.name }}</strong> quedara anulada y no se eliminara fisicamente.
-      </p>
-
-      <footer class="modal-actions">
-        <button type="button" class="ghost-btn btn-outline" (click)="closeCancelConfirm()" [disabled]="isSaving">
-          Cancelar
-        </button>
-
-        <button type="button" class="danger-btn btn-danger" (click)="confirmCancel()" [disabled]="isSaving">
-          {{ isSaving ? 'Anulando...' : 'Anular ubicacion' }}
-        </button>
-      </footer>
-    </section>
-  </div>
+  <app-confirm-dialog
+    [open]="!!locationToCancel"
+    title="Anular ubicacion"
+    [message]="cancelLocationMessage"
+    confirmLabel="Anular ubicacion"
+    [loading]="isSaving"
+    (confirm)="confirmCancel()"
+    (cancel)="closeCancelConfirm()"
+  ></app-confirm-dialog>
 </section>

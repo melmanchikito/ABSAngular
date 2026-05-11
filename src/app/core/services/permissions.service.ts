@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { UserPermissions } from '../models/permissions.model';
+import { PermissionKey, UserPermissions } from '../models/permissions.model';
 
 @Injectable({
   providedIn: 'root'
@@ -9,6 +9,10 @@ export class PermissionsService {
   private readonly permissionsSubject = new BehaviorSubject<UserPermissions | null>(null);
   readonly permissions$ = this.permissionsSubject.asObservable();
 
+  constructor() {
+    this.loadPermissionsFromStorage();
+  }
+
   setPermissions(data: UserPermissions): void {
     this.permissionsSubject.next(data);
     localStorage.setItem('userPermissions', JSON.stringify(data));
@@ -16,6 +20,35 @@ export class PermissionsService {
 
   getPermissionsSnapshot(): UserPermissions | null {
     return this.permissionsSubject.value;
+  }
+
+  getAllPermissions(): PermissionKey[] {
+    const permissions = this.getPermissionsSnapshot();
+
+    return [
+      ...(permissions?.priorityPermissions ?? []),
+      ...(permissions?.permissions ?? [])
+    ];
+  }
+
+  hasPermission(permission: PermissionKey): boolean {
+    return this.getAllPermissions().includes(permission);
+  }
+
+  hasAnyPermission(permissions: PermissionKey[]): boolean {
+    if (!permissions.length) {
+      return true;
+    }
+
+    return permissions.some((permission) => this.hasPermission(permission));
+  }
+
+  hasEveryPermission(permissions: PermissionKey[]): boolean {
+    if (!permissions.length) {
+      return true;
+    }
+
+    return permissions.every((permission) => this.hasPermission(permission));
   }
 
   loadPermissionsFromStorage(): void {
