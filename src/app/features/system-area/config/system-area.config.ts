@@ -95,8 +95,18 @@ const configuracionCategories = createCategories(
       icon: MapPin,
       route: route('sistema/configuracion/mantenimientos/ubicaciones')
     },
-    { label: 'Sucursal', description: 'Gestion de sucursales registradas.', icon: Landmark },
-    { label: 'Modulos', description: 'Configuracion de modulos del sistema.', icon: LayoutDashboard },
+    {
+      label: 'Sucursal',
+      description: 'Gestion de sucursales registradas.',
+      icon: Landmark,
+      route: route('sistema/configuracion/sucursales')
+    },
+    {
+      label: 'Modulos',
+      description: 'Configuracion de modulos del sistema.',
+      icon: LayoutDashboard,
+      route: route('sistema/configuracion/modulos')
+    },
     { label: 'Opciones', description: 'Opciones disponibles por modulo.', icon: Settings },
     { label: 'Tipo de opciones', description: 'Clasificacion de opciones del sistema.', icon: Tags },
     { label: 'Acciones', description: 'Permisos y acciones disponibles.', icon: ClipboardCheck },

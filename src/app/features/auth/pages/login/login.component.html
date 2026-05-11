@@ -1,17 +1,11 @@
 <main class="auth-shell">
   <section class="auth-stage">
-    <div class="brand-panel">
-      <div class="brand-copy">
-        <span>SISTEMA</span>
-        <h1>ABS</h1>
-      </div>
-    </div>
-
     <section class="auth-card" aria-labelledby="login-title">
       <div class="card-header">
         <img class="card-logo" src="assets/auth/LogoAR.svg" alt="Logo ABS" />
         <div>
-          <h2 id="login-title">Iniciar sesión</h2>
+          <span class="eyebrow">Acceso seguro</span>
+          <h2 id="login-title">Iniciar sesion</h2>
         </div>
       </div>
 
@@ -41,13 +35,13 @@
         </label>
 
         <label class="field" for="password">
-          <span>Contraseña</span>
+          <span>Contrasena</span>
           <div class="input-wrap">
             <lucide-angular class="field-icon" [img]="lockIcon" [size]="18" [strokeWidth]="2.2"></lucide-angular>
             <input
               id="password"
               [type]="showPassword ? 'text' : 'password'"
-              placeholder="Ingresa tu contraseña"
+              placeholder="Ingresa tu contrasena"
               autocomplete="current-password"
               formControlName="password"
               (copy)="$event.preventDefault()"
@@ -57,7 +51,7 @@
               class="icon-button"
               type="button"
               (click)="togglePasswordVisibility()"
-              [attr.aria-label]="showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+              [attr.aria-label]="showPassword ? 'Ocultar contrasena' : 'Mostrar contrasena'"
             >
               <lucide-angular
                 [img]="showPassword ? eyeOffIcon : eyeIcon"
@@ -69,14 +63,32 @@
         </label>
 
         <div class="form-row">
-          <a href="#" (click)="goToRecoverPassword($event)">Olvidé mi contraseña</a>
+          <a href="#" (click)="goToRecoverPassword($event)">Olvide mi contrasena</a>
         </div>
 
         <button class="primary-action" type="submit" [disabled]="isSubmitting">
           <lucide-angular [img]="loginIcon" [size]="18" [strokeWidth]="2.4"></lucide-angular>
-          {{ isSubmitting ? 'Ingresando...' : 'Ingresar' }}
+          {{ isSubmitting ? 'Ingresando...' : 'Iniciar sesion' }}
         </button>
       </form>
     </section>
+
+    <aside class="brand-panel" aria-label="Presentacion ABS">
+      <div class="brand-orbit" aria-hidden="true">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+
+      <div class="brand-copy">
+        <span class="brand-kicker">Sistema ERP</span>
+        <h1>ABS</h1>
+        <h2>Sistema de Gestion Empresarial</h2>
+        <p>
+          Administra modulos, procesos y operaciones desde una plataforma integrada.
+        </p>
+        <span class="brand-badge">Conoce mas</span>
+      </div>
+    </aside>
   </section>
 </main>

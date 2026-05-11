@@ -1,0 +1,352 @@
+<section class="module-page page-shell">
+  <app-page-header
+    eyebrow="Sistema"
+    title="Mantenimiento - Modulos"
+    subtitle="Administra los modulos registrados en el sistema."
+    [icon]="moduleIcon"
+  >
+    <button page-actions type="button" class="primary-btn btn-primary" (click)="openCreateModal()">
+      <lucide-angular [img]="addIcon" [size]="18" [strokeWidth]="2.4"></lucide-angular>
+      Nuevo modulo
+    </button>
+  </app-page-header>
+
+  <div class="alert-success" *ngIf="successMessage">{{ successMessage }}</div>
+  <div class="alert-error" *ngIf="errorMessage">{{ errorMessage }}</div>
+
+  <section class="summary-grid module-summary">
+    <app-stat-card label="Total modulos" [value]="totalModules"></app-stat-card>
+    <app-stat-card label="Modulos activos" [value]="activeModules" tone="active"></app-stat-card>
+    <app-stat-card label="Modulos inactivos" [value]="inactiveModules" tone="inactive"></app-stat-card>
+  </section>
+
+  <section class="toolbar app-card">
+    <label class="search-box">
+      <lucide-angular [img]="searchIcon" [size]="18" [strokeWidth]="2.3"></lucide-angular>
+      <input
+        type="search"
+        name="moduleSearch"
+        [(ngModel)]="searchTerm"
+        (ngModelChange)="onFiltersChange()"
+        placeholder="Buscar por codigo, nombre u orden..."
+        autocomplete="off"
+      />
+    </label>
+
+    <div class="filter-pills" aria-label="Filtro por estado">
+      <button
+        type="button"
+        class="filter-pill"
+        [class.active]="statusFilter === 'all'"
+        (click)="setStatusFilter('all')"
+      >
+        Todos
+      </button>
+      <button
+        type="button"
+        class="filter-pill"
+        [class.active]="statusFilter === 'active'"
+        (click)="setStatusFilter('active')"
+      >
+        Activos
+      </button>
+      <button
+        type="button"
+        class="filter-pill"
+        [class.active]="statusFilter === 'inactive'"
+        (click)="setStatusFilter('inactive')"
+      >
+        Inactivos
+      </button>
+    </div>
+
+    <button type="button" class="ghost-btn btn-outline refresh-btn" (click)="loadModules()" [disabled]="isLoading">
+      <lucide-angular [img]="refreshIcon" [size]="17" [strokeWidth]="2.3"></lucide-angular>
+      Actualizar
+    </button>
+  </section>
+
+  <section class="content-grid">
+    <article class="modules-panel app-card">
+      <header class="panel-header">
+        <div>
+          <span class="eyebrow">Listado</span>
+          <h2>Modulos</h2>
+        </div>
+        <span class="counter">{{ filteredModules.length }} registros</span>
+      </header>
+
+      <div class="table-shell table-wrapper">
+        <table class="module-table app-table">
+          <thead>
+            <tr>
+              <th>Codigo</th>
+              <th>Nombre</th>
+              <th>Orden</th>
+              <th>Estado</th>
+              <th>Fecha creacion</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngIf="isLoading">
+              <td colspan="6">
+                <app-empty-state message="Cargando modulos..." [icon]="moduleIcon"></app-empty-state>
+              </td>
+            </tr>
+
+            <tr *ngIf="!isLoading && !modules.length">
+              <td colspan="6">
+                <app-empty-state message="No existen modulos registrados." [icon]="moduleIcon"></app-empty-state>
+              </td>
+            </tr>
+
+            <tr *ngIf="!isLoading && modules.length && !filteredModules.length">
+              <td colspan="6">
+                <app-empty-state
+                  message="No se encontraron modulos con los filtros aplicados."
+                  [icon]="searchIcon"
+                ></app-empty-state>
+              </td>
+            </tr>
+
+            <tr
+              *ngFor="let module of paginatedModules; trackBy: trackByModuleId"
+              class="module-row"
+              [class.selected]="selectedModuleId === module.id"
+              (click)="selectModule(module)"
+            >
+              <td>
+                <span class="code-badge">{{ module.code }}</span>
+              </td>
+              <td>
+                <div class="module-name">
+                  <span class="module-avatar">{{ getModuleInitial(module) }}</span>
+                  <strong>{{ module.name }}</strong>
+                </div>
+              </td>
+              <td>{{ module.order }}</td>
+              <td>
+                <app-status-badge
+                  [label]="module.canceled ? 'Inactivo' : 'Activo'"
+                  [variant]="module.canceled ? 'inactive' : 'active'"
+                ></app-status-badge>
+              </td>
+              <td>{{ formatDate(module.created_at) }}</td>
+              <td>
+                <div class="actions-cell table-actions">
+                  <button
+                    type="button"
+                    class="icon-action btn-icon"
+                    title="Editar modulo"
+                    aria-label="Editar modulo"
+                    (click)="$event.stopPropagation(); openEditModal(module)"
+                  >
+                    <lucide-angular [img]="editIcon" [size]="17" [strokeWidth]="2.3"></lucide-angular>
+                  </button>
+
+                  <button
+                    type="button"
+                    class="icon-action danger btn-icon"
+                    title="Borrar modulo"
+                    aria-label="Borrar modulo"
+                    [disabled]="module.canceled"
+                    (click)="$event.stopPropagation(); askCancel(module)"
+                  >
+                    <lucide-angular [img]="trashIcon" [size]="17" [strokeWidth]="2.3"></lucide-angular>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <footer class="pagination-bar">
+        <span>Mostrando {{ showingCount }} de {{ filteredModules.length }} modulos</span>
+
+        <div class="pagination-actions">
+          <button
+            type="button"
+            class="page-btn btn-icon"
+            title="Pagina anterior"
+            aria-label="Pagina anterior"
+            [disabled]="currentPage === 1"
+            (click)="previousPage()"
+          >
+            <lucide-angular [img]="chevronLeftIcon" [size]="16" [strokeWidth]="2.5"></lucide-angular>
+          </button>
+
+          <strong>{{ currentPage }} / {{ totalPages }}</strong>
+
+          <button
+            type="button"
+            class="page-btn btn-icon"
+            title="Pagina siguiente"
+            aria-label="Pagina siguiente"
+            [disabled]="currentPage === totalPages"
+            (click)="nextPage()"
+          >
+            <lucide-angular [img]="chevronRightIcon" [size]="16" [strokeWidth]="2.5"></lucide-angular>
+          </button>
+        </div>
+      </footer>
+    </article>
+
+    <aside class="detail-panel app-card">
+      <ng-container *ngIf="selectedModule as module; else emptyDetail">
+        <div class="detail-hero">
+          <span class="detail-avatar">{{ getModuleInitial(module) }}</span>
+          <div>
+            <span class="eyebrow">Detalle modulo</span>
+            <h2>{{ module.name }}</h2>
+            <p>Orden {{ module.order }}</p>
+          </div>
+        </div>
+
+        <dl class="detail-list">
+          <div>
+            <dt>Codigo</dt>
+            <dd>{{ module.code }}</dd>
+          </div>
+          <div>
+            <dt>Nombre</dt>
+            <dd>{{ module.name }}</dd>
+          </div>
+          <div>
+            <dt>Orden</dt>
+            <dd>{{ module.order }}</dd>
+          </div>
+          <div>
+            <dt>Estado</dt>
+            <dd>
+              <app-status-badge
+                [label]="module.canceled ? 'Inactivo' : 'Activo'"
+                [variant]="module.canceled ? 'inactive' : 'active'"
+              ></app-status-badge>
+            </dd>
+          </div>
+          <div>
+            <dt>Fecha creacion</dt>
+            <dd>{{ formatDate(module.created_at) }}</dd>
+          </div>
+          <div>
+            <dt>Fecha actualizacion</dt>
+            <dd>{{ formatDate(module.updated_at) }}</dd>
+          </div>
+        </dl>
+
+        <div class="detail-actions">
+          <button type="button" class="ghost-btn btn-outline" (click)="openEditModal(module)">
+            <lucide-angular [img]="editIcon" [size]="17" [strokeWidth]="2.3"></lucide-angular>
+            Editar
+          </button>
+
+          <button
+            type="button"
+            class="danger-btn btn-danger"
+            [disabled]="module.canceled"
+            (click)="askCancel(module)"
+          >
+            <lucide-angular [img]="trashIcon" [size]="17" [strokeWidth]="2.3"></lucide-angular>
+            Borrar
+          </button>
+        </div>
+      </ng-container>
+
+      <ng-template #emptyDetail>
+        <app-empty-state
+          message="Seleccione un modulo para ver sus datos."
+          [icon]="moduleIcon"
+        ></app-empty-state>
+      </ng-template>
+    </aside>
+  </section>
+
+  <div class="modal-backdrop" *ngIf="modalOpen">
+    <section class="modal-panel" role="dialog" aria-modal="true" [attr.aria-label]="modalTitle">
+      <header class="modal-header">
+        <div>
+          <span class="eyebrow">{{ modalMode === 'create' ? 'Crear' : 'Editar' }}</span>
+          <h2>{{ modalTitle }}</h2>
+        </div>
+
+        <button
+          type="button"
+          class="close-btn btn-icon"
+          title="Cerrar"
+          aria-label="Cerrar"
+          (click)="closeModal()"
+          [disabled]="isSaving"
+        >
+          <lucide-angular [img]="closeIcon" [size]="18" [strokeWidth]="2.4"></lucide-angular>
+        </button>
+      </header>
+
+      <form class="module-form" (ngSubmit)="saveModule()">
+        <div class="alert-warning compact-alert field-wide" *ngIf="isLoadingDetail">
+          Cargando modulo seleccionado...
+        </div>
+
+        <label class="field">
+          <span>Codigo</span>
+          <input
+            type="text"
+            name="moduleCode"
+            [(ngModel)]="moduleForm.code"
+            placeholder="MOD001"
+            autocomplete="off"
+            [readonly]="modalMode === 'edit'"
+            required
+          />
+        </label>
+
+        <label class="field">
+          <span>Nombre</span>
+          <input
+            type="text"
+            name="moduleName"
+            [(ngModel)]="moduleForm.name"
+            placeholder="Administracion"
+            autocomplete="off"
+            required
+          />
+        </label>
+
+        <label class="field">
+          <span>Orden</span>
+          <input
+            type="number"
+            name="moduleOrder"
+            [(ngModel)]="moduleForm.order"
+            placeholder="1"
+            required
+          />
+        </label>
+
+        <div class="alert-error compact-alert field-wide" *ngIf="formError">{{ formError }}</div>
+
+        <footer class="modal-actions field-wide">
+          <button type="button" class="ghost-btn btn-outline" (click)="closeModal()" [disabled]="isSaving">
+            Cancelar
+          </button>
+
+          <button type="submit" class="primary-btn btn-primary" [disabled]="isSaving || isLoadingDetail">
+            {{ isSaving ? 'Guardando...' : 'Guardar' }}
+          </button>
+        </footer>
+      </form>
+    </section>
+  </div>
+
+  <app-confirm-dialog
+    [open]="!!moduleToCancel"
+    title="Anular modulo"
+    [message]="cancelModuleMessage"
+    confirmLabel="Anular modulo"
+    [loading]="isSaving"
+    (confirm)="confirmCancel()"
+    (cancel)="closeCancelConfirm()"
+  ></app-confirm-dialog>
+</section>

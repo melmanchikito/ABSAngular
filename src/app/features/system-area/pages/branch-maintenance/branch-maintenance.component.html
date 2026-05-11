@@ -1,0 +1,399 @@
+<section class="branch-page page-shell">
+  <app-page-header
+    eyebrow="Sistema"
+    title="Mantenimiento - Sucursal"
+    subtitle="Administra las sucursales registradas en el sistema."
+    [icon]="branchIcon"
+  >
+    <button page-actions type="button" class="primary-btn btn-primary" (click)="openCreateModal()">
+      <lucide-angular [img]="addIcon" [size]="18" [strokeWidth]="2.4"></lucide-angular>
+      Nueva sucursal
+    </button>
+  </app-page-header>
+
+  <div class="alert-success" *ngIf="successMessage">{{ successMessage }}</div>
+  <div class="alert-error" *ngIf="errorMessage">{{ errorMessage }}</div>
+
+  <section class="summary-grid branch-summary">
+    <app-stat-card label="Total sucursales" [value]="totalBranches"></app-stat-card>
+    <app-stat-card label="Sucursales activas" [value]="activeBranches" tone="active"></app-stat-card>
+    <app-stat-card label="Sucursales inactivas" [value]="inactiveBranches" tone="inactive"></app-stat-card>
+  </section>
+
+  <section class="toolbar app-card">
+    <label class="search-box">
+      <lucide-angular [img]="searchIcon" [size]="18" [strokeWidth]="2.3"></lucide-angular>
+      <input
+        type="search"
+        name="branchSearch"
+        [(ngModel)]="searchTerm"
+        (ngModelChange)="onFiltersChange()"
+        placeholder="Buscar por codigo, nombre, empresa o ubicacion..."
+        autocomplete="off"
+      />
+    </label>
+
+    <select
+      class="filter-select form-select"
+      name="companyFilter"
+      [(ngModel)]="selectedCompanyFilter"
+      (ngModelChange)="onCompanyFilterChange()"
+    >
+      <option value="all">Todas las empresas</option>
+      <option *ngFor="let company of companies; trackBy: trackByCompanyId" [ngValue]="company.id">
+        {{ company.name }}
+      </option>
+    </select>
+
+    <div class="filter-pills" aria-label="Filtro por estado">
+      <button
+        type="button"
+        class="filter-pill"
+        [class.active]="statusFilter === 'all'"
+        (click)="setStatusFilter('all')"
+      >
+        Todas
+      </button>
+      <button
+        type="button"
+        class="filter-pill"
+        [class.active]="statusFilter === 'active'"
+        (click)="setStatusFilter('active')"
+      >
+        Activas
+      </button>
+      <button
+        type="button"
+        class="filter-pill"
+        [class.active]="statusFilter === 'inactive'"
+        (click)="setStatusFilter('inactive')"
+      >
+        Inactivas
+      </button>
+    </div>
+
+    <button type="button" class="ghost-btn btn-outline refresh-btn" (click)="loadBranches()" [disabled]="isLoading">
+      <lucide-angular [img]="refreshIcon" [size]="17" [strokeWidth]="2.3"></lucide-angular>
+      Actualizar
+    </button>
+  </section>
+
+  <section class="content-grid">
+    <article class="branches-panel app-card">
+      <header class="panel-header">
+        <div>
+          <span class="eyebrow">Listado</span>
+          <h2>Sucursales</h2>
+        </div>
+        <span class="counter">{{ filteredBranches.length }} registros</span>
+      </header>
+
+      <div class="table-shell table-wrapper">
+        <table class="branch-table app-table">
+          <thead>
+            <tr>
+              <th>Codigo</th>
+              <th>Nombre</th>
+              <th>Empresa</th>
+              <th>Ubicacion</th>
+              <th>Estado</th>
+              <th>Fecha creacion</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngIf="isLoading">
+              <td colspan="7">
+                <app-empty-state message="Cargando sucursales..." [icon]="branchIcon"></app-empty-state>
+              </td>
+            </tr>
+
+            <tr *ngIf="!isLoading && !branches.length">
+              <td colspan="7">
+                <app-empty-state message="No existen sucursales registradas." [icon]="branchIcon"></app-empty-state>
+              </td>
+            </tr>
+
+            <tr *ngIf="!isLoading && branches.length && !filteredBranches.length">
+              <td colspan="7">
+                <app-empty-state
+                  message="No se encontraron sucursales con los filtros aplicados."
+                  [icon]="searchIcon"
+                ></app-empty-state>
+              </td>
+            </tr>
+
+            <tr
+              *ngFor="let branch of paginatedBranches; trackBy: trackByBranchId"
+              class="branch-row"
+              [class.selected]="selectedBranchId === branch.id"
+              (click)="selectBranch(branch)"
+            >
+              <td>
+                <span class="code-badge">{{ branch.code }}</span>
+              </td>
+              <td>
+                <div class="branch-name">
+                  <span class="branch-avatar">{{ getBranchInitial(branch) }}</span>
+                  <strong>{{ branch.name }}</strong>
+                </div>
+              </td>
+              <td>{{ getCompanyName(branch.company_id) }}</td>
+              <td>{{ getLocationLabel(branch.location_id) }}</td>
+              <td>
+                <app-status-badge
+                  [label]="branch.canceled ? 'Inactiva' : 'Activa'"
+                  [variant]="branch.canceled ? 'inactive' : 'active'"
+                ></app-status-badge>
+              </td>
+              <td>{{ formatDate(branch.created_at) }}</td>
+              <td>
+                <div class="actions-cell table-actions">
+                  <button
+                    type="button"
+                    class="icon-action btn-icon"
+                    title="Editar sucursal"
+                    aria-label="Editar sucursal"
+                    (click)="$event.stopPropagation(); openEditModal(branch)"
+                  >
+                    <lucide-angular [img]="editIcon" [size]="17" [strokeWidth]="2.3"></lucide-angular>
+                  </button>
+
+                  <button
+                    type="button"
+                    class="icon-action danger btn-icon"
+                    title="Borrar sucursal"
+                    aria-label="Borrar sucursal"
+                    [disabled]="branch.canceled"
+                    (click)="$event.stopPropagation(); askCancel(branch)"
+                  >
+                    <lucide-angular [img]="trashIcon" [size]="17" [strokeWidth]="2.3"></lucide-angular>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <footer class="pagination-bar">
+        <span>Mostrando {{ showingCount }} de {{ filteredBranches.length }} sucursales</span>
+
+        <div class="pagination-actions">
+          <button
+            type="button"
+            class="page-btn btn-icon"
+            title="Pagina anterior"
+            aria-label="Pagina anterior"
+            [disabled]="currentPage === 1"
+            (click)="previousPage()"
+          >
+            <lucide-angular [img]="chevronLeftIcon" [size]="16" [strokeWidth]="2.5"></lucide-angular>
+          </button>
+
+          <strong>{{ currentPage }} / {{ totalPages }}</strong>
+
+          <button
+            type="button"
+            class="page-btn btn-icon"
+            title="Pagina siguiente"
+            aria-label="Pagina siguiente"
+            [disabled]="currentPage === totalPages"
+            (click)="nextPage()"
+          >
+            <lucide-angular [img]="chevronRightIcon" [size]="16" [strokeWidth]="2.5"></lucide-angular>
+          </button>
+        </div>
+      </footer>
+    </article>
+
+    <aside class="detail-panel app-card">
+      <ng-container *ngIf="selectedBranch as branch; else emptyDetail">
+        <div class="detail-hero">
+          <span class="detail-avatar">{{ getBranchInitial(branch) }}</span>
+          <div>
+            <span class="eyebrow">Detalle sucursal</span>
+            <h2>{{ branch.name }}</h2>
+            <p>{{ getCompanyName(branch.company_id) }} · {{ getLocationLabel(branch.location_id) }}</p>
+          </div>
+        </div>
+
+        <dl class="detail-list">
+          <div>
+            <dt>Codigo</dt>
+            <dd>{{ branch.code }}</dd>
+          </div>
+          <div>
+            <dt>Nombre</dt>
+            <dd>{{ branch.name }}</dd>
+          </div>
+          <div>
+            <dt>Empresa</dt>
+            <dd>{{ getCompanyName(branch.company_id) }}</dd>
+          </div>
+          <div>
+            <dt>ID Empresa</dt>
+            <dd>{{ branch.company_id }}</dd>
+          </div>
+          <div>
+            <dt>Ubicacion</dt>
+            <dd>{{ getLocationLabel(branch.location_id) }}</dd>
+          </div>
+          <div>
+            <dt>ID Ubicacion</dt>
+            <dd>{{ branch.location_id }}</dd>
+          </div>
+          <div>
+            <dt>Estado</dt>
+            <dd>
+              <app-status-badge
+                [label]="branch.canceled ? 'Inactiva' : 'Activa'"
+                [variant]="branch.canceled ? 'inactive' : 'active'"
+              ></app-status-badge>
+            </dd>
+          </div>
+          <div>
+            <dt>Fecha creacion</dt>
+            <dd>{{ formatDate(branch.created_at) }}</dd>
+          </div>
+          <div>
+            <dt>Fecha actualizacion</dt>
+            <dd>{{ formatDate(branch.updated_at) }}</dd>
+          </div>
+        </dl>
+
+        <div class="detail-actions">
+          <button type="button" class="ghost-btn btn-outline" (click)="openEditModal(branch)">
+            <lucide-angular [img]="editIcon" [size]="17" [strokeWidth]="2.3"></lucide-angular>
+            Editar
+          </button>
+
+          <button
+            type="button"
+            class="danger-btn btn-danger"
+            [disabled]="branch.canceled"
+            (click)="askCancel(branch)"
+          >
+            <lucide-angular [img]="trashIcon" [size]="17" [strokeWidth]="2.3"></lucide-angular>
+            Borrar
+          </button>
+        </div>
+      </ng-container>
+
+      <ng-template #emptyDetail>
+        <app-empty-state
+          message="Seleccione una sucursal para ver sus datos."
+          [icon]="branchIcon"
+        ></app-empty-state>
+      </ng-template>
+    </aside>
+  </section>
+
+  <div class="modal-backdrop" *ngIf="modalOpen">
+    <section class="modal-panel" role="dialog" aria-modal="true" [attr.aria-label]="modalTitle">
+      <header class="modal-header">
+        <div>
+          <span class="eyebrow">{{ modalMode === 'create' ? 'Crear' : 'Editar' }}</span>
+          <h2>{{ modalTitle }}</h2>
+        </div>
+
+        <button
+          type="button"
+          class="close-btn btn-icon"
+          title="Cerrar"
+          aria-label="Cerrar"
+          (click)="closeModal()"
+          [disabled]="isSaving"
+        >
+          <lucide-angular [img]="closeIcon" [size]="18" [strokeWidth]="2.4"></lucide-angular>
+        </button>
+      </header>
+
+      <form class="branch-form" (ngSubmit)="saveBranch()">
+        <div class="alert-warning compact-alert field-wide" *ngIf="isLoadingDetail">
+          Cargando sucursal seleccionada...
+        </div>
+
+        <label class="field">
+          <span>Codigo</span>
+          <input
+            type="text"
+            name="branchCode"
+            [(ngModel)]="branchForm.code"
+            placeholder="SUC001"
+            autocomplete="off"
+            [readonly]="modalMode === 'edit'"
+            required
+          />
+        </label>
+
+        <label class="field">
+          <span>Nombre</span>
+          <input
+            type="text"
+            name="branchName"
+            [(ngModel)]="branchForm.name"
+            placeholder="Matriz"
+            autocomplete="off"
+            required
+          />
+        </label>
+
+        <label class="field">
+          <span>Empresa</span>
+          <select
+            name="branchCompany"
+            class="form-select"
+            [(ngModel)]="branchForm.company_id"
+            [disabled]="isLoadingCatalogs"
+            required
+          >
+            <option [ngValue]="null">Seleccione una empresa</option>
+            <option *ngFor="let company of companies; trackBy: trackByCompanyId" [ngValue]="company.id">
+              {{ company.name }}
+            </option>
+          </select>
+        </label>
+
+        <label class="field">
+          <span>Ubicacion</span>
+          <select
+            name="branchLocation"
+            class="form-select"
+            [(ngModel)]="branchForm.location_id"
+            [disabled]="isLoadingCatalogs"
+            required
+          >
+            <option [ngValue]="null">Seleccione una ubicacion</option>
+            <option *ngFor="let location of locations; trackBy: trackByLocationId" [ngValue]="location.id">
+              {{ location.name }} · {{ location.address }}
+            </option>
+          </select>
+        </label>
+
+        <div class="alert-error compact-alert field-wide" *ngIf="formError">{{ formError }}</div>
+
+        <footer class="modal-actions field-wide">
+          <button type="button" class="ghost-btn btn-outline" (click)="closeModal()" [disabled]="isSaving">
+            Cancelar
+          </button>
+
+          <button type="submit" class="primary-btn btn-primary" [disabled]="isSaving || isLoadingDetail">
+            {{ isSaving ? 'Guardando...' : 'Guardar' }}
+          </button>
+        </footer>
+      </form>
+    </section>
+  </div>
+
+  <app-confirm-dialog
+    [open]="!!branchToCancel"
+    title="Anular sucursal"
+    [message]="cancelBranchMessage"
+    confirmLabel="Anular sucursal"
+    [loading]="isSaving"
+    (confirm)="confirmCancel()"
+    (cancel)="closeCancelConfirm()"
+  ></app-confirm-dialog>
+</section>
