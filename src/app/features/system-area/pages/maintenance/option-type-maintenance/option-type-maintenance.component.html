@@ -1,0 +1,349 @@
+<section class="option-type-page page-shell">
+  <app-page-header
+    eyebrow="Configuracion"
+    title="Mantenimiento - Tipo de opciones"
+    subtitle="Administra la clasificacion de opciones disponibles en el sistema."
+    [icon]="optionTypeIcon"
+  >
+    <button page-actions type="button" class="btn-primary" (click)="openCreateModal()">
+      <lucide-angular [img]="addIcon" [size]="18" [strokeWidth]="2.4"></lucide-angular>
+      Nuevo
+    </button>
+  </app-page-header>
+
+  <div
+    *ngIf="toast() as notification"
+    class="toast-message"
+    [class.toast-success]="notification.type === 'success'"
+    [class.toast-error]="notification.type === 'error'"
+  >
+    {{ notification.message }}
+  </div>
+
+  <section class="summary-grid option-type-summary">
+    <app-stat-card label="Total tipos" [value]="totalOptionTypes()"></app-stat-card>
+    <app-stat-card label="Tipos activos" [value]="activeOptionTypesCount()" tone="active"></app-stat-card>
+    <app-stat-card label="Tipos inactivos" [value]="inactiveOptionTypesCount()" tone="inactive"></app-stat-card>
+  </section>
+
+  <section class="toolbar app-card">
+    <label class="search-box">
+      <lucide-angular [img]="searchIcon" [size]="18" [strokeWidth]="2.3"></lucide-angular>
+      <input
+        #optionTypeSearch
+        type="search"
+        [value]="searchTerm()"
+        (input)="updateSearchTerm(optionTypeSearch.value)"
+        placeholder="Buscar por codigo o nombre..."
+        autocomplete="off"
+      />
+    </label>
+
+    <div class="filter-pills" aria-label="Filtro por estado">
+      <button
+        type="button"
+        class="filter-pill"
+        [class.active]="statusFilter() === 'all'"
+        (click)="setStatusFilter('all')"
+      >
+        Todos
+      </button>
+      <button
+        type="button"
+        class="filter-pill"
+        [class.active]="statusFilter() === 'active'"
+        (click)="setStatusFilter('active')"
+      >
+        Activos
+      </button>
+      <button
+        type="button"
+        class="filter-pill"
+        [class.active]="statusFilter() === 'inactive'"
+        (click)="setStatusFilter('inactive')"
+      >
+        Inactivos
+      </button>
+    </div>
+
+    <button type="button" class="btn-outline refresh-btn" (click)="loadOptionTypes()" [disabled]="isLoading()">
+      <lucide-angular [img]="refreshIcon" [size]="17" [strokeWidth]="2.3"></lucide-angular>
+      Actualizar
+    </button>
+  </section>
+
+  <section class="content-grid">
+    <article class="option-type-panel app-card">
+      <header class="panel-header">
+        <div>
+          <span class="eyebrow">Listado</span>
+          <h2>Tipos de opcion</h2>
+        </div>
+        <span class="counter">{{ filteredOptionTypes().length }} registros</span>
+      </header>
+
+      <div class="table-shell">
+        <table class="option-type-table app-table">
+          <thead>
+            <tr>
+              <th>Codigo</th>
+              <th>Nombre</th>
+              <th>Estado</th>
+              <th>Fecha creacion</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngIf="isLoading()">
+              <td colspan="5">
+                <div class="skeleton-stack" aria-label="Cargando tipos de opcion">
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                </div>
+              </td>
+            </tr>
+
+            <tr *ngIf="!isLoading() && !optionTypes().length">
+              <td colspan="5">
+                <app-empty-state
+                  message="No existen tipos de opcion registrados."
+                  [icon]="optionTypeIcon"
+                ></app-empty-state>
+              </td>
+            </tr>
+
+            <tr *ngIf="!isLoading() && optionTypes().length && !filteredOptionTypes().length">
+              <td colspan="5">
+                <app-empty-state
+                  message="No se encontraron tipos de opcion con los filtros aplicados."
+                  [icon]="searchIcon"
+                ></app-empty-state>
+              </td>
+            </tr>
+
+            <tr
+              *ngFor="let optionType of paginatedOptionTypes(); trackBy: trackByOptionTypeId"
+              class="option-type-row"
+              [class.selected]="selectedOptionTypeId() === optionType.id"
+              (click)="selectOptionType(optionType)"
+            >
+              <td>
+                <span class="code-badge">{{ optionType.code }}</span>
+              </td>
+              <td>
+                <div class="option-type-name">
+                  <span class="option-type-avatar">{{ getOptionTypeInitial(optionType) }}</span>
+                  <strong>{{ optionType.name }}</strong>
+                </div>
+              </td>
+              <td>
+                <app-status-badge
+                  [label]="optionType.canceled ? 'Inactivo' : 'Activo'"
+                  [variant]="optionType.canceled ? 'inactive' : 'active'"
+                ></app-status-badge>
+              </td>
+              <td>{{ formatDate(optionType.created_at) }}</td>
+              <td>
+                <div class="actions-cell table-actions">
+                  <button
+                    type="button"
+                    class="btn-icon"
+                    title="Editar tipo de opcion"
+                    aria-label="Editar tipo de opcion"
+                    (click)="$event.stopPropagation(); openEditModal(optionType)"
+                  >
+                    <lucide-angular [img]="editIcon" [size]="17" [strokeWidth]="2.3"></lucide-angular>
+                  </button>
+
+                  <button
+                    type="button"
+                    class="btn-icon icon-danger"
+                    title="Anular tipo de opcion"
+                    aria-label="Anular tipo de opcion"
+                    [disabled]="optionType.canceled"
+                    (click)="$event.stopPropagation(); askCancel(optionType)"
+                  >
+                    <lucide-angular [img]="trashIcon" [size]="17" [strokeWidth]="2.3"></lucide-angular>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <footer class="pagination-bar">
+        <span>Mostrando {{ showingCount() }} de {{ filteredOptionTypes().length }} tipos</span>
+
+        <div class="pagination-actions">
+          <button
+            type="button"
+            class="btn-icon"
+            title="Pagina anterior"
+            aria-label="Pagina anterior"
+            [disabled]="currentPage() === 1"
+            (click)="previousPage()"
+          >
+            <lucide-angular [img]="chevronLeftIcon" [size]="16" [strokeWidth]="2.5"></lucide-angular>
+          </button>
+
+          <strong>{{ currentPage() }} / {{ totalPages() }}</strong>
+
+          <button
+            type="button"
+            class="btn-icon"
+            title="Pagina siguiente"
+            aria-label="Pagina siguiente"
+            [disabled]="currentPage() === totalPages()"
+            (click)="nextPage()"
+          >
+            <lucide-angular [img]="chevronRightIcon" [size]="16" [strokeWidth]="2.5"></lucide-angular>
+          </button>
+        </div>
+      </footer>
+    </article>
+
+    <aside class="detail-panel app-card">
+      <ng-container *ngIf="selectedOptionType() as optionType; else emptyDetail">
+        <div class="detail-hero">
+          <span class="detail-avatar">{{ getOptionTypeInitial(optionType) }}</span>
+          <div>
+            <span class="eyebrow">Detalle</span>
+            <h2>{{ optionType.name }}</h2>
+            <p>{{ optionType.code }}</p>
+          </div>
+        </div>
+
+        <dl class="detail-list">
+          <div>
+            <dt>Codigo</dt>
+            <dd>{{ optionType.code }}</dd>
+          </div>
+          <div>
+            <dt>Nombre</dt>
+            <dd>{{ optionType.name }}</dd>
+          </div>
+          <div>
+            <dt>Estado</dt>
+            <dd>
+              <app-status-badge
+                [label]="optionType.canceled ? 'Inactivo' : 'Activo'"
+                [variant]="optionType.canceled ? 'inactive' : 'active'"
+              ></app-status-badge>
+            </dd>
+          </div>
+          <div>
+            <dt>Fecha creacion</dt>
+            <dd>{{ formatDate(optionType.created_at) }}</dd>
+          </div>
+          <div>
+            <dt>Fecha actualizacion</dt>
+            <dd>{{ formatDate(optionType.updated_at) }}</dd>
+          </div>
+        </dl>
+
+        <div class="detail-actions">
+          <button type="button" class="btn-outline" (click)="openEditModal(optionType)">
+            <lucide-angular [img]="editIcon" [size]="17" [strokeWidth]="2.3"></lucide-angular>
+            Editar
+          </button>
+
+          <button
+            type="button"
+            class="btn-danger"
+            [disabled]="optionType.canceled"
+            (click)="askCancel(optionType)"
+          >
+            <lucide-angular [img]="trashIcon" [size]="17" [strokeWidth]="2.3"></lucide-angular>
+            Anular
+          </button>
+        </div>
+      </ng-container>
+
+      <ng-template #emptyDetail>
+        <app-empty-state
+          message="Seleccione un tipo de opcion para ver sus datos."
+          [icon]="optionTypeIcon"
+        ></app-empty-state>
+      </ng-template>
+    </aside>
+  </section>
+
+  <div class="modal-backdrop" *ngIf="modalOpen()">
+    <section class="modal-panel" role="dialog" aria-modal="true" [attr.aria-label]="modalTitle()">
+      <header class="modal-header">
+        <div>
+          <span class="eyebrow">{{ modalMode() === 'create' ? 'Crear' : 'Editar' }}</span>
+          <h2>{{ modalTitle() }}</h2>
+        </div>
+
+        <button
+          type="button"
+          class="btn-icon"
+          title="Cerrar"
+          aria-label="Cerrar"
+          (click)="closeModal()"
+          [disabled]="isSaving()"
+        >
+          <lucide-angular [img]="closeIcon" [size]="18" [strokeWidth]="2.4"></lucide-angular>
+        </button>
+      </header>
+
+      <form class="option-type-form" [formGroup]="optionTypeForm" (ngSubmit)="saveOptionType()">
+        <div class="alert-warning compact-alert field-wide" *ngIf="isLoadingDetail()">
+          Cargando tipo de opcion seleccionado...
+        </div>
+
+        <label class="form-group">
+          <span class="form-label">Codigo</span>
+          <input
+            class="form-control"
+            type="text"
+            formControlName="code"
+            placeholder="TIP-001"
+            autocomplete="off"
+            [readonly]="modalMode() === 'edit'"
+          />
+          <small class="field-error" *ngIf="fieldInvalid('code')">{{ fieldMessage('code') }}</small>
+        </label>
+
+        <label class="form-group">
+          <span class="form-label">Nombre</span>
+          <input
+            class="form-control"
+            type="text"
+            formControlName="name"
+            placeholder="Menu principal"
+            autocomplete="off"
+          />
+          <small class="field-error" *ngIf="fieldInvalid('name')">{{ fieldMessage('name') }}</small>
+        </label>
+
+        <div class="alert-error compact-alert field-wide" *ngIf="formError()">{{ formError() }}</div>
+
+        <footer class="modal-actions field-wide">
+          <button type="button" class="btn-outline" (click)="closeModal()" [disabled]="isSaving()">
+            Cancelar
+          </button>
+
+          <button type="submit" class="btn-primary" [disabled]="isSaving() || isLoadingDetail()">
+            {{ isSaving() ? 'Guardando...' : 'Guardar' }}
+          </button>
+        </footer>
+      </form>
+    </section>
+  </div>
+
+  <app-confirm-dialog
+    [open]="!!optionTypeToCancel()"
+    title="Anular tipo de opcion"
+    [message]="cancelOptionTypeMessage()"
+    confirmLabel="Anular"
+    [loading]="isSaving()"
+    (confirm)="confirmCancel()"
+    (cancel)="closeCancelConfirm()"
+  ></app-confirm-dialog>
+</section>

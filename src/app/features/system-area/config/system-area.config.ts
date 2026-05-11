@@ -107,9 +107,24 @@ const configuracionCategories = createCategories(
       icon: LayoutDashboard,
       route: route('sistema/configuracion/modulos')
     },
-    { label: 'Opciones', description: 'Opciones disponibles por modulo.', icon: Settings },
-    { label: 'Tipo de opciones', description: 'Clasificacion de opciones del sistema.', icon: Tags },
-    { label: 'Acciones', description: 'Permisos y acciones disponibles.', icon: ClipboardCheck },
+    {
+      label: 'Opciones',
+      description: 'Opciones disponibles por modulo.',
+      icon: Settings,
+      route: route('sistema/configuracion/opciones')
+    },
+    {
+      label: 'Tipo de opciones',
+      description: 'Clasificacion de opciones del sistema.',
+      icon: Tags,
+      route: route('sistema/configuracion/tipo-opciones')
+    },
+    {
+      label: 'Acciones',
+      description: 'Permisos y acciones disponibles.',
+      icon: ClipboardCheck,
+      route: route('sistema/configuracion/acciones')
+    },
     { label: 'Areas', description: 'Grupos organizacionales internos.', icon: FolderKanban },
     { label: 'Preferencia', description: 'Preferencias generales de operacion.', icon: Gauge }
   ],

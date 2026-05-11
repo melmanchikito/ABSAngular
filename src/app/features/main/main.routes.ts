@@ -2,10 +2,13 @@ import { Routes } from '@angular/router';
 import { MainLayoutComponent } from '../../shared/layouts/main-layout/main-layout.component';
 import { HomeComponent } from '../home/pages/home/home.component';
 import { MailComponent } from '../mail/pages/mail/mail.component';
+import { ActionMaintenanceComponent } from '../system-area/pages/action-maintenance/action-maintenance.component';
 import { BranchMaintenanceComponent } from '../system-area/pages/branch-maintenance/branch-maintenance.component';
 import { CompanyMaintenanceComponent } from '../system-area/pages/company-maintenance/company-maintenance.component';
 import { LocationMaintenanceComponent } from '../system-area/pages/location-maintenance/location-maintenance.component';
 import { ModuleMaintenanceComponent } from '../system-area/pages/module-maintenance/module-maintenance.component';
+import { OptionMaintenanceComponent } from '../system-area/pages/option-maintenance/option-maintenance.component';
+import { OptionTypeMaintenanceComponent } from '../system-area/pages/maintenance/option-type-maintenance/option-type-maintenance.component';
 import { ProductMaintenanceComponent } from '../system-area/pages/product-maintenance/product-maintenance.component';
 import { SystemAreaComponent } from '../system-area/pages/system-area/system-area.component';
 
@@ -102,6 +105,18 @@ export const MAIN_ROUTES: Routes = [
       {
         path: 'modulo/sistema/configuracion/modulos',
         component: ModuleMaintenanceComponent
+      },
+      {
+        path: 'modulo/sistema/configuracion/acciones',
+        component: ActionMaintenanceComponent
+      },
+      {
+        path: 'modulo/sistema/configuracion/opciones',
+        component: OptionMaintenanceComponent
+      },
+      {
+        path: 'modulo/sistema/configuracion/tipo-opciones',
+        component: OptionTypeMaintenanceComponent
       },
       {
         path: 'modulo/producto/produccion-distribucion/productos',
