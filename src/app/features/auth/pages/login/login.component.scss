@@ -565,4 +565,15 @@
   .brand-badge {
     margin-top: 0.65rem;
   }
+
+}
+.input-wrap input:-webkit-autofill,
+.input-wrap input:-webkit-autofill:hover,
+.input-wrap input:-webkit-autofill:focus,
+.input-wrap input:-webkit-autofill:active {
+  -webkit-text-fill-color: var(--abs-text);
+  caret-color: var(--abs-text);
+  box-shadow: 0 0 0 1000px rgba(15, 23, 42, 0.92) inset;
+  -webkit-box-shadow: 0 0 0 1000px rgba(15, 23, 42, 0.92) inset;
+  transition: background-color 9999s ease-in-out 0s;
 }
