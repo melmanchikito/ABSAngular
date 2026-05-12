@@ -1,0 +1,222 @@
+[data-theme='liquid-glass'] {
+  color-scheme: dark;
+
+  --abs-bg: #08111f;
+  --abs-bg-soft: rgba(15, 23, 42, 0.72);
+  --abs-surface: rgba(20, 31, 48, 0.58);
+  --abs-surface-soft: rgba(33, 48, 70, 0.46);
+  --abs-surface-hover: rgba(255, 255, 255, 0.11);
+  --abs-sidebar-bg: rgba(9, 15, 28, 0.62);
+  --abs-header-bg: rgba(11, 18, 32, 0.58);
+  --abs-text: #f8fafc;
+  --abs-text-muted: #cbd5e1;
+  --abs-text-soft: #94a3b8;
+  --abs-border: rgba(255, 255, 255, 0.22);
+  --abs-border-soft: rgba(255, 255, 255, 0.13);
+  --abs-primary: #f0444b;
+  --abs-primary-hover: #ff6970;
+  --abs-primary-soft: rgba(240, 68, 75, 0.18);
+  --abs-success: #34d399;
+  --abs-error: #fb7185;
+  --abs-warning: #fbbf24;
+  --abs-info: #93c5fd;
+  --abs-shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.28);
+  --abs-shadow-sm: 0 10px 28px rgba(0, 0, 0, 0.25);
+  --abs-shadow-md: 0 20px 50px rgba(0, 0, 0, 0.34);
+  --abs-shadow-lg: 0 32px 80px rgba(0, 0, 0, 0.44);
+  --abs-input-bg: rgba(6, 13, 26, 0.42);
+  --abs-input-border: rgba(255, 255, 255, 0.23);
+  --abs-scroll-track: rgba(255, 255, 255, 0.06);
+  --abs-scroll-thumb: rgba(255, 255, 255, 0.28);
+}
+
+[data-theme='liquid-glass'] body {
+  background:
+    radial-gradient(circle at 14% 8%, rgba(240, 68, 75, 0.18), transparent 28%),
+    radial-gradient(circle at 86% 18%, rgba(148, 163, 184, 0.16), transparent 30%),
+    linear-gradient(135deg, #060b15 0%, #0b1728 48%, #111827 100%);
+}
+
+[data-theme='liquid-glass'] body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.028) 1px, transparent 1px);
+  background-size: 46px 46px;
+  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.72), transparent 88%);
+}
+
+[data-theme='liquid-glass'] .fondo {
+  background:
+    radial-gradient(circle at top right, rgba(240, 68, 75, 0.15), transparent 34%),
+    radial-gradient(circle at bottom left, rgba(148, 163, 184, 0.12), transparent 36%),
+    transparent;
+}
+
+[data-theme='liquid-glass'] .card_sidebar,
+[data-theme='liquid-glass'] .card_header,
+[data-theme='liquid-glass'] .app-card,
+[data-theme='liquid-glass'] .profile-card,
+[data-theme='liquid-glass'] .home-card,
+[data-theme='liquid-glass'] .metric-card,
+[data-theme='liquid-glass'] .home-hero,
+[data-theme='liquid-glass'] .tray-panel,
+[data-theme='liquid-glass'] .user-menu,
+[data-theme='liquid-glass'] .modal-panel,
+[data-theme='liquid-glass'] .confirm-dialog,
+[data-theme='liquid-glass'] .panel,
+[data-theme='liquid-glass'] .card,
+[data-theme='liquid-glass'] .table-shell,
+[data-theme='liquid-glass'] .toolbar,
+[data-theme='liquid-glass'] .detail-panel,
+[data-theme='liquid-glass'] .options-panel,
+[data-theme='liquid-glass'] .option-type-panel,
+[data-theme='liquid-glass'] .user-panel {
+  border-color: rgba(255, 255, 255, 0.18);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.13), rgba(255, 255, 255, 0.045)),
+    rgba(12, 19, 34, 0.5);
+  box-shadow:
+    0 18px 48px rgba(0, 0, 0, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(22px) saturate(145%);
+  -webkit-backdrop-filter: blur(22px) saturate(145%);
+}
+
+[data-theme='liquid-glass'] .card_sidebar {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.11), rgba(255, 255, 255, 0.035)),
+    rgba(6, 12, 24, 0.68);
+}
+
+[data-theme='liquid-glass'] .card_header {
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.055)),
+    rgba(8, 15, 28, 0.56);
+}
+
+[data-theme='liquid-glass'] .item:hover,
+[data-theme='liquid-glass'] .item.active,
+[data-theme='liquid-glass'] .active,
+[data-theme='liquid-glass'] .submenu,
+[data-theme='liquid-glass'] .submenu-item:hover,
+[data-theme='liquid-glass'] .submenu-active,
+[data-theme='liquid-glass'] .filter-pill,
+[data-theme='liquid-glass'] .code-badge,
+[data-theme='liquid-glass'] .counter,
+[data-theme='liquid-glass'] .tray-btn,
+[data-theme='liquid-glass'] .network-box,
+[data-theme='liquid-glass'] .user-box:hover,
+[data-theme='liquid-glass'] .liquid-theme-option,
+[data-theme='liquid-glass'] .theme-option,
+[data-theme='liquid-glass'] .chip-group button,
+[data-theme='liquid-glass'] .select-shell,
+[data-theme='liquid-glass'] .wallpaper-preview {
+  border-color: rgba(255, 255, 255, 0.19);
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+}
+
+[data-theme='liquid-glass'] input,
+[data-theme='liquid-glass'] select,
+[data-theme='liquid-glass'] textarea,
+[data-theme='liquid-glass'] .form-control,
+[data-theme='liquid-glass'] .form-select,
+[data-theme='liquid-glass'] .search-box,
+[data-theme='liquid-glass'] .search-wrap input {
+  border-color: rgba(255, 255, 255, 0.22);
+  background: rgba(3, 9, 20, 0.34);
+  color: var(--abs-text);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.09),
+    0 8px 24px rgba(0, 0, 0, 0.14);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+[data-theme='liquid-glass'] input:focus,
+[data-theme='liquid-glass'] select:focus,
+[data-theme='liquid-glass'] textarea:focus,
+[data-theme='liquid-glass'] .form-control:focus,
+[data-theme='liquid-glass'] .form-select:focus,
+[data-theme='liquid-glass'] .search-box:focus-within,
+[data-theme='liquid-glass'] .search-wrap input:focus {
+  border-color: rgba(240, 68, 75, 0.72);
+  box-shadow:
+    0 0 0 3px rgba(240, 68, 75, 0.18),
+    0 12px 30px rgba(0, 0, 0, 0.18);
+}
+
+[data-theme='liquid-glass'] .btn-primary,
+[data-theme='liquid-glass'] .primary-btn,
+[data-theme='liquid-glass'] .toggle-sidebar {
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.18), transparent),
+    var(--abs-primary);
+  box-shadow:
+    0 12px 30px rgba(240, 68, 75, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+[data-theme='liquid-glass'] .btn-outline,
+[data-theme='liquid-glass'] .btn-secondary,
+[data-theme='liquid-glass'] .btn-icon,
+[data-theme='liquid-glass'] .ghost-btn {
+  border-color: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--abs-text);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+[data-theme='liquid-glass'] .btn-danger,
+[data-theme='liquid-glass'] .danger-btn {
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.16), transparent),
+    var(--abs-error);
+}
+
+[data-theme='liquid-glass'] table,
+[data-theme='liquid-glass'] .app-table {
+  background: transparent;
+}
+
+[data-theme='liquid-glass'] thead,
+[data-theme='liquid-glass'] .app-table thead {
+  background: rgba(255, 255, 255, 0.075);
+}
+
+[data-theme='liquid-glass'] th,
+[data-theme='liquid-glass'] td,
+[data-theme='liquid-glass'] .panel-header,
+[data-theme='liquid-glass'] .pagination-bar,
+[data-theme='liquid-glass'] .detail-hero,
+[data-theme='liquid-glass'] .modal-header,
+[data-theme='liquid-glass'] .separator {
+  border-color: rgba(255, 255, 255, 0.13);
+}
+
+[data-theme='liquid-glass'] tbody tr:hover,
+[data-theme='liquid-glass'] .option-row.selected,
+[data-theme='liquid-glass'] .option-type-row.selected,
+[data-theme='liquid-glass'] .user-row.selected,
+[data-theme='liquid-glass'] .module-row.selected,
+[data-theme='liquid-glass'] .company-row.selected,
+[data-theme='liquid-glass'] .location-row.selected,
+[data-theme='liquid-glass'] .branch-row.selected,
+[data-theme='liquid-glass'] .action-row.selected,
+[data-theme='liquid-glass'] .product-row.selected {
+  background: rgba(240, 68, 75, 0.11);
+}
+
+[data-theme='liquid-glass'] .modal-backdrop {
+  background: rgba(2, 6, 23, 0.48);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}

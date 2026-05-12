@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
-import { LucideAngularModule, Menu, X } from 'lucide-angular';
+import { Eye, EyeOff, LucideAngularModule, Menu, X } from 'lucide-angular';
 import { SidebarComponent } from '../sidebar/sidebar.component';
 import { HeaderComponent } from '../header/header.component';
 import { AuthService } from '../../../core/services/auth.service';
@@ -24,11 +24,16 @@ import { SessionTimeoutAlertComponent } from '../../components/alert/session-tim
 export class MainLayoutComponent implements OnInit, OnDestroy {
   activeSection = 'Sistema';
   sidebarCollapsed = false;
+  headerVisible = true;
   menuIcon = Menu;
   closeIcon = X;
+  showHeaderIcon = Eye;
+  hideHeaderIcon = EyeOff;
 
   isOnline = navigator.onLine;
   networkType = navigator.onLine ? 'Con internet' : 'Sin internet';
+
+  private readonly headerVisibleStorageKey = 'headerVisible';
 
   private onlineHandler = () => {
     this.isOnline = true;
@@ -43,6 +48,7 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
   constructor(private readonly authService: AuthService) {}
 
   ngOnInit(): void {
+    this.loadHeaderPreference();
     window.addEventListener('online', this.onlineHandler);
     window.addEventListener('offline', this.offlineHandler);
   }
@@ -56,6 +62,11 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
     this.sidebarCollapsed = !this.sidebarCollapsed;
   }
 
+  toggleHeader(): void {
+    this.headerVisible = !this.headerVisible;
+    localStorage.setItem(this.headerVisibleStorageKey, String(this.headerVisible));
+  }
+
   onSelectSection(section: string): void {
     this.activeSection = section;
   }
@@ -66,5 +77,16 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
 
   get img(): string {
     return localStorage.getItem('profileImage') ?? '';
+  }
+
+  private loadHeaderPreference(): void {
+    const storedPreference = localStorage.getItem(this.headerVisibleStorageKey);
+
+    if (storedPreference === null) {
+      this.headerVisible = true;
+      return;
+    }
+
+    this.headerVisible = storedPreference !== 'false';
   }
 }

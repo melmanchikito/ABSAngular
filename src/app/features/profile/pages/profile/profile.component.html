@@ -1,4 +1,4 @@
-<div class="profile-page">
+<div class="profile-page non-operational-page visual-page-background">
   <section class="page-header">
     <div>
       <h1>Perfil y preferencias</h1>
@@ -154,12 +154,22 @@
     <div class="pref-row">
       <div>
         <h3>Tema de la aplicación</h3>
-        <p>Modo claro, oscuro o automático según el sistema.</p>
+        <p>Modo claro, oscuro, automático o Liquid Glass global.</p>
       </div>
-      <div class="chip-group">
-        <button [class.active]="prefs.theme === 'light'" (click)="setTheme('light')">Claro</button>
-        <button [class.active]="prefs.theme === 'dark'" (click)="setTheme('dark')">Oscuro</button>
-        <button [class.active]="prefs.theme === 'system'" (click)="setTheme('system')">Sistema</button>
+      <div class="liquid-theme-group" role="radiogroup" aria-label="Tema de la aplicacion">
+        <button
+          type="button"
+          class="liquid-theme-option"
+          *ngFor="let option of themeOptions"
+          [class.active]="prefs.theme === option.value"
+          (click)="setTheme(option.value)"
+        >
+          <span class="liquid-indicator"></span>
+          <span>
+            <strong>{{ option.label }}</strong>
+            <small>{{ option.description }}</small>
+          </span>
+        </button>
       </div>
     </div>
 
@@ -168,50 +178,48 @@
         <h3>Color del sistema</h3>
         <p>Color principal de botones y elementos activos.</p>
       </div>
-      <div class="theme-grid">
-        <button
-          type="button"
-          class="theme-option abs-red"
-          [class.selected]="prefs.accentColor === 'absRed'"
-          (click)="setAccentColor('absRed')"
-        >
-          <span></span>
-          <strong>Rojo ABS</strong>
-          <small>Marca principal</small>
-        </button>
+      <label class="select-shell accent-select">
+        <span class="select-swatch" [ngClass]="'swatch-' + prefs.accentColor"></span>
+        <select [ngModel]="prefs.accentColor" (ngModelChange)="setAccentColor($event)">
+          <option *ngFor="let option of accentOptions" [ngValue]="option.value">
+            {{ option.label }}
+          </option>
+        </select>
+      </label>
+    </div>
 
-        <button
-          type="button"
-          class="theme-option executive-red"
-          [class.selected]="prefs.accentColor === 'executiveRed'"
-          (click)="setAccentColor('executiveRed')"
-        >
-          <span></span>
-          <strong>Rojo ejecutivo</strong>
-          <small>Formal y elegante</small>
-        </button>
+    <div class="pref-row wallpaper-row">
+      <div>
+        <h3>Fondo de pantalla del sistema</h3>
+        <p>Disponible solo en Inicio y pantallas visuales, no en mantenimientos ni procesos.</p>
+      </div>
+      <div class="wallpaper-controls">
+        <div class="wallpaper-actions">
+          <label class="switch">
+            <input
+              type="checkbox"
+              [ngModel]="prefs.wallpaperEnabled"
+              (ngModelChange)="setWallpaperEnabled($event)"
+            />
+            <span></span>
+          </label>
 
-        <button
-          type="button"
-          class="theme-option enterprise-gray"
-          [class.selected]="prefs.accentColor === 'enterpriseGray'"
-          (click)="setAccentColor('enterpriseGray')"
-        >
-          <span></span>
-          <strong>Gris empresarial</strong>
-          <small>Neutro y serio</small>
-        </button>
+          <label class="select-shell wallpaper-select">
+            <select [ngModel]="prefs.wallpaper" (ngModelChange)="setWallpaper($event)">
+              <option *ngFor="let option of wallpaperOptions" [ngValue]="option.value">
+                {{ option.label }}
+              </option>
+            </select>
+          </label>
+        </div>
 
-        <button
-          type="button"
-          class="theme-option premium-night"
-          [class.selected]="prefs.accentColor === 'premiumNight'"
-          (click)="setAccentColor('premiumNight')"
+        <div
+          class="wallpaper-preview"
+          [class.empty]="!prefs.wallpaperEnabled || prefs.wallpaper === 'none'"
+          [ngStyle]="wallpaperPreviewStyle"
         >
-          <span></span>
-          <strong>Nocturno premium</strong>
-          <small>Rojo, dorado y gris oscuro</small>
-        </button>
+          <span>{{ prefs.wallpaperEnabled ? wallpaperPreviewLabel : 'Sin fondo activo' }}</span>
+        </div>
       </div>
     </div>
 

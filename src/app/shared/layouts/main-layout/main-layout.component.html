@@ -1,4 +1,8 @@
-<div class="fondo" [class.sidebar-collapsed]="sidebarCollapsed">
+<div
+  class="fondo"
+  [class.sidebar-collapsed]="sidebarCollapsed"
+  [class.header-hidden-layout]="!headerVisible"
+>
   <section class="card_sidebar">
     <button class="toggle-sidebar" type="button" (click)="toggleSidebar()">
       <lucide-angular
@@ -15,12 +19,48 @@
   </section>
 
   <div class="right_content">
-    <section class="card_header">
+    <button
+      *ngIf="headerVisible"
+      class="header-visibility-btn header-hide-btn"
+      type="button"
+      aria-label="Ocultar header"
+      title="Ocultar header"
+      (click)="toggleHeader()"
+    >
+      <lucide-angular
+        [img]="hideHeaderIcon"
+        [size]="18"
+        [strokeWidth]="2.4"
+      ></lucide-angular>
+    </button>
+
+    <section
+      class="card_header"
+      [class.header-hidden]="!headerVisible"
+      [attr.aria-hidden]="!headerVisible"
+      [attr.inert]="!headerVisible ? '' : null"
+    >
       <app-header
         [img]="img"
         [username]="username"
       ></app-header>
     </section>
+
+    <button
+      *ngIf="!headerVisible"
+      class="header-visibility-btn header-show-btn"
+      type="button"
+      aria-label="Mostrar header"
+      title="Mostrar header"
+      (click)="toggleHeader()"
+    >
+      <lucide-angular
+        [img]="showHeaderIcon"
+        [size]="18"
+        [strokeWidth]="2.4"
+      ></lucide-angular>
+      <span>Header</span>
+    </button>
 
     <main class="card_main">
       <router-outlet></router-outlet>

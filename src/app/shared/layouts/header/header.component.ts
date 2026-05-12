@@ -2,10 +2,10 @@ import { Component, HostListener, Input, OnDestroy, OnInit } from '@angular/core
 import { CommonModule } from '@angular/common';
 import {
   Bell,
-  Cake,
   CheckCircle2,
   ChevronDown,
   ClipboardList,
+  House,
   LogOut,
   LucideAngularModule,
   Mail,
@@ -29,8 +29,6 @@ interface NavigatorWithConnection extends Navigator {
   connection?: BrowserNetworkInformation;
 }
 
-type HeaderPanel = 'notifications' | 'birthdays' | 'user' | null;
-
 interface HeaderNotification {
   title: string;
   description: string;
@@ -39,11 +37,7 @@ interface HeaderNotification {
   icon: typeof Bell;
 }
 
-interface HeaderBirthday {
-  name: string;
-  area: string;
-  dateLabel: string;
-}
+type HeaderPanel = 'notifications' | 'user' | null;
 
 @Component({
   selector: 'app-header',
@@ -61,7 +55,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   networkIcon = Wifi;
   searchIcon = Search;
   notificationIcon = Bell;
-  birthdayIcon = Cake;
+  homeIcon = House;
   chevronIcon = ChevronDown;
   logoutIcon = LogOut;
   mailIcon = Mail;
@@ -91,19 +85,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
       time: 'Hoy',
       unread: true,
       icon: CheckCircle2
-    }
-  ];
-
-  readonly birthdays: HeaderBirthday[] = [
-    {
-      name: 'German Machado',
-      area: 'Desarrollo',
-      dateLabel: 'Hoy'
-    },
-    {
-      name: 'Maria Perez',
-      area: 'Administracion',
-      dateLabel: 'Hoy'
     }
   ];
 
@@ -142,10 +123,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
     return this.notifications.filter((notification) => notification.unread).length;
   }
 
-  get todayBirthdays(): number {
-    return this.birthdays.filter((birthday) => birthday.dateLabel.toLowerCase() === 'hoy').length;
-  }
-
   @HostListener('document:click')
   closePanels(): void {
     this.activePanel = null;
@@ -160,8 +137,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
     event.stopPropagation();
   }
 
-  getInitial(name: string): string {
-    return name.trim().charAt(0).toUpperCase();
+  goToHome(event: MouseEvent): void {
+    event.stopPropagation();
+    this.activePanel = null;
+    void this.navigationService.goToHome();
   }
 
   goToProfile(event: MouseEvent): void {

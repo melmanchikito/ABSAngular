@@ -1,6 +1,7 @@
 @use './variables.scss' as v;
 @use './themes/light.scss';
 @use './themes/dark.scss';
+@use './themes/liquid-glass.scss';
 :root {
   --abs-font-size: 15px;
   --abs-accent: #c72026;
@@ -128,5 +129,27 @@ textarea {
 input::placeholder,
 textarea::placeholder {
   color: var(--abs-text-soft);
+}
+
+/* Fondos visuales: solo para pantallas no transaccionales. */
+.visual-page-background,
+.non-operational-page {
+  position: relative;
+  isolation: isolate;
+}
+
+[data-wallpaper]:not([data-wallpaper='none']) .visual-page-background .app-card,
+[data-wallpaper]:not([data-wallpaper='none']) .visual-page-background .profile-card,
+[data-wallpaper]:not([data-wallpaper='none']) .visual-page-background .home-card,
+[data-wallpaper]:not([data-wallpaper='none']) .visual-page-background .metric-card,
+[data-wallpaper]:not([data-wallpaper='none']) .visual-page-background .home-hero,
+[data-wallpaper]:not([data-wallpaper='none']) .visual-page-background .content-card,
+[data-wallpaper]:not([data-wallpaper='none']) .visual-page-background .section-btn,
+[data-wallpaper]:not([data-wallpaper='none']) .visual-page-background .option-card {
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.08), transparent 48%),
+    color-mix(in srgb, var(--abs-surface) 82%, transparent);
+  backdrop-filter: blur(14px) saturate(118%);
+  -webkit-backdrop-filter: blur(14px) saturate(118%);
 }
 

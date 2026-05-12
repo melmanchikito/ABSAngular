@@ -16,8 +16,15 @@ import {
 import { Subscription } from 'rxjs';
 import { PreferencesService } from '../../../../core/services/preferences.service';
 import { AuthService } from '../../../../core/services/auth.service';
-import { AccentColor, AppTheme, CardDensity, FontSize } from '../../../../core/models/preferences.model';
+import { AccentColor, AppTheme, CardDensity, FontSize, SystemWallpaper } from '../../../../core/models/preferences.model';
 import { ProfileImageService } from '../../services/profile-image.service';
+
+interface SelectOption<T extends string> {
+  value: T;
+  label: string;
+  description?: string;
+  asset?: string;
+}
 
 @Component({
   selector: 'app-profile',
@@ -36,6 +43,30 @@ export class ProfileComponent implements OnInit, OnDestroy {
   readonly appearanceIcon = Palette;
   readonly ordersIcon = ShoppingCart;
   readonly uploadIcon = Upload;
+
+  readonly themeOptions: readonly SelectOption<AppTheme>[] = [
+    { value: 'light', label: 'Claro', description: 'Interfaz limpia para espacios iluminados.' },
+    { value: 'dark', label: 'Oscuro', description: 'Mayor contraste para trabajo continuo.' },
+    { value: 'system', label: 'Sistema', description: 'Usa la preferencia del dispositivo.' },
+    { value: 'liquid-glass', label: 'Liquid Glass', description: 'Vidrio translúcido con profundidad visual.' }
+  ];
+
+  readonly accentOptions: readonly SelectOption<AccentColor>[] = [
+    { value: 'absRed', label: 'Rojo ABS', description: 'Marca principal' },
+    { value: 'executiveRed', label: 'Rojo ejecutivo', description: 'Formal y elegante' },
+    { value: 'enterpriseGray', label: 'Gris empresarial', description: 'Neutro y serio' },
+    { value: 'premiumNight', label: 'Nocturno premium', description: 'Rojo, dorado y gris oscuro' }
+  ];
+
+  readonly wallpaperOptions: readonly SelectOption<SystemWallpaper>[] = [
+    { value: 'none', label: 'Sin fondo' },
+    { value: 'arwallaros', label: 'AR Wall Aros', asset: 'assets/auth/arwallaros.webp' },
+    { value: 'arwallpaper', label: 'AR Wallpaper', asset: 'assets/auth/arwallpaper.webp' },
+    { value: 'autofondo', label: 'Auto fondo', asset: 'assets/auth/autofondo.svg' },
+    { value: 'fondonnewpass', label: 'Fondo new pass', asset: 'assets/auth/fondonnewpass.webp' },
+    { value: 'fondonnew', label: 'Fondo new', asset: 'assets/auth/fondonnew.webp' },
+    { value: 'lockScreen', label: 'Lock screen', asset: 'assets/auth/lockScreen.webp' }
+  ];
 
   savedBadge = false;
   showResetConfirm = false;
@@ -102,6 +133,36 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
   setAccentColor(accentColor: AccentColor): void {
     this.update({ accentColor });
+  }
+
+  setWallpaper(wallpaper: SystemWallpaper): void {
+    this.update({
+      wallpaper,
+      wallpaperEnabled: wallpaper === 'none' ? false : this.prefs.wallpaperEnabled
+    });
+  }
+
+  setWallpaperEnabled(wallpaperEnabled: boolean): void {
+    this.update({
+      wallpaperEnabled,
+      wallpaper: wallpaperEnabled && this.prefs.wallpaper === 'none' ? 'arwallpaper' : this.prefs.wallpaper
+    });
+  }
+
+  get wallpaperPreviewLabel(): string {
+    return this.wallpaperOptions.find((option) => option.value === this.prefs.wallpaper)?.label ?? 'Sin fondo';
+  }
+
+  get wallpaperPreviewStyle(): Record<string, string> {
+    const selectedWallpaper = this.wallpaperOptions.find((option) => option.value === this.prefs.wallpaper);
+
+    if (!this.prefs.wallpaperEnabled || !selectedWallpaper?.asset) {
+      return {};
+    }
+
+    return {
+      'background-image': `linear-gradient(135deg, rgba(15, 23, 42, 0.18), rgba(15, 23, 42, 0.56)), url("${selectedWallpaper.asset}")`
+    };
   }
 
   setCardDensity(cardDensity: CardDensity): void {

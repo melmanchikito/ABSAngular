@@ -71,45 +71,13 @@
         <div class="tray-wrap">
           <button
             type="button"
-            class="tray-btn"
-            title="Cumpleanos"
-            aria-label="Cumpleanos"
-            [class.active]="activePanel === 'birthdays'"
-            (click)="togglePanel('birthdays', $event)"
+            class="tray-btn home-btn"
+            title="Home"
+            aria-label="Ir al home"
+            (click)="goToHome($event)"
           >
-            <lucide-angular [img]="birthdayIcon" [size]="19" [strokeWidth]="2.35"></lucide-angular>
-            <span class="tray-badge" *ngIf="todayBirthdays">{{ todayBirthdays }}</span>
+            <lucide-angular [img]="homeIcon" [size]="19" [strokeWidth]="2.35"></lucide-angular>
           </button>
-
-          <section
-            class="tray-panel"
-            *ngIf="activePanel === 'birthdays'"
-            (click)="keepPanelOpen($event)"
-          >
-            <header class="panel-head">
-              <div>
-                <h3>Cumpleanos</h3>
-                <span>{{ todayBirthdays }} hoy</span>
-              </div>
-            </header>
-
-            <div class="panel-list" *ngIf="birthdays.length; else emptyBirthdays">
-              <article class="birthday-item" *ngFor="let birthday of birthdays">
-                <span class="birthday-avatar">{{ getInitial(birthday.name) }}</span>
-                <span class="item-content">
-                  <strong>{{ birthday.name }}</strong>
-                  <small>{{ birthday.area }}</small>
-                  <em>{{ birthday.dateLabel }}</em>
-                </span>
-              </article>
-            </div>
-
-            <ng-template #emptyBirthdays>
-              <div class="panel-empty">No hay cumpleanos para mostrar.</div>
-            </ng-template>
-
-            <button type="button" class="panel-action">Ver calendario</button>
-          </section>
         </div>
       </div>
 

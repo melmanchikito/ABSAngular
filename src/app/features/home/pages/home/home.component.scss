@@ -4,6 +4,10 @@
   --home-soft-bg: color-mix(in srgb, var(--abs-surface-soft) 90%, var(--abs-surface));
   --home-hover-bg: color-mix(in srgb, var(--abs-primary) 8%, var(--abs-surface));
   --home-shadow: 0 10px 28px rgba(15, 23, 42, 0.12);
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border-radius: 22px;
 }
 
 .home-hero,

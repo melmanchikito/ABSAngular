@@ -1,4 +1,4 @@
-export type AppTheme = 'light' | 'dark' | 'system';
+export type AppTheme = 'light' | 'dark' | 'system' | 'liquid-glass';
 export type FontSize = 'small' | 'medium' | 'large' | 'extralarge';
 
 export type AccentColor =
@@ -8,12 +8,22 @@ export type AccentColor =
   | 'premiumNight';
 
 export type CardDensity = 'compact' | 'normal' | 'comfortable';
+export type SystemWallpaper =
+  | 'none'
+  | 'arwallaros'
+  | 'arwallpaper'
+  | 'autofondo'
+  | 'fondonnewpass'
+  | 'fondonnew'
+  | 'lockScreen';
 
 export interface AppPreferences {
   theme: AppTheme;
   fontSize: FontSize;
   accentColor: AccentColor;
   cardDensity: CardDensity;
+  wallpaperEnabled: boolean;
+  wallpaper: SystemWallpaper;
 
   autoSync: boolean;
   syncInterval: string;

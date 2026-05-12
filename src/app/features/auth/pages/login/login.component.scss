@@ -16,9 +16,12 @@
   overflow: hidden;
   padding: clamp(0.75rem, 2.2vw, 2rem);
   background:
-    radial-gradient(circle at 18% 16%, rgba(199, 32, 38, 0.2), transparent 28%),
-    radial-gradient(circle at 84% 72%, rgba(199, 32, 38, 0.16), transparent 32%),
-    linear-gradient(135deg, #050608 0%, #101217 48%, #08090c 100%);
+    linear-gradient(135deg, rgba(5, 8, 15, 0.38), rgba(5, 8, 15, 0.44)),
+    url('/assets/auth/fondonnewpass.webp'),
+    #050608;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   position: relative;
 }
 
@@ -27,23 +30,33 @@
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.022) 1px, transparent 1px);
-  background-size: 42px 42px;
-  mask-image: radial-gradient(circle at center, #000, transparent 74%);
+    url('/assets/auth/fondonnewpass.webp');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  filter: blur(1.5px) saturate(112%) brightness(0.94);
+  transform: scale(1.01);
   pointer-events: none;
 }
 
 .auth-shell::after {
   content: '';
   position: absolute;
-  width: 42rem;
-  height: 42rem;
-  right: -18rem;
-  top: -16rem;
-  border-radius: 999px;
-  background: rgba(199, 32, 38, 0.11);
-  filter: blur(54px);
+  inset: 0;
+  background:
+    radial-gradient(circle at 18% 18%, rgba(199, 32, 38, 0.16), transparent 30%),
+    radial-gradient(circle at 84% 72%, rgba(199, 32, 38, 0.1), transparent 34%),
+    radial-gradient(circle at 64% 12%, rgba(255, 255, 255, 0.06), transparent 24%),
+    linear-gradient(rgba(255, 255, 255, 0.024) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(135deg, rgba(5, 8, 15, 0.18), rgba(5, 8, 15, 0.34));
+  background-size:
+    auto,
+    auto,
+    auto,
+    42px 42px,
+    42px 42px,
+    auto;
   pointer-events: none;
 }
 
@@ -59,12 +72,15 @@
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 30px;
   background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.035)),
-    rgba(11, 13, 17, 0.78);
+    linear-gradient(135deg, rgba(255, 255, 255, 0.13), rgba(255, 255, 255, 0.04)),
+    rgba(8, 10, 15, 0.68);
   box-shadow:
-    0 28px 90px rgba(0, 0, 0, 0.52),
-    0 0 0 1px rgba(199, 32, 38, 0.08) inset;
-  backdrop-filter: blur(18px);
+    0 32px 100px rgba(0, 0, 0, 0.58),
+    0 0 48px rgba(199, 32, 38, 0.12),
+    0 0 0 1px rgba(199, 32, 38, 0.1) inset,
+    inset 0 1px 0 rgba(255, 255, 255, 0.14);
+  backdrop-filter: blur(22px) saturate(128%);
+  -webkit-backdrop-filter: blur(22px) saturate(128%);
 }
 
 .auth-stage::before {
@@ -93,7 +109,9 @@
   justify-content: center;
   gap: clamp(0.9rem, 2.1vh, 1.65rem);
   padding: clamp(1.1rem, 3.2vw, 2.5rem);
-  background: rgba(7, 9, 12, 0.52);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.055), transparent 38%),
+    rgba(6, 8, 12, 0.56);
   overflow: hidden;
 }
 
@@ -163,7 +181,7 @@
   border: 1.5px solid rgba(148, 163, 184, 0.28);
   border-radius: 15px;
   outline: none;
-  background: rgba(15, 18, 24, 0.92);
+  background: rgba(11, 14, 21, 0.78);
   color: #fff;
   padding: 0 3rem 0 2.75rem;
   font-size: 0.98rem;
@@ -179,12 +197,12 @@
 
 .input-wrap input:hover {
   border-color: rgba(229, 231, 235, 0.36);
-  background: rgba(18, 21, 28, 0.96);
+  background: rgba(16, 19, 28, 0.84);
 }
 
 .input-wrap input:focus {
   border-color: #c72026;
-  background: rgba(19, 22, 29, 0.98);
+  background: rgba(18, 21, 30, 0.9);
   box-shadow:
     0 0 0 4px rgba(199, 32, 38, 0.14),
     0 0 28px rgba(199, 32, 38, 0.12);
@@ -298,8 +316,9 @@
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(135deg, rgba(199, 32, 38, 0.14), transparent 42%),
-    radial-gradient(circle at 70% 26%, rgba(255, 255, 255, 0.08), transparent 28%);
+    linear-gradient(135deg, rgba(199, 32, 38, 0.2), transparent 44%),
+    radial-gradient(circle at 70% 26%, rgba(255, 255, 255, 0.1), transparent 28%),
+    radial-gradient(circle at 34% 74%, rgba(199, 32, 38, 0.12), transparent 30%);
   pointer-events: none;
 }
 
