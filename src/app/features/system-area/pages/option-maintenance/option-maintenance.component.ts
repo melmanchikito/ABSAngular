@@ -1,14 +1,16 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
   ChevronLeft,
   ChevronRight,
   CirclePlus,
   Edit3,
+  Eye,
   LucideAngularModule,
   RefreshCcw,
   Search,
+  SlidersHorizontal,
   Settings,
   Trash2,
   X
@@ -17,8 +19,8 @@ import { ConfirmDialogComponent } from '../../../../shared/components/confirm-di
 import { DataGridPaginationComponent } from '../../../../shared/components/data-grid-pagination/data-grid-pagination.component';
 import { EmptyStateComponent } from '../../../../shared/components/empty-state/empty-state.component';
 import { PageHeaderComponent } from '../../../../shared/components/page-header/page-header.component';
-import { StatCardComponent } from '../../../../shared/components/stat-card/stat-card.component';
 import { StatusBadgeComponent } from '../../../../shared/components/status-badge/status-badge.component';
+import { GridColumnConfig, GridFilterOption } from '../../../../shared/models/grid-view.model';
 import { ModuleItem } from '../../models/module-maintenance.model';
 import {
   CancelOptionRequest,
@@ -32,6 +34,7 @@ import { OptionMaintenanceService } from '../../services/option-maintenance.serv
 
 type OptionModalMode = 'create' | 'edit';
 type OptionStatusFilter = 'all' | 'active' | 'inactive';
+type OptionGridColumn = keyof OptionItem | 'module_name' | 'type_name' | 'actions';
 type BackendErrorBody = Record<string, unknown>;
 
 interface OptionForm {
@@ -53,7 +56,6 @@ interface OptionForm {
     DataGridPaginationComponent,
     EmptyStateComponent,
     PageHeaderComponent,
-    StatCardComponent,
     StatusBadgeComponent
   ],
   templateUrl: './option-maintenance.component.html',
@@ -64,20 +66,46 @@ export class OptionMaintenanceComponent implements OnInit {
   readonly addIcon = CirclePlus;
   readonly chevronLeftIcon = ChevronLeft;
   readonly chevronRightIcon = ChevronRight;
+  readonly detailIcon = Eye;
   readonly editIcon = Edit3;
   readonly refreshIcon = RefreshCcw;
   readonly searchIcon = Search;
+  readonly filterIcon = SlidersHorizontal;
   readonly trashIcon = Trash2;
   readonly closeIcon = X;
+  readonly gridColumns: readonly GridColumnConfig<OptionGridColumn>[] = [
+    { key: 'id', label: 'ID', width: '88px' },
+    { key: 'code', label: 'Codigo' },
+    { key: 'name', label: 'Nombre' },
+    { key: 'order', label: 'Orden', width: '110px' },
+    { key: 'module_id', label: 'Modulo ID', width: '130px' },
+    { key: 'module_name', label: 'Modulo' },
+    { key: 'type_id', label: 'Tipo ID', width: '120px' },
+    { key: 'type_name', label: 'Tipo' },
+    { key: 'canceled', label: 'Estado', width: '140px' },
+    { key: 'canceled_at', label: 'Fecha anulacion', width: '180px' },
+    { key: 'created_at', label: 'Fecha creacion', width: '180px' },
+    { key: 'updated_at', label: 'Fecha actualizacion', width: '190px' },
+    { key: 'actions', label: 'Acciones', width: '170px', align: 'right' }
+  ];
+  readonly statusFilterOptions: readonly GridFilterOption<OptionStatusFilter>[] = [
+    { value: 'all', label: 'Todas' },
+    { value: 'active', label: 'Activas' },
+    { value: 'inactive', label: 'Inactivas' }
+  ];
 
   options: OptionItem[] = [];
   modules: ModuleItem[] = [];
   optionTypes: OptionTypeItem[] = [];
   selectedOptionId: number | null = null;
   selectedModuleFilter: number | 'all' = 'all';
+  selectedModuleFilterDraft: number | 'all' = 'all';
   selectedTypeFilter: number | 'all' = 'all';
+  selectedTypeFilterDraft: number | 'all' = 'all';
   searchTerm = '';
   statusFilter: OptionStatusFilter = 'all';
+  statusFilterDraft: OptionStatusFilter = 'all';
+  filtersOpen = false;
   currentPage = 1;
   pageSize = 6;
   isLoading = false;
@@ -107,26 +135,6 @@ export class OptionMaintenanceComponent implements OnInit {
 
   get modalTitle(): string {
     return this.modalMode === 'create' ? 'Nueva opcion' : 'Editar opcion';
-  }
-
-  get totalOptions(): number {
-    return this.options.length;
-  }
-
-  get activeOptionsCount(): number {
-    return this.options.filter((option) => !option.canceled).length;
-  }
-
-  get inactiveOptionsCount(): number {
-    return this.options.filter((option) => option.canceled).length;
-  }
-
-  get selectedOption(): OptionItem | null {
-    if (!this.selectedOptionId) {
-      return null;
-    }
-
-    return this.options.find((option) => option.id === this.selectedOptionId) ?? null;
   }
 
   get filteredOptions(): OptionItem[] {
@@ -241,6 +249,33 @@ export class OptionMaintenanceComponent implements OnInit {
   setStatusFilter(filter: OptionStatusFilter): void {
     this.statusFilter = filter;
     this.onFiltersChange();
+  }
+
+  toggleFilters(event?: MouseEvent): void {
+    event?.stopPropagation();
+    this.statusFilterDraft = this.statusFilter;
+    this.selectedModuleFilterDraft = this.selectedModuleFilter;
+    this.selectedTypeFilterDraft = this.selectedTypeFilter;
+    this.filtersOpen = !this.filtersOpen;
+  }
+
+  applyFilters(): void {
+    this.statusFilter = this.statusFilterDraft;
+    this.selectedModuleFilter = this.selectedModuleFilterDraft;
+    this.selectedTypeFilter = this.selectedTypeFilterDraft;
+    this.onFiltersChange();
+    this.filtersOpen = false;
+  }
+
+  clearFilters(): void {
+    this.statusFilterDraft = 'all';
+    this.selectedModuleFilterDraft = 'all';
+    this.selectedTypeFilterDraft = 'all';
+    this.statusFilter = 'all';
+    this.selectedModuleFilter = 'all';
+    this.selectedTypeFilter = 'all';
+    this.onFiltersChange();
+    this.filtersOpen = false;
   }
 
   previousPage(): void {
@@ -457,6 +492,46 @@ export class OptionMaintenanceComponent implements OnInit {
 
   trackByTypeId(_: number, type: OptionTypeItem): number {
     return type.id;
+  }
+
+  trackByColumnKey(_: number, column: GridColumnConfig<OptionGridColumn>): OptionGridColumn {
+    return column.key;
+  }
+
+  getColumnClass(column: GridColumnConfig<OptionGridColumn>): string {
+    const classes = [`app-grid-col-${column.key}`];
+
+    if (column.align === 'right') {
+      classes.push('app-grid-col-right');
+    }
+
+    if (column.align === 'center') {
+      classes.push('app-grid-col-center');
+    }
+
+    return classes.join(' ');
+  }
+
+  formatGridValue(option: OptionItem, key: OptionGridColumn): string {
+    if (key === 'actions' || key === 'canceled') {
+      return '';
+    }
+
+    if (key === 'module_name') {
+      return this.getModuleName(option.module_id);
+    }
+
+    if (key === 'type_name') {
+      return this.getTypeName(option.type_id);
+    }
+
+    const value = option[key];
+    return value === null || value === undefined || value === '' ? 'Sin registro' : String(value);
+  }
+
+  @HostListener('document:click')
+  closeFiltersFromOutside(): void {
+    this.filtersOpen = false;
   }
 
   private createEmptyForm(): OptionForm {

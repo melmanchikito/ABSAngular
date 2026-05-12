@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
   ChevronLeft,
@@ -7,9 +7,11 @@ import {
   CirclePlus,
   ClipboardCheck,
   Edit3,
+  Eye,
   LucideAngularModule,
   RefreshCcw,
   Search,
+  SlidersHorizontal,
   Trash2,
   X
 } from 'lucide-angular';
@@ -17,8 +19,8 @@ import { ConfirmDialogComponent } from '../../../../shared/components/confirm-di
 import { DataGridPaginationComponent } from '../../../../shared/components/data-grid-pagination/data-grid-pagination.component';
 import { EmptyStateComponent } from '../../../../shared/components/empty-state/empty-state.component';
 import { PageHeaderComponent } from '../../../../shared/components/page-header/page-header.component';
-import { StatCardComponent } from '../../../../shared/components/stat-card/stat-card.component';
 import { StatusBadgeComponent } from '../../../../shared/components/status-badge/status-badge.component';
+import { GridColumnConfig, GridFilterOption } from '../../../../shared/models/grid-view.model';
 import {
   ActionItem,
   CancelActionRequest,
@@ -29,6 +31,7 @@ import { ActionMaintenanceService } from '../../services/action-maintenance.serv
 
 type ActionModalMode = 'create' | 'edit';
 type ActionStatusFilter = 'all' | 'active' | 'inactive';
+type ActionGridColumn = keyof ActionItem | 'actions';
 type BackendErrorBody = Record<string, unknown>;
 
 interface ActionForm {
@@ -47,7 +50,6 @@ interface ActionForm {
     DataGridPaginationComponent,
     EmptyStateComponent,
     PageHeaderComponent,
-    StatCardComponent,
     StatusBadgeComponent
   ],
   templateUrl: './action-maintenance.component.html',
@@ -58,16 +60,35 @@ export class ActionMaintenanceComponent implements OnInit {
   readonly addIcon = CirclePlus;
   readonly chevronLeftIcon = ChevronLeft;
   readonly chevronRightIcon = ChevronRight;
+  readonly detailIcon = Eye;
   readonly editIcon = Edit3;
   readonly refreshIcon = RefreshCcw;
   readonly searchIcon = Search;
+  readonly filterIcon = SlidersHorizontal;
   readonly trashIcon = Trash2;
   readonly closeIcon = X;
+  readonly gridColumns: readonly GridColumnConfig<ActionGridColumn>[] = [
+    { key: 'id', label: 'ID', width: '88px' },
+    { key: 'code', label: 'Codigo' },
+    { key: 'name', label: 'Nombre' },
+    { key: 'canceled', label: 'Estado', width: '140px' },
+    { key: 'canceled_at', label: 'Fecha anulacion', width: '180px' },
+    { key: 'created_at', label: 'Fecha creacion', width: '180px' },
+    { key: 'updated_at', label: 'Fecha actualizacion', width: '190px' },
+    { key: 'actions', label: 'Acciones', width: '170px', align: 'right' }
+  ];
+  readonly statusFilterOptions: readonly GridFilterOption<ActionStatusFilter>[] = [
+    { value: 'all', label: 'Todas' },
+    { value: 'active', label: 'Activas' },
+    { value: 'inactive', label: 'Inactivas' }
+  ];
 
   actions: ActionItem[] = [];
   selectedActionId: number | null = null;
   searchTerm = '';
   statusFilter: ActionStatusFilter = 'all';
+  statusFilterDraft: ActionStatusFilter = 'all';
+  filtersOpen = false;
   currentPage = 1;
   pageSize = 6;
   isLoading = false;
@@ -92,26 +113,6 @@ export class ActionMaintenanceComponent implements OnInit {
 
   get modalTitle(): string {
     return this.modalMode === 'create' ? 'Nueva accion' : 'Editar accion';
-  }
-
-  get totalActions(): number {
-    return this.actions.length;
-  }
-
-  get activeActions(): number {
-    return this.actions.filter((action) => !action.canceled).length;
-  }
-
-  get inactiveActions(): number {
-    return this.actions.filter((action) => action.canceled).length;
-  }
-
-  get selectedAction(): ActionItem | null {
-    if (!this.selectedActionId) {
-      return null;
-    }
-
-    return this.actions.find((action) => action.id === this.selectedActionId) ?? null;
   }
 
   get filteredActions(): ActionItem[] {
@@ -186,6 +187,23 @@ export class ActionMaintenanceComponent implements OnInit {
   setStatusFilter(filter: ActionStatusFilter): void {
     this.statusFilter = filter;
     this.onFiltersChange();
+  }
+
+  toggleFilters(event?: MouseEvent): void {
+    event?.stopPropagation();
+    this.statusFilterDraft = this.statusFilter;
+    this.filtersOpen = !this.filtersOpen;
+  }
+
+  applyFilters(): void {
+    this.setStatusFilter(this.statusFilterDraft);
+    this.filtersOpen = false;
+  }
+
+  clearFilters(): void {
+    this.statusFilterDraft = 'all';
+    this.setStatusFilter('all');
+    this.filtersOpen = false;
   }
 
   previousPage(): void {
@@ -358,6 +376,38 @@ export class ActionMaintenanceComponent implements OnInit {
 
   trackByActionId(_: number, action: ActionItem): number {
     return action.id;
+  }
+
+  trackByColumnKey(_: number, column: GridColumnConfig<ActionGridColumn>): ActionGridColumn {
+    return column.key;
+  }
+
+  getColumnClass(column: GridColumnConfig<ActionGridColumn>): string {
+    const classes = [`app-grid-col-${column.key}`];
+
+    if (column.align === 'right') {
+      classes.push('app-grid-col-right');
+    }
+
+    if (column.align === 'center') {
+      classes.push('app-grid-col-center');
+    }
+
+    return classes.join(' ');
+  }
+
+  formatGridValue(action: ActionItem, key: ActionGridColumn): string {
+    if (key === 'actions' || key === 'canceled') {
+      return '';
+    }
+
+    const value = action[key];
+    return value === null || value === undefined || value === '' ? 'Sin registro' : String(value);
+  }
+
+  @HostListener('document:click')
+  closeFiltersFromOutside(): void {
+    this.filtersOpen = false;
   }
 
   private createEmptyForm(): ActionForm {

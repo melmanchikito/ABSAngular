@@ -3,12 +3,12 @@
 }
 
 .stat-card {
-  min-height: 84px;
+  min-height: 72px;
   display: grid;
   align-content: center;
   gap: 0.2rem;
-  padding: 1rem;
-  border-radius: 16px;
+  padding: 0.85rem 1rem;
+  border-radius: 14px;
   border: 1.5px solid color-mix(in srgb, var(--abs-border) 82%, #6b7280);
   background: color-mix(in srgb, var(--abs-surface) 94%, var(--abs-bg));
   box-shadow: var(--abs-shadow-md);

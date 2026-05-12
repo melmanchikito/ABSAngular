@@ -1,0 +1,322 @@
+.app-page-actions,
+.app-grid-header,
+.app-grid-toolbar,
+.app-grid-search,
+.app-grid-actions,
+.app-grid-filter-actions,
+.app-grid-skeleton {
+  display: flex;
+  align-items: center;
+}
+
+.app-page-actions {
+  position: relative;
+  gap: 0.65rem;
+  justify-content: flex-end;
+}
+
+.app-grid-icon-button {
+  width: 42px;
+  min-width: 42px;
+  height: 42px;
+  min-height: 42px;
+  flex: 0 0 42px;
+  padding: 0;
+  border-radius: 12px;
+}
+
+.page-shell .app-grid-icon-button,
+.page-shell .btn-primary.app-grid-icon-button,
+.page-shell .btn-outline.app-grid-icon-button,
+.page-shell .primary-btn.app-grid-icon-button,
+.page-shell .ghost-btn.app-grid-icon-button {
+  width: 42px;
+  min-width: 42px;
+  height: 42px;
+  min-height: 42px;
+  flex: 0 0 42px;
+  padding: 0;
+}
+
+.app-grid-icon-button lucide-angular {
+  display: inline-flex;
+}
+
+.app-grid-card {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.app-grid-header {
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem;
+  border-bottom: 1.5px solid color-mix(in srgb, var(--abs-border) 82%, #6b7280);
+}
+
+.app-grid-title {
+  min-width: 0;
+}
+
+.app-grid-eyebrow {
+  display: inline-flex;
+  margin-bottom: 0.35rem;
+  color: var(--abs-primary);
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.app-grid-heading {
+  margin: 0;
+  color: var(--abs-text);
+  font-size: 1.15rem;
+}
+
+.app-grid-toolbar {
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.85rem;
+  border-bottom: 1.5px solid color-mix(in srgb, var(--abs-border) 82%, #6b7280);
+}
+
+.app-grid-search {
+  flex: 0 1 45%;
+  width: 45%;
+  max-width: 520px;
+  min-width: 280px;
+  gap: 0.65rem;
+  min-height: 44px;
+  padding: 0 0.85rem;
+  border-radius: 12px;
+  border: 1.5px solid color-mix(in srgb, var(--abs-border) 82%, #6b7280);
+  background: color-mix(in srgb, var(--abs-surface-soft) 90%, var(--abs-surface));
+  color: var(--abs-text-muted);
+}
+
+.app-grid-search:focus-within {
+  border-color: color-mix(in srgb, var(--abs-primary) 58%, var(--abs-border));
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--abs-primary) 13%, transparent);
+}
+
+.app-grid-search input {
+  width: 100%;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--abs-text);
+  font: inherit;
+}
+
+.app-grid-search input::placeholder {
+  color: color-mix(in srgb, var(--abs-text-muted) 76%, transparent);
+}
+
+.app-grid-table-wrapper {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.app-grid-table {
+  width: 100%;
+  max-width: 100%;
+  min-width: min(920px, 100%);
+  table-layout: auto;
+}
+
+.app-grid-table th,
+.app-grid-table td {
+  white-space: nowrap;
+}
+
+.app-grid-table tbody tr {
+  cursor: default;
+}
+
+.app-grid-row-clickable {
+  cursor: pointer;
+}
+
+.app-grid-row-selected {
+  background: color-mix(in srgb, var(--abs-primary) 8%, transparent);
+}
+
+.app-grid-actions {
+  gap: 0.45rem;
+}
+
+.app-grid-col-actions {
+  text-align: right;
+}
+
+.app-grid-col-actions .app-grid-actions {
+  justify-content: flex-end;
+}
+
+.app-grid-col-center {
+  text-align: center;
+}
+
+.app-grid-col-right {
+  text-align: right;
+}
+
+.app-grid-filter-menu {
+  position: relative;
+}
+
+.app-grid-filter-trigger.active {
+  border-color: color-mix(in srgb, var(--abs-primary) 55%, var(--abs-border));
+  background: color-mix(in srgb, var(--abs-primary) 10%, var(--abs-surface));
+  color: var(--abs-primary);
+  box-shadow: 0 8px 18px color-mix(in srgb, var(--abs-primary) 14%, transparent);
+}
+
+.app-grid-filter-panel {
+  position: absolute;
+  top: calc(100% + 0.65rem);
+  right: 0;
+  z-index: 35;
+  width: min(320px, calc(100vw - 2rem));
+  padding: 0.9rem;
+  border: 1.5px solid color-mix(in srgb, var(--abs-border) 78%, #ffffff);
+  border-radius: 18px;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.1), transparent 46%),
+    color-mix(in srgb, var(--abs-surface) 88%, transparent);
+  box-shadow: 0 18px 44px rgba(15, 23, 42, 0.24);
+  backdrop-filter: blur(18px) saturate(130%);
+  -webkit-backdrop-filter: blur(18px) saturate(130%);
+}
+
+.app-grid-filter-title {
+  display: block;
+  margin-bottom: 0.75rem;
+  color: var(--abs-text);
+  font-size: 0.95rem;
+  font-weight: 900;
+}
+
+.app-grid-filter-field {
+  display: grid;
+  gap: 0.4rem;
+  margin-bottom: 0.85rem;
+}
+
+.app-grid-filter-field span {
+  color: var(--abs-text-muted);
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.app-grid-filter-field select {
+  width: 100%;
+  min-height: 42px;
+  border-radius: 12px;
+  border: 1.5px solid color-mix(in srgb, var(--abs-border) 82%, #6b7280);
+  background: color-mix(in srgb, var(--abs-surface-soft) 88%, var(--abs-surface));
+  color: var(--abs-text);
+  padding: 0 0.75rem;
+  outline: 0;
+}
+
+.app-grid-filter-field select:focus {
+  border-color: color-mix(in srgb, var(--abs-primary) 58%, var(--abs-border));
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--abs-primary) 13%, transparent);
+}
+
+.app-grid-filter-actions {
+  justify-content: flex-end;
+  gap: 0.55rem;
+}
+
+.app-grid-skeleton {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.75rem;
+  padding: 1rem;
+}
+
+.app-grid-skeleton span {
+  height: 44px;
+  border-radius: 12px;
+  border: 1px solid color-mix(in srgb, var(--abs-border) 60%, transparent);
+  background:
+    linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--abs-surface-soft) 70%, transparent),
+      color-mix(in srgb, var(--abs-primary) 12%, var(--abs-surface)),
+      color-mix(in srgb, var(--abs-surface-soft) 70%, transparent)
+    );
+  background-size: 220% 100%;
+  animation: app-grid-skeleton-loading 1.15s ease-in-out infinite;
+}
+
+@keyframes app-grid-skeleton-loading {
+  0% {
+    background-position: 100% 0;
+  }
+
+  100% {
+    background-position: -100% 0;
+  }
+}
+
+[data-theme='dark'] .app-grid-filter-panel {
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.075), transparent 46%),
+    color-mix(in srgb, var(--abs-surface) 88%, #000);
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.38);
+}
+
+@media (max-width: 900px) {
+  .app-grid-toolbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .app-grid-search {
+    flex-basis: auto;
+    width: 100%;
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .app-page-actions {
+    align-items: stretch;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
+
+  .app-page-actions > .btn-primary,
+  .app-page-actions > .btn-outline,
+  .app-grid-filter-menu {
+    flex: 1 1 150px;
+  }
+
+  .app-page-actions > .app-grid-icon-button,
+  .app-grid-filter-menu {
+    flex: 0 0 42px;
+  }
+
+  .app-grid-filter-menu > .btn-outline {
+    width: 100%;
+  }
+
+  .app-grid-filter-panel {
+    left: 0;
+    right: auto;
+  }
+
+  .app-grid-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

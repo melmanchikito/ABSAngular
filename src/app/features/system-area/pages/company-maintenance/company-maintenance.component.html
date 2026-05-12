@@ -5,32 +5,59 @@
     subtitle="Administra las empresas registradas en el sistema."
     [icon]="buildingIcon"
   >
-    <button page-actions type="button" class="primary-btn btn-primary" (click)="openCreateModal()">
-      <lucide-angular [img]="addIcon" [size]="18" [strokeWidth]="2.4"></lucide-angular>
-      Nueva empresa
-    </button>
+    <div page-actions class="app-page-actions" (click)="$event.stopPropagation()">
+      <div class="app-grid-filter-menu">
+        <button
+          type="button"
+          class="btn-outline app-grid-filter-trigger app-grid-icon-button"
+          [class.active]="filtersOpen || statusFilter !== 'all'"
+          title="Filtros"
+          aria-label="Abrir filtros"
+          (click)="toggleFilters($event)"
+        >
+          <lucide-angular [img]="filterIcon" [size]="17" [strokeWidth]="2.4"></lucide-angular>
+        </button>
+
+        <section class="app-grid-filter-panel" *ngIf="filtersOpen" (click)="$event.stopPropagation()">
+          <strong class="app-grid-filter-title">Filtros del listado</strong>
+          <label class="app-grid-filter-field">
+            <span>Estado</span>
+            <select [(ngModel)]="statusFilterDraft">
+              <option *ngFor="let option of statusFilterOptions" [ngValue]="option.value">{{ option.label }}</option>
+            </select>
+          </label>
+          <div class="app-grid-filter-actions">
+            <button type="button" class="btn-outline" (click)="clearFilters()">Limpiar</button>
+            <button type="button" class="btn-primary" (click)="applyFilters()">Aplicar</button>
+          </div>
+        </section>
+      </div>
+
+      <button
+        type="button"
+        class="primary-btn btn-primary app-grid-icon-button"
+        title="Nuevo"
+        aria-label="Nuevo registro"
+        (click)="openCreateModal()"
+      >
+        <lucide-angular [img]="addIcon" [size]="18" [strokeWidth]="2.4"></lucide-angular>
+      </button>
+    </div>
   </app-page-header>
 
   <div class="message success alert-success" *ngIf="successMessage">{{ successMessage }}</div>
   <div class="message error alert-error" *ngIf="errorMessage">{{ errorMessage }}</div>
 
-  <section class="table-card app-card">
-    <header class="panel-header">
-      <div>
-        <span class="eyebrow">Listado</span>
-        <h2>Empresas</h2>
+  <section class="table-card app-card app-grid-card">
+    <header class="app-grid-header">
+      <div class="app-grid-title">
+        <span class="app-grid-eyebrow">Listado</span>
+        <h2 class="app-grid-heading">Empresas</h2>
       </div>
-      <span class="counter">{{ filteredCompanies.length }} registros</span>
     </header>
 
-    <section class="metrics-grid summary-grid">
-      <app-stat-card label="Total" [value]="totalCompanies"></app-stat-card>
-      <app-stat-card label="Activas" [value]="activeCompanies" tone="active"></app-stat-card>
-      <app-stat-card label="Inactivas" [value]="inactiveCompanies" tone="inactive"></app-stat-card>
-    </section>
-
-    <div class="table-toolbar">
-      <label class="search-box">
+    <div class="app-grid-toolbar">
+      <label class="app-grid-search">
         <lucide-angular [img]="searchIcon" [size]="18" [strokeWidth]="2.3"></lucide-angular>
         <input
           type="search"
@@ -42,79 +69,76 @@
         />
       </label>
 
-      <select
-        class="filter-select form-select"
-        name="companyStatus"
-        [(ngModel)]="statusFilter"
-        (ngModelChange)="onFiltersChange()"
+      <button
+        type="button"
+        class="ghost-btn btn-outline refresh-btn app-grid-icon-button"
+        title="Actualizar"
+        aria-label="Actualizar listado"
+        (click)="loadCompanies()"
+        [disabled]="isLoading"
       >
-        <option value="all">Todos los estados</option>
-        <option value="active">Activas</option>
-        <option value="inactive">Inactivas</option>
-      </select>
-
-      <button type="button" class="ghost-btn btn-outline refresh-btn" (click)="loadCompanies()" [disabled]="isLoading">
         <lucide-angular [img]="refreshIcon" [size]="17" [strokeWidth]="2.3"></lucide-angular>
-        Actualizar
       </button>
     </div>
 
-    <div class="table-shell table-wrapper">
-      <table class="company-table app-table">
+    <div class="app-grid-table-wrapper">
+      <table class="company-table app-table app-grid-table">
         <thead>
           <tr>
-            <th>Codigo</th>
-            <th>Nombre</th>
-            <th>Telefono</th>
-            <th>Correo</th>
-            <th>Estado</th>
-            <th>Fecha creacion</th>
-            <th>Acciones</th>
+            <th
+              *ngFor="let column of gridColumns; trackBy: trackByColumnKey"
+              [class]="getColumnClass(column)"
+              [style.width]="column.width || null"
+            >
+              {{ column.label }}
+            </th>
           </tr>
         </thead>
 
         <tbody>
           <tr *ngIf="isLoading">
-            <td colspan="7" class="table-state">Cargando empresas...</td>
+            <td [attr.colspan]="gridColumns.length" class="table-state">Cargando empresas...</td>
           </tr>
 
           <tr *ngIf="!isLoading && !companies.length">
-            <td colspan="7" class="table-state">No existen empresas registradas.</td>
+            <td [attr.colspan]="gridColumns.length" class="table-state">No existen empresas registradas.</td>
           </tr>
 
           <tr *ngIf="!isLoading && companies.length && !filteredCompanies.length">
-            <td colspan="7" class="table-state">No se encontraron empresas con los filtros aplicados.</td>
+            <td [attr.colspan]="gridColumns.length" class="table-state">No se encontraron empresas con los filtros aplicados.</td>
           </tr>
 
-          <tr *ngFor="let company of paginatedCompanies">
-            <td>
-              <span class="code-badge">{{ company.code }}</span>
-            </td>
-            <td>
-              <div class="company-name">
-                <span class="company-avatar">{{ getCompanyInitial(company) }}</span>
-                <strong>{{ company.name }}</strong>
-              </div>
-            </td>
-            <td>{{ company.phone || 'Sin registro' }}</td>
-            <td>
-              <span class="email-text">{{ company.email || 'Sin registro' }}</span>
-            </td>
-            <td>
-              <app-status-badge
-                [label]="company.canceled ? 'Inactiva' : 'Activa'"
-                [variant]="company.canceled ? 'inactive' : 'active'"
-              ></app-status-badge>
-            </td>
-            <td>{{ formatDate(company.created_at) }}</td>
-            <td>
-              <div class="actions-cell table-actions">
+          <tr
+            *ngFor="let company of paginatedCompanies; trackBy: trackByCompanyId"
+            class="app-grid-row-clickable"
+            [class.app-grid-row-selected]="selectedCompanyId === company.id"
+            (click)="selectCompany(company)"
+          >
+            <td *ngFor="let column of gridColumns; trackBy: trackByColumnKey" [class]="getColumnClass(column)">
+              <ng-container [ngSwitch]="column.key">
+                <app-status-badge
+                  *ngSwitchCase="'canceled'"
+                  [label]="company.canceled ? 'Inactiva' : 'Activa'"
+                  [variant]="company.canceled ? 'inactive' : 'active'"
+                ></app-status-badge>
+
+                <div *ngSwitchCase="'actions'" class="app-grid-actions">
+                <button
+                  type="button"
+                  class="icon-action btn-icon"
+                  title="Ver empresa"
+                  aria-label="Ver empresa"
+                  (click)="$event.stopPropagation(); selectCompany(company)"
+                >
+                  <lucide-angular [img]="detailIcon" [size]="17" [strokeWidth]="2.3"></lucide-angular>
+                </button>
+
                 <button
                   type="button"
                   class="icon-action btn-icon"
                   title="Editar empresa"
                   aria-label="Editar empresa"
-                  (click)="openEditModal(company)"
+                  (click)="$event.stopPropagation(); openEditModal(company)"
                 >
                   <lucide-angular [img]="editIcon" [size]="17" [strokeWidth]="2.3"></lucide-angular>
                 </button>
@@ -125,11 +149,14 @@
                   title="Borrar empresa"
                   aria-label="Borrar empresa"
                   [disabled]="company.canceled"
-                  (click)="askCancel(company)"
+                  (click)="$event.stopPropagation(); askCancel(company)"
                 >
                   <lucide-angular [img]="trashIcon" [size]="17" [strokeWidth]="2.3"></lucide-angular>
                 </button>
-              </div>
+                </div>
+
+                <span *ngSwitchDefault>{{ formatGridValue(company, column.key) }}</span>
+              </ng-container>
             </td>
           </tr>
         </tbody>

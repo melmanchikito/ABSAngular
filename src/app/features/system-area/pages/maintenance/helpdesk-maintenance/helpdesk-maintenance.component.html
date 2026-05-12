@@ -5,9 +5,15 @@
     subtitle="Administra los responsables de helpdesk registrados en el sistema."
     [icon]="helpdeskIcon"
   >
-    <button page-actions type="button" class="primary-btn btn-primary" (click)="openCreateModal()">
+    <button
+      page-actions
+      type="button"
+      class="primary-btn btn-primary app-grid-icon-button"
+      title="Nuevo"
+      aria-label="Nuevo registro"
+      (click)="openCreateModal()"
+    >
       <lucide-angular [img]="addIcon" [size]="18" [strokeWidth]="2.4"></lucide-angular>
-      Nuevo
     </button>
   </app-page-header>
 
@@ -27,7 +33,6 @@
           <span class="eyebrow">Listado</span>
           <h2>Helpdesk</h2>
         </div>
-        <span class="counter">{{ filteredHelpdesks().length }} registros</span>
       </header>
 
       <section class="summary-grid helpdesk-summary">
@@ -75,9 +80,15 @@
           </button>
         </div>
 
-        <button type="button" class="ghost-btn btn-outline refresh-btn" (click)="loadHelpdesks()" [disabled]="isLoading()">
+        <button
+          type="button"
+          class="ghost-btn btn-outline refresh-btn app-grid-icon-button"
+          title="Actualizar"
+          aria-label="Actualizar listado"
+          (click)="loadHelpdesks()"
+          [disabled]="isLoading()"
+        >
           <lucide-angular [img]="refreshIcon" [size]="17" [strokeWidth]="2.3"></lucide-angular>
-          Actualizar
         </button>
       </section>
 

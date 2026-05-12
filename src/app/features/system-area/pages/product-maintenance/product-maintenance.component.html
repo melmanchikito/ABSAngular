@@ -5,9 +5,15 @@
     subtitle="Administra los productos registrados en el sistema."
     [icon]="productIcon"
   >
-    <button page-actions type="button" class="primary-btn btn-primary" (click)="openCreateModal()">
+    <button
+      page-actions
+      type="button"
+      class="primary-btn btn-primary app-grid-icon-button"
+      title="Nuevo"
+      aria-label="Nuevo registro"
+      (click)="openCreateModal()"
+    >
       <lucide-angular [img]="addIcon" [size]="18" [strokeWidth]="2.4"></lucide-angular>
-      Nuevo producto
     </button>
   </app-page-header>
 
@@ -21,14 +27,7 @@
           <span class="eyebrow">Listado</span>
           <h2>Productos</h2>
         </div>
-        <span class="counter">{{ filteredProducts.length }} registros</span>
       </header>
-
-      <section class="summary-grid product-summary">
-        <app-stat-card label="Total productos" [value]="totalProducts"></app-stat-card>
-        <app-stat-card label="Productos activos" [value]="activeProducts" tone="active"></app-stat-card>
-        <app-stat-card label="Productos inactivos" [value]="inactiveProducts" tone="inactive"></app-stat-card>
-      </section>
 
       <section class="toolbar">
         <label class="search-box">
@@ -49,9 +48,15 @@
           <button type="button" class="filter-pill" [class.active]="statusFilter === 'inactive'" (click)="setStatusFilter('inactive')">Inactivos</button>
         </div>
 
-        <button type="button" class="ghost-btn btn-outline refresh-btn" (click)="loadProducts()" [disabled]="isLoading">
+        <button
+          type="button"
+          class="ghost-btn btn-outline refresh-btn app-grid-icon-button"
+          title="Actualizar"
+          aria-label="Actualizar listado"
+          (click)="loadProducts()"
+          [disabled]="isLoading"
+        >
           <lucide-angular [img]="refreshIcon" [size]="17" [strokeWidth]="2.3"></lucide-angular>
-          Actualizar
         </button>
       </section>
 
@@ -107,7 +112,6 @@
               </td>
               <td>
                 <div class="product-name">
-                  <span class="product-avatar">{{ getProductInitial(product) }}</span>
                   <strong>{{ product.name }}</strong>
                 </div>
               </td>

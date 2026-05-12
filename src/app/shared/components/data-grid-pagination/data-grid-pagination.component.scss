@@ -5,7 +5,8 @@
 }
 
 .data-grid-pagination {
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   gap: 1rem;
   padding: 0.9rem 1rem;
   border-top: 1.5px solid color-mix(in srgb, var(--abs-border) 82%, #6b7280);
@@ -16,12 +17,15 @@
 
 .pagination-count {
   min-width: 0;
+  justify-self: start;
 }
 
 .pagination-actions {
   gap: 0.45rem;
   flex-wrap: wrap;
-  justify-content: flex-end;
+  justify-content: center;
+  justify-self: center;
+  grid-column: 2;
 }
 
 .pagination-btn {
@@ -97,11 +101,14 @@
 
 @media (max-width: 820px) {
   .data-grid-pagination {
-    align-items: stretch;
-    flex-direction: column;
+    grid-template-columns: 1fr;
+    justify-items: center;
   }
 
+  .pagination-count,
   .pagination-actions {
-    justify-content: flex-start;
+    justify-self: center;
+    grid-column: 1;
+    text-align: center;
   }
 }

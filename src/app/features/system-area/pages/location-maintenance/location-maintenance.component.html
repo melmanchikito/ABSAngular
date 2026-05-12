@@ -4,29 +4,63 @@
     title="Mantenimiento - Ubicaciones"
     subtitle="Administra las ubicaciones fisicas registradas en el sistema."
     [icon]="mapIcon"
-  ></app-page-header>
+  >
+    <div page-actions class="app-page-actions" (click)="$event.stopPropagation()">
+      <div class="app-grid-filter-menu">
+        <button
+          type="button"
+          class="btn-outline app-grid-filter-trigger app-grid-icon-button"
+          [class.active]="filtersOpen || statusFilter !== 'all'"
+          title="Filtros"
+          aria-label="Abrir filtros"
+          (click)="toggleFilters($event)"
+        >
+          <lucide-angular [img]="filterIcon" [size]="17" [strokeWidth]="2.4"></lucide-angular>
+        </button>
+
+        <section class="app-grid-filter-panel" *ngIf="filtersOpen" (click)="$event.stopPropagation()">
+          <strong class="app-grid-filter-title">Filtros del listado</strong>
+
+          <label class="app-grid-filter-field">
+            <span>Estado</span>
+            <select [(ngModel)]="statusFilterDraft">
+              <option *ngFor="let option of statusFilterOptions" [ngValue]="option.value">{{ option.label }}</option>
+            </select>
+          </label>
+
+          <div class="app-grid-filter-actions">
+            <button type="button" class="btn-outline" (click)="clearFilters()">Limpiar</button>
+            <button type="button" class="btn-primary" (click)="applyFilters()">Aplicar</button>
+          </div>
+        </section>
+      </div>
+
+      <button
+        type="button"
+        class="primary-btn btn-primary app-grid-icon-button"
+        title="Nuevo"
+        aria-label="Nuevo registro"
+        (click)="openCreateModal()"
+      >
+        <lucide-angular [img]="addIcon" [size]="18" [strokeWidth]="2.4"></lucide-angular>
+      </button>
+    </div>
+  </app-page-header>
 
   <div class="message success alert-success" *ngIf="successMessage">{{ successMessage }}</div>
   <div class="message error alert-error" *ngIf="errorMessage">{{ errorMessage }}</div>
 
   <section class="content-grid">
-    <article class="list-panel app-card">
-      <header class="panel-header">
-        <div>
-          <span class="eyebrow">Listado</span>
-          <h2>Ubicaciones</h2>
+    <article class="list-panel app-card app-grid-card">
+      <header class="app-grid-header">
+        <div class="app-grid-title">
+          <span class="app-grid-eyebrow">Listado</span>
+          <h2 class="app-grid-heading">Ubicaciones</h2>
         </div>
-        <span class="counter">{{ filteredLocations.length }} registros</span>
       </header>
 
-      <section class="summary-grid location-summary">
-        <app-stat-card label="Total ubicaciones" [value]="totalLocations"></app-stat-card>
-        <app-stat-card label="Ubicaciones activas" [value]="activeLocations" tone="active"></app-stat-card>
-        <app-stat-card label="Ubicaciones inactivas" [value]="inactiveLocations" tone="inactive"></app-stat-card>
-      </section>
-
-      <section class="actions-bar">
-        <label class="search-box">
+      <section class="app-grid-toolbar">
+        <label class="app-grid-search">
           <lucide-angular [img]="searchIcon" [size]="18" [strokeWidth]="2.3"></lucide-angular>
           <input
             type="search"
@@ -38,85 +72,110 @@
           />
         </label>
 
-        <div class="filter-pills" aria-label="Filtro por estado">
-          <button type="button" class="filter-pill" [class.active]="statusFilter === 'all'" (click)="setStatusFilter('all')">Todas</button>
-          <button type="button" class="filter-pill" [class.active]="statusFilter === 'active'" (click)="setStatusFilter('active')">Activas</button>
-          <button type="button" class="filter-pill" [class.active]="statusFilter === 'inactive'" (click)="setStatusFilter('inactive')">Inactivas</button>
-        </div>
-
-        <button type="button" class="primary-btn btn-primary new-btn" (click)="openCreateModal()">
-          <lucide-angular [img]="addIcon" [size]="18" [strokeWidth]="2.4"></lucide-angular>
-          Nueva
+        <button
+          type="button"
+          class="ghost-btn btn-outline refresh-btn app-grid-icon-button"
+          title="Actualizar"
+          aria-label="Actualizar listado"
+          (click)="loadLocations()"
+          [disabled]="isLoading"
+        >
+          <lucide-angular [img]="refreshIcon" [size]="17" [strokeWidth]="2.3"></lucide-angular>
         </button>
       </section>
 
-      <div class="location-list">
-        <app-empty-state
-          *ngIf="isLoading"
-          message="Cargando ubicaciones..."
-          [icon]="mapIcon"
-        ></app-empty-state>
-
-        <app-empty-state
-          *ngIf="!isLoading && !locations.length"
-          message="No existen ubicaciones registradas."
-          [icon]="mapIcon"
-        ></app-empty-state>
-
-        <app-empty-state
-          *ngIf="!isLoading && locations.length && !filteredLocations.length"
-          message="No se encontraron ubicaciones con los filtros aplicados."
-          [icon]="searchIcon"
-        ></app-empty-state>
-
-        <button
-          *ngFor="let location of paginatedLocations"
-          type="button"
-          class="location-item"
-          [class.selected]="selectedLocationId === location.id"
-          (click)="selectLocation(location)"
-        >
-          <span class="location-avatar">{{ getLocationInitial(location) }}</span>
-
-          <span class="location-content">
-            <span class="location-main">
-              <strong>{{ location.name }}</strong>
-              <app-status-badge
-                [label]="location.canceled ? 'Inactiva' : 'Activa'"
-                [variant]="location.canceled ? 'inactive' : 'active'"
-              ></app-status-badge>
-            </span>
-
-            <small>{{ location.address || 'Sin direccion registrada' }}</small>
-            <span class="location-meta">
-              <span>{{ location.code }}</span>
-              <span>{{ formatDate(location.created_at) }}</span>
-            </span>
-
-            <span class="item-actions">
-              <button
-                type="button"
-                class="mini-action btn-icon"
-                title="Editar ubicacion"
-                aria-label="Editar ubicacion"
-                (click)="$event.stopPropagation(); openEditModal(location)"
+      <div class="app-grid-table-wrapper">
+        <table class="location-table app-table app-grid-table">
+          <thead>
+            <tr>
+              <th
+                *ngFor="let column of gridColumns; trackBy: trackByColumnKey"
+                [class]="getColumnClass(column)"
+                [style.width]="column.width || null"
               >
-                <lucide-angular [img]="editIcon" [size]="16" [strokeWidth]="2.3"></lucide-angular>
-              </button>
+                {{ column.label }}
+              </th>
+            </tr>
+          </thead>
 
-              <button
-                type="button"
-                class="mini-action danger btn-icon"
-                title="Borrar ubicacion"
-                aria-label="Borrar ubicacion"
-                [disabled]="location.canceled"
-                (click)="$event.stopPropagation(); askCancel(location)"
-              >
-                <lucide-angular [img]="trashIcon" [size]="16" [strokeWidth]="2.3"></lucide-angular>
-              </button>
-            </span>
-          </span>
-        </button>
+          <tbody>
+            <tr *ngIf="isLoading">
+              <td [attr.colspan]="gridColumns.length">
+                <app-empty-state message="Cargando ubicaciones..." [icon]="mapIcon"></app-empty-state>
+              </td>
+            </tr>
+
+            <tr *ngIf="!isLoading && !locations.length">
+              <td [attr.colspan]="gridColumns.length">
+                <app-empty-state message="No existen ubicaciones registradas." [icon]="mapIcon"></app-empty-state>
+              </td>
+            </tr>
+
+            <tr *ngIf="!isLoading && locations.length && !filteredLocations.length">
+              <td [attr.colspan]="gridColumns.length">
+                <app-empty-state
+                  message="No se encontraron ubicaciones con los filtros aplicados."
+                  [icon]="searchIcon"
+                ></app-empty-state>
+              </td>
+            </tr>
+
+            <tr
+              *ngFor="let location of paginatedLocations; trackBy: trackByLocationId"
+              class="location-row app-grid-row-clickable"
+              [class.app-grid-row-selected]="selectedLocationId === location.id"
+              (click)="selectLocation(location)"
+            >
+              <td *ngFor="let column of gridColumns; trackBy: trackByColumnKey" [class]="getColumnClass(column)">
+                <ng-container [ngSwitch]="column.key">
+                  <span *ngSwitchCase="'code'" class="code-badge">{{ location.code }}</span>
+                  <div *ngSwitchCase="'name'" class="location-name">
+                    <span class="location-avatar">{{ getLocationInitial(location) }}</span>
+                    <strong>{{ location.name }}</strong>
+                  </div>
+                  <app-status-badge
+                    *ngSwitchCase="'canceled'"
+                    [label]="location.canceled ? 'Inactiva' : 'Activa'"
+                    [variant]="location.canceled ? 'inactive' : 'active'"
+                  ></app-status-badge>
+                  <div *ngSwitchCase="'actions'" class="app-grid-actions">
+                    <button
+                      type="button"
+                      class="mini-action btn-icon"
+                      title="Ver ubicacion"
+                      aria-label="Ver ubicacion"
+                      (click)="$event.stopPropagation(); selectLocation(location)"
+                    >
+                      <lucide-angular [img]="detailIcon" [size]="16" [strokeWidth]="2.3"></lucide-angular>
+                    </button>
+
+                    <button
+                      type="button"
+                      class="mini-action btn-icon"
+                      title="Editar ubicacion"
+                      aria-label="Editar ubicacion"
+                      (click)="$event.stopPropagation(); openEditModal(location)"
+                    >
+                      <lucide-angular [img]="editIcon" [size]="16" [strokeWidth]="2.3"></lucide-angular>
+                    </button>
+
+                    <button
+                      type="button"
+                      class="mini-action danger btn-icon"
+                      title="Borrar ubicacion"
+                      aria-label="Borrar ubicacion"
+                      [disabled]="location.canceled"
+                      (click)="$event.stopPropagation(); askCancel(location)"
+                    >
+                      <lucide-angular [img]="trashIcon" [size]="16" [strokeWidth]="2.3"></lucide-angular>
+                    </button>
+                  </div>
+                  <span *ngSwitchDefault>{{ formatGridValue(location, column.key) }}</span>
+                </ng-container>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
 
       <app-data-grid-pagination
@@ -128,71 +187,6 @@
         (pageChange)="setPage($event)"
       ></app-data-grid-pagination>
     </article>
-
-    <aside class="detail-panel app-card">
-      <ng-container *ngIf="selectedLocation as location; else emptyDetail">
-        <div class="detail-hero">
-          <span class="detail-avatar">{{ getLocationInitial(location) }}</span>
-          <div>
-            <span class="eyebrow">Detalle ubicacion</span>
-            <h2>{{ location.name }}</h2>
-            <p>{{ location.address }}</p>
-          </div>
-        </div>
-
-        <dl class="detail-list">
-          <div>
-            <dt>Estado</dt>
-            <dd>
-              <app-status-badge
-                [label]="location.canceled ? 'Inactiva' : 'Activa'"
-                [variant]="location.canceled ? 'inactive' : 'active'"
-              ></app-status-badge>
-            </dd>
-          </div>
-          <div>
-            <dt>Codigo</dt>
-            <dd>{{ location.code }}</dd>
-          </div>
-          <div>
-            <dt>Fecha creacion</dt>
-            <dd>{{ formatDate(location.created_at) }}</dd>
-          </div>
-          <div>
-            <dt>Hora</dt>
-            <dd>{{ formatTime(location.created_at) }}</dd>
-          </div>
-          <div>
-            <dt>Actualizacion</dt>
-            <dd>{{ formatDate(location.updated_at) }}</dd>
-          </div>
-        </dl>
-
-        <div class="detail-actions">
-          <button type="button" class="ghost-btn btn-outline" (click)="openEditModal(location)">
-            <lucide-angular [img]="editIcon" [size]="17" [strokeWidth]="2.3"></lucide-angular>
-            Editar
-          </button>
-
-          <button
-            type="button"
-            class="danger-btn btn-danger"
-            [disabled]="location.canceled"
-            (click)="askCancel(location)"
-          >
-            <lucide-angular [img]="trashIcon" [size]="17" [strokeWidth]="2.3"></lucide-angular>
-            Borrar
-          </button>
-        </div>
-      </ng-container>
-
-      <ng-template #emptyDetail>
-        <app-empty-state
-          message="Seleccione una ubicacion para ver sus datos."
-          [icon]="mapIcon"
-        ></app-empty-state>
-      </ng-template>
-    </aside>
   </section>
 
   <section class="map-section app-card">

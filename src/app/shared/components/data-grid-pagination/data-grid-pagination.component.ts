@@ -45,6 +45,13 @@ export class DataGridPaginationComponent {
     return this.safeCurrentPage >= this.safeTotalPages;
   }
 
+  get countLabel(): string {
+    const total = Math.max(0, this.totalItems || 0);
+    const label = total === 1 ? 'registro' : 'registros';
+
+    return `${total} ${label}`;
+  }
+
   goToPage(page: number): void {
     const nextPage = Math.min(Math.max(1, page), this.safeTotalPages);
 

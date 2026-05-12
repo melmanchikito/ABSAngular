@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
+  HostListener,
   computed,
   inject,
   signal
@@ -21,6 +22,7 @@ import {
   LucideAngularModule,
   RefreshCcw,
   Search,
+  SlidersHorizontal,
   Trash2,
   UserRound,
   X
@@ -30,8 +32,12 @@ import { ConfirmDialogComponent } from '../../../../../shared/components/confirm
 import { DataGridPaginationComponent } from '../../../../../shared/components/data-grid-pagination/data-grid-pagination.component';
 import { EmptyStateComponent } from '../../../../../shared/components/empty-state/empty-state.component';
 import { PageHeaderComponent } from '../../../../../shared/components/page-header/page-header.component';
-import { StatCardComponent } from '../../../../../shared/components/stat-card/stat-card.component';
 import { StatusBadgeComponent } from '../../../../../shared/components/status-badge/status-badge.component';
+import {
+  GridColumnConfig,
+  GridFilterOption,
+  PageViewConfig
+} from '../../../../../shared/models/grid-view.model';
 import {
   CancelUserRequest,
   InsertUserRequest,
@@ -42,6 +48,7 @@ import { UserMaintenanceService } from '../../../services/user-maintenance.servi
 
 type UserStatusFilter = 'all' | 'active' | 'inactive';
 type UserModalMode = 'create' | 'edit';
+type UserGridColumn = keyof UserItem | 'actions';
 type UserFormField =
   | 'username'
   | 'name'
@@ -84,7 +91,6 @@ interface UserForm {
     DataGridPaginationComponent,
     EmptyStateComponent,
     PageHeaderComponent,
-    StatCardComponent,
     StatusBadgeComponent
   ],
   templateUrl: './user-maintenance.component.html',
@@ -98,13 +104,48 @@ export class UserMaintenanceComponent {
   readonly editIcon = Edit3;
   readonly refreshIcon = RefreshCcw;
   readonly searchIcon = Search;
+  readonly filterIcon = SlidersHorizontal;
   readonly trashIcon = Trash2;
   readonly closeIcon = X;
+
+  readonly pageHeader: PageViewConfig = {
+    title: 'Mantenimiento - User',
+    subtitle: 'Administra los usuarios registrados en el sistema.',
+    eyebrow: 'Sistema',
+    icon: this.userIcon,
+    module: 'Sistema',
+    breadcrumb: ['Sistema', 'Configuracion', 'Mantenimientos', 'User']
+  };
+
+  readonly gridColumns: readonly GridColumnConfig<UserGridColumn>[] = [
+    { key: 'id', label: 'ID', width: '92px' },
+    { key: 'username', label: 'Usuario' },
+    { key: 'name', label: 'Nombre' },
+    { key: 'lastname', label: 'Apellido' },
+    { key: 'email', label: 'Email' },
+    { key: 'role_id', label: 'Rol ID', width: '120px' },
+    { key: 'phone', label: 'Telefono' },
+    { key: 'identification', label: 'Identificacion' },
+    { key: 'state', label: 'Estado', width: '150px' },
+    { key: 'canceled', label: 'Anulado', width: '140px' },
+    { key: 'canceled_at', label: 'Fecha anulacion', width: '180px' },
+    { key: 'created_at', label: 'Fecha creacion', width: '190px' },
+    { key: 'updated_at', label: 'Fecha actualizacion', width: '190px' },
+    { key: 'actions', label: 'Acciones', width: '170px', align: 'right' }
+  ];
+
+  readonly statusFilterOptions: readonly GridFilterOption<UserStatusFilter>[] = [
+    { value: 'all', label: 'Todos' },
+    { value: 'active', label: 'Activos' },
+    { value: 'inactive', label: 'Inactivos' }
+  ];
 
   readonly pageSize = 7;
   readonly users = signal<UserItem[]>([]);
   readonly searchTerm = signal('');
   readonly statusFilter = signal<UserStatusFilter>('all');
+  readonly statusFilterDraft = signal<UserStatusFilter>('all');
+  readonly filtersOpen = signal(false);
   readonly currentPage = signal(1);
   readonly selectedUserId = signal<number | null>(null);
   readonly isLoading = signal(false);
@@ -164,14 +205,6 @@ export class UserMaintenanceComponent {
     }
   );
 
-  readonly totalUsers = computed(() => this.users().length);
-  readonly activeUsersCount = computed(
-    () => this.users().filter((user) => this.isUserActive(user)).length
-  );
-  readonly inactiveUsersCount = computed(
-    () => this.users().filter((user) => !this.isUserActive(user)).length
-  );
-
   readonly filteredUsers = computed(() => {
     const term = this.searchTerm().trim().toLowerCase();
     const status = this.statusFilter();
@@ -217,16 +250,6 @@ export class UserMaintenanceComponent {
 
   readonly showingCount = computed(() => this.paginatedUsers().length);
 
-  readonly selectedUser = computed(() => {
-    const selectedId = this.selectedUserId();
-
-    if (!selectedId) {
-      return null;
-    }
-
-    return this.users().find((user) => user.id === selectedId) ?? null;
-  });
-
   readonly cancelUserMessage = computed(() => {
     const username = this.userToCancel()?.username ?? 'este usuario';
 
@@ -267,6 +290,27 @@ export class UserMaintenanceComponent {
   updateSearchTerm(value: string): void {
     this.searchTerm.set(value);
     this.currentPage.set(1);
+  }
+
+  toggleFilters(event?: MouseEvent): void {
+    event?.stopPropagation();
+    this.statusFilterDraft.set(this.statusFilter());
+    this.filtersOpen.update((open) => !open);
+  }
+
+  updateStatusFilterDraft(filter: UserStatusFilter): void {
+    this.statusFilterDraft.set(filter);
+  }
+
+  applyFilters(): void {
+    this.setStatusFilter(this.statusFilterDraft());
+    this.filtersOpen.set(false);
+  }
+
+  clearFilters(): void {
+    this.statusFilterDraft.set('all');
+    this.setStatusFilter('all');
+    this.filtersOpen.set(false);
   }
 
   setStatusFilter(filter: UserStatusFilter): void {
@@ -559,8 +603,50 @@ export class UserMaintenanceComponent {
     return this.getStateLabel(user) === 'Activo';
   }
 
+  isFilterActive(): boolean {
+    return this.statusFilter() !== 'all';
+  }
+
+  get activeFilterLabel(): string {
+    return this.statusFilterOptions.find((option) => option.value === this.statusFilter())?.label ?? 'Todos';
+  }
+
+  getColumnClass(column: GridColumnConfig<UserGridColumn>): string {
+    const classes = [`app-grid-col-${column.key}`];
+
+    if (column.align === 'center') {
+      classes.push('app-grid-col-center');
+    }
+
+    if (column.align === 'right') {
+      classes.push('app-grid-col-right');
+    }
+
+    return classes.join(' ');
+  }
+
+  trackByColumnKey(_: number, column: GridColumnConfig<UserGridColumn>): UserGridColumn {
+    return column.key;
+  }
+
+  formatGridValue(user: UserItem, key: UserGridColumn): string {
+    if (key === 'actions' || key === 'state' || key === 'canceled') {
+      return '';
+    }
+
+    const value = user[key];
+    return value === null || value === undefined || value === '' ? 'Sin registro' : String(value);
+  }
+
   trackByUserId(_: number, user: UserItem): number {
     return user.id;
+  }
+
+  @HostListener('document:click')
+  closeFiltersFromOutside(): void {
+    if (this.filtersOpen()) {
+      this.filtersOpen.set(false);
+    }
   }
 
   private patchForm(user: UserItem): void {

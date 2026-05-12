@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
   Building2,
@@ -7,9 +7,11 @@ import {
   ChevronRight,
   CirclePlus,
   Edit3,
+  Eye,
   LucideAngularModule,
   RefreshCcw,
   Search,
+  SlidersHorizontal,
   Trash2,
   X
 } from 'lucide-angular';
@@ -21,13 +23,14 @@ import {
 } from '../../models/company-maintenance.model';
 import { CompanyMaintenanceService } from '../../services/company-maintenance.service';
 import { PageHeaderComponent } from '../../../../shared/components/page-header/page-header.component';
-import { StatCardComponent } from '../../../../shared/components/stat-card/stat-card.component';
 import { StatusBadgeComponent } from '../../../../shared/components/status-badge/status-badge.component';
 import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog.component';
 import { DataGridPaginationComponent } from '../../../../shared/components/data-grid-pagination/data-grid-pagination.component';
+import { GridColumnConfig, GridFilterOption } from '../../../../shared/models/grid-view.model';
 
 type CompanyModalMode = 'create' | 'edit';
 type CompanyStatusFilter = 'all' | 'active' | 'inactive';
+type CompanyGridColumn = keyof Company | 'actions';
 type BackendErrorBody = Record<string, unknown>;
 
 interface CompanyForm {
@@ -53,7 +56,6 @@ interface EditCompanyForm {
     FormsModule,
     LucideAngularModule,
     PageHeaderComponent,
-    StatCardComponent,
     StatusBadgeComponent,
     ConfirmDialogComponent,
     DataGridPaginationComponent
@@ -66,15 +68,38 @@ export class CompanyMaintenanceComponent implements OnInit {
   readonly addIcon = CirclePlus;
   readonly chevronLeftIcon = ChevronLeft;
   readonly chevronRightIcon = ChevronRight;
+  readonly detailIcon = Eye;
   readonly editIcon = Edit3;
   readonly refreshIcon = RefreshCcw;
   readonly searchIcon = Search;
+  readonly filterIcon = SlidersHorizontal;
   readonly trashIcon = Trash2;
   readonly closeIcon = X;
+  readonly gridColumns: readonly GridColumnConfig<CompanyGridColumn>[] = [
+    { key: 'id', label: 'ID', width: '88px' },
+    { key: 'code', label: 'Codigo' },
+    { key: 'name', label: 'Nombre' },
+    { key: 'phone', label: 'Telefono' },
+    { key: 'email', label: 'Correo' },
+    { key: 'website', label: 'Sitio web' },
+    { key: 'canceled', label: 'Estado', width: '140px' },
+    { key: 'canceled_at', label: 'Fecha anulacion', width: '180px' },
+    { key: 'created_at', label: 'Fecha creacion', width: '180px' },
+    { key: 'updated_at', label: 'Fecha actualizacion', width: '190px' },
+    { key: 'actions', label: 'Acciones', width: '170px', align: 'right' }
+  ];
+  readonly statusFilterOptions: readonly GridFilterOption<CompanyStatusFilter>[] = [
+    { value: 'all', label: 'Todos' },
+    { value: 'active', label: 'Activas' },
+    { value: 'inactive', label: 'Inactivas' }
+  ];
 
   companies: Company[] = [];
+  selectedCompanyId: number | null = null;
   searchTerm = '';
   statusFilter: CompanyStatusFilter = 'all';
+  statusFilterDraft: CompanyStatusFilter = 'all';
+  filtersOpen = false;
   currentPage = 1;
   readonly pageSize = 5;
   isLoading = false;
@@ -111,18 +136,6 @@ export class CompanyMaintenanceComponent implements OnInit {
 
   get modalTitle(): string {
     return this.modalMode === 'create' ? 'Nueva empresa' : 'Editar empresa';
-  }
-
-  get totalCompanies(): number {
-    return this.companies.length;
-  }
-
-  get activeCompanies(): number {
-    return this.companies.filter((company) => !company.canceled).length;
-  }
-
-  get inactiveCompanies(): number {
-    return this.companies.filter((company) => company.canceled).length;
   }
 
   get filteredCompanies(): Company[] {
@@ -180,6 +193,9 @@ export class CompanyMaintenanceComponent implements OnInit {
       next: (companies) => {
         this.companies = companies;
         this.currentPage = Math.min(this.currentPage, this.totalPages);
+        this.selectedCompanyId = companies.some((company) => company.id === this.selectedCompanyId)
+          ? this.selectedCompanyId
+          : null;
         this.isLoading = false;
       },
       error: (error) => {
@@ -191,6 +207,25 @@ export class CompanyMaintenanceComponent implements OnInit {
 
   onFiltersChange(): void {
     this.currentPage = 1;
+  }
+
+  toggleFilters(event?: MouseEvent): void {
+    event?.stopPropagation();
+    this.statusFilterDraft = this.statusFilter;
+    this.filtersOpen = !this.filtersOpen;
+  }
+
+  applyFilters(): void {
+    this.statusFilter = this.statusFilterDraft;
+    this.onFiltersChange();
+    this.filtersOpen = false;
+  }
+
+  clearFilters(): void {
+    this.statusFilterDraft = 'all';
+    this.statusFilter = 'all';
+    this.onFiltersChange();
+    this.filtersOpen = false;
   }
 
   previousPage(): void {
@@ -207,6 +242,10 @@ export class CompanyMaintenanceComponent implements OnInit {
 
   getCompanyInitial(company: Company): string {
     return (company.name || company.code || '?').trim().charAt(0).toUpperCase();
+  }
+
+  selectCompany(company: Company): void {
+    this.selectedCompanyId = company.id;
   }
 
   openCreateModal(): void {
@@ -400,6 +439,7 @@ export class CompanyMaintenanceComponent implements OnInit {
       next: () => {
         this.isSaving = false;
         this.companyToCancel = null;
+        this.selectedCompanyId = null;
         this.successMessage = 'Empresa anulada correctamente.';
         this.loadCompanies();
       },
@@ -412,6 +452,42 @@ export class CompanyMaintenanceComponent implements OnInit {
 
   formatDate(value?: string | null): string {
     return value || 'Sin registro';
+  }
+
+  trackByCompanyId(_: number, company: Company): number {
+    return company.id;
+  }
+
+  trackByColumnKey(_: number, column: GridColumnConfig<CompanyGridColumn>): CompanyGridColumn {
+    return column.key;
+  }
+
+  getColumnClass(column: GridColumnConfig<CompanyGridColumn>): string {
+    const classes = [`app-grid-col-${column.key}`];
+
+    if (column.align === 'right') {
+      classes.push('app-grid-col-right');
+    }
+
+    if (column.align === 'center') {
+      classes.push('app-grid-col-center');
+    }
+
+    return classes.join(' ');
+  }
+
+  formatGridValue(company: Company, key: CompanyGridColumn): string {
+    if (key === 'actions' || key === 'canceled') {
+      return '';
+    }
+
+    const value = company[key];
+    return value === null || value === undefined || value === '' ? 'Sin registro' : String(value);
+  }
+
+  @HostListener('document:click')
+  closeFiltersFromOutside(): void {
+    this.filtersOpen = false;
   }
 
   private afterSuccessfulSave(message: string): void {

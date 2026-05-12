@@ -1,14 +1,55 @@
 <section class="user-page page-shell">
   <app-page-header
-    eyebrow="Configuracion"
-    title="Mantenimiento - User"
-    subtitle="Administra los usuarios registrados en el sistema."
-    [icon]="userIcon"
+    [title]="pageHeader.title"
+    [subtitle]="pageHeader.subtitle || ''"
+    [eyebrow]="pageHeader.eyebrow || ''"
+    [icon]="pageHeader.icon || null"
   >
-    <button page-actions type="button" class="btn-primary" (click)="openCreateModal()">
-      <lucide-angular [img]="addIcon" [size]="18" [strokeWidth]="2.4"></lucide-angular>
-      Nuevo
-    </button>
+    <div page-actions class="app-page-actions" (click)="$event.stopPropagation()">
+      <div class="app-grid-filter-menu">
+        <button
+          type="button"
+          class="btn-outline app-grid-filter-trigger app-grid-icon-button"
+          [class.active]="filtersOpen() || isFilterActive()"
+          title="Filtros"
+          aria-label="Abrir filtros"
+          (click)="toggleFilters($event)"
+        >
+          <lucide-angular [img]="filterIcon" [size]="17" [strokeWidth]="2.4"></lucide-angular>
+        </button>
+
+        <section class="app-grid-filter-panel" *ngIf="filtersOpen()" (click)="$event.stopPropagation()">
+          <strong class="app-grid-filter-title">Filtros del listado</strong>
+
+          <label class="app-grid-filter-field">
+            <span>Estado</span>
+            <select
+              [value]="statusFilterDraft()"
+              (change)="updateStatusFilterDraft($any($event.target).value)"
+            >
+              <option *ngFor="let option of statusFilterOptions" [value]="option.value">
+                {{ option.label }}
+              </option>
+            </select>
+          </label>
+
+          <div class="app-grid-filter-actions">
+            <button type="button" class="btn-outline" (click)="clearFilters()">Limpiar</button>
+            <button type="button" class="btn-primary" (click)="applyFilters()">Aplicar</button>
+          </div>
+        </section>
+      </div>
+
+      <button
+        type="button"
+        class="btn-primary app-grid-icon-button"
+        title="Nuevo"
+        aria-label="Nuevo registro"
+        (click)="openCreateModal()"
+      >
+        <lucide-angular [img]="addIcon" [size]="18" [strokeWidth]="2.4"></lucide-angular>
+      </button>
+    </div>
   </app-page-header>
 
   <div
@@ -21,23 +62,16 @@
   </div>
 
   <section class="content-grid">
-    <article class="user-panel app-card">
-      <header class="panel-header">
-        <div>
-          <span class="eyebrow">Listado</span>
-          <h2>Usuarios</h2>
+    <article class="user-panel app-card app-grid-card">
+      <header class="app-grid-header">
+        <div class="app-grid-title">
+          <span class="app-grid-eyebrow">Listado</span>
+          <h2 class="app-grid-heading">Usuarios</h2>
         </div>
-        <span class="counter">{{ filteredUsers().length }} registros</span>
       </header>
 
-      <section class="summary-grid user-summary">
-        <app-stat-card label="Total usuarios" [value]="totalUsers()"></app-stat-card>
-        <app-stat-card label="Usuarios activos" [value]="activeUsersCount()" tone="active"></app-stat-card>
-        <app-stat-card label="Usuarios inactivos" [value]="inactiveUsersCount()" tone="inactive"></app-stat-card>
-      </section>
-
-      <section class="toolbar">
-        <label class="search-box">
+      <section class="app-grid-toolbar">
+        <label class="app-grid-search">
           <lucide-angular [img]="searchIcon" [size]="18" [strokeWidth]="2.3"></lucide-angular>
           <input
             #userSearch
@@ -49,57 +83,36 @@
           />
         </label>
 
-        <div class="filter-pills" aria-label="Filtro por estado">
-          <button
-            type="button"
-            class="filter-pill"
-            [class.active]="statusFilter() === 'all'"
-            (click)="setStatusFilter('all')"
-          >
-            Todos
-          </button>
-          <button
-            type="button"
-            class="filter-pill"
-            [class.active]="statusFilter() === 'active'"
-            (click)="setStatusFilter('active')"
-          >
-            Activos
-          </button>
-          <button
-            type="button"
-            class="filter-pill"
-            [class.active]="statusFilter() === 'inactive'"
-            (click)="setStatusFilter('inactive')"
-          >
-            Inactivos
-          </button>
-        </div>
-
-        <button type="button" class="btn-outline refresh-btn" (click)="loadUsers()" [disabled]="isLoading()">
+        <button
+          type="button"
+          class="btn-outline refresh-btn app-grid-icon-button"
+          title="Actualizar"
+          aria-label="Actualizar listado"
+          (click)="loadUsers()"
+          [disabled]="isLoading()"
+        >
           <lucide-angular [img]="refreshIcon" [size]="17" [strokeWidth]="2.3"></lucide-angular>
-          Actualizar
         </button>
       </section>
 
-      <div class="table-shell">
-        <table class="user-table app-table">
+      <div class="app-grid-table-wrapper">
+        <table class="user-table app-table app-grid-table">
           <thead>
             <tr>
-              <th>ID</th>
-              
-              <th>Nombre</th>
-              <th>Email</th>
-              <th>Estado</th>
-              <th>Fecha creacion</th>
-              <th>Acciones</th>
+              <th
+                *ngFor="let column of gridColumns; trackBy: trackByColumnKey"
+                [class]="getColumnClass(column)"
+                [style.width]="column.width || null"
+              >
+                {{ column.label }}
+              </th>
             </tr>
           </thead>
 
           <tbody>
             <tr *ngIf="isLoading()">
-              <td colspan="7">
-                <div class="skeleton-stack" aria-label="Cargando usuarios">
+              <td [attr.colspan]="gridColumns.length">
+                <div class="app-grid-skeleton" aria-label="Cargando usuarios">
                   <span></span>
                   <span></span>
                   <span></span>
@@ -109,7 +122,7 @@
             </tr>
 
             <tr *ngIf="!isLoading() && !users().length">
-              <td colspan="7">
+              <td [attr.colspan]="gridColumns.length">
                 <app-empty-state
                   message="No existen usuarios registrados."
                   [icon]="userIcon"
@@ -118,7 +131,7 @@
             </tr>
 
             <tr *ngIf="!isLoading() && users().length && !filteredUsers().length">
-              <td colspan="7">
+              <td [attr.colspan]="gridColumns.length">
                 <app-empty-state
                   message="No se encontraron usuarios con los filtros aplicados."
                   [icon]="searchIcon"
@@ -128,59 +141,75 @@
 
             <tr
               *ngFor="let user of paginatedUsers(); trackBy: trackByUserId"
-              class="user-row"
-              [class.selected]="selectedUserId() === user.id"
+              class="user-row app-grid-row-clickable"
+              [class.app-grid-row-selected]="selectedUserId() === user.id"
               (click)="selectUser(user)"
             >
-              <td>{{ user.id }}</td>
-              
-              <td>
-                <div class="user-name">
-                  <span class="user-avatar">{{ getUserInitial(user) }}</span>
-                  <strong>{{ getFullName(user) }}</strong>
-                </div>
-              </td>
-              <td>{{ user.email }}</td>
-              <td>
-                <app-status-badge
-                  [label]="getStateLabel(user)"
-                  [variant]="getStateVariant(user)"
-                ></app-status-badge>
-              </td>
-              <td>{{ formatDate(user.created_at) }}</td>
-              <td>
-                <div class="actions-cell table-actions">
-                  <button
-                    type="button"
-                    class="btn-icon"
-                    title="Ver detalle"
-                    aria-label="Ver detalle"
-                    (click)="$event.stopPropagation(); selectUser(user)"
-                  >
-                    <lucide-angular [img]="detailIcon" [size]="17" [strokeWidth]="2.3"></lucide-angular>
-                  </button>
+              <td
+                *ngFor="let column of gridColumns; trackBy: trackByColumnKey"
+                [class]="getColumnClass(column)"
+              >
+                <ng-container [ngSwitch]="column.key">
+                  <span *ngSwitchCase="'id'">{{ user.id }}</span>
 
-                  <button
-                    type="button"
-                    class="btn-icon"
-                    title="Editar usuario"
-                    aria-label="Editar usuario"
-                    (click)="$event.stopPropagation(); openEditModal(user)"
-                  >
-                    <lucide-angular [img]="editIcon" [size]="17" [strokeWidth]="2.3"></lucide-angular>
-                  </button>
+                  <div *ngSwitchCase="'name'" class="user-name">
+                    <span class="user-avatar">{{ getUserInitial(user) }}</span>
+                    <strong>{{ getFullName(user) }}</strong>
+                  </div>
 
-                  <button
-                    type="button"
-                    class="btn-icon icon-danger"
-                    title="Anular usuario"
-                    aria-label="Anular usuario"
-                    [disabled]="!isUserActive(user)"
-                    (click)="$event.stopPropagation(); askCancel(user)"
-                  >
-                    <lucide-angular [img]="trashIcon" [size]="17" [strokeWidth]="2.3"></lucide-angular>
-                  </button>
-                </div>
+                  <span *ngSwitchCase="'email'">{{ user.email }}</span>
+
+                  <app-status-badge
+                    *ngSwitchCase="'state'"
+                    [label]="getStateLabel(user)"
+                    [variant]="getStateVariant(user)"
+                  ></app-status-badge>
+
+                  <span *ngSwitchCase="'created_at'">{{ formatDate(user.created_at) }}</span>
+                  <span *ngSwitchCase="'updated_at'">{{ formatDate(user.updated_at) }}</span>
+                  <span *ngSwitchCase="'canceled_at'">{{ formatDate(user.canceled_at) }}</span>
+
+                  <app-status-badge
+                    *ngSwitchCase="'canceled'"
+                    [label]="user.canceled ? 'Si' : 'No'"
+                    [variant]="user.canceled ? 'inactive' : 'active'"
+                  ></app-status-badge>
+
+                  <div *ngSwitchCase="'actions'" class="app-grid-actions">
+                    <button
+                      type="button"
+                      class="btn-icon"
+                      title="Ver detalle"
+                      aria-label="Ver detalle"
+                      (click)="$event.stopPropagation(); selectUser(user)"
+                    >
+                      <lucide-angular [img]="detailIcon" [size]="17" [strokeWidth]="2.3"></lucide-angular>
+                    </button>
+
+                    <button
+                      type="button"
+                      class="btn-icon"
+                      title="Editar usuario"
+                      aria-label="Editar usuario"
+                      (click)="$event.stopPropagation(); openEditModal(user)"
+                    >
+                      <lucide-angular [img]="editIcon" [size]="17" [strokeWidth]="2.3"></lucide-angular>
+                    </button>
+
+                    <button
+                      type="button"
+                      class="btn-icon icon-danger"
+                      title="Anular usuario"
+                      aria-label="Anular usuario"
+                      [disabled]="!isUserActive(user)"
+                      (click)="$event.stopPropagation(); askCancel(user)"
+                    >
+                      <lucide-angular [img]="trashIcon" [size]="17" [strokeWidth]="2.3"></lucide-angular>
+                    </button>
+                  </div>
+
+                  <span *ngSwitchDefault>{{ formatGridValue(user, column.key) }}</span>
+                </ng-container>
               </td>
             </tr>
           </tbody>
@@ -197,90 +226,7 @@
       ></app-data-grid-pagination>
     </article>
 
-    <aside class="detail-panel app-card">
-      <ng-container *ngIf="selectedUser() as user; else emptyDetail">
-        <div class="detail-hero">
-          <span class="detail-avatar">{{ getUserInitial(user) }}</span>
-          <div>
-            <span class="eyebrow">Detalle</span>
-            <h2>{{ getFullName(user) }}</h2>
-            <p>{{ user.username }} - {{ user.email }}</p>
-          </div>
-        </div>
-
-        <dl class="detail-list">
-          <div>
-            <dt>ID</dt>
-            <dd>{{ user.id }}</dd>
-          </div>
-          <div>
-            <dt>Usuario</dt>
-            <dd>{{ user.username }}</dd>
-          </div>
-          <div>
-            <dt>Nombre</dt>
-            <dd>{{ getFullName(user) }}</dd>
-          </div>
-          <div>
-            <dt>Email</dt>
-            <dd>{{ user.email }}</dd>
-          </div>
-          <div>
-            <dt>Rol ID</dt>
-            <dd>{{ user.role_id ?? 'Sin registro' }}</dd>
-          </div>
-          <div>
-            <dt>Telefono</dt>
-            <dd>{{ user.phone || 'Sin registro' }}</dd>
-          </div>
-          <div>
-            <dt>Identificacion</dt>
-            <dd>{{ user.identification || 'Sin registro' }}</dd>
-          </div>
-          <div>
-            <dt>Estado</dt>
-            <dd>
-              <app-status-badge
-                [label]="getStateLabel(user)"
-                [variant]="getStateVariant(user)"
-              ></app-status-badge>
-            </dd>
-          </div>
-          <div>
-            <dt>Fecha creacion</dt>
-            <dd>{{ formatDate(user.created_at) }}</dd>
-          </div>
-          <div>
-            <dt>Fecha actualizacion</dt>
-            <dd>{{ formatDate(user.updated_at) }}</dd>
-          </div>
-        </dl>
-
-        <div class="detail-actions">
-          <button type="button" class="btn-outline" (click)="openEditModal(user)">
-            <lucide-angular [img]="editIcon" [size]="17" [strokeWidth]="2.3"></lucide-angular>
-            Editar
-          </button>
-
-          <button
-            type="button"
-            class="btn-danger"
-            [disabled]="!isUserActive(user)"
-            (click)="askCancel(user)"
-          >
-            <lucide-angular [img]="trashIcon" [size]="17" [strokeWidth]="2.3"></lucide-angular>
-            Anular
-          </button>
-        </div>
-      </ng-container>
-
-      <ng-template #emptyDetail>
-        <app-empty-state
-          message="Seleccione un usuario para ver sus datos."
-          [icon]="userIcon"
-        ></app-empty-state>
-      </ng-template>
-    </aside>
+    
   </section>
 
   <div class="modal-backdrop" *ngIf="modalOpen()">

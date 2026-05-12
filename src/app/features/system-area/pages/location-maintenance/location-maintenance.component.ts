@@ -3,6 +3,7 @@ import {
   AfterViewInit,
   Component,
   ElementRef,
+  HostListener,
   OnDestroy,
   OnInit,
   ViewChild
@@ -13,9 +14,12 @@ import {
   ChevronRight,
   CirclePlus,
   Edit3,
+  Eye,
   LucideAngularModule,
   MapPin,
+  RefreshCcw,
   Search,
+  SlidersHorizontal,
   Trash2,
   X
 } from 'lucide-angular';
@@ -31,11 +35,12 @@ import { ConfirmDialogComponent } from '../../../../shared/components/confirm-di
 import { DataGridPaginationComponent } from '../../../../shared/components/data-grid-pagination/data-grid-pagination.component';
 import { EmptyStateComponent } from '../../../../shared/components/empty-state/empty-state.component';
 import { PageHeaderComponent } from '../../../../shared/components/page-header/page-header.component';
-import { StatCardComponent } from '../../../../shared/components/stat-card/stat-card.component';
 import { StatusBadgeComponent } from '../../../../shared/components/status-badge/status-badge.component';
+import { GridColumnConfig, GridFilterOption } from '../../../../shared/models/grid-view.model';
 
 type LocationModalMode = 'create' | 'edit';
 type LocationStatusFilter = 'all' | 'active' | 'inactive';
+type LocationGridColumn = keyof LocationItem | 'actions';
 type BackendErrorBody = Record<string, unknown>;
 
 interface LocationForm {
@@ -66,7 +71,6 @@ interface MapPoint {
     DataGridPaginationComponent,
     EmptyStateComponent,
     PageHeaderComponent,
-    StatCardComponent,
     StatusBadgeComponent
   ],
   templateUrl: './location-maintenance.component.html',
@@ -80,15 +84,36 @@ export class LocationMaintenanceComponent implements OnInit, AfterViewInit, OnDe
   readonly addIcon = CirclePlus;
   readonly chevronLeftIcon = ChevronLeft;
   readonly chevronRightIcon = ChevronRight;
+  readonly detailIcon = Eye;
   readonly editIcon = Edit3;
+  readonly refreshIcon = RefreshCcw;
   readonly searchIcon = Search;
+  readonly filterIcon = SlidersHorizontal;
   readonly trashIcon = Trash2;
   readonly closeIcon = X;
+  readonly gridColumns: readonly GridColumnConfig<LocationGridColumn>[] = [
+    { key: 'id', label: 'ID', width: '88px' },
+    { key: 'code', label: 'Codigo' },
+    { key: 'name', label: 'Nombre' },
+    { key: 'address', label: 'Direccion' },
+    { key: 'canceled', label: 'Estado', width: '140px' },
+    { key: 'canceled_at', label: 'Fecha anulacion', width: '180px' },
+    { key: 'created_at', label: 'Fecha creacion', width: '180px' },
+    { key: 'updated_at', label: 'Fecha actualizacion', width: '190px' },
+    { key: 'actions', label: 'Acciones', width: '170px', align: 'right' }
+  ];
+  readonly statusFilterOptions: readonly GridFilterOption<LocationStatusFilter>[] = [
+    { value: 'all', label: 'Todas' },
+    { value: 'active', label: 'Activas' },
+    { value: 'inactive', label: 'Inactivas' }
+  ];
 
   locations: LocationItem[] = [];
   selectedLocationId: number | null = null;
   searchTerm = '';
   statusFilter: LocationStatusFilter = 'all';
+  statusFilterDraft: LocationStatusFilter = 'all';
+  filtersOpen = false;
   currentPage = 1;
   readonly pageSize = 6;
   isLoading = false;
@@ -142,26 +167,6 @@ export class LocationMaintenanceComponent implements OnInit, AfterViewInit, OnDe
 
   get modalTitle(): string {
     return this.modalMode === 'create' ? 'Nueva ubicacion' : 'Editar ubicacion';
-  }
-
-  get totalLocations(): number {
-    return this.locations.length;
-  }
-
-  get activeLocations(): number {
-    return this.locations.filter((location) => !location.canceled).length;
-  }
-
-  get inactiveLocations(): number {
-    return this.locations.filter((location) => location.canceled).length;
-  }
-
-  get selectedLocation(): LocationItem | null {
-    if (!this.selectedLocationId) {
-      return null;
-    }
-
-    return this.locations.find((location) => location.id === this.selectedLocationId) ?? null;
   }
 
   get cancelLocationMessage(): string {
@@ -238,6 +243,25 @@ export class LocationMaintenanceComponent implements OnInit, AfterViewInit, OnDe
   setStatusFilter(filter: LocationStatusFilter): void {
     this.statusFilter = filter;
     this.onFiltersChange();
+  }
+
+  toggleFilters(event?: MouseEvent): void {
+    event?.stopPropagation();
+    this.statusFilterDraft = this.statusFilter;
+    this.filtersOpen = !this.filtersOpen;
+  }
+
+  applyFilters(): void {
+    this.statusFilter = this.statusFilterDraft;
+    this.onFiltersChange();
+    this.filtersOpen = false;
+  }
+
+  clearFilters(): void {
+    this.statusFilterDraft = 'all';
+    this.statusFilter = 'all';
+    this.onFiltersChange();
+    this.filtersOpen = false;
   }
 
   previousPage(): void {
@@ -441,12 +465,48 @@ export class LocationMaintenanceComponent implements OnInit, AfterViewInit, OnDe
     return (location.name || location.code || '?').trim().charAt(0).toUpperCase();
   }
 
+  trackByLocationId(_: number, location: LocationItem): number {
+    return location.id;
+  }
+
+  trackByColumnKey(_: number, column: GridColumnConfig<LocationGridColumn>): LocationGridColumn {
+    return column.key;
+  }
+
+  getColumnClass(column: GridColumnConfig<LocationGridColumn>): string {
+    const classes = [`app-grid-col-${column.key}`];
+
+    if (column.align === 'right') {
+      classes.push('app-grid-col-right');
+    }
+
+    if (column.align === 'center') {
+      classes.push('app-grid-col-center');
+    }
+
+    return classes.join(' ');
+  }
+
+  formatGridValue(location: LocationItem, key: LocationGridColumn): string {
+    if (key === 'actions' || key === 'canceled') {
+      return '';
+    }
+
+    const value = location[key];
+    return value === null || value === undefined || value === '' ? 'Sin registro' : String(value);
+  }
+
   formatPoint(point: MapPoint | null): string {
     if (!point) {
       return 'Sin punto seleccionado';
     }
 
     return `${point.lat.toFixed(6)}, ${point.lng.toFixed(6)}`;
+  }
+
+  @HostListener('document:click')
+  closeFiltersFromOutside(): void {
+    this.filtersOpen = false;
   }
 
   private initMainMap(): void {

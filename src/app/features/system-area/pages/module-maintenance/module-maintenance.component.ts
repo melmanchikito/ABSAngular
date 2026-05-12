@@ -1,15 +1,17 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
   ChevronLeft,
   ChevronRight,
   CirclePlus,
   Edit3,
+  Eye,
   LayoutDashboard,
   LucideAngularModule,
   RefreshCcw,
   Search,
+  SlidersHorizontal,
   Trash2,
   X
 } from 'lucide-angular';
@@ -17,8 +19,8 @@ import { ConfirmDialogComponent } from '../../../../shared/components/confirm-di
 import { DataGridPaginationComponent } from '../../../../shared/components/data-grid-pagination/data-grid-pagination.component';
 import { EmptyStateComponent } from '../../../../shared/components/empty-state/empty-state.component';
 import { PageHeaderComponent } from '../../../../shared/components/page-header/page-header.component';
-import { StatCardComponent } from '../../../../shared/components/stat-card/stat-card.component';
 import { StatusBadgeComponent } from '../../../../shared/components/status-badge/status-badge.component';
+import { GridColumnConfig, GridFilterOption } from '../../../../shared/models/grid-view.model';
 import {
   CancelModuleRequest,
   InsertModuleRequest,
@@ -29,6 +31,7 @@ import { ModuleMaintenanceService } from '../../services/module-maintenance.serv
 
 type ModuleModalMode = 'create' | 'edit';
 type ModuleStatusFilter = 'all' | 'active' | 'inactive';
+type ModuleGridColumn = keyof ModuleItem | 'actions';
 type BackendErrorBody = Record<string, unknown>;
 
 interface ModuleForm {
@@ -48,7 +51,6 @@ interface ModuleForm {
     DataGridPaginationComponent,
     EmptyStateComponent,
     PageHeaderComponent,
-    StatCardComponent,
     StatusBadgeComponent
   ],
   templateUrl: './module-maintenance.component.html',
@@ -59,16 +61,36 @@ export class ModuleMaintenanceComponent implements OnInit {
   readonly addIcon = CirclePlus;
   readonly chevronLeftIcon = ChevronLeft;
   readonly chevronRightIcon = ChevronRight;
+  readonly detailIcon = Eye;
   readonly editIcon = Edit3;
   readonly refreshIcon = RefreshCcw;
   readonly searchIcon = Search;
+  readonly filterIcon = SlidersHorizontal;
   readonly trashIcon = Trash2;
   readonly closeIcon = X;
+  readonly gridColumns: readonly GridColumnConfig<ModuleGridColumn>[] = [
+    { key: 'id', label: 'ID', width: '88px' },
+    { key: 'code', label: 'Codigo' },
+    { key: 'name', label: 'Nombre' },
+    { key: 'order', label: 'Orden', width: '110px' },
+    { key: 'canceled', label: 'Estado', width: '140px' },
+    { key: 'canceled_at', label: 'Fecha anulacion', width: '180px' },
+    { key: 'created_at', label: 'Fecha creacion', width: '180px' },
+    { key: 'updated_at', label: 'Fecha actualizacion', width: '190px' },
+    { key: 'actions', label: 'Acciones', width: '170px', align: 'right' }
+  ];
+  readonly statusFilterOptions: readonly GridFilterOption<ModuleStatusFilter>[] = [
+    { value: 'all', label: 'Todos' },
+    { value: 'active', label: 'Activos' },
+    { value: 'inactive', label: 'Inactivos' }
+  ];
 
   modules: ModuleItem[] = [];
   selectedModuleId: number | null = null;
   searchTerm = '';
   statusFilter: ModuleStatusFilter = 'all';
+  statusFilterDraft: ModuleStatusFilter = 'all';
+  filtersOpen = false;
   currentPage = 1;
   pageSize = 6;
   isLoading = false;
@@ -93,26 +115,6 @@ export class ModuleMaintenanceComponent implements OnInit {
 
   get modalTitle(): string {
     return this.modalMode === 'create' ? 'Nuevo modulo' : 'Editar modulo';
-  }
-
-  get totalModules(): number {
-    return this.modules.length;
-  }
-
-  get activeModules(): number {
-    return this.modules.filter((module) => !module.canceled).length;
-  }
-
-  get inactiveModules(): number {
-    return this.modules.filter((module) => module.canceled).length;
-  }
-
-  get selectedModule(): ModuleItem | null {
-    if (!this.selectedModuleId) {
-      return null;
-    }
-
-    return this.modules.find((module) => module.id === this.selectedModuleId) ?? null;
   }
 
   get filteredModules(): ModuleItem[] {
@@ -188,6 +190,23 @@ export class ModuleMaintenanceComponent implements OnInit {
   setStatusFilter(filter: ModuleStatusFilter): void {
     this.statusFilter = filter;
     this.onFiltersChange();
+  }
+
+  toggleFilters(event?: MouseEvent): void {
+    event?.stopPropagation();
+    this.statusFilterDraft = this.statusFilter;
+    this.filtersOpen = !this.filtersOpen;
+  }
+
+  applyFilters(): void {
+    this.setStatusFilter(this.statusFilterDraft);
+    this.filtersOpen = false;
+  }
+
+  clearFilters(): void {
+    this.statusFilterDraft = 'all';
+    this.setStatusFilter('all');
+    this.filtersOpen = false;
   }
 
   previousPage(): void {
@@ -368,6 +387,38 @@ export class ModuleMaintenanceComponent implements OnInit {
 
   trackByModuleId(_: number, module: ModuleItem): number {
     return module.id;
+  }
+
+  trackByColumnKey(_: number, column: GridColumnConfig<ModuleGridColumn>): ModuleGridColumn {
+    return column.key;
+  }
+
+  getColumnClass(column: GridColumnConfig<ModuleGridColumn>): string {
+    const classes = [`app-grid-col-${column.key}`];
+
+    if (column.align === 'right') {
+      classes.push('app-grid-col-right');
+    }
+
+    if (column.align === 'center') {
+      classes.push('app-grid-col-center');
+    }
+
+    return classes.join(' ');
+  }
+
+  formatGridValue(module: ModuleItem, key: ModuleGridColumn): string {
+    if (key === 'actions' || key === 'canceled') {
+      return '';
+    }
+
+    const value = module[key];
+    return value === null || value === undefined || value === '' ? 'Sin registro' : String(value);
+  }
+
+  @HostListener('document:click')
+  closeFiltersFromOutside(): void {
+    this.filtersOpen = false;
   }
 
   private createEmptyForm(): ModuleForm {

@@ -5,10 +5,29 @@
     subtitle="Administra la clasificacion de opciones disponibles en el sistema."
     [icon]="optionTypeIcon"
   >
-    <button page-actions type="button" class="btn-primary" (click)="openCreateModal()">
-      <lucide-angular [img]="addIcon" [size]="18" [strokeWidth]="2.4"></lucide-angular>
-      Nuevo
-    </button>
+    <div page-actions class="app-page-actions" (click)="$event.stopPropagation()">
+      <div class="app-grid-filter-menu">
+        <button type="button" class="btn-outline app-grid-filter-trigger app-grid-icon-button" [class.active]="filtersOpen() || statusFilter() !== 'all'" title="Filtros" aria-label="Abrir filtros" (click)="toggleFilters($event)">
+          <lucide-angular [img]="filterIcon" [size]="17" [strokeWidth]="2.4"></lucide-angular>
+        </button>
+        <section class="app-grid-filter-panel" *ngIf="filtersOpen()" (click)="$event.stopPropagation()">
+          <strong class="app-grid-filter-title">Filtros del listado</strong>
+          <label class="app-grid-filter-field">
+            <span>Estado</span>
+            <select [value]="statusFilterDraft()" (change)="updateStatusFilterDraft($any($event.target).value)">
+              <option *ngFor="let option of statusFilterOptions" [value]="option.value">{{ option.label }}</option>
+            </select>
+          </label>
+          <div class="app-grid-filter-actions">
+            <button type="button" class="btn-outline" (click)="clearFilters()">Limpiar</button>
+            <button type="button" class="btn-primary" (click)="applyFilters()">Aplicar</button>
+          </div>
+        </section>
+      </div>
+      <button type="button" class="btn-primary app-grid-icon-button" title="Nuevo" aria-label="Nuevo registro" (click)="openCreateModal()">
+        <lucide-angular [img]="addIcon" [size]="18" [strokeWidth]="2.4"></lucide-angular>
+      </button>
+    </div>
   </app-page-header>
 
   <div
@@ -21,23 +40,16 @@
   </div>
 
   <section class="content-grid">
-    <article class="option-type-panel app-card">
-      <header class="panel-header">
-        <div>
-          <span class="eyebrow">Listado</span>
-          <h2>Tipos de opcion</h2>
+    <article class="option-type-panel app-card app-grid-card">
+      <header class="app-grid-header">
+        <div class="app-grid-title">
+          <span class="app-grid-eyebrow">Listado</span>
+          <h2 class="app-grid-heading">Tipos de opcion</h2>
         </div>
-        <span class="counter">{{ filteredOptionTypes().length }} registros</span>
       </header>
 
-      <section class="summary-grid option-type-summary">
-        <app-stat-card label="Total tipos" [value]="totalOptionTypes()"></app-stat-card>
-        <app-stat-card label="Tipos activos" [value]="activeOptionTypesCount()" tone="active"></app-stat-card>
-        <app-stat-card label="Tipos inactivos" [value]="inactiveOptionTypesCount()" tone="inactive"></app-stat-card>
-      </section>
-
-      <section class="toolbar">
-        <label class="search-box">
+      <section class="app-grid-toolbar">
+        <label class="app-grid-search">
           <lucide-angular [img]="searchIcon" [size]="18" [strokeWidth]="2.3"></lucide-angular>
           <input
             #optionTypeSearch
@@ -49,55 +61,32 @@
           />
         </label>
 
-        <div class="filter-pills" aria-label="Filtro por estado">
-          <button
-            type="button"
-            class="filter-pill"
-            [class.active]="statusFilter() === 'all'"
-            (click)="setStatusFilter('all')"
-          >
-            Todos
-          </button>
-          <button
-            type="button"
-            class="filter-pill"
-            [class.active]="statusFilter() === 'active'"
-            (click)="setStatusFilter('active')"
-          >
-            Activos
-          </button>
-          <button
-            type="button"
-            class="filter-pill"
-            [class.active]="statusFilter() === 'inactive'"
-            (click)="setStatusFilter('inactive')"
-          >
-            Inactivos
-          </button>
-        </div>
-
-        <button type="button" class="btn-outline refresh-btn" (click)="loadOptionTypes()" [disabled]="isLoading()">
+        <button
+          type="button"
+          class="btn-outline refresh-btn app-grid-icon-button"
+          title="Actualizar"
+          aria-label="Actualizar listado"
+          (click)="loadOptionTypes()"
+          [disabled]="isLoading()"
+        >
           <lucide-angular [img]="refreshIcon" [size]="17" [strokeWidth]="2.3"></lucide-angular>
-          Actualizar
         </button>
       </section>
 
-      <div class="table-shell">
-        <table class="option-type-table app-table">
+      <div class="app-grid-table-wrapper">
+        <table class="option-type-table app-table app-grid-table">
           <thead>
             <tr>
-              <th>Codigo</th>
-              <th>Nombre</th>
-              <th>Estado</th>
-              <th>Fecha creacion</th>
-              <th>Acciones</th>
+              <th *ngFor="let column of gridColumns; trackBy: trackByColumnKey" [class]="getColumnClass(column)" [style.width]="column.width || null">
+                {{ column.label }}
+              </th>
             </tr>
           </thead>
 
           <tbody>
             <tr *ngIf="isLoading()">
-              <td colspan="5">
-                <div class="skeleton-stack" aria-label="Cargando tipos de opcion">
+              <td [attr.colspan]="gridColumns.length">
+                <div class="app-grid-skeleton" aria-label="Cargando tipos de opcion">
                   <span></span>
                   <span></span>
                   <span></span>
@@ -107,7 +96,7 @@
             </tr>
 
             <tr *ngIf="!isLoading() && !optionTypes().length">
-              <td colspan="5">
+              <td [attr.colspan]="gridColumns.length">
                 <app-empty-state
                   message="No existen tipos de opcion registrados."
                   [icon]="optionTypeIcon"
@@ -116,7 +105,7 @@
             </tr>
 
             <tr *ngIf="!isLoading() && optionTypes().length && !filteredOptionTypes().length">
-              <td colspan="5">
+              <td [attr.colspan]="gridColumns.length">
                 <app-empty-state
                   message="No se encontraron tipos de opcion con los filtros aplicados."
                   [icon]="searchIcon"
@@ -126,28 +115,24 @@
 
             <tr
               *ngFor="let optionType of paginatedOptionTypes(); trackBy: trackByOptionTypeId"
-              class="option-type-row"
-              [class.selected]="selectedOptionTypeId() === optionType.id"
+              class="option-type-row app-grid-row-clickable"
+              [class.app-grid-row-selected]="selectedOptionTypeId() === optionType.id"
               (click)="selectOptionType(optionType)"
             >
-              <td>
-                <span class="code-badge">{{ optionType.code }}</span>
-              </td>
-              <td>
-                <div class="option-type-name">
-                  <span class="option-type-avatar">{{ getOptionTypeInitial(optionType) }}</span>
-                  <strong>{{ optionType.name }}</strong>
-                </div>
-              </td>
-              <td>
-                <app-status-badge
-                  [label]="optionType.canceled ? 'Inactivo' : 'Activo'"
-                  [variant]="optionType.canceled ? 'inactive' : 'active'"
-                ></app-status-badge>
-              </td>
-              <td>{{ formatDate(optionType.created_at) }}</td>
-              <td>
-                <div class="actions-cell table-actions">
+              <td *ngFor="let column of gridColumns; trackBy: trackByColumnKey" [class]="getColumnClass(column)">
+                <ng-container [ngSwitch]="column.key">
+                  <app-status-badge *ngSwitchCase="'canceled'" [label]="optionType.canceled ? 'Inactivo' : 'Activo'" [variant]="optionType.canceled ? 'inactive' : 'active'"></app-status-badge>
+                  <div *ngSwitchCase="'actions'" class="app-grid-actions">
+                  <button
+                    type="button"
+                    class="btn-icon"
+                    title="Ver tipo de opcion"
+                    aria-label="Ver tipo de opcion"
+                    (click)="$event.stopPropagation(); selectOptionType(optionType)"
+                  >
+                    <lucide-angular [img]="detailIcon" [size]="17" [strokeWidth]="2.3"></lucide-angular>
+                  </button>
+
                   <button
                     type="button"
                     class="btn-icon"
@@ -168,7 +153,9 @@
                   >
                     <lucide-angular [img]="trashIcon" [size]="17" [strokeWidth]="2.3"></lucide-angular>
                   </button>
-                </div>
+                  </div>
+                  <span *ngSwitchDefault>{{ formatGridValue(optionType, column.key) }}</span>
+                </ng-container>
               </td>
             </tr>
           </tbody>
@@ -184,71 +171,6 @@
         (pageChange)="setPage($event)"
       ></app-data-grid-pagination>
     </article>
-
-    <aside class="detail-panel app-card">
-      <ng-container *ngIf="selectedOptionType() as optionType; else emptyDetail">
-        <div class="detail-hero">
-          <span class="detail-avatar">{{ getOptionTypeInitial(optionType) }}</span>
-          <div>
-            <span class="eyebrow">Detalle</span>
-            <h2>{{ optionType.name }}</h2>
-            <p>{{ optionType.code }}</p>
-          </div>
-        </div>
-
-        <dl class="detail-list">
-          <div>
-            <dt>Codigo</dt>
-            <dd>{{ optionType.code }}</dd>
-          </div>
-          <div>
-            <dt>Nombre</dt>
-            <dd>{{ optionType.name }}</dd>
-          </div>
-          <div>
-            <dt>Estado</dt>
-            <dd>
-              <app-status-badge
-                [label]="optionType.canceled ? 'Inactivo' : 'Activo'"
-                [variant]="optionType.canceled ? 'inactive' : 'active'"
-              ></app-status-badge>
-            </dd>
-          </div>
-          <div>
-            <dt>Fecha creacion</dt>
-            <dd>{{ formatDate(optionType.created_at) }}</dd>
-          </div>
-          <div>
-            <dt>Fecha actualizacion</dt>
-            <dd>{{ formatDate(optionType.updated_at) }}</dd>
-          </div>
-        </dl>
-
-        <div class="detail-actions">
-          <button type="button" class="btn-outline" (click)="openEditModal(optionType)">
-            <lucide-angular [img]="editIcon" [size]="17" [strokeWidth]="2.3"></lucide-angular>
-            Editar
-          </button>
-
-          <button
-            type="button"
-            class="btn-danger"
-            [disabled]="optionType.canceled"
-            (click)="askCancel(optionType)"
-          >
-            <lucide-angular [img]="trashIcon" [size]="17" [strokeWidth]="2.3"></lucide-angular>
-            Anular
-          </button>
-        </div>
-      </ng-container>
-
-      <ng-template #emptyDetail>
-        <app-empty-state
-          message="Seleccione un tipo de opcion para ver sus datos."
-          [icon]="optionTypeIcon"
-        ></app-empty-state>
-      </ng-template>
-    </aside>
   </section>
 
   <div class="modal-backdrop" *ngIf="modalOpen()">

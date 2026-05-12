@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
   Building2,
@@ -7,10 +7,12 @@ import {
   ChevronRight,
   CirclePlus,
   Edit3,
+  Eye,
   Landmark,
   LucideAngularModule,
   RefreshCcw,
   Search,
+  SlidersHorizontal,
   Trash2,
   X
 } from 'lucide-angular';
@@ -18,8 +20,8 @@ import { ConfirmDialogComponent } from '../../../../shared/components/confirm-di
 import { DataGridPaginationComponent } from '../../../../shared/components/data-grid-pagination/data-grid-pagination.component';
 import { EmptyStateComponent } from '../../../../shared/components/empty-state/empty-state.component';
 import { PageHeaderComponent } from '../../../../shared/components/page-header/page-header.component';
-import { StatCardComponent } from '../../../../shared/components/stat-card/stat-card.component';
 import { StatusBadgeComponent } from '../../../../shared/components/status-badge/status-badge.component';
+import { GridColumnConfig, GridFilterOption } from '../../../../shared/models/grid-view.model';
 import {
   BranchItem,
   CancelBranchRequest,
@@ -34,6 +36,7 @@ import { LocationMaintenanceService } from '../../services/location-maintenance.
 
 type BranchModalMode = 'create' | 'edit';
 type BranchStatusFilter = 'all' | 'active' | 'inactive';
+type BranchGridColumn = keyof BranchItem | 'company_name' | 'location_name' | 'actions';
 type BackendErrorBody = Record<string, unknown>;
 
 interface BranchForm {
@@ -54,7 +57,6 @@ interface BranchForm {
     DataGridPaginationComponent,
     EmptyStateComponent,
     PageHeaderComponent,
-    StatCardComponent,
     StatusBadgeComponent
   ],
   templateUrl: './branch-maintenance.component.html',
@@ -66,11 +68,32 @@ export class BranchMaintenanceComponent implements OnInit {
   readonly buildingIcon = Building2;
   readonly chevronLeftIcon = ChevronLeft;
   readonly chevronRightIcon = ChevronRight;
+  readonly detailIcon = Eye;
   readonly editIcon = Edit3;
   readonly refreshIcon = RefreshCcw;
   readonly searchIcon = Search;
+  readonly filterIcon = SlidersHorizontal;
   readonly trashIcon = Trash2;
   readonly closeIcon = X;
+  readonly gridColumns: readonly GridColumnConfig<BranchGridColumn>[] = [
+    { key: 'id', label: 'ID', width: '88px' },
+    { key: 'code', label: 'Codigo' },
+    { key: 'name', label: 'Nombre' },
+    { key: 'company_id', label: 'Empresa ID', width: '130px' },
+    { key: 'company_name', label: 'Empresa' },
+    { key: 'location_id', label: 'Ubicacion ID', width: '140px' },
+    { key: 'location_name', label: 'Ubicacion' },
+    { key: 'canceled', label: 'Estado', width: '140px' },
+    { key: 'canceled_at', label: 'Fecha anulacion', width: '180px' },
+    { key: 'created_at', label: 'Fecha creacion', width: '180px' },
+    { key: 'updated_at', label: 'Fecha actualizacion', width: '190px' },
+    { key: 'actions', label: 'Acciones', width: '170px', align: 'right' }
+  ];
+  readonly statusFilterOptions: readonly GridFilterOption<BranchStatusFilter>[] = [
+    { value: 'all', label: 'Todas' },
+    { value: 'active', label: 'Activas' },
+    { value: 'inactive', label: 'Inactivas' }
+  ];
 
   allBranches: BranchItem[] = [];
   branches: BranchItem[] = [];
@@ -78,8 +101,11 @@ export class BranchMaintenanceComponent implements OnInit {
   locations: LocationItem[] = [];
   selectedBranchId: number | null = null;
   selectedCompanyFilter: number | 'all' = 'all';
+  selectedCompanyFilterDraft: number | 'all' = 'all';
   searchTerm = '';
   statusFilter: BranchStatusFilter = 'all';
+  statusFilterDraft: BranchStatusFilter = 'all';
+  filtersOpen = false;
   currentPage = 1;
   pageSize = 6;
   isLoading = false;
@@ -110,26 +136,6 @@ export class BranchMaintenanceComponent implements OnInit {
 
   get modalTitle(): string {
     return this.modalMode === 'create' ? 'Nueva sucursal' : 'Editar sucursal';
-  }
-
-  get totalBranches(): number {
-    return this.branches.length;
-  }
-
-  get activeBranches(): number {
-    return this.branches.filter((branch) => !branch.canceled).length;
-  }
-
-  get inactiveBranches(): number {
-    return this.branches.filter((branch) => branch.canceled).length;
-  }
-
-  get selectedBranch(): BranchItem | null {
-    if (!this.selectedBranchId) {
-      return null;
-    }
-
-    return this.branches.find((branch) => branch.id === this.selectedBranchId) ?? null;
   }
 
   get filteredBranches(): BranchItem[] {
@@ -231,6 +237,29 @@ export class BranchMaintenanceComponent implements OnInit {
   setStatusFilter(filter: BranchStatusFilter): void {
     this.statusFilter = filter;
     this.onFiltersChange();
+  }
+
+  toggleFilters(event?: MouseEvent): void {
+    event?.stopPropagation();
+    this.statusFilterDraft = this.statusFilter;
+    this.selectedCompanyFilterDraft = this.selectedCompanyFilter;
+    this.filtersOpen = !this.filtersOpen;
+  }
+
+  applyFilters(): void {
+    this.statusFilter = this.statusFilterDraft;
+    this.selectedCompanyFilter = this.selectedCompanyFilterDraft;
+    this.onCompanyFilterChange();
+    this.filtersOpen = false;
+  }
+
+  clearFilters(): void {
+    this.statusFilterDraft = 'all';
+    this.selectedCompanyFilterDraft = 'all';
+    this.statusFilter = 'all';
+    this.selectedCompanyFilter = 'all';
+    this.onCompanyFilterChange();
+    this.filtersOpen = false;
   }
 
   onCompanyFilterChange(): void {
@@ -475,6 +504,46 @@ export class BranchMaintenanceComponent implements OnInit {
 
   trackByLocationId(_: number, location: LocationItem): number {
     return location.id;
+  }
+
+  trackByColumnKey(_: number, column: GridColumnConfig<BranchGridColumn>): BranchGridColumn {
+    return column.key;
+  }
+
+  getColumnClass(column: GridColumnConfig<BranchGridColumn>): string {
+    const classes = [`app-grid-col-${column.key}`];
+
+    if (column.align === 'right') {
+      classes.push('app-grid-col-right');
+    }
+
+    if (column.align === 'center') {
+      classes.push('app-grid-col-center');
+    }
+
+    return classes.join(' ');
+  }
+
+  formatGridValue(branch: BranchItem, key: BranchGridColumn): string {
+    if (key === 'actions' || key === 'canceled') {
+      return '';
+    }
+
+    if (key === 'company_name') {
+      return this.getCompanyName(branch.company_id);
+    }
+
+    if (key === 'location_name') {
+      return this.getLocationLabel(branch.location_id);
+    }
+
+    const value = branch[key];
+    return value === null || value === undefined || value === '' ? 'Sin registro' : String(value);
+  }
+
+  @HostListener('document:click')
+  closeFiltersFromOutside(): void {
+    this.filtersOpen = false;
   }
 
   private createEmptyForm(): BranchForm {
