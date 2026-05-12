@@ -28,8 +28,10 @@ import {
 } from '../../models/location-maintenance.model';
 import { LocationMaintenanceService } from '../../services/location-maintenance.service';
 import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog.component';
+import { DataGridPaginationComponent } from '../../../../shared/components/data-grid-pagination/data-grid-pagination.component';
 import { EmptyStateComponent } from '../../../../shared/components/empty-state/empty-state.component';
 import { PageHeaderComponent } from '../../../../shared/components/page-header/page-header.component';
+import { StatCardComponent } from '../../../../shared/components/stat-card/stat-card.component';
 import { StatusBadgeComponent } from '../../../../shared/components/status-badge/status-badge.component';
 
 type LocationModalMode = 'create' | 'edit';
@@ -61,8 +63,10 @@ interface MapPoint {
     FormsModule,
     LucideAngularModule,
     ConfirmDialogComponent,
+    DataGridPaginationComponent,
     EmptyStateComponent,
     PageHeaderComponent,
+    StatCardComponent,
     StatusBadgeComponent
   ],
   templateUrl: './location-maintenance.component.html',
@@ -242,6 +246,10 @@ export class LocationMaintenanceComponent implements OnInit, AfterViewInit, OnDe
 
   nextPage(): void {
     this.currentPage = Math.min(this.totalPages, this.currentPage + 1);
+  }
+
+  setPage(page: number): void {
+    this.currentPage = Math.min(Math.max(1, page), this.totalPages);
   }
 
   selectLocation(location: LocationItem): void {

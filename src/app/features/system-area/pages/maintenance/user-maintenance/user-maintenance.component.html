@@ -20,58 +20,6 @@
     {{ notification.message }}
   </div>
 
-  <section class="summary-grid user-summary">
-    <app-stat-card label="Total usuarios" [value]="totalUsers()"></app-stat-card>
-    <app-stat-card label="Usuarios activos" [value]="activeUsersCount()" tone="active"></app-stat-card>
-    <app-stat-card label="Usuarios inactivos" [value]="inactiveUsersCount()" tone="inactive"></app-stat-card>
-  </section>
-
-  <section class="toolbar app-card">
-    <label class="search-box">
-      <lucide-angular [img]="searchIcon" [size]="18" [strokeWidth]="2.3"></lucide-angular>
-      <input
-        #userSearch
-        type="search"
-        [value]="searchTerm()"
-        (input)="updateSearchTerm(userSearch.value)"
-        placeholder="Buscar por usuario, nombre, email o identificacion..."
-        autocomplete="off"
-      />
-    </label>
-
-    <div class="filter-pills" aria-label="Filtro por estado">
-      <button
-        type="button"
-        class="filter-pill"
-        [class.active]="statusFilter() === 'all'"
-        (click)="setStatusFilter('all')"
-      >
-        Todos
-      </button>
-      <button
-        type="button"
-        class="filter-pill"
-        [class.active]="statusFilter() === 'active'"
-        (click)="setStatusFilter('active')"
-      >
-        Activos
-      </button>
-      <button
-        type="button"
-        class="filter-pill"
-        [class.active]="statusFilter() === 'inactive'"
-        (click)="setStatusFilter('inactive')"
-      >
-        Inactivos
-      </button>
-    </div>
-
-    <button type="button" class="btn-outline refresh-btn" (click)="loadUsers()" [disabled]="isLoading()">
-      <lucide-angular [img]="refreshIcon" [size]="17" [strokeWidth]="2.3"></lucide-angular>
-      Actualizar
-    </button>
-  </section>
-
   <section class="content-grid">
     <article class="user-panel app-card">
       <header class="panel-header">
@@ -81,6 +29,58 @@
         </div>
         <span class="counter">{{ filteredUsers().length }} registros</span>
       </header>
+
+      <section class="summary-grid user-summary">
+        <app-stat-card label="Total usuarios" [value]="totalUsers()"></app-stat-card>
+        <app-stat-card label="Usuarios activos" [value]="activeUsersCount()" tone="active"></app-stat-card>
+        <app-stat-card label="Usuarios inactivos" [value]="inactiveUsersCount()" tone="inactive"></app-stat-card>
+      </section>
+
+      <section class="toolbar">
+        <label class="search-box">
+          <lucide-angular [img]="searchIcon" [size]="18" [strokeWidth]="2.3"></lucide-angular>
+          <input
+            #userSearch
+            type="search"
+            [value]="searchTerm()"
+            (input)="updateSearchTerm(userSearch.value)"
+            placeholder="Buscar por usuario, nombre, email o identificacion..."
+            autocomplete="off"
+          />
+        </label>
+
+        <div class="filter-pills" aria-label="Filtro por estado">
+          <button
+            type="button"
+            class="filter-pill"
+            [class.active]="statusFilter() === 'all'"
+            (click)="setStatusFilter('all')"
+          >
+            Todos
+          </button>
+          <button
+            type="button"
+            class="filter-pill"
+            [class.active]="statusFilter() === 'active'"
+            (click)="setStatusFilter('active')"
+          >
+            Activos
+          </button>
+          <button
+            type="button"
+            class="filter-pill"
+            [class.active]="statusFilter() === 'inactive'"
+            (click)="setStatusFilter('inactive')"
+          >
+            Inactivos
+          </button>
+        </div>
+
+        <button type="button" class="btn-outline refresh-btn" (click)="loadUsers()" [disabled]="isLoading()">
+          <lucide-angular [img]="refreshIcon" [size]="17" [strokeWidth]="2.3"></lucide-angular>
+          Actualizar
+        </button>
+      </section>
 
       <div class="table-shell">
         <table class="user-table app-table">
@@ -187,35 +187,14 @@
         </table>
       </div>
 
-      <footer class="pagination-bar">
-        <span>Mostrando {{ showingCount() }} de {{ filteredUsers().length }} usuarios</span>
-
-        <div class="pagination-actions">
-          <button
-            type="button"
-            class="btn-icon"
-            title="Pagina anterior"
-            aria-label="Pagina anterior"
-            [disabled]="currentPage() === 1"
-            (click)="previousPage()"
-          >
-            <lucide-angular [img]="chevronLeftIcon" [size]="16" [strokeWidth]="2.5"></lucide-angular>
-          </button>
-
-          <strong>{{ currentPage() }} / {{ totalPages() }}</strong>
-
-          <button
-            type="button"
-            class="btn-icon"
-            title="Pagina siguiente"
-            aria-label="Pagina siguiente"
-            [disabled]="currentPage() === totalPages()"
-            (click)="nextPage()"
-          >
-            <lucide-angular [img]="chevronRightIcon" [size]="16" [strokeWidth]="2.5"></lucide-angular>
-          </button>
-        </div>
-      </footer>
+      <app-data-grid-pagination
+        [showing]="showingCount()"
+        [totalItems]="filteredUsers().length"
+        itemLabel="usuarios"
+        [currentPage]="currentPage()"
+        [totalPages]="totalPages()"
+        (pageChange)="setPage($event)"
+      ></app-data-grid-pagination>
     </article>
 
     <aside class="detail-panel app-card">

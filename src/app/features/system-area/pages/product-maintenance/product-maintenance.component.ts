@@ -14,6 +14,7 @@ import {
   X
 } from 'lucide-angular';
 import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog.component';
+import { DataGridPaginationComponent } from '../../../../shared/components/data-grid-pagination/data-grid-pagination.component';
 import { EmptyStateComponent } from '../../../../shared/components/empty-state/empty-state.component';
 import { PageHeaderComponent } from '../../../../shared/components/page-header/page-header.component';
 import { StatCardComponent } from '../../../../shared/components/stat-card/stat-card.component';
@@ -55,6 +56,7 @@ interface ProductForm {
     FormsModule,
     LucideAngularModule,
     ConfirmDialogComponent,
+    DataGridPaginationComponent,
     EmptyStateComponent,
     PageHeaderComponent,
     StatCardComponent,
@@ -215,6 +217,10 @@ export class ProductMaintenanceComponent implements OnInit {
 
   nextPage(): void {
     this.currentPage = Math.min(this.totalPages, this.currentPage + 1);
+  }
+
+  setPage(page: number): void {
+    this.currentPage = Math.min(Math.max(1, page), this.totalPages);
   }
 
   selectProduct(product: ProductItem): void {

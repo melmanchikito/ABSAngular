@@ -21,8 +21,6 @@
 .location-main,
 .location-meta,
 .item-actions,
-.pagination-bar,
-.pagination-actions,
 .detail-hero,
 .detail-actions,
 .modal-header,
@@ -67,12 +65,13 @@ p {
 .actions-bar {
   justify-content: space-between;
   gap: 0.75rem;
-  margin-bottom: 1rem;
   padding: 0.85rem;
-  border: 1.5px solid var(--location-border);
-  border-radius: 18px;
-  background: var(--location-card-bg);
-  box-shadow: var(--location-shadow);
+  border-bottom: 1.5px solid var(--location-border);
+}
+
+.location-summary {
+  padding: 1rem;
+  border-bottom: 1.5px solid var(--location-border);
 }
 
 .search-box {
@@ -291,26 +290,6 @@ p {
 .item-actions {
   gap: 0.45rem;
   padding-top: 0.25rem;
-}
-
-.pagination-bar {
-  justify-content: space-between;
-  gap: 1rem;
-  padding: 0.9rem 1rem;
-  border-top: 1.5px solid var(--location-border);
-  color: var(--abs-text-muted);
-  font-size: 0.9rem;
-  font-weight: 800;
-}
-
-.pagination-actions {
-  gap: 0.65rem;
-}
-
-.pagination-actions strong {
-  min-width: 58px;
-  color: var(--abs-text);
-  text-align: center;
 }
 
 .detail-panel {

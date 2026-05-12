@@ -5,15 +5,14 @@
 }
 
 .user-summary {
-  margin-bottom: 1rem;
+  padding: 1rem;
+  border-bottom: 1.5px solid var(--user-border);
 }
 
 .toolbar,
 .filter-pills,
 .panel-header,
 .user-name,
-.pagination-bar,
-.pagination-actions,
 .detail-hero,
 .detail-actions,
 .modal-header,
@@ -48,8 +47,8 @@
 .toolbar {
   justify-content: space-between;
   gap: 0.75rem;
-  margin-bottom: 1rem;
   padding: 0.85rem;
+  border-bottom: 1.5px solid var(--user-border);
 }
 
 .search-box {
@@ -256,26 +255,6 @@ p {
   }
 }
 
-.pagination-bar {
-  justify-content: space-between;
-  gap: 1rem;
-  padding: 0.9rem 1rem;
-  border-top: 1.5px solid var(--user-border);
-  color: var(--abs-text-muted);
-  font-size: 0.9rem;
-  font-weight: 800;
-}
-
-.pagination-actions {
-  gap: 0.65rem;
-}
-
-.pagination-actions strong {
-  min-width: 58px;
-  color: var(--abs-text);
-  text-align: center;
-}
-
 .detail-panel {
   display: grid;
   gap: 1rem;
@@ -422,11 +401,6 @@ p {
 @media (max-width: 820px) {
   .user-page {
     padding: 1rem;
-  }
-
-  .pagination-bar {
-    align-items: stretch;
-    flex-direction: column;
   }
 
   .btn-primary,

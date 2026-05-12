@@ -14,70 +14,6 @@
   <div class="alert-success" *ngIf="successMessage">{{ successMessage }}</div>
   <div class="alert-error" *ngIf="errorMessage">{{ errorMessage }}</div>
 
-  <section class="summary-grid branch-summary">
-    <app-stat-card label="Total sucursales" [value]="totalBranches"></app-stat-card>
-    <app-stat-card label="Sucursales activas" [value]="activeBranches" tone="active"></app-stat-card>
-    <app-stat-card label="Sucursales inactivas" [value]="inactiveBranches" tone="inactive"></app-stat-card>
-  </section>
-
-  <section class="toolbar app-card">
-    <label class="search-box">
-      <lucide-angular [img]="searchIcon" [size]="18" [strokeWidth]="2.3"></lucide-angular>
-      <input
-        type="search"
-        name="branchSearch"
-        [(ngModel)]="searchTerm"
-        (ngModelChange)="onFiltersChange()"
-        placeholder="Buscar por codigo, nombre, empresa o ubicacion..."
-        autocomplete="off"
-      />
-    </label>
-
-    <select
-      class="filter-select form-select"
-      name="companyFilter"
-      [(ngModel)]="selectedCompanyFilter"
-      (ngModelChange)="onCompanyFilterChange()"
-    >
-      <option value="all">Todas las empresas</option>
-      <option *ngFor="let company of companies; trackBy: trackByCompanyId" [ngValue]="company.id">
-        {{ company.name }}
-      </option>
-    </select>
-
-    <div class="filter-pills" aria-label="Filtro por estado">
-      <button
-        type="button"
-        class="filter-pill"
-        [class.active]="statusFilter === 'all'"
-        (click)="setStatusFilter('all')"
-      >
-        Todas
-      </button>
-      <button
-        type="button"
-        class="filter-pill"
-        [class.active]="statusFilter === 'active'"
-        (click)="setStatusFilter('active')"
-      >
-        Activas
-      </button>
-      <button
-        type="button"
-        class="filter-pill"
-        [class.active]="statusFilter === 'inactive'"
-        (click)="setStatusFilter('inactive')"
-      >
-        Inactivas
-      </button>
-    </div>
-
-    <button type="button" class="ghost-btn btn-outline refresh-btn" (click)="loadBranches()" [disabled]="isLoading">
-      <lucide-angular [img]="refreshIcon" [size]="17" [strokeWidth]="2.3"></lucide-angular>
-      Actualizar
-    </button>
-  </section>
-
   <section class="content-grid">
     <article class="branches-panel app-card">
       <header class="panel-header">
@@ -87,6 +23,42 @@
         </div>
         <span class="counter">{{ filteredBranches.length }} registros</span>
       </header>
+
+      <section class="summary-grid branch-summary">
+        <app-stat-card label="Total sucursales" [value]="totalBranches"></app-stat-card>
+        <app-stat-card label="Sucursales activas" [value]="activeBranches" tone="active"></app-stat-card>
+        <app-stat-card label="Sucursales inactivas" [value]="inactiveBranches" tone="inactive"></app-stat-card>
+      </section>
+
+      <section class="toolbar">
+        <label class="search-box">
+          <lucide-angular [img]="searchIcon" [size]="18" [strokeWidth]="2.3"></lucide-angular>
+          <input
+            type="search"
+            name="branchSearch"
+            [(ngModel)]="searchTerm"
+            (ngModelChange)="onFiltersChange()"
+            placeholder="Buscar por codigo, nombre, empresa o ubicacion..."
+            autocomplete="off"
+          />
+        </label>
+
+        <select class="filter-select form-select" name="companyFilter" [(ngModel)]="selectedCompanyFilter" (ngModelChange)="onCompanyFilterChange()">
+          <option value="all">Todas las empresas</option>
+          <option *ngFor="let company of companies; trackBy: trackByCompanyId" [ngValue]="company.id">{{ company.name }}</option>
+        </select>
+
+        <div class="filter-pills" aria-label="Filtro por estado">
+          <button type="button" class="filter-pill" [class.active]="statusFilter === 'all'" (click)="setStatusFilter('all')">Todas</button>
+          <button type="button" class="filter-pill" [class.active]="statusFilter === 'active'" (click)="setStatusFilter('active')">Activas</button>
+          <button type="button" class="filter-pill" [class.active]="statusFilter === 'inactive'" (click)="setStatusFilter('inactive')">Inactivas</button>
+        </div>
+
+        <button type="button" class="ghost-btn btn-outline refresh-btn" (click)="loadBranches()" [disabled]="isLoading">
+          <lucide-angular [img]="refreshIcon" [size]="17" [strokeWidth]="2.3"></lucide-angular>
+          Actualizar
+        </button>
+      </section>
 
       <div class="table-shell table-wrapper">
         <table class="branch-table app-table">
@@ -177,35 +149,14 @@
         </table>
       </div>
 
-      <footer class="pagination-bar">
-        <span>Mostrando {{ showingCount }} de {{ filteredBranches.length }} sucursales</span>
-
-        <div class="pagination-actions">
-          <button
-            type="button"
-            class="page-btn btn-icon"
-            title="Pagina anterior"
-            aria-label="Pagina anterior"
-            [disabled]="currentPage === 1"
-            (click)="previousPage()"
-          >
-            <lucide-angular [img]="chevronLeftIcon" [size]="16" [strokeWidth]="2.5"></lucide-angular>
-          </button>
-
-          <strong>{{ currentPage }} / {{ totalPages }}</strong>
-
-          <button
-            type="button"
-            class="page-btn btn-icon"
-            title="Pagina siguiente"
-            aria-label="Pagina siguiente"
-            [disabled]="currentPage === totalPages"
-            (click)="nextPage()"
-          >
-            <lucide-angular [img]="chevronRightIcon" [size]="16" [strokeWidth]="2.5"></lucide-angular>
-          </button>
-        </div>
-      </footer>
+      <app-data-grid-pagination
+        [showing]="showingCount"
+        [totalItems]="filteredBranches.length"
+        itemLabel="sucursales"
+        [currentPage]="currentPage"
+        [totalPages]="totalPages"
+        (pageChange)="setPage($event)"
+      ></app-data-grid-pagination>
     </article>
 
     <aside class="detail-panel app-card">

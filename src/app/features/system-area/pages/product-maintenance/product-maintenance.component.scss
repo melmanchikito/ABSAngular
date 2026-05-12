@@ -5,7 +5,8 @@
 }
 
 .product-summary {
-  margin-bottom: 1rem;
+  padding: 1rem;
+  border-bottom: 1.5px solid var(--product-border);
 }
 
 .toolbar,
@@ -13,8 +14,6 @@
 .panel-header,
 .product-name,
 .actions-cell,
-.pagination-bar,
-.pagination-actions,
 .detail-hero,
 .detail-actions,
 .modal-header,
@@ -26,8 +25,8 @@
 .toolbar {
   justify-content: space-between;
   gap: 0.75rem;
-  margin-bottom: 1rem;
   padding: 0.85rem;
+  border-bottom: 1.5px solid var(--product-border);
 }
 
 .search-box {
@@ -222,26 +221,6 @@ p {
   border-color: color-mix(in srgb, var(--abs-error) 55%, var(--product-border));
   background: color-mix(in srgb, var(--abs-error) 12%, var(--abs-surface));
   color: var(--abs-error);
-}
-
-.pagination-bar {
-  justify-content: space-between;
-  gap: 1rem;
-  padding: 0.9rem 1rem;
-  border-top: 1.5px solid var(--product-border);
-  color: var(--abs-text-muted);
-  font-size: 0.9rem;
-  font-weight: 800;
-}
-
-.pagination-actions {
-  gap: 0.65rem;
-}
-
-.pagination-actions strong {
-  min-width: 58px;
-  color: var(--abs-text);
-  text-align: center;
 }
 
 .detail-panel {

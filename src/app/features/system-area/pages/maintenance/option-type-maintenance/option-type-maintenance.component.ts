@@ -13,8 +13,6 @@ import {
   Validators
 } from '@angular/forms';
 import {
-  ChevronLeft,
-  ChevronRight,
   CirclePlus,
   Edit3,
   LucideAngularModule,
@@ -26,6 +24,7 @@ import {
 } from 'lucide-angular';
 import { finalize } from 'rxjs';
 import { ConfirmDialogComponent } from '../../../../../shared/components/confirm-dialog/confirm-dialog.component';
+import { DataGridPaginationComponent } from '../../../../../shared/components/data-grid-pagination/data-grid-pagination.component';
 import { EmptyStateComponent } from '../../../../../shared/components/empty-state/empty-state.component';
 import { PageHeaderComponent } from '../../../../../shared/components/page-header/page-header.component';
 import { StatCardComponent } from '../../../../../shared/components/stat-card/stat-card.component';
@@ -61,6 +60,7 @@ interface OptionTypeForm {
     ReactiveFormsModule,
     LucideAngularModule,
     ConfirmDialogComponent,
+    DataGridPaginationComponent,
     EmptyStateComponent,
     PageHeaderComponent,
     StatCardComponent,
@@ -73,8 +73,6 @@ interface OptionTypeForm {
 export class OptionTypeMaintenanceComponent {
   readonly optionTypeIcon = Tags;
   readonly addIcon = CirclePlus;
-  readonly chevronLeftIcon = ChevronLeft;
-  readonly chevronRightIcon = ChevronRight;
   readonly editIcon = Edit3;
   readonly refreshIcon = RefreshCcw;
   readonly searchIcon = Search;
@@ -215,6 +213,10 @@ export class OptionTypeMaintenanceComponent {
 
   nextPage(): void {
     this.currentPage.set(Math.min(this.totalPages(), this.currentPage() + 1));
+  }
+
+  setPage(page: number): void {
+    this.currentPage.set(Math.min(Math.max(1, page), this.totalPages()));
   }
 
   selectOptionType(optionType: OptionTypeItem): void {

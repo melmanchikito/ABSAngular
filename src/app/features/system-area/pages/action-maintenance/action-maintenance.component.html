@@ -14,58 +14,6 @@
   <div class="alert-success" *ngIf="successMessage">{{ successMessage }}</div>
   <div class="alert-error" *ngIf="errorMessage">{{ errorMessage }}</div>
 
-  <section class="summary-grid action-summary">
-    <app-stat-card label="Total acciones" [value]="totalActions"></app-stat-card>
-    <app-stat-card label="Acciones activas" [value]="activeActions" tone="active"></app-stat-card>
-    <app-stat-card label="Acciones inactivas" [value]="inactiveActions" tone="inactive"></app-stat-card>
-  </section>
-
-  <section class="toolbar app-card">
-    <label class="search-box">
-      <lucide-angular [img]="searchIcon" [size]="18" [strokeWidth]="2.3"></lucide-angular>
-      <input
-        type="search"
-        name="actionSearch"
-        [(ngModel)]="searchTerm"
-        (ngModelChange)="onFiltersChange()"
-        placeholder="Buscar por codigo o nombre..."
-        autocomplete="off"
-      />
-    </label>
-
-    <div class="filter-pills" aria-label="Filtro por estado">
-      <button
-        type="button"
-        class="filter-pill"
-        [class.active]="statusFilter === 'all'"
-        (click)="setStatusFilter('all')"
-      >
-        Todas
-      </button>
-      <button
-        type="button"
-        class="filter-pill"
-        [class.active]="statusFilter === 'active'"
-        (click)="setStatusFilter('active')"
-      >
-        Activas
-      </button>
-      <button
-        type="button"
-        class="filter-pill"
-        [class.active]="statusFilter === 'inactive'"
-        (click)="setStatusFilter('inactive')"
-      >
-        Inactivas
-      </button>
-    </div>
-
-    <button type="button" class="ghost-btn btn-outline refresh-btn" (click)="loadActions()" [disabled]="isLoading">
-      <lucide-angular [img]="refreshIcon" [size]="17" [strokeWidth]="2.3"></lucide-angular>
-      Actualizar
-    </button>
-  </section>
-
   <section class="content-grid">
     <article class="actions-panel app-card">
       <header class="panel-header">
@@ -75,6 +23,37 @@
         </div>
         <span class="counter">{{ filteredActions.length }} registros</span>
       </header>
+
+      <section class="summary-grid action-summary">
+        <app-stat-card label="Total acciones" [value]="totalActions"></app-stat-card>
+        <app-stat-card label="Acciones activas" [value]="activeActions" tone="active"></app-stat-card>
+        <app-stat-card label="Acciones inactivas" [value]="inactiveActions" tone="inactive"></app-stat-card>
+      </section>
+
+      <section class="toolbar">
+        <label class="search-box">
+          <lucide-angular [img]="searchIcon" [size]="18" [strokeWidth]="2.3"></lucide-angular>
+          <input
+            type="search"
+            name="actionSearch"
+            [(ngModel)]="searchTerm"
+            (ngModelChange)="onFiltersChange()"
+            placeholder="Buscar por codigo o nombre..."
+            autocomplete="off"
+          />
+        </label>
+
+        <div class="filter-pills" aria-label="Filtro por estado">
+          <button type="button" class="filter-pill" [class.active]="statusFilter === 'all'" (click)="setStatusFilter('all')">Todas</button>
+          <button type="button" class="filter-pill" [class.active]="statusFilter === 'active'" (click)="setStatusFilter('active')">Activas</button>
+          <button type="button" class="filter-pill" [class.active]="statusFilter === 'inactive'" (click)="setStatusFilter('inactive')">Inactivas</button>
+        </div>
+
+        <button type="button" class="ghost-btn btn-outline refresh-btn" (click)="loadActions()" [disabled]="isLoading">
+          <lucide-angular [img]="refreshIcon" [size]="17" [strokeWidth]="2.3"></lucide-angular>
+          Actualizar
+        </button>
+      </section>
 
       <div class="table-shell table-wrapper">
         <table class="action-table app-table">
@@ -161,35 +140,14 @@
         </table>
       </div>
 
-      <footer class="pagination-bar">
-        <span>Mostrando {{ showingCount }} de {{ filteredActions.length }} acciones</span>
-
-        <div class="pagination-actions">
-          <button
-            type="button"
-            class="page-btn btn-icon"
-            title="Pagina anterior"
-            aria-label="Pagina anterior"
-            [disabled]="currentPage === 1"
-            (click)="previousPage()"
-          >
-            <lucide-angular [img]="chevronLeftIcon" [size]="16" [strokeWidth]="2.5"></lucide-angular>
-          </button>
-
-          <strong>{{ currentPage }} / {{ totalPages }}</strong>
-
-          <button
-            type="button"
-            class="page-btn btn-icon"
-            title="Pagina siguiente"
-            aria-label="Pagina siguiente"
-            [disabled]="currentPage === totalPages"
-            (click)="nextPage()"
-          >
-            <lucide-angular [img]="chevronRightIcon" [size]="16" [strokeWidth]="2.5"></lucide-angular>
-          </button>
-        </div>
-      </footer>
+      <app-data-grid-pagination
+        [showing]="showingCount"
+        [totalItems]="filteredActions.length"
+        itemLabel="acciones"
+        [currentPage]="currentPage"
+        [totalPages]="totalPages"
+        (pageChange)="setPage($event)"
+      ></app-data-grid-pagination>
     </article>
 
     <aside class="detail-panel app-card">

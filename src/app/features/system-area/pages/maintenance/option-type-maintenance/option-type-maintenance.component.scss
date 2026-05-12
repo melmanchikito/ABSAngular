@@ -5,15 +5,14 @@
 }
 
 .option-type-summary {
-  margin-bottom: 1rem;
+  padding: 1rem;
+  border-bottom: 1.5px solid var(--type-border);
 }
 
 .toolbar,
 .filter-pills,
 .panel-header,
 .option-type-name,
-.pagination-bar,
-.pagination-actions,
 .detail-hero,
 .detail-actions,
 .modal-header,
@@ -48,8 +47,8 @@
 .toolbar {
   justify-content: space-between;
   gap: 0.75rem;
-  margin-bottom: 1rem;
   padding: 0.85rem;
+  border-bottom: 1.5px solid var(--type-border);
 }
 
 .search-box {
@@ -254,26 +253,6 @@ p {
   100% {
     background-position: -100% 0;
   }
-}
-
-.pagination-bar {
-  justify-content: space-between;
-  gap: 1rem;
-  padding: 0.9rem 1rem;
-  border-top: 1.5px solid var(--type-border);
-  color: var(--abs-text-muted);
-  font-size: 0.9rem;
-  font-weight: 800;
-}
-
-.pagination-actions {
-  gap: 0.65rem;
-}
-
-.pagination-actions strong {
-  min-width: 58px;
-  color: var(--abs-text);
-  text-align: center;
 }
 
 .detail-panel {

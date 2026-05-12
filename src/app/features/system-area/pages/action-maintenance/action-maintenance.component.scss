@@ -5,15 +5,14 @@
 }
 
 .action-summary {
-  margin-bottom: 1rem;
+  padding: 1rem;
+  border-bottom: 1.5px solid var(--action-border);
 }
 
 .toolbar,
 .filter-pills,
 .panel-header,
 .action-name,
-.pagination-bar,
-.pagination-actions,
 .detail-hero,
 .detail-actions,
 .modal-header,
@@ -25,8 +24,8 @@
 .toolbar {
   justify-content: space-between;
   gap: 0.75rem;
-  margin-bottom: 1rem;
   padding: 0.85rem;
+  border-bottom: 1.5px solid var(--action-border);
 }
 
 .search-box {
@@ -208,26 +207,6 @@ p {
   border-color: color-mix(in srgb, var(--abs-error) 55%, var(--action-border));
   background: color-mix(in srgb, var(--abs-error) 12%, var(--abs-surface));
   color: var(--abs-error);
-}
-
-.pagination-bar {
-  justify-content: space-between;
-  gap: 1rem;
-  padding: 0.9rem 1rem;
-  border-top: 1.5px solid var(--action-border);
-  color: var(--abs-text-muted);
-  font-size: 0.9rem;
-  font-weight: 800;
-}
-
-.pagination-actions {
-  gap: 0.65rem;
-}
-
-.pagination-actions strong {
-  min-width: 58px;
-  color: var(--abs-text);
-  text-align: center;
 }
 
 .detail-panel {

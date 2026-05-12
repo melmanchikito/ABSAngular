@@ -24,6 +24,7 @@ import { PageHeaderComponent } from '../../../../shared/components/page-header/p
 import { StatCardComponent } from '../../../../shared/components/stat-card/stat-card.component';
 import { StatusBadgeComponent } from '../../../../shared/components/status-badge/status-badge.component';
 import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog.component';
+import { DataGridPaginationComponent } from '../../../../shared/components/data-grid-pagination/data-grid-pagination.component';
 
 type CompanyModalMode = 'create' | 'edit';
 type CompanyStatusFilter = 'all' | 'active' | 'inactive';
@@ -54,7 +55,8 @@ interface EditCompanyForm {
     PageHeaderComponent,
     StatCardComponent,
     StatusBadgeComponent,
-    ConfirmDialogComponent
+    ConfirmDialogComponent,
+    DataGridPaginationComponent
   ],
   templateUrl: './company-maintenance.component.html',
   styleUrl: './company-maintenance.component.scss'
@@ -197,6 +199,10 @@ export class CompanyMaintenanceComponent implements OnInit {
 
   nextPage(): void {
     this.currentPage = Math.min(this.totalPages, this.currentPage + 1);
+  }
+
+  setPage(page: number): void {
+    this.currentPage = Math.min(Math.max(1, page), this.totalPages);
   }
 
   getCompanyInitial(company: Company): string {

@@ -14,13 +14,21 @@
   <div class="message success alert-success" *ngIf="successMessage">{{ successMessage }}</div>
   <div class="message error alert-error" *ngIf="errorMessage">{{ errorMessage }}</div>
 
-  <section class="metrics-grid summary-grid">
-    <app-stat-card label="Total" [value]="totalCompanies"></app-stat-card>
-    <app-stat-card label="Activas" [value]="activeCompanies" tone="active"></app-stat-card>
-    <app-stat-card label="Inactivas" [value]="inactiveCompanies" tone="inactive"></app-stat-card>
-  </section>
-
   <section class="table-card app-card">
+    <header class="panel-header">
+      <div>
+        <span class="eyebrow">Listado</span>
+        <h2>Empresas</h2>
+      </div>
+      <span class="counter">{{ filteredCompanies.length }} registros</span>
+    </header>
+
+    <section class="metrics-grid summary-grid">
+      <app-stat-card label="Total" [value]="totalCompanies"></app-stat-card>
+      <app-stat-card label="Activas" [value]="activeCompanies" tone="active"></app-stat-card>
+      <app-stat-card label="Inactivas" [value]="inactiveCompanies" tone="inactive"></app-stat-card>
+    </section>
+
     <div class="table-toolbar">
       <label class="search-box">
         <lucide-angular [img]="searchIcon" [size]="18" [strokeWidth]="2.3"></lucide-angular>
@@ -128,35 +136,14 @@
       </table>
     </div>
 
-    <footer class="pagination-bar">
-      <span>Mostrando {{ showingCount }} de {{ filteredCompanies.length }} empresas</span>
-
-      <div class="pagination-actions">
-        <button
-          type="button"
-          class="page-btn btn-icon"
-          title="Pagina anterior"
-          aria-label="Pagina anterior"
-          [disabled]="currentPage === 1"
-          (click)="previousPage()"
-        >
-          <lucide-angular [img]="chevronLeftIcon" [size]="16" [strokeWidth]="2.5"></lucide-angular>
-        </button>
-
-        <strong>{{ currentPage }} / {{ totalPages }}</strong>
-
-        <button
-          type="button"
-          class="page-btn btn-icon"
-          title="Pagina siguiente"
-          aria-label="Pagina siguiente"
-          [disabled]="currentPage === totalPages"
-          (click)="nextPage()"
-        >
-          <lucide-angular [img]="chevronRightIcon" [size]="16" [strokeWidth]="2.5"></lucide-angular>
-        </button>
-      </div>
-    </footer>
+    <app-data-grid-pagination
+      [showing]="showingCount"
+      [totalItems]="filteredCompanies.length"
+      itemLabel="empresas"
+      [currentPage]="currentPage"
+      [totalPages]="totalPages"
+      (pageChange)="setPage($event)"
+    ></app-data-grid-pagination>
   </section>
 
   <div class="modal-backdrop" *ngIf="modalOpen">

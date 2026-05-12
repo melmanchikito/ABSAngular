@@ -20,58 +20,6 @@
     {{ notification.message }}
   </div>
 
-  <section class="summary-grid option-type-summary">
-    <app-stat-card label="Total tipos" [value]="totalOptionTypes()"></app-stat-card>
-    <app-stat-card label="Tipos activos" [value]="activeOptionTypesCount()" tone="active"></app-stat-card>
-    <app-stat-card label="Tipos inactivos" [value]="inactiveOptionTypesCount()" tone="inactive"></app-stat-card>
-  </section>
-
-  <section class="toolbar app-card">
-    <label class="search-box">
-      <lucide-angular [img]="searchIcon" [size]="18" [strokeWidth]="2.3"></lucide-angular>
-      <input
-        #optionTypeSearch
-        type="search"
-        [value]="searchTerm()"
-        (input)="updateSearchTerm(optionTypeSearch.value)"
-        placeholder="Buscar por codigo o nombre..."
-        autocomplete="off"
-      />
-    </label>
-
-    <div class="filter-pills" aria-label="Filtro por estado">
-      <button
-        type="button"
-        class="filter-pill"
-        [class.active]="statusFilter() === 'all'"
-        (click)="setStatusFilter('all')"
-      >
-        Todos
-      </button>
-      <button
-        type="button"
-        class="filter-pill"
-        [class.active]="statusFilter() === 'active'"
-        (click)="setStatusFilter('active')"
-      >
-        Activos
-      </button>
-      <button
-        type="button"
-        class="filter-pill"
-        [class.active]="statusFilter() === 'inactive'"
-        (click)="setStatusFilter('inactive')"
-      >
-        Inactivos
-      </button>
-    </div>
-
-    <button type="button" class="btn-outline refresh-btn" (click)="loadOptionTypes()" [disabled]="isLoading()">
-      <lucide-angular [img]="refreshIcon" [size]="17" [strokeWidth]="2.3"></lucide-angular>
-      Actualizar
-    </button>
-  </section>
-
   <section class="content-grid">
     <article class="option-type-panel app-card">
       <header class="panel-header">
@@ -81,6 +29,58 @@
         </div>
         <span class="counter">{{ filteredOptionTypes().length }} registros</span>
       </header>
+
+      <section class="summary-grid option-type-summary">
+        <app-stat-card label="Total tipos" [value]="totalOptionTypes()"></app-stat-card>
+        <app-stat-card label="Tipos activos" [value]="activeOptionTypesCount()" tone="active"></app-stat-card>
+        <app-stat-card label="Tipos inactivos" [value]="inactiveOptionTypesCount()" tone="inactive"></app-stat-card>
+      </section>
+
+      <section class="toolbar">
+        <label class="search-box">
+          <lucide-angular [img]="searchIcon" [size]="18" [strokeWidth]="2.3"></lucide-angular>
+          <input
+            #optionTypeSearch
+            type="search"
+            [value]="searchTerm()"
+            (input)="updateSearchTerm(optionTypeSearch.value)"
+            placeholder="Buscar por codigo o nombre..."
+            autocomplete="off"
+          />
+        </label>
+
+        <div class="filter-pills" aria-label="Filtro por estado">
+          <button
+            type="button"
+            class="filter-pill"
+            [class.active]="statusFilter() === 'all'"
+            (click)="setStatusFilter('all')"
+          >
+            Todos
+          </button>
+          <button
+            type="button"
+            class="filter-pill"
+            [class.active]="statusFilter() === 'active'"
+            (click)="setStatusFilter('active')"
+          >
+            Activos
+          </button>
+          <button
+            type="button"
+            class="filter-pill"
+            [class.active]="statusFilter() === 'inactive'"
+            (click)="setStatusFilter('inactive')"
+          >
+            Inactivos
+          </button>
+        </div>
+
+        <button type="button" class="btn-outline refresh-btn" (click)="loadOptionTypes()" [disabled]="isLoading()">
+          <lucide-angular [img]="refreshIcon" [size]="17" [strokeWidth]="2.3"></lucide-angular>
+          Actualizar
+        </button>
+      </section>
 
       <div class="table-shell">
         <table class="option-type-table app-table">
@@ -175,35 +175,14 @@
         </table>
       </div>
 
-      <footer class="pagination-bar">
-        <span>Mostrando {{ showingCount() }} de {{ filteredOptionTypes().length }} tipos</span>
-
-        <div class="pagination-actions">
-          <button
-            type="button"
-            class="btn-icon"
-            title="Pagina anterior"
-            aria-label="Pagina anterior"
-            [disabled]="currentPage() === 1"
-            (click)="previousPage()"
-          >
-            <lucide-angular [img]="chevronLeftIcon" [size]="16" [strokeWidth]="2.5"></lucide-angular>
-          </button>
-
-          <strong>{{ currentPage() }} / {{ totalPages() }}</strong>
-
-          <button
-            type="button"
-            class="btn-icon"
-            title="Pagina siguiente"
-            aria-label="Pagina siguiente"
-            [disabled]="currentPage() === totalPages()"
-            (click)="nextPage()"
-          >
-            <lucide-angular [img]="chevronRightIcon" [size]="16" [strokeWidth]="2.5"></lucide-angular>
-          </button>
-        </div>
-      </footer>
+      <app-data-grid-pagination
+        [showing]="showingCount()"
+        [totalItems]="filteredOptionTypes().length"
+        itemLabel="tipos"
+        [currentPage]="currentPage()"
+        [totalPages]="totalPages()"
+        (pageChange)="setPage($event)"
+      ></app-data-grid-pagination>
     </article>
 
     <aside class="detail-panel app-card">

@@ -11,8 +11,6 @@
 .panel-header,
 .helpdesk-name,
 .actions-cell,
-.pagination-bar,
-.pagination-actions,
 .detail-hero,
 .detail-actions,
 .modal-header,
@@ -21,15 +19,16 @@
   align-items: center;
 }
 
-.helpdesk-summary,
-.toolbar {
-  margin-bottom: 1rem;
+.helpdesk-summary {
+  padding: 1rem;
+  border-bottom: 1.5px solid var(--helpdesk-border);
 }
 
 .toolbar {
   justify-content: space-between;
   gap: 0.85rem;
   padding: 1rem;
+  border-bottom: 1.5px solid var(--helpdesk-border);
 }
 
 .search-box {
@@ -94,7 +93,6 @@
 
 .helpdesk-panel,
 .detail-panel,
-.toolbar,
 .modal-panel {
   border-color: var(--helpdesk-border);
   background: var(--helpdesk-card-bg);
@@ -222,26 +220,6 @@ p {
   border-color: color-mix(in srgb, var(--abs-primary) 46%, var(--helpdesk-border));
   background: var(--helpdesk-hover-bg);
   color: var(--abs-primary);
-}
-
-.pagination-bar {
-  justify-content: space-between;
-  gap: 1rem;
-  padding: 0.9rem 1rem;
-  border-top: 1.5px solid var(--helpdesk-border);
-  color: var(--abs-text-muted);
-  font-size: 0.9rem;
-  font-weight: 800;
-}
-
-.pagination-actions {
-  gap: 0.65rem;
-}
-
-.pagination-actions strong {
-  min-width: 58px;
-  color: var(--abs-text);
-  text-align: center;
 }
 
 .detail-panel {

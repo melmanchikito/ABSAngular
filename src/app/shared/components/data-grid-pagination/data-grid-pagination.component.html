@@ -1,0 +1,75 @@
+<footer class="data-grid-pagination">
+  <span class="pagination-count">
+    Mostrando {{ showing }} de {{ totalItems }} {{ itemLabel }}
+  </span>
+
+  <div class="pagination-actions" aria-label="Paginacion del listado">
+    <button
+      type="button"
+      class="pagination-btn"
+      title="Ir al inicio"
+      aria-label="Ir al inicio"
+      [disabled]="isFirstPage"
+      (click)="goToFirst()"
+    >
+      <lucide-angular [img]="firstIcon" [size]="16" [strokeWidth]="2.5"></lucide-angular>
+    </button>
+
+    <button
+      type="button"
+      class="pagination-btn page-jump"
+      title="Retroceder 5 paginas"
+      aria-label="Retroceder 5 paginas"
+      [disabled]="isFirstPage"
+      (click)="goBackFive()"
+    >
+      -5
+    </button>
+
+    <button
+      type="button"
+      class="pagination-btn"
+      title="Pagina anterior"
+      aria-label="Pagina anterior"
+      [disabled]="isFirstPage"
+      (click)="goToPrevious()"
+    >
+      <lucide-angular [img]="previousIcon" [size]="16" [strokeWidth]="2.5"></lucide-angular>
+    </button>
+
+    <strong class="page-indicator">{{ safeCurrentPage }} / {{ safeTotalPages }}</strong>
+
+    <button
+      type="button"
+      class="pagination-btn"
+      title="Pagina siguiente"
+      aria-label="Pagina siguiente"
+      [disabled]="isLastPage"
+      (click)="goToNext()"
+    >
+      <lucide-angular [img]="nextIcon" [size]="16" [strokeWidth]="2.5"></lucide-angular>
+    </button>
+
+    <button
+      type="button"
+      class="pagination-btn page-jump"
+      title="Avanzar 5 paginas"
+      aria-label="Avanzar 5 paginas"
+      [disabled]="isLastPage"
+      (click)="goForwardFive()"
+    >
+      +5
+    </button>
+
+    <button
+      type="button"
+      class="pagination-btn"
+      title="Ir al final"
+      aria-label="Ir al final"
+      [disabled]="isLastPage"
+      (click)="goToLast()"
+    >
+      <lucide-angular [img]="lastIcon" [size]="16" [strokeWidth]="2.5"></lucide-angular>
+    </button>
+  </div>
+</footer>
