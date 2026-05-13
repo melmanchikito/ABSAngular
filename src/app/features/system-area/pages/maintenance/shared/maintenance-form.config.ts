@@ -1,4 +1,5 @@
 import { map } from 'rxjs';
+import { FIELD_LIMITS } from '../../../../../shared/constants/field-limits.constants';
 import { ActionMaintenanceService } from '../../../services/action-maintenance.service';
 import { BranchMaintenanceService } from '../../../services/branch-maintenance.service';
 import { CompanyMaintenanceService } from '../../../services/company-maintenance.service';
@@ -221,12 +222,9 @@ export function createMaintenanceFormConfig(
       listUrl: `${listBase}/user`,
       idParam: 'user_id',
       fields: [
-        { key: 'username', label: 'Usuario', required: true, minLength: 3 },
-        baseFields.name,
-        { key: 'lastname', label: 'Apellido', required: true, minLength: 2 },
+        
+        { key: 'name', label: 'Nombre', required: true, minLength: 2 },
         { key: 'email', label: 'Email', type: 'email', required: true },
-        { key: 'password', label: 'Contrasena', type: 'password', required: false, minLength: 8 },
-        { key: 'confirm_password', label: 'Confirmar contrasena', type: 'password', required: false },
         { key: 'role_id', label: 'Rol ID', type: 'number', required: true, numeric: true },
         {
           key: 'state',
@@ -235,13 +233,16 @@ export function createMaintenanceFormConfig(
           required: true,
           options: [
             { value: 'active', label: 'Activo' },
-            { value: 'inactive', label: 'Inactivo' },
-            { value: 'blocked', label: 'Bloqueado' },
-            { value: 'pending', label: 'Pendiente' }
+            { value: 'inactive', label: 'Inactivo' }
           ]
         },
         { key: 'phone', label: 'Telefono', required: true, minLength: 7 },
-        { key: 'identification', label: 'Identificacion', required: true, minLength: 6 }
+        { key: 'identification', label: 'Identificacion', required: true, minLength: 6 },
+        {
+            key: 'developer',
+            label: 'desarrollador',
+            type: 'checkbox'
+          }
       ],
       load: (id) => services.userService.getUserById(id),
       create: (payload) => services.userService.insertUser(payload as never),
@@ -326,5 +327,20 @@ export function createMaintenanceFormConfig(
     }
   };
 
-  return configs[entity] ?? configs.companies;
+  const config = configs[entity] ?? configs.companies;
+
+  return {
+    ...config,
+    fields: config.fields.map(applyDefaultMaxLength)
+  };
+}
+
+function applyDefaultMaxLength(field: FormFieldConfig): FormFieldConfig {
+  if (field.maxLength || field.numeric || field.type === 'number' || field.type === 'select') {
+    return field;
+  }
+
+  const maxLength = FIELD_LIMITS[field.key];
+
+  return maxLength ? { ...field, maxLength } : field;
 }

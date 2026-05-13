@@ -28,12 +28,19 @@
     <form id="maintenanceEditForm" class="maintenance-form" (ngSubmit)="save()" *ngIf="!isLoading">
       <label class="form-field" *ngFor="let field of visibleFields">
         <span>{{ field.label }}</span>
+        <small class="field-meta" *ngIf="hasCharacterCounter(field)">
+          <span>Maximo {{ field.maxLength }} caracteres</span>
+          <span class="field-counter" [class]="fieldCounterClass(field)">
+            {{ fieldLength(field) }}/{{ field.maxLength }}
+          </span>
+        </small>
 
         <textarea
           *ngIf="field.type === 'textarea'; else regularField"
           [name]="field.key"
           [value]="getFieldValue(field.key)"
           [placeholder]="field.placeholder || field.label"
+          [attr.maxlength]="field.maxLength || null"
           [readonly]="isReadonly(field)"
           (input)="setFieldValue(field.key, $any($event.target).value)"
         ></textarea>
@@ -58,6 +65,7 @@
               [name]="field.key"
               [value]="getFieldValue(field.key)"
               [placeholder]="field.placeholder || field.label"
+              [attr.maxlength]="field.maxLength || null"
               [readonly]="isReadonly(field)"
               (input)="setFieldValue(field.key, $any($event.target).value)"
             />

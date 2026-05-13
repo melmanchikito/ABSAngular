@@ -84,7 +84,13 @@ export abstract class MaintenanceFormBase {
 
   setFieldValue(key: string, value: string): void {
     const field = this.config.fields.find((item) => item.key === key);
-    this.form[key] = field?.numeric ? toNumberValue(value) : value;
+
+    if (field?.numeric) {
+      this.form[key] = toNumberValue(value);
+      return;
+    }
+
+    this.form[key] = field?.maxLength ? value.slice(0, field.maxLength) : value;
   }
 
   fieldOptions(field: FormFieldConfig): readonly SelectOption[] {
@@ -97,6 +103,32 @@ export abstract class MaintenanceFormBase {
 
   fieldInvalid(field: FormFieldConfig): boolean {
     return Boolean(this.submitted && this.errors[field.key]);
+  }
+
+  hasCharacterCounter(field: FormFieldConfig): boolean {
+    return Boolean(field.maxLength && field.type !== 'select' && field.type !== 'number' && !field.numeric);
+  }
+
+  fieldLength(field: FormFieldConfig): number {
+    return String(this.form[field.key] ?? '').length;
+  }
+
+  fieldCounterClass(field: FormFieldConfig): string {
+    if (!field.maxLength) {
+      return '';
+    }
+
+    const used = this.fieldLength(field);
+
+    if (used >= field.maxLength) {
+      return 'is-limit';
+    }
+
+    if (used >= Math.floor(field.maxLength * 0.9)) {
+      return 'is-warning';
+    }
+
+    return '';
   }
 
   isReadonly(field: FormFieldConfig): boolean {

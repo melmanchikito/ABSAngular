@@ -5,7 +5,7 @@ import {
   HostListener,
   computed,
   inject,
-  signal
+  signal,
 } from '@angular/core';
 import {
   AbstractControl,
@@ -13,7 +13,7 @@ import {
   FormGroup,
   ReactiveFormsModule,
   ValidationErrors,
-  Validators
+  Validators,
 } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import {
@@ -26,7 +26,7 @@ import {
   SlidersHorizontal,
   Trash2,
   UserRound,
-  X
+  X,
 } from 'lucide-angular';
 import { finalize } from 'rxjs';
 import { ConfirmDialogComponent } from '../../../../../shared/components/confirm-dialog/confirm-dialog.component';
@@ -39,29 +39,19 @@ import { formatDateTime, isDateLikeField } from '../../../../../shared/utils/dat
 import {
   GridColumnConfig,
   GridFilterOption,
-  PageViewConfig
+  PageViewConfig,
 } from '../../../../../shared/models/grid-view.model';
 import {
   CancelUserRequest,
   InsertUserRequest,
   UpdateUserRequest,
-  UserItem
+  UserItem,
 } from '../../../models/user-maintenance.model';
 import { UserMaintenanceService } from '../../../services/user-maintenance.service';
 
 type UserStatusFilter = 'all' | 'active' | 'inactive';
 type UserGridColumn = keyof UserItem | 'actions';
-type UserFormField =
-  | 'username'
-  | 'name'
-  | 'lastname'
-  | 'email'
-  | 'password'
-  | 'confirm_password'
-  | 'role_id'
-  | 'state'
-  | 'phone'
-  | 'identification';
+type UserFormField = 'name' | 'email' | 'role_id' | 'state' | 'phone' | 'identification';
 type BackendErrorBody = Record<string, unknown>;
 
 interface ToastState {
@@ -70,12 +60,8 @@ interface ToastState {
 }
 
 interface UserForm {
-  username: FormControl<string>;
   name: FormControl<string>;
-  lastname: FormControl<string>;
   email: FormControl<string>;
-  password: FormControl<string>;
-  confirm_password: FormControl<string>;
   role_id: FormControl<number | null>;
   state: FormControl<string>;
   phone: FormControl<string>;
@@ -94,11 +80,11 @@ interface UserForm {
     DataGridPaginationComponent,
     EmptyStateComponent,
     PageHeaderComponent,
-    StatusBadgeComponent
+    StatusBadgeComponent,
   ],
   templateUrl: './user-maintenance.component.html',
   styleUrl: './user-maintenance.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UserMaintenanceComponent {
   readonly userIcon = UserRound;
@@ -117,30 +103,27 @@ export class UserMaintenanceComponent {
     eyebrow: 'Sistema',
     icon: this.userIcon,
     module: 'Sistema',
-    breadcrumb: ['Sistema', 'Configuracion', 'Mantenimientos', 'User']
+    breadcrumb: ['Sistema', 'Configuracion', 'Mantenimientos', 'User'],
   };
 
   readonly gridColumns: readonly GridColumnConfig<UserGridColumn>[] = [
     { key: 'id', label: 'ID', width: '92px' },
-    { key: 'username', label: 'Usuario' },
     { key: 'name', label: 'Nombre' },
-    { key: 'lastname', label: 'Apellido' },
     { key: 'email', label: 'Email' },
     { key: 'role_id', label: 'Rol ID', width: '120px' },
-    { key: 'phone', label: 'Telefono' },
-    { key: 'identification', label: 'Identificacion' },
-    { key: 'state', label: 'Estado', width: '150px' },
-    { key: 'canceled', label: 'Anulado', width: '140px' },
-    { key: 'canceled_at', label: 'Fecha anulacion', width: '180px' },
+    { key: 'identification', label: 'Codigo Empleado' },
+    { key: 'phone', label: 'Celular' },
+    { key: 'canceled', label: 'Estado', width: '140px' },
     { key: 'created_at', label: 'Fecha creacion', width: '190px' },
     { key: 'updated_at', label: 'Fecha actualizacion', width: '190px' },
-    { key: 'actions', label: 'Acciones', width: '170px', align: 'right' }
+    { key: 'canceled_at', label: 'Fecha anulacion', width: '180px' },
+    { key: 'actions', label: 'Acciones', width: '170px', align: 'right' },
   ];
 
   readonly statusFilterOptions: readonly GridFilterOption<UserStatusFilter>[] = [
     { value: 'all', label: 'Todos' },
     { value: 'active', label: 'Activos' },
-    { value: 'inactive', label: 'Inactivos' }
+    { value: 'inactive', label: 'Inactivos' },
   ];
 
   readonly pageSize = 7;
@@ -161,49 +144,33 @@ export class UserMaintenanceComponent {
 
   readonly userForm = new FormGroup<UserForm>(
     {
-      username: new FormControl('', {
-        nonNullable: true,
-        validators: [Validators.required, Validators.minLength(3)]
-      }),
       name: new FormControl('', {
         nonNullable: true,
-        validators: [Validators.required, Validators.minLength(2)]
-      }),
-      lastname: new FormControl('', {
-        nonNullable: true,
-        validators: [Validators.required, Validators.minLength(2)]
+        validators: [Validators.required, Validators.minLength(2)],
       }),
       email: new FormControl('', {
         nonNullable: true,
-        validators: [Validators.required, Validators.email]
-      }),
-      password: new FormControl('', {
-        nonNullable: true,
-        validators: [Validators.required, Validators.minLength(8)]
-      }),
-      confirm_password: new FormControl('', {
-        nonNullable: true,
-        validators: [Validators.required]
+        validators: [Validators.required, Validators.email],
       }),
       role_id: new FormControl<number | null>(null, {
-        validators: [Validators.required]
+        validators: [Validators.required],
       }),
       state: new FormControl('active', {
         nonNullable: true,
-        validators: [Validators.required]
+        validators: [Validators.required],
       }),
       phone: new FormControl('', {
         nonNullable: true,
-        validators: [Validators.required, Validators.minLength(7)]
+        validators: [Validators.required, Validators.minLength(7)],
       }),
       identification: new FormControl('', {
         nonNullable: true,
-        validators: [Validators.required, Validators.minLength(6)]
-      })
+        validators: [Validators.required, Validators.minLength(6)],
+      }),
     },
     {
-      validators: [this.passwordsMatchValidator]
-    }
+      validators: [this.passwordsMatchValidator],
+    },
   );
 
   readonly filteredUsers = computed(() => {
@@ -233,13 +200,13 @@ export class UserMaintenanceComponent {
         String(user.role_id ?? ''),
         String(user.state ?? ''),
         user.phone ?? '',
-        user.identification ?? ''
+        user.identification ?? '',
       ].some((value) => value.toLowerCase().includes(term));
     });
   });
 
   readonly totalPages = computed(() =>
-    Math.max(1, Math.ceil(this.filteredUsers().length / this.pageSize))
+    Math.max(1, Math.ceil(this.filteredUsers().length / this.pageSize)),
   );
 
   readonly paginatedUsers = computed(() => {
@@ -275,12 +242,10 @@ export class UserMaintenanceComponent {
           this.users.set(users);
           this.currentPage.set(Math.min(this.currentPage(), this.totalPages()));
           this.selectedUserId.set(
-            users.some((user) => user.id === this.selectedUserId())
-              ? this.selectedUserId()
-              : null
+            users.some((user) => user.id === this.selectedUserId()) ? this.selectedUserId() : null,
           );
         },
-        error: (error) => this.handleHttpError(error, 'No se pudo cargar el listado de usuarios.')
+        error: (error) => this.handleHttpError(error, 'No se pudo cargar el listado de usuarios.'),
       });
   }
 
@@ -352,7 +317,7 @@ export class UserMaintenanceComponent {
 
     const payload: CancelUserRequest = {
       user_id: user.id,
-      canceled_by: this.getUsername()
+      canceled_by: this.getUsername(),
     };
 
     this.isSaving.set(true);
@@ -367,26 +332,18 @@ export class UserMaintenanceComponent {
           this.setToast('success', 'Usuario anulado correctamente.');
           this.loadUsers();
         },
-        error: (error) => this.handleHttpError(error, 'No se pudo anular el usuario.')
+        error: (error) => this.handleHttpError(error, 'No se pudo anular el usuario.'),
       });
   }
 
   fieldInvalid(field: UserFormField): boolean {
     const control = this.userForm.controls[field];
 
-    if (field === 'confirm_password' && this.userForm.hasError('passwordMismatch')) {
-      return control.touched || control.dirty;
-    }
-
     return control.invalid && (control.touched || control.dirty);
   }
 
   fieldMessage(field: UserFormField): string {
     const control = this.userForm.controls[field];
-
-    if (field === 'confirm_password' && this.userForm.hasError('passwordMismatch')) {
-      return 'Las contrasenas no coinciden.';
-    }
 
     if (control.hasError('required')) {
       return this.requiredFieldMessage(field);
@@ -460,7 +417,10 @@ export class UserMaintenanceComponent {
   }
 
   get activeFilterLabel(): string {
-    return this.statusFilterOptions.find((option) => option.value === this.statusFilter())?.label ?? 'Todos';
+    return (
+      this.statusFilterOptions.find((option) => option.value === this.statusFilter())?.label ??
+      'Todos'
+    );
   }
 
   getColumnClass(column: GridColumnConfig<UserGridColumn>): string {
@@ -508,29 +468,13 @@ export class UserMaintenanceComponent {
 
   private patchForm(user: UserItem): void {
     this.userForm.reset({
-      username: user.username ?? '',
       name: user.name ?? '',
-      lastname: user.lastname ?? '',
       email: user.email ?? '',
-      password: '',
-      confirm_password: '',
       role_id: user.role_id ?? null,
       state: String(user.state ?? (user.canceled ? 'inactive' : 'active')),
       phone: user.phone ?? '',
-      identification: user.identification ?? ''
+      identification: user.identification ?? '',
     });
-  }
-
-  private setPasswordValidators(required: boolean): void {
-    this.userForm.controls.password.setValidators(
-      required ? [Validators.required, Validators.minLength(8)] : [Validators.minLength(8)]
-    );
-    this.userForm.controls.confirm_password.setValidators(
-      required ? [Validators.required] : []
-    );
-    this.userForm.controls.password.updateValueAndValidity({ emitEvent: false });
-    this.userForm.controls.confirm_password.updateValueAndValidity({ emitEvent: false });
-    this.userForm.updateValueAndValidity({ emitEvent: false });
   }
 
   private passwordsMatchValidator(control: AbstractControl): ValidationErrors | null {
@@ -616,7 +560,7 @@ export class UserMaintenanceComponent {
       role_id: 'El rol es obligatorio.',
       state: 'El estado es obligatorio.',
       phone: 'El telefono es obligatorio.',
-      identification: 'La identificacion es obligatoria.'
+      identification: 'La identificacion es obligatoria.',
     };
 
     return labels[field] ?? `${field} es obligatorio.`;
@@ -624,16 +568,12 @@ export class UserMaintenanceComponent {
 
   private requiredFieldMessage(field: UserFormField): string {
     const messages: Record<UserFormField, string> = {
-      username: 'El usuario es obligatorio.',
       name: 'El nombre es obligatorio.',
-      lastname: 'El apellido es obligatorio.',
       email: 'El email es obligatorio.',
-      password: 'La contrasena es obligatoria.',
-      confirm_password: 'La confirmacion de contrasena es obligatoria.',
       role_id: 'El rol es obligatorio.',
       state: 'El estado es obligatorio.',
       phone: 'El telefono es obligatorio.',
-      identification: 'La identificacion es obligatoria.'
+      identification: 'La identificacion es obligatoria.',
     };
 
     return messages[field];
@@ -641,12 +581,9 @@ export class UserMaintenanceComponent {
 
   private minLengthFieldMessage(field: UserFormField): string {
     const messages: Partial<Record<UserFormField, string>> = {
-      username: 'El usuario debe tener al menos 3 caracteres.',
       name: 'El nombre debe tener al menos 2 caracteres.',
-      lastname: 'El apellido debe tener al menos 2 caracteres.',
-      password: 'La contrasena debe tener al menos 8 caracteres.',
       phone: 'El telefono debe tener al menos 7 caracteres.',
-      identification: 'La identificacion debe tener al menos 6 caracteres.'
+      identification: 'La identificacion debe tener al menos 6 caracteres.',
     };
 
     return messages[field] ?? 'El valor ingresado es demasiado corto.';
@@ -662,7 +599,7 @@ export class UserMaintenanceComponent {
     }
 
     return Object.values(value).every(
-      (item) => Array.isArray(item) && item.every((entry) => typeof entry === 'string')
+      (item) => Array.isArray(item) && item.every((entry) => typeof entry === 'string'),
     );
   }
 

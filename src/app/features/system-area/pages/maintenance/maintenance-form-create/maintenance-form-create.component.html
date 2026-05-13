@@ -1,9 +1,5 @@
 <section class="maintenance-form-shell page-shell">
-  <app-page-header
-    [eyebrow]="config.eyebrow"
-    [title]="title"
-    [subtitle]="subtitle"
-  >
+  <app-page-header [eyebrow]="config.eyebrow" [title]="title" [subtitle]="subtitle">
     <button page-actions type="button" class="btn-outline form-top-action" (click)="goBack()">
       <lucide-angular [img]="backIcon" [size]="17" [strokeWidth]="2.4"></lucide-angular>
       Volver
@@ -16,53 +12,92 @@
         <span class="form-eyebrow">{{ config.listTitle }}</span>
         <h2>{{ title }}</h2>
       </div>
-      <button type="submit" class="btn-primary form-save-action" form="maintenanceCreateForm" [disabled]="isSaving || isLoading">
+      <button
+        type="submit"
+        class="btn-primary form-save-action"
+        form="maintenanceCreateForm"
+        [disabled]="isSaving || isLoading"
+      >
         <lucide-angular [img]="saveIcon" [size]="17" [strokeWidth]="2.4"></lucide-angular>
         {{ isSaving ? 'Guardando...' : 'Guardar' }}
       </button>
     </header>
 
-    <div class="alert-warning compact-alert" *ngIf="isLoading">Cargando registro seleccionado...</div>
+    <div class="alert-warning compact-alert" *ngIf="isLoading">
+      Cargando registro seleccionado...
+    </div>
     <div class="alert-error compact-alert" *ngIf="pageError">{{ pageError }}</div>
 
-    <form id="maintenanceCreateForm" class="maintenance-form" (ngSubmit)="save()" *ngIf="!isLoading">
+    <form
+      id="maintenanceCreateForm"
+      class="maintenance-form"
+      (ngSubmit)="save()"
+      *ngIf="!isLoading"
+    >
       <label class="form-field" *ngFor="let field of visibleFields">
-        <span>{{ field.label }}</span>
+        <span class="field-label">{{ field.label }}</span>
 
-        <textarea
-          *ngIf="field.type === 'textarea'; else regularField"
-          [name]="field.key"
-          [value]="getFieldValue(field.key)"
-          [placeholder]="field.placeholder || field.label"
-          [readonly]="isReadonly(field)"
-          (input)="setFieldValue(field.key, $any($event.target).value)"
-        ></textarea>
-
-        <ng-template #regularField>
-          <select
-            *ngIf="field.type === 'select'; else inputField"
+        <div class="field-control">
+          <textarea
+            *ngIf="field.type === 'textarea'; else regularField"
             [name]="field.key"
-            [ngModel]="getFieldValue(field.key)"
-            [disabled]="isReadonly(field)"
-            (ngModelChange)="setFieldValue(field.key, $event)"
-          >
-            <option value="">Seleccione...</option>
-            <option *ngFor="let option of fieldOptions(field)" [ngValue]="option.value">
-              {{ option.label }}
-            </option>
-          </select>
+            [value]="getFieldValue(field.key)"
+            [placeholder]="field.placeholder || field.label"
+            [attr.maxlength]="field.maxLength || null"
+            [readonly]="isReadonly(field)"
+            (input)="setFieldValue(field.key, $any($event.target).value)"
+          ></textarea>
 
-          <ng-template #inputField>
-            <input
-              [type]="field.type || 'text'"
+          <ng-template #regularField>
+            <select
+              *ngIf="field.type === 'select'; else checkboxField"
               [name]="field.key"
-              [value]="getFieldValue(field.key)"
-              [placeholder]="field.placeholder || field.label"
-              [readonly]="isReadonly(field)"
-              (input)="setFieldValue(field.key, $any($event.target).value)"
-            />
+              [ngModel]="getFieldValue(field.key)"
+              [disabled]="isReadonly(field)"
+              (ngModelChange)="setFieldValue(field.key, $event)"
+            >
+              <option value="">Seleccione...</option>
+              <option *ngFor="let option of fieldOptions(field)" [ngValue]="option.value">
+                {{ option.label }}
+              </option>
+            </select>
+
+            <ng-template #checkboxField>
+              <label class="checkbox-field" *ngIf="field.type === 'checkbox'; else inputField">
+                <input
+                  type="checkbox"
+                  class="form-checkbox"
+                  [checked]="getFieldValue(field.key)"
+                  (change)="setFieldValue(field.key, $any($event.target).checked)"
+                />
+
+                <span class="field-label" *ngIf="field.type !== 'checkbox'">
+                  {{ field.label }}
+                </span>
+              </label>
+
+              <ng-template #inputField>
+                <input
+                  [type]="field.type || 'text'"
+                  [name]="field.key"
+                  [value]="getFieldValue(field.key)"
+                  [placeholder]="field.placeholder || field.label"
+                  [attr.maxlength]="field.maxLength || null"
+                  [readonly]="isReadonly(field)"
+                  (input)="setFieldValue(field.key, $any($event.target).value)"
+                />
+              </ng-template>
+            </ng-template>
           </ng-template>
-        </ng-template>
+
+          <span
+            class="field-counter"
+            *ngIf="hasCharacterCounter(field)"
+            [class]="fieldCounterClass(field)"
+          >
+            {{ fieldLength(field) }}/{{ field.maxLength }}
+          </span>
+        </div>
 
         <small class="field-error" *ngIf="fieldInvalid(field)">{{ errors[field.key] }}</small>
       </label>

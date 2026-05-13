@@ -56,6 +56,11 @@ export function validateMaintenanceForm(
       continue;
     }
 
+    if (field.maxLength && textValue && textValue.length > field.maxLength) {
+      errors[field.key] = `${field.label} no debe superar ${field.maxLength} caracteres.`;
+      continue;
+    }
+
     if (field.type === 'email' && textValue && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(textValue)) {
       errors[field.key] = 'Ingrese un email valido.';
       continue;

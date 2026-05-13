@@ -61,13 +61,110 @@ h2 {
   display: grid;
   gap: 0.45rem;
 }
+.field-control {
+  position: relative;
+  width: 100%;
+}
 
-.form-field span {
+.field-control input,
+.field-control select,
+.field-control textarea {
+  width: 100%;
+  padding-right: 4.5rem;
+}
+
+.field-counter {
+  position: absolute;
+  top: 50%;
+  right: 0.95rem;
+  transform: translateY(-50%);
+  z-index: 3;
+
+  color: color-mix(in srgb, var(--abs-text-muted) 72%, transparent);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+
+  opacity: 0.75;
+  pointer-events: none;
+  user-select: none;
+}
+
+.field-counter.is-warning {
+  color: color-mix(in srgb, var(--abs-warning, #f59e0b) 86%, var(--abs-text));
+}
+
+.field-counter.is-limit {
+  color: var(--abs-error);
+}
+.field-label {
   color: var(--abs-text-muted);
+  display: block;
+  text-align: left;
   font-size: 0.78rem;
   font-weight: 900;
   letter-spacing: 0.04em;
   text-transform: uppercase;
+}
+.form-field span {
+  color: var(--abs-text-muted);
+  display: flex;
+  justify-content: flex-start;
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.checkbox-field {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex-direction: row-reverse;
+  gap: 0.7rem;
+  min-height: 44px;
+
+  width: fit-content;
+
+  color: var(--abs-text);
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.form-checkbox {
+  width: 18px !important;
+  height: 18px !important;
+  margin: 0;
+
+  accent-color: var(--abs-primary);
+  cursor: pointer;
+}
+.field-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-top: -0.12rem;
+  color: color-mix(in srgb, var(--abs-text-muted) 82%, transparent);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.field-counter {
+  
+  white-space: nowrap;
+  color: color-mix(in srgb, var(--abs-text-muted) 88%, var(--abs-text));
+}
+
+.field-counter.is-warning {
+  color: color-mix(in srgb, var(--abs-warning, #f59e0b) 86%, var(--abs-text));
+}
+
+.field-counter.is-limit {
+  color: var(--abs-error);
 }
 
 .form-field input,
@@ -103,7 +200,10 @@ h2 {
   opacity: 0.72;
   cursor: not-allowed;
 }
-
+.field-control textarea + .field-counter {
+  top: 0.9rem;
+  transform: none;
+}
 .field-error {
   color: var(--abs-error);
   font-size: 0.78rem;

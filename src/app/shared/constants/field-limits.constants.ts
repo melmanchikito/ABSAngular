@@ -1,0 +1,23 @@
+export const FIELD_LIMITS: Record<string, number> = {
+  username: 50,
+  name: 100,
+  lastname: 100,
+  email: 120,
+  password: 50,
+  confirm_password: 50,
+  phone: 20,
+  identification: 20,
+  code: 30,
+  short_name: 80,
+  description: 255,
+  address: 255,
+  observation: 500,
+  website: 160,
+  oem: 80,
+  currency: 10,
+  model: 80,
+  type: 80,
+  serial_number: 80,
+  state: 50,
+  status: 50
+};

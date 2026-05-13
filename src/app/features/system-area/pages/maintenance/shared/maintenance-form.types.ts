@@ -13,7 +13,7 @@ export type MaintenanceEntity =
   | 'products';
 
 export type MaintenanceMode = 'create' | 'edit';
-export type FieldType = 'text' | 'email' | 'number' | 'password' | 'select' | 'textarea';
+export type FieldType = 'text' | 'email' | 'number' | 'password' | 'select' | 'textarea'| 'checkbox';
 export type EntityRecord = Record<string, unknown>;
 export type FormValue = string | number | null;
 
@@ -29,6 +29,7 @@ export interface FormFieldConfig {
   placeholder?: string;
   required?: boolean;
   minLength?: number;
+  maxLength?: number;
   createOnly?: boolean;
   readonlyOnEdit?: boolean;
   numeric?: boolean;
