@@ -20,8 +20,7 @@ import { ConfirmDialogComponent } from '../../../../../shared/components/confirm
 import { DataGridPaginationComponent } from '../../../../../shared/components/data-grid-pagination/data-grid-pagination.component';
 import { EmptyStateComponent } from '../../../../../shared/components/empty-state/empty-state.component';
 import { PageHeaderComponent } from '../../../../../shared/components/page-header/page-header.component';
-
-import { formatDateOnly, isDateLikeField } from '../../../../../shared/utils/date-format.util';
+import { formatDateTime, isDateLikeField } from '../../../../../shared/utils/date-format.util';
 import { StatusBadgeComponent } from '../../../../../shared/components/status-badge/status-badge.component';
 import { GridColumnConfig, GridFilterOption } from '../../../../../shared/models/grid-view.model';
 import { ModuleItem } from '../../../models/module-maintenance.model';
@@ -335,7 +334,7 @@ export class OptionMaintenanceComponent implements OnInit {
   }
 
   formatDate(value?: string | null): string {
-    return formatDateOnly(value);
+    return formatDateTime(value);
   }
 
   getModuleName(moduleId: number): string {
@@ -396,7 +395,7 @@ export class OptionMaintenanceComponent implements OnInit {
     const value = option[key];
 
     if (isDateLikeField(String(key))) {
-      return formatDateOnly(value as string | null | undefined);
+      return formatDateTime(value as string | null | undefined);
     }
 
     return value === null || value === undefined || value === '' ? 'Sin registro' : String(value);

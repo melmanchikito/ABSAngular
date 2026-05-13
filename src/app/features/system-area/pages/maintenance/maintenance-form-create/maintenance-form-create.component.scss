@@ -6,7 +6,7 @@
 
 .form-top-action,
 .form-card-header,
-.form-actions {
+.form-save-action {
   display: flex;
   align-items: center;
 }
@@ -40,15 +40,10 @@ h2 {
   font-size: 1.18rem;
 }
 
-.form-mode {
+.form-save-action {
+  justify-content: center;
+  gap: 0.45rem;
   white-space: nowrap;
-  border-radius: 999px;
-  padding: 0.34rem 0.68rem;
-  border: 1.5px solid color-mix(in srgb, var(--abs-primary) 34%, var(--form-border));
-  background: color-mix(in srgb, var(--abs-primary) 9%, var(--abs-surface));
-  color: var(--abs-primary);
-  font-size: 0.78rem;
-  font-weight: 900;
 }
 
 .compact-alert {
@@ -115,13 +110,6 @@ h2 {
   font-weight: 800;
 }
 
-.form-actions {
-  grid-column: 1 / -1;
-  justify-content: flex-end;
-  gap: 0.65rem;
-  padding-top: 0.25rem;
-}
-
 :host-context([data-theme='liquid-glass']) .form-card {
   border-color: rgba(255, 255, 255, 0.18);
   background:
@@ -139,14 +127,12 @@ h2 {
     grid-template-columns: 1fr;
   }
 
-  .form-card-header,
-  .form-actions {
+  .form-card-header {
     align-items: stretch;
     flex-direction: column;
   }
 
-  .form-actions .btn-outline,
-  .form-actions .btn-primary {
+  .form-save-action {
     width: 100%;
   }
 }

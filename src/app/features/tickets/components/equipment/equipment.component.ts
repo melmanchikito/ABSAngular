@@ -10,6 +10,7 @@ import {
 } from 'lucide-angular';
 import { Subscription } from 'rxjs';
 
+import { formatDateTime } from '../../../../shared/utils/date-format.util';
 import { ComponentItem, Device, EquipmentWithDevices, RemovedEquipment } from '../../models/helpdesk.model';
 import { AssistFormService } from '../../state/assist-form.service';
 import {
@@ -506,6 +507,10 @@ private buildInsertComponentPayload(): InsertComponentRequest | null {
       pad(date.getMonth() + 1),
       pad(date.getDate())
     ].join('-') + ` ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+  }
+
+  formatDisplayDate(value?: string | Date | null): string {
+    return formatDateTime(value);
   }
 
   private getUsername(): string {

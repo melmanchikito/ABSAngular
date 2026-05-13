@@ -14,7 +14,6 @@ import { MaintenanceFormBase } from '../shared/maintenance-form.base';
 })
 export class MaintenanceFormEditComponent extends MaintenanceFormBase implements OnInit {
   readonly mode = 'edit';
-  readonly modeLabel = 'Edicion';
 
   get title(): string {
     return this.config.editTitle;

@@ -18,7 +18,7 @@ import { ConfirmDialogComponent } from '../../../../../shared/components/confirm
 import { DataGridPaginationComponent } from '../../../../../shared/components/data-grid-pagination/data-grid-pagination.component';
 import { EmptyStateComponent } from '../../../../../shared/components/empty-state/empty-state.component';
 import { PageHeaderComponent } from '../../../../../shared/components/page-header/page-header.component';
-import { formatDateOnly } from '../../../../../shared/utils/date-format.util';
+import { formatDateTime } from '../../../../../shared/utils/date-format.util';
 import {
   StatusBadgeComponent,
   StatusBadgeVariant
@@ -265,7 +265,7 @@ export class ProductMaintenanceComponent implements OnInit {
   }
 
   formatDate(value?: string | null): string {
-    return formatDateOnly(value);
+    return formatDateTime(value);
   }
 
   formatAmount(value?: number | null): string {

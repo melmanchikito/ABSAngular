@@ -50,7 +50,6 @@ export abstract class MaintenanceFormBase {
   recordId: number | null = null;
 
   abstract readonly mode: MaintenanceMode;
-  abstract readonly modeLabel: string;
   abstract get title(): string;
   abstract get subtitle(): string;
 

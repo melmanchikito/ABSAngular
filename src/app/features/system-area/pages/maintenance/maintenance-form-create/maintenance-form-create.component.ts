@@ -14,7 +14,6 @@ import { MaintenanceFormBase } from '../shared/maintenance-form.base';
 })
 export class MaintenanceFormCreateComponent extends MaintenanceFormBase implements OnInit {
   readonly mode = 'create';
-  readonly modeLabel = 'Nuevo registro';
 
   get title(): string {
     return this.config.createTitle;

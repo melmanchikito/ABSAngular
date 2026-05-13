@@ -30,7 +30,7 @@ import { EmptyStateComponent } from '../../../../../shared/components/empty-stat
 import { PageHeaderComponent } from '../../../../../shared/components/page-header/page-header.component';
 import { StatusBadgeComponent } from '../../../../../shared/components/status-badge/status-badge.component';
 import { StatCardComponent } from '../../../../../shared/components/stat-card/stat-card.component';
-import { formatDateOnly } from '../../../../../shared/utils/date-format.util';
+import { formatDateTime } from '../../../../../shared/utils/date-format.util';
 import {
   HelpdeskItem,
   InsertHelpdeskRequest,
@@ -248,7 +248,7 @@ export class HelpdeskMaintenanceComponent {
   }
 
   formatDate(value?: string | null): string {
-    return formatDateOnly(value);
+    return formatDateTime(value);
   }
 
   trackByHelpdeskId(_: number, helpdesk: HelpdeskItem): number {

@@ -28,7 +28,7 @@ import { GridColumnConfig, GridFilterOption } from '../../../../../shared/models
 import { ConfirmDialogComponent } from '../../../../../shared/components/confirm-dialog/confirm-dialog.component';
 import { DataGridPaginationComponent } from '../../../../../shared/components/data-grid-pagination/data-grid-pagination.component';
 import { PageHeaderComponent } from '../../../../../shared/components/page-header/page-header.component';
-import { formatDateOnly, isDateLikeField } from '../../../../../shared/utils/date-format.util';
+import { formatDateTime, isDateLikeField } from '../../../../../shared/utils/date-format.util';
 
 type CompanyStatusFilter = 'all' | 'active' | 'inactive';
 type CompanyGridColumn = keyof Company | 'actions';
@@ -284,7 +284,7 @@ export class CompanyMaintenanceComponent implements OnInit {
   }
 
   formatDate(value?: string | null): string {
-    return formatDateOnly(value);
+    return formatDateTime(value);
   }
 
   trackByCompanyId(_: number, company: Company): number {
@@ -317,7 +317,7 @@ export class CompanyMaintenanceComponent implements OnInit {
     const value = company[key];
 
     if (isDateLikeField(String(key))) {
-      return formatDateOnly(value as string | null | undefined);
+      return formatDateTime(value as string | null | undefined);
     }
 
     return value === null || value === undefined || value === '' ? 'Sin registro' : String(value);

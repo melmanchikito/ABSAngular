@@ -68,7 +68,7 @@
       </label>
 
       <label>
-        Código
+        CÃ³digo
         <input
           type="text"
           name="newEquipmentCode"
@@ -125,17 +125,17 @@
           type="text"
           name="newEquipmentSerial"
           [(ngModel)]="addEquipmentForm.serialNumber"
-          placeholder="Número de serie"
+          placeholder="NÃºmero de serie"
         />
       </label>
 
       <label class="panel-wide">
-        Descripción
+        DescripciÃ³n
         <textarea
           name="newEquipmentDescription"
           [(ngModel)]="addEquipmentForm.description"
           rows="3"
-          placeholder="Detalle del equipo que se agregará"
+          placeholder="Detalle del equipo que se agregarÃ¡"
         ></textarea>
       </label>
     </div>
@@ -178,12 +178,12 @@
       </label>
 
       <label class="panel-wide">
-        Motivo de anulación
+        Motivo de anulaciÃ³n
         <textarea
           name="removeReason"
           [(ngModel)]="removeEquipmentForm.reason"
           rows="3"
-          placeholder="Describa por qué se anula el equipo"
+          placeholder="Describa por quÃ© se anula el equipo"
           required
         ></textarea>
       </label>
@@ -206,7 +206,7 @@
         (click)="confirmRemoveEquipment()"
         [disabled]="isCancelingEquipment"
       >
-        {{ isCancelingEquipment ? 'Anulando...' : 'Confirmar anulación' }}
+        {{ isCancelingEquipment ? 'Anulando...' : 'Confirmar anulaciÃ³n' }}
       </button>
     </div>
   </section>
@@ -222,7 +222,7 @@
 
     <div class="panel-grid">
       <label>
-        Código
+        CÃ³digo
         <input
           type="text"
           name="newComponentCode"
@@ -312,7 +312,7 @@
       <article class="change-item" *ngFor="let item of removedEquipments">
         <div>
           <strong>{{ item.device.name || 'Equipo sin nombre' }}</strong>
-          <span>{{ item.device.code || 'Sin código' }}</span>
+          <span>{{ item.device.code || 'Sin cÃ³digo' }}</span>
           <p>{{ item.reason }}</p>
         </div>
 
@@ -334,7 +334,7 @@
         <dt>Tipo:</dt>
         <dd>{{ selectedDevice?.type || '' }}</dd>
 
-        <dt>Descripción:</dt>
+        <dt>DescripciÃ³n:</dt>
         <dd>{{ selectedDevice?.description || '' }}</dd>
 
         <dt>Estado:</dt>
@@ -346,11 +346,11 @@
         <dt>Serie:</dt>
         <dd>{{ selectedDevice?.serial_number || '' }}</dd>
 
-        <dt>Último mantenimiento:</dt>
-        <dd>{{ selectedDevice?.last_maintenance_at || '' }}</dd>
+        <dt>Ãšltimo mantenimiento:</dt>
+        <dd>{{ formatDisplayDate(selectedDevice?.last_maintenance_at) }}</dd>
 
-        <dt>Fecha de asignación:</dt>
-        <dd>{{ selectedDevice?.assignment_at || '' }}</dd>
+        <dt>Fecha de asignaciÃ³n:</dt>
+        <dd>{{ formatDisplayDate(selectedDevice?.assignment_at) }}</dd>
       </dl>
     </section>
 
@@ -384,7 +384,7 @@
               <p>Nombre: {{ component.name || 'No encontrado' }}</p>
               <p>Tipo: {{ component.type || 'No encontrado' }}</p>
               <p>Estado: {{ component.state || 'No encontrado' }}</p>
-              <p>Fecha de asignación: {{ component.assignment_at || 'No encontrado' }}</p>
+              <p>Fecha de asignaciÃ³n: {{ formatDisplayDate(component.assignment_at) }}</p>
             </div>
           </div>
         </ng-container>

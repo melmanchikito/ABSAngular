@@ -35,7 +35,7 @@ import { EmptyStateComponent } from '../../../../../shared/components/empty-stat
 
 import { PageHeaderComponent } from '../../../../../shared/components/page-header/page-header.component';
 import { StatusBadgeComponent } from '../../../../../shared/components/status-badge/status-badge.component';
-import { formatDateOnly, isDateLikeField } from '../../../../../shared/utils/date-format.util';
+import { formatDateTime, isDateLikeField } from '../../../../../shared/utils/date-format.util';
 import {
   GridColumnConfig,
   GridFilterOption,
@@ -404,7 +404,7 @@ export class UserMaintenanceComponent {
   }
 
   formatDate(value?: string | null): string {
-    return formatDateOnly(value);
+    return formatDateTime(value);
   }
 
   getFullName(user: UserItem): string {
@@ -489,7 +489,7 @@ export class UserMaintenanceComponent {
     const value = user[key];
 
     if (isDateLikeField(String(key))) {
-      return formatDateOnly(value as string | null | undefined);
+      return formatDateTime(value as string | null | undefined);
     }
 
     return value === null || value === undefined || value === '' ? 'Sin registro' : String(value);
