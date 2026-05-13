@@ -82,7 +82,7 @@ export abstract class MaintenanceFormBase {
     return this.form[key] ?? '';
   }
 
-  setFieldValue(key: string, value: string): void {
+  setFieldValue(key: string, value: FormValue): void {
     const field = this.config.fields.find((item) => item.key === key);
 
     if (field?.numeric) {
@@ -90,7 +90,13 @@ export abstract class MaintenanceFormBase {
       return;
     }
 
-    this.form[key] = field?.maxLength ? value.slice(0, field.maxLength) : value;
+    if (field?.type === 'checkbox') {
+      this.form[key] = Boolean(value);
+      return;
+    }
+
+    const textValue = String(value ?? '');
+    this.form[key] = field?.maxLength ? textValue.slice(0, field.maxLength) : textValue;
   }
 
   fieldOptions(field: FormFieldConfig): readonly SelectOption[] {
@@ -207,7 +213,7 @@ export abstract class MaintenanceFormBase {
 
   private initializeForm(): void {
     for (const field of this.config.fields) {
-      this.form[field.key] = field.numeric ? null : '';
+      this.form[field.key] = field.numeric ? null : field.type === 'checkbox' ? false : '';
     }
   }
 

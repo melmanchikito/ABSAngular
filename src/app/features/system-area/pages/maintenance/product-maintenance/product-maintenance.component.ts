@@ -269,7 +269,15 @@ export class ProductMaintenanceComponent implements OnInit {
   }
 
   formatAmount(value?: number | null): string {
-    const amount = Number(value ?? 0);
+    if (value === null || value === undefined) {
+      return 'Sin registro';
+    }
+
+    const amount = Number(value);
+
+    if (!Number.isFinite(amount)) {
+      return 'Sin registro';
+    }
 
     return new Intl.NumberFormat('es-EC', {
       minimumFractionDigits: 2,

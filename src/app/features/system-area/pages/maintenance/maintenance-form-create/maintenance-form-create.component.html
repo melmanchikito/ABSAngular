@@ -12,6 +12,7 @@
         <span class="form-eyebrow">{{ config.listTitle }}</span>
         <h2>{{ title }}</h2>
       </div>
+
       <button
         type="submit"
         class="btn-primary form-save-action"
@@ -26,7 +27,10 @@
     <div class="alert-warning compact-alert" *ngIf="isLoading">
       Cargando registro seleccionado...
     </div>
-    <div class="alert-error compact-alert" *ngIf="pageError">{{ pageError }}</div>
+
+    <div class="alert-error compact-alert" *ngIf="pageError">
+      {{ pageError }}
+    </div>
 
     <form
       id="maintenanceCreateForm"
@@ -34,47 +38,53 @@
       (ngSubmit)="save()"
       *ngIf="!isLoading"
     >
-      <label class="form-field" *ngFor="let field of visibleFields">
-        <span class="field-label">{{ field.label }}</span>
-
-        <div class="field-control">
-          <textarea
-            *ngIf="field.type === 'textarea'; else regularField"
-            [name]="field.key"
-            [value]="getFieldValue(field.key)"
-            [placeholder]="field.placeholder || field.label"
-            [attr.maxlength]="field.maxLength || null"
-            [readonly]="isReadonly(field)"
-            (input)="setFieldValue(field.key, $any($event.target).value)"
-          ></textarea>
-
-          <ng-template #regularField>
-            <select
-              *ngIf="field.type === 'select'; else checkboxField"
+      <label
+        class="form-field"
+        *ngFor="let field of visibleFields"
+        [class.is-checkbox]="field.type === 'checkbox'"
+      >
+        <ng-container *ngIf="field.type === 'checkbox'; else normalField">
+          <div class="checkbox-field">
+            <input
+              type="checkbox"
+              class="form-checkbox"
               [name]="field.key"
-              [ngModel]="getFieldValue(field.key)"
+              [checked]="getFieldValue(field.key)"
               [disabled]="isReadonly(field)"
-              (ngModelChange)="setFieldValue(field.key, $event)"
-            >
-              <option value="">Seleccione...</option>
-              <option *ngFor="let option of fieldOptions(field)" [ngValue]="option.value">
-                {{ option.label }}
-              </option>
-            </select>
+              (change)="setFieldValue(field.key, $any($event.target).checked)"
+            />
 
-            <ng-template #checkboxField>
-              <label class="checkbox-field" *ngIf="field.type === 'checkbox'; else inputField">
-                <input
-                  type="checkbox"
-                  class="form-checkbox"
-                  [checked]="getFieldValue(field.key)"
-                  (change)="setFieldValue(field.key, $any($event.target).checked)"
-                />
+            <span>{{ field.label }}</span>
+          </div>
+        </ng-container>
 
-                <span class="field-label" *ngIf="field.type !== 'checkbox'">
-                  {{ field.label }}
-                </span>
-              </label>
+        <ng-template #normalField>
+          <span class="field-label">{{ field.label }}</span>
+
+          <div class="field-control">
+            <textarea
+              *ngIf="field.type === 'textarea'; else regularField"
+              [name]="field.key"
+              [value]="getFieldValue(field.key)"
+              [placeholder]="field.placeholder || field.label"
+              [attr.maxlength]="field.maxLength || null"
+              [readonly]="isReadonly(field)"
+              (input)="setFieldValue(field.key, $any($event.target).value)"
+            ></textarea>
+
+            <ng-template #regularField>
+              <select
+                *ngIf="field.type === 'select'; else inputField"
+                [name]="field.key"
+                [ngModel]="getFieldValue(field.key)"
+                [disabled]="isReadonly(field)"
+                (ngModelChange)="setFieldValue(field.key, $event)"
+              >
+                <option value="">Seleccione...</option>
+                <option *ngFor="let option of fieldOptions(field)" [ngValue]="option.value">
+                  {{ option.label }}
+                </option>
+              </select>
 
               <ng-template #inputField>
                 <input
@@ -88,18 +98,20 @@
                 />
               </ng-template>
             </ng-template>
-          </ng-template>
 
-          <span
-            class="field-counter"
-            *ngIf="hasCharacterCounter(field)"
-            [class]="fieldCounterClass(field)"
-          >
-            {{ fieldLength(field) }}/{{ field.maxLength }}
-          </span>
-        </div>
+            <span
+              class="field-counter"
+              *ngIf="hasCharacterCounter(field)"
+              [class]="fieldCounterClass(field)"
+            >
+              {{ fieldLength(field) }}/{{ field.maxLength }}
+            </span>
+          </div>
+        </ng-template>
 
-        <small class="field-error" *ngIf="fieldInvalid(field)">{{ errors[field.key] }}</small>
+        <small class="field-error" *ngIf="fieldInvalid(field)">
+          {{ errors[field.key] }}
+        </small>
       </label>
     </form>
   </section>

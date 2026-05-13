@@ -115,16 +115,18 @@ h2 {
   letter-spacing: 0.04em;
   text-transform: uppercase;
 }
+
+.form-field.is-checkbox {
+  align-content: end;
+}
+
 .checkbox-field {
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  flex-direction: row-reverse;
   gap: 0.7rem;
   min-height: 44px;
-
   width: fit-content;
-
   color: var(--abs-text);
   font-size: 0.82rem;
   font-weight: 800;
@@ -185,6 +187,12 @@ h2 {
   min-height: 116px;
   padding: 0.8rem 0.85rem;
   resize: vertical;
+}
+
+.field-control input,
+.field-control select,
+.field-control textarea {
+  padding-right: 4.5rem;
 }
 
 .form-field input:focus,

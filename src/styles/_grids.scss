@@ -150,7 +150,26 @@
 }
 
 .app-grid-col-actions {
+  position: sticky;
+  right: 0;
+  z-index: 3;
+  min-width: 150px;
+  background: color-mix(in srgb, var(--abs-surface) 96%, var(--abs-bg));
+  box-shadow: -12px 0 18px -18px rgba(15, 23, 42, 0.55);
   text-align: right;
+}
+
+th.app-grid-col-actions {
+  z-index: 5;
+  background: color-mix(in srgb, var(--abs-surface-soft) 92%, var(--abs-surface));
+}
+
+tr:hover .app-grid-col-actions {
+  background: color-mix(in srgb, var(--abs-primary) 7%, var(--abs-surface));
+}
+
+.app-grid-row-selected .app-grid-col-actions {
+  background: color-mix(in srgb, var(--abs-primary) 8%, var(--abs-surface));
 }
 
 .app-grid-col-actions .app-grid-actions {
@@ -273,6 +292,26 @@
     linear-gradient(135deg, rgba(255, 255, 255, 0.075), transparent 46%),
     color-mix(in srgb, var(--abs-surface) 88%, #000);
   box-shadow: 0 18px 44px rgba(0, 0, 0, 0.38);
+}
+
+[data-theme='dark'] .app-grid-col-actions {
+  background: color-mix(in srgb, var(--abs-surface) 94%, #000);
+  box-shadow: -12px 0 18px -18px rgba(0, 0, 0, 0.88);
+}
+
+[data-theme='dark'] th.app-grid-col-actions {
+  background: color-mix(in srgb, var(--abs-surface-soft) 88%, #000);
+}
+
+[data-theme='dark'] tr:hover .app-grid-col-actions {
+  background: color-mix(in srgb, var(--abs-primary) 10%, var(--abs-surface));
+}
+
+[data-theme='liquid-glass'] .app-grid-col-actions {
+  background: color-mix(in srgb, var(--abs-surface) 82%, #0f1724);
+  box-shadow:
+    -14px 0 24px -20px rgba(0, 0, 0, 0.8),
+    inset 1px 0 0 rgba(255, 255, 255, 0.1);
 }
 
 @media (max-width: 900px) {

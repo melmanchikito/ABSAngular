@@ -117,7 +117,7 @@
               </td>
               <td>{{ product.short_name || 'Sin registro' }}</td>
               <td>
-                <span class="description-text">{{ product.description || 'Sin descripcion' }}</span>
+                <span class="description-text">{{ product.description || 'Sin registro' }}</span>
               </td>
               <td>{{ formatAmount(product.cost_price) }}</td>
               <td>{{ formatAmount(product.price_mayor) }}</td>
@@ -176,7 +176,7 @@
           <div>
             <span class="eyebrow">Detalle producto</span>
             <h2>{{ product.name }}</h2>
-            <p>{{ product.description || 'Sin descripcion' }}</p>
+            <p>{{ product.description || 'Sin registro' }}</p>
           </div>
         </div>
 

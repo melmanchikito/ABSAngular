@@ -13,9 +13,9 @@ export type MaintenanceEntity =
   | 'products';
 
 export type MaintenanceMode = 'create' | 'edit';
-export type FieldType = 'text' | 'email' | 'number' | 'password' | 'select' | 'textarea'| 'checkbox';
+export type FieldType = 'text' | 'email' | 'number' | 'password' | 'select' | 'textarea' | 'checkbox';
 export type EntityRecord = Record<string, unknown>;
-export type FormValue = string | number | null;
+export type FormValue = string | number | boolean | null;
 
 export interface SelectOption {
   value: string | number;

@@ -222,7 +222,6 @@ export function createMaintenanceFormConfig(
       listUrl: `${listBase}/user`,
       idParam: 'user_id',
       fields: [
-        
         { key: 'name', label: 'Nombre', required: true, minLength: 2 },
         { key: 'email', label: 'Email', type: 'email', required: true },
         { key: 'role_id', label: 'Rol ID', type: 'number', required: true, numeric: true },
@@ -236,39 +235,36 @@ export function createMaintenanceFormConfig(
             { value: 'inactive', label: 'Inactivo' }
           ]
         },
-        { key: 'phone', label: 'Telefono', required: true, minLength: 7 },
-        { key: 'identification', label: 'Identificacion', required: true, minLength: 6 },
-        {
-            key: 'developer',
-            label: 'desarrollador',
-            type: 'checkbox'
-          }
+        { key: 'phone', label: 'Celular', required: true, minLength: 7 },
+        { key: 'identification', label: 'Identificación', required: true, minLength: 6 },
+        { key: 'developer', label: 'Desarrollador', type: 'checkbox' }
       ],
       load: (id) => services.userService.getUserById(id),
       create: (payload) => services.userService.insertUser(payload as never),
       update: (payload) => services.userService.updateUser(payload as never),
-      toCreatePayload: (form, username) => cleanPayload({ ...form, created_by: username }),
-      toUpdatePayload: (id, form, username) => {
-        const payload = cleanPayload({
-          user_id: id,
-          username: form['username'],
+      toCreatePayload: (form, username) =>
+        cleanPayload({
           name: form['name'],
-          lastname: form['lastname'],
           email: form['email'],
           role_id: form['role_id'],
           state: form['state'],
           phone: form['phone'],
           identification: form['identification'],
+          developer: Boolean(form['developer']),
+          created_by: username
+        }),
+      toUpdatePayload: (id, form, username) =>
+        cleanPayload({
+          user_id: id,
+          name: form['name'],
+          email: form['email'],
+          role_id: form['role_id'],
+          state: form['state'],
+          phone: form['phone'],
+          identification: form['identification'],
+          developer: Boolean(form['developer']),
           updated_by: username
-        });
-
-        if (form['password']) {
-          payload['password'] = form['password'];
-          payload['confirm_password'] = form['confirm_password'];
-        }
-
-        return payload;
-      }
+        })
     },
     helpdesks: {
       entity,

@@ -10,6 +10,7 @@ export interface UserItem {
   state?: UserState | boolean | number | null;
   phone?: string | null;
   identification?: string | null;
+  developer?: boolean | number | string | null;
   canceled?: boolean;
   canceled_at?: string | null;
   created_at?: string | null;
@@ -32,32 +33,26 @@ export interface ApiResponse<T> {
 }
 
 export interface InsertUserRequest {
-  username: string;
   name: string;
-  lastname: string;
   email: string;
-  password: string;
-  confirm_password: string;
   role_id: number;
   state: string;
   phone: string;
   identification: string;
+  developer: boolean;
   created_by: string;
 }
 
 export interface UpdateUserRequest {
   user_id: number;
-  username: string;
   name: string;
-  lastname: string;
   email: string;
   role_id: number;
   state: string;
   phone: string;
   identification: string;
+  developer: boolean;
   updated_by: string;
-  password?: string;
-  confirm_password?: string;
 }
 
 export interface CancelUserRequest {

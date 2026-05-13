@@ -6,8 +6,8 @@ import {
   MaintenanceMode
 } from './maintenance-form.types';
 
-export function toNumberValue(value: string): number | null {
-  if (value === '') {
+export function toNumberValue(value: string | number | boolean | null): number | null {
+  if (value === '' || value === null) {
     return null;
   }
 
@@ -17,7 +17,11 @@ export function toNumberValue(value: string): number | null {
 
 export function normalizeFormValue(value: unknown, field: FormFieldConfig): FormValue {
   if (value === null || value === undefined) {
-    return field.numeric ? null : '';
+    return field.numeric ? null : field.type === 'checkbox' ? false : '';
+  }
+
+  if (field.type === 'checkbox') {
+    return toBooleanValue(value);
   }
 
   return field.numeric ? toNumberValue(String(value)) : String(value);
@@ -46,7 +50,7 @@ export function validateMaintenanceForm(
     const value = form[field.key];
     const textValue = String(value ?? '').trim();
 
-    if (field.required && !textValue) {
+    if (field.required && isEmptyValue(value, field)) {
       errors[field.key] = `${field.label} es obligatorio.`;
       continue;
     }
@@ -71,7 +75,12 @@ export function validateMaintenanceForm(
     }
   }
 
-  if (entity === 'users') {
+  const hasPasswordFields =
+    entity === 'users' &&
+    fields.some((field) => field.key === 'password') &&
+    fields.some((field) => field.key === 'confirm_password');
+
+  if (hasPasswordFields) {
     const password = String(form['password'] ?? '');
     const confirmPassword = String(form['confirm_password'] ?? '');
     const passwordRequired = mode === 'create';
@@ -90,6 +99,28 @@ export function validateMaintenanceForm(
   }
 
   return errors;
+}
+
+function toBooleanValue(value: unknown): boolean {
+  if (typeof value === 'boolean') {
+    return value;
+  }
+
+  if (typeof value === 'number') {
+    return value === 1;
+  }
+
+  const normalizedValue = String(value).trim().toLowerCase();
+
+  return ['1', 'true', 'si', 'yes', 'y'].includes(normalizedValue);
+}
+
+function isEmptyValue(value: FormValue, field: FormFieldConfig): boolean {
+  if (field.type === 'checkbox') {
+    return value !== true;
+  }
+
+  return String(value ?? '').trim() === '';
 }
 
 export function extractErrorMessage(error: unknown, fallback: string): string {
