@@ -24,7 +24,7 @@
           </div>
         </section>
       </div>
-      <button type="button" class="btn-primary app-grid-icon-button" title="Nuevo" aria-label="Nuevo registro" (click)="openCreateModal()">
+      <button type="button" class="btn-primary app-grid-icon-button" title="Nuevo" aria-label="Nuevo registro" routerLink="create">
         <lucide-angular [img]="addIcon" [size]="18" [strokeWidth]="2.4"></lucide-angular>
       </button>
     </div>
@@ -138,7 +138,7 @@
                     class="btn-icon"
                     title="Editar tipo de opcion"
                     aria-label="Editar tipo de opcion"
-                    (click)="$event.stopPropagation(); openEditModal(optionType)"
+                    [routerLink]="['edit', optionType.id]" (click)="$event.stopPropagation()"
                   >
                     <lucide-angular [img]="editIcon" [size]="17" [strokeWidth]="2.3"></lucide-angular>
                   </button>
@@ -173,70 +173,6 @@
     </article>
   </section>
 
-  <div class="modal-backdrop" *ngIf="modalOpen()">
-    <section class="modal-panel" role="dialog" aria-modal="true" [attr.aria-label]="modalTitle()">
-      <header class="modal-header">
-        <div>
-          <span class="eyebrow">{{ modalMode() === 'create' ? 'Crear' : 'Editar' }}</span>
-          <h2>{{ modalTitle() }}</h2>
-        </div>
-
-        <button
-          type="button"
-          class="btn-icon"
-          title="Cerrar"
-          aria-label="Cerrar"
-          (click)="closeModal()"
-          [disabled]="isSaving()"
-        >
-          <lucide-angular [img]="closeIcon" [size]="18" [strokeWidth]="2.4"></lucide-angular>
-        </button>
-      </header>
-
-      <form class="option-type-form" [formGroup]="optionTypeForm" (ngSubmit)="saveOptionType()">
-        <div class="alert-warning compact-alert field-wide" *ngIf="isLoadingDetail()">
-          Cargando tipo de opcion seleccionado...
-        </div>
-
-        <label class="form-group">
-          <span class="form-label">Codigo</span>
-          <input
-            class="form-control"
-            type="text"
-            formControlName="code"
-            placeholder="TIP-001"
-            autocomplete="off"
-            [readonly]="modalMode() === 'edit'"
-          />
-          <small class="field-error" *ngIf="fieldInvalid('code')">{{ fieldMessage('code') }}</small>
-        </label>
-
-        <label class="form-group">
-          <span class="form-label">Nombre</span>
-          <input
-            class="form-control"
-            type="text"
-            formControlName="name"
-            placeholder="Menu principal"
-            autocomplete="off"
-          />
-          <small class="field-error" *ngIf="fieldInvalid('name')">{{ fieldMessage('name') }}</small>
-        </label>
-
-        <div class="alert-error compact-alert field-wide" *ngIf="formError()">{{ formError() }}</div>
-
-        <footer class="modal-actions field-wide">
-          <button type="button" class="btn-outline" (click)="closeModal()" [disabled]="isSaving()">
-            Cancelar
-          </button>
-
-          <button type="submit" class="btn-primary" [disabled]="isSaving() || isLoadingDetail()">
-            {{ isSaving() ? 'Guardando...' : 'Guardar' }}
-          </button>
-        </footer>
-      </form>
-    </section>
-  </div>
 
   <app-confirm-dialog
     [open]="!!optionTypeToCancel()"
@@ -248,3 +184,4 @@
     (cancel)="closeCancelConfirm()"
   ></app-confirm-dialog>
 </section>
+

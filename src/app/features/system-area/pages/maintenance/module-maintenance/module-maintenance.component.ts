@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, HostListener, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import {
   ChevronLeft,
   ChevronRight,
@@ -15,21 +16,22 @@ import {
   Trash2,
   X
 } from 'lucide-angular';
-import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog.component';
-import { DataGridPaginationComponent } from '../../../../shared/components/data-grid-pagination/data-grid-pagination.component';
-import { EmptyStateComponent } from '../../../../shared/components/empty-state/empty-state.component';
-import { PageHeaderComponent } from '../../../../shared/components/page-header/page-header.component';
-import { StatusBadgeComponent } from '../../../../shared/components/status-badge/status-badge.component';
-import { GridColumnConfig, GridFilterOption } from '../../../../shared/models/grid-view.model';
+import { ConfirmDialogComponent } from '../../../../../shared/components/confirm-dialog/confirm-dialog.component';
+import { DataGridPaginationComponent } from '../../../../../shared/components/data-grid-pagination/data-grid-pagination.component';
+import { EmptyStateComponent } from '../../../../../shared/components/empty-state/empty-state.component';
+import { PageHeaderComponent } from '../../../../../shared/components/page-header/page-header.component';
+
+import { formatDateOnly, isDateLikeField } from '../../../../../shared/utils/date-format.util';
+import { StatusBadgeComponent } from '../../../../../shared/components/status-badge/status-badge.component';
+import { GridColumnConfig, GridFilterOption } from '../../../../../shared/models/grid-view.model';
 import {
   CancelModuleRequest,
   InsertModuleRequest,
   ModuleItem,
   UpdateModuleRequest
-} from '../../models/module-maintenance.model';
-import { ModuleMaintenanceService } from '../../services/module-maintenance.service';
+} from '../../../models/module-maintenance.model';
+import { ModuleMaintenanceService } from '../../../services/module-maintenance.service';
 
-type ModuleModalMode = 'create' | 'edit';
 type ModuleStatusFilter = 'all' | 'active' | 'inactive';
 type ModuleGridColumn = keyof ModuleItem | 'actions';
 type BackendErrorBody = Record<string, unknown>;
@@ -46,6 +48,7 @@ interface ModuleForm {
   imports: [
     CommonModule,
     FormsModule,
+    RouterLink,
     LucideAngularModule,
     ConfirmDialogComponent,
     DataGridPaginationComponent,
@@ -100,8 +103,6 @@ export class ModuleMaintenanceComponent implements OnInit {
   errorMessage = '';
   formError = '';
 
-  modalOpen = false;
-  modalMode: ModuleModalMode = 'create';
   editingModule: ModuleItem | null = null;
   moduleToCancel: ModuleItem | null = null;
 
@@ -111,10 +112,6 @@ export class ModuleMaintenanceComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadModules();
-  }
-
-  get modalTitle(): string {
-    return this.modalMode === 'create' ? 'Nuevo modulo' : 'Editar modulo';
   }
 
   get filteredModules(): ModuleItem[] {
@@ -225,115 +222,6 @@ export class ModuleMaintenanceComponent implements OnInit {
     this.selectedModuleId = module.id;
   }
 
-  openCreateModal(): void {
-    this.modalMode = 'create';
-    this.editingModule = null;
-    this.moduleForm = this.createEmptyForm();
-    this.formError = '';
-    this.successMessage = '';
-    this.errorMessage = '';
-    this.modalOpen = true;
-  }
-
-  openEditModal(module: ModuleItem): void {
-    this.modalMode = 'edit';
-    this.editingModule = module;
-    this.moduleForm = this.createFormFromModule(module);
-    this.formError = '';
-    this.successMessage = '';
-    this.errorMessage = '';
-    this.modalOpen = true;
-    this.isLoadingDetail = true;
-
-    this.moduleService.getModuleById(module.id).subscribe({
-      next: (loadedModule) => {
-        this.isLoadingDetail = false;
-        this.editingModule = loadedModule;
-        this.moduleForm = this.createFormFromModule(loadedModule);
-      },
-      error: (error) => {
-        this.isLoadingDetail = false;
-        this.handleHttpError(
-          error,
-          'No se pudo cargar el modulo seleccionado para editar.',
-          true
-        );
-      }
-    });
-  }
-
-  closeModal(): void {
-    if (this.isSaving) {
-      return;
-    }
-
-    this.modalOpen = false;
-    this.editingModule = null;
-    this.formError = '';
-    this.isLoadingDetail = false;
-  }
-
-  saveModule(): void {
-    this.successMessage = '';
-    this.errorMessage = '';
-    this.formError = '';
-
-    const code = this.moduleForm.code.trim();
-    const name = this.moduleForm.name.trim();
-    const order = Number(this.moduleForm.order);
-
-    if (this.modalMode === 'create' && !code) {
-      this.formError = 'El codigo es obligatorio.';
-      return;
-    }
-
-    if (!name) {
-      this.formError = 'El nombre es obligatorio.';
-      return;
-    }
-
-    if (!Number.isFinite(order)) {
-      this.formError = 'El orden es obligatorio y debe ser numerico.';
-      return;
-    }
-
-    this.isSaving = true;
-
-    if (this.modalMode === 'create') {
-      const payload: InsertModuleRequest = {
-        code,
-        name,
-        order,
-        created_by: this.getUsername()
-      };
-
-      this.moduleService.insertModule(payload).subscribe({
-        next: () => this.afterSuccessfulSave('Modulo creado correctamente.'),
-        error: (error) => this.handleSaveError(error, 'No se pudo crear el modulo.')
-      });
-
-      return;
-    }
-
-    if (!this.editingModule) {
-      this.isSaving = false;
-      this.formError = 'No se encontro el modulo seleccionado.';
-      return;
-    }
-
-    const payload: UpdateModuleRequest = {
-      module_id: this.editingModule.id,
-      name,
-      order,
-      updated_by: this.getUsername()
-    };
-
-    this.moduleService.updateModule(payload).subscribe({
-      next: () => this.afterSuccessfulSave('Modulo actualizado correctamente.'),
-      error: (error) => this.handleSaveError(error, 'No se pudo actualizar el modulo.')
-    });
-  }
-
   askCancel(module: ModuleItem): void {
     this.moduleToCancel = module;
     this.successMessage = '';
@@ -378,11 +266,7 @@ export class ModuleMaintenanceComponent implements OnInit {
   }
 
   formatDate(value?: string | null): string {
-    return value || 'Sin registro';
-  }
-
-  getModuleInitial(module: ModuleItem): string {
-    return (module.name || module.code || '?').trim().charAt(0).toUpperCase();
+    return formatDateOnly(value);
   }
 
   trackByModuleId(_: number, module: ModuleItem): number {
@@ -413,6 +297,11 @@ export class ModuleMaintenanceComponent implements OnInit {
     }
 
     const value = module[key];
+
+    if (isDateLikeField(String(key))) {
+      return formatDateOnly(value as string | null | undefined);
+    }
+
     return value === null || value === undefined || value === '' ? 'Sin registro' : String(value);
   }
 
@@ -435,19 +324,6 @@ export class ModuleMaintenanceComponent implements OnInit {
       name: module.name ?? '',
       order: module.order ?? null
     };
-  }
-
-  private afterSuccessfulSave(message: string): void {
-    this.isSaving = false;
-    this.modalOpen = false;
-    this.editingModule = null;
-    this.successMessage = message;
-    this.loadModules();
-  }
-
-  private handleSaveError(error: unknown, fallback: string): void {
-    this.isSaving = false;
-    this.handleHttpError(error, fallback, true);
   }
 
   private handleHttpError(error: unknown, fallback: string, formError = false): void {

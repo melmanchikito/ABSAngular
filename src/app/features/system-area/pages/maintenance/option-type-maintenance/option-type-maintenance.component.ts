@@ -13,6 +13,7 @@ import {
   ReactiveFormsModule,
   Validators
 } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import {
   CirclePlus,
   Edit3,
@@ -30,6 +31,8 @@ import { ConfirmDialogComponent } from '../../../../../shared/components/confirm
 import { DataGridPaginationComponent } from '../../../../../shared/components/data-grid-pagination/data-grid-pagination.component';
 import { EmptyStateComponent } from '../../../../../shared/components/empty-state/empty-state.component';
 import { PageHeaderComponent } from '../../../../../shared/components/page-header/page-header.component';
+
+import { formatDateOnly, isDateLikeField } from '../../../../../shared/utils/date-format.util';
 import { StatusBadgeComponent } from '../../../../../shared/components/status-badge/status-badge.component';
 import { GridColumnConfig, GridFilterOption } from '../../../../../shared/models/grid-view.model';
 import {
@@ -41,7 +44,6 @@ import {
 import { OptionTypeMaintenanceService } from '../../../services/option-type-maintenance.service';
 
 type OptionTypeStatusFilter = 'all' | 'active' | 'inactive';
-type OptionTypeModalMode = 'create' | 'edit';
 type OptionTypeGridColumn = keyof OptionTypeItem | 'actions';
 type OptionTypeFormField = 'code' | 'name';
 type BackendErrorBody = Record<string, unknown>;
@@ -62,6 +64,7 @@ interface OptionTypeForm {
   imports: [
     CommonModule,
     ReactiveFormsModule,
+    RouterLink,
     LucideAngularModule,
     ConfirmDialogComponent,
     DataGridPaginationComponent,
@@ -110,8 +113,6 @@ export class OptionTypeMaintenanceComponent {
   readonly isLoading = signal(false);
   readonly isSaving = signal(false);
   readonly isLoadingDetail = signal(false);
-  readonly modalOpen = signal(false);
-  readonly modalMode = signal<OptionTypeModalMode>('create');
   readonly editingOptionType = signal<OptionTypeItem | null>(null);
   readonly optionTypeToCancel = signal<OptionTypeItem | null>(null);
   readonly toast = signal<ToastState | null>(null);
@@ -158,10 +159,6 @@ export class OptionTypeMaintenanceComponent {
 
     return `Esta seguro de que desea borrar ${name}?`;
   });
-
-  readonly modalTitle = computed(() =>
-    this.modalMode() === 'create' ? 'Nuevo tipo de opcion' : 'Editar tipo de opcion'
-  );
 
   readonly optionTypeForm = inject(NonNullableFormBuilder).group<OptionTypeForm>({
     code: inject(NonNullableFormBuilder).control('', [
@@ -248,115 +245,6 @@ export class OptionTypeMaintenanceComponent {
     this.selectedOptionTypeId.set(optionType.id);
   }
 
-  openCreateModal(): void {
-    this.modalMode.set('create');
-    this.editingOptionType.set(null);
-    this.formError.set('');
-    this.optionTypeForm.reset({
-      code: '',
-      name: ''
-    });
-    this.optionTypeForm.controls.code.enable();
-    this.modalOpen.set(true);
-  }
-
-  openEditModal(optionType: OptionTypeItem): void {
-    this.modalMode.set('edit');
-    this.editingOptionType.set(optionType);
-    this.formError.set('');
-    this.optionTypeForm.reset({
-      code: optionType.code,
-      name: optionType.name
-    });
-    this.optionTypeForm.controls.code.disable();
-    this.modalOpen.set(true);
-    this.isLoadingDetail.set(true);
-
-    this.optionTypeService
-      .getOptionTypeById(optionType.id)
-      .pipe(finalize(() => this.isLoadingDetail.set(false)))
-      .subscribe({
-        next: (loadedOptionType) => {
-          this.editingOptionType.set(loadedOptionType);
-          this.optionTypeForm.reset({
-            code: loadedOptionType.code,
-            name: loadedOptionType.name
-          });
-          this.optionTypeForm.controls.code.disable();
-        },
-        error: (error) =>
-          this.handleHttpError(
-            error,
-            'No se pudo cargar el tipo de opcion seleccionado.',
-            true
-          )
-      });
-  }
-
-  closeModal(): void {
-    if (this.isSaving()) {
-      return;
-    }
-
-    this.modalOpen.set(false);
-    this.editingOptionType.set(null);
-    this.formError.set('');
-    this.isLoadingDetail.set(false);
-    this.optionTypeForm.controls.code.enable();
-  }
-
-  saveOptionType(): void {
-    this.formError.set('');
-    this.optionTypeForm.markAllAsTouched();
-
-    if (this.optionTypeForm.invalid) {
-      this.formError.set('Revise los campos obligatorios antes de guardar.');
-      return;
-    }
-
-    this.isSaving.set(true);
-
-    if (this.modalMode() === 'create') {
-      const payload: InsertOptionTypeRequest = {
-        code: this.optionTypeForm.controls.code.getRawValue().trim(),
-        name: this.optionTypeForm.controls.name.getRawValue().trim(),
-        created_by: this.getUsername()
-      };
-
-      this.optionTypeService
-        .insertOptionType(payload)
-        .pipe(finalize(() => this.isSaving.set(false)))
-        .subscribe({
-          next: () => this.afterSuccessfulSave('Tipo de opcion creado correctamente.'),
-          error: (error) => this.handleHttpError(error, 'No se pudo crear el tipo de opcion.', true)
-        });
-
-      return;
-    }
-
-    const editing = this.editingOptionType();
-
-    if (!editing) {
-      this.isSaving.set(false);
-      this.formError.set('No se encontro el tipo de opcion seleccionado.');
-      return;
-    }
-
-    const payload: UpdateOptionTypeRequest = {
-      option_type_id: editing.id,
-      name: this.optionTypeForm.controls.name.getRawValue().trim(),
-      updated_by: this.getUsername()
-    };
-
-    this.optionTypeService
-      .updateOptionType(payload)
-      .pipe(finalize(() => this.isSaving.set(false)))
-      .subscribe({
-        next: () => this.afterSuccessfulSave('Tipo de opcion actualizado correctamente.'),
-        error: (error) => this.handleHttpError(error, 'No se pudo actualizar el tipo de opcion.', true)
-      });
-  }
-
   askCancel(optionType: OptionTypeItem): void {
     this.optionTypeToCancel.set(optionType);
   }
@@ -420,11 +308,7 @@ export class OptionTypeMaintenanceComponent {
   }
 
   formatDate(value?: string | null): string {
-    return value || 'Sin registro';
-  }
-
-  getOptionTypeInitial(optionType: OptionTypeItem): string {
-    return (optionType.name || optionType.code || '?').trim().charAt(0).toUpperCase();
+    return formatDateOnly(value);
   }
 
   trackByOptionTypeId(_: number, optionType: OptionTypeItem): number {
@@ -455,20 +339,17 @@ export class OptionTypeMaintenanceComponent {
     }
 
     const value = optionType[key];
+
+    if (isDateLikeField(String(key))) {
+      return formatDateOnly(value as string | null | undefined);
+    }
+
     return value === null || value === undefined || value === '' ? 'Sin registro' : String(value);
   }
 
   @HostListener('document:click')
   closeFiltersFromOutside(): void {
     this.filtersOpen.set(false);
-  }
-
-  private afterSuccessfulSave(message: string): void {
-    this.modalOpen.set(false);
-    this.editingOptionType.set(null);
-    this.optionTypeForm.controls.code.enable();
-    this.setToast('success', message);
-    this.loadOptionTypes();
   }
 
   private handleHttpError(error: unknown, fallback: string, formError = false): void {

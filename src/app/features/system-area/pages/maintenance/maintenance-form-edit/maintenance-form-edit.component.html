@@ -1,0 +1,79 @@
+<section class="maintenance-form-shell page-shell">
+  <app-page-header
+    [eyebrow]="config.eyebrow"
+    [title]="title"
+    [subtitle]="subtitle"
+  >
+    <button page-actions type="button" class="btn-outline form-top-action" (click)="goBack()">
+      <lucide-angular [img]="backIcon" [size]="17" [strokeWidth]="2.4"></lucide-angular>
+      Volver
+    </button>
+  </app-page-header>
+
+  <section class="form-card app-card">
+    <header class="form-card-header">
+      <div>
+        <span class="form-eyebrow">{{ config.listTitle }}</span>
+        <h2>{{ title }}</h2>
+      </div>
+      <span class="form-mode">{{ modeLabel }}</span>
+    </header>
+
+    <div class="alert-warning compact-alert" *ngIf="isLoading">Cargando registro seleccionado...</div>
+    <div class="alert-error compact-alert" *ngIf="pageError">{{ pageError }}</div>
+
+    <form class="maintenance-form" (ngSubmit)="save()" *ngIf="!isLoading">
+      <label class="form-field" *ngFor="let field of visibleFields">
+        <span>{{ field.label }}</span>
+
+        <textarea
+          *ngIf="field.type === 'textarea'; else regularField"
+          [name]="field.key"
+          [value]="getFieldValue(field.key)"
+          [placeholder]="field.placeholder || field.label"
+          [readonly]="isReadonly(field)"
+          (input)="setFieldValue(field.key, $any($event.target).value)"
+        ></textarea>
+
+        <ng-template #regularField>
+          <select
+            *ngIf="field.type === 'select'; else inputField"
+            [name]="field.key"
+            [ngModel]="getFieldValue(field.key)"
+            [disabled]="isReadonly(field)"
+            (ngModelChange)="setFieldValue(field.key, $event)"
+          >
+            <option value="">Seleccione...</option>
+            <option *ngFor="let option of fieldOptions(field)" [ngValue]="option.value">
+              {{ option.label }}
+            </option>
+          </select>
+
+          <ng-template #inputField>
+            <input
+              [type]="field.type || 'text'"
+              [name]="field.key"
+              [value]="getFieldValue(field.key)"
+              [placeholder]="field.placeholder || field.label"
+              [readonly]="isReadonly(field)"
+              (input)="setFieldValue(field.key, $any($event.target).value)"
+            />
+          </ng-template>
+        </ng-template>
+
+        <small class="field-error" *ngIf="fieldInvalid(field)">{{ errors[field.key] }}</small>
+      </label>
+
+      <footer class="form-actions">
+        <button type="button" class="btn-outline" (click)="cancel()" [disabled]="isSaving">
+          Cancelar
+        </button>
+
+        <button type="submit" class="btn-primary" [disabled]="isSaving">
+          <lucide-angular [img]="saveIcon" [size]="17" [strokeWidth]="2.4"></lucide-angular>
+          {{ isSaving ? 'Guardando...' : 'Guardar' }}
+        </button>
+      </footer>
+    </form>
+  </section>
+</section>

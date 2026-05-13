@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, HostListener, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import {
   Building2,
   ChevronLeft,
@@ -20,15 +21,15 @@ import {
   Company,
   InsertCompanyRequest,
   UpdateCompanyRequest
-} from '../../models/company-maintenance.model';
-import { CompanyMaintenanceService } from '../../services/company-maintenance.service';
-import { PageHeaderComponent } from '../../../../shared/components/page-header/page-header.component';
-import { StatusBadgeComponent } from '../../../../shared/components/status-badge/status-badge.component';
-import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog.component';
-import { DataGridPaginationComponent } from '../../../../shared/components/data-grid-pagination/data-grid-pagination.component';
-import { GridColumnConfig, GridFilterOption } from '../../../../shared/models/grid-view.model';
+} from '../../../models/company-maintenance.model';
+import { CompanyMaintenanceService } from '../../../services/company-maintenance.service';
+import { StatusBadgeComponent } from '../../../../../shared/components/status-badge/status-badge.component';
+import { GridColumnConfig, GridFilterOption } from '../../../../../shared/models/grid-view.model';
+import { ConfirmDialogComponent } from '../../../../../shared/components/confirm-dialog/confirm-dialog.component';
+import { DataGridPaginationComponent } from '../../../../../shared/components/data-grid-pagination/data-grid-pagination.component';
+import { PageHeaderComponent } from '../../../../../shared/components/page-header/page-header.component';
+import { formatDateOnly, isDateLikeField } from '../../../../../shared/utils/date-format.util';
 
-type CompanyModalMode = 'create' | 'edit';
 type CompanyStatusFilter = 'all' | 'active' | 'inactive';
 type CompanyGridColumn = keyof Company | 'actions';
 type BackendErrorBody = Record<string, unknown>;
@@ -54,6 +55,7 @@ interface EditCompanyForm {
   imports: [
     CommonModule,
     FormsModule,
+    RouterLink,
     LucideAngularModule,
     PageHeaderComponent,
     StatusBadgeComponent,
@@ -108,8 +110,6 @@ export class CompanyMaintenanceComponent implements OnInit {
   errorMessage = '';
   formError = '';
 
-  modalOpen = false;
-  modalMode: CompanyModalMode = 'create';
   editingCompany: Company | null = null;
   companyToCancel: Company | null = null;
 
@@ -132,10 +132,6 @@ export class CompanyMaintenanceComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadCompanies();
-  }
-
-  get modalTitle(): string {
-    return this.modalMode === 'create' ? 'Nueva empresa' : 'Editar empresa';
   }
 
   get filteredCompanies(): Company[] {
@@ -240,171 +236,8 @@ export class CompanyMaintenanceComponent implements OnInit {
     this.currentPage = Math.min(Math.max(1, page), this.totalPages);
   }
 
-  getCompanyInitial(company: Company): string {
-    return (company.name || company.code || '?').trim().charAt(0).toUpperCase();
-  }
-
   selectCompany(company: Company): void {
     this.selectedCompanyId = company.id;
-  }
-
-  openCreateModal(): void {
-    this.modalMode = 'create';
-    this.editingCompany = null;
-    this.companyForm = {
-      code: '',
-      name: '',
-      phone: '',
-      email: '',
-      website: ''
-    };
-    this.editCompanyForm = {
-      code: '',
-      name: '',
-      phone: '',
-      email: ''
-    };
-    this.formError = '';
-    this.successMessage = '';
-    this.errorMessage = '';
-    this.modalOpen = true;
-  }
-
-  openEditModal(company: Company): void {
-    this.modalMode = 'edit';
-    this.editingCompany = company;
-    this.editCompanyForm = {
-      code: company.code,
-      name: company.name,
-      phone: company.phone ?? '',
-      email: company.email ?? ''
-    };
-    this.formError = '';
-    this.successMessage = '';
-    this.errorMessage = '';
-    this.modalOpen = true;
-  }
-
-  closeModal(): void {
-    if (this.isSaving) {
-      return;
-    }
-
-    this.modalOpen = false;
-    this.editingCompany = null;
-    this.formError = '';
-  }
-
-  saveCompany(): void {
-    this.successMessage = '';
-    this.errorMessage = '';
-    this.formError = '';
-
-    if (this.modalMode === 'create') {
-      const code = this.companyForm.code.trim();
-      const name = this.companyForm.name.trim();
-      const phone = this.companyForm.phone.trim();
-      const email = this.companyForm.email.trim();
-      const website = this.companyForm.website.trim();
-
-      if (!code) {
-        this.formError = 'El codigo es obligatorio.';
-        return;
-      }
-
-      if (!name) {
-        this.formError = 'El nombre es obligatorio.';
-        return;
-      }
-
-      if (!phone) {
-        this.formError = 'El telefono es obligatorio.';
-        return;
-      }
-
-      if (!email) {
-        this.formError = 'El email es obligatorio.';
-        return;
-      }
-
-      if (!website) {
-        this.formError = 'El sitio web es obligatorio.';
-        return;
-      }
-
-      this.isSaving = true;
-
-      const payload: InsertCompanyRequest = {
-        code,
-        name,
-        phone,
-        email,
-        website,
-        created_by: this.getUsername()
-      };
-
-      console.log('Payload empresa enviado:', JSON.stringify(payload, null, 2));
-
-      this.companyService.insertCompany(payload).subscribe({
-        next: () => this.afterSuccessfulSave('Empresa creada correctamente.'),
-        error: (error) => this.handleSaveError(error, 'No se pudo crear la empresa.')
-      });
-
-      return;
-    }
-
-    if (!this.editingCompany) {
-      this.isSaving = false;
-      this.formError = 'No se encontro la empresa seleccionada.';
-      return;
-    }
-
-    const code = this.editCompanyForm.code.trim();
-    const name = this.editCompanyForm.name.trim();
-    const phone = this.editCompanyForm.phone.trim();
-    const email = this.editCompanyForm.email.trim();
-
-    if (!code) {
-      this.formError = 'El codigo es obligatorio.';
-      return;
-    }
-
-    if (!name) {
-      this.formError = 'El nombre es obligatorio.';
-      return;
-    }
-
-    if (!phone) {
-      this.formError = 'El telefono es obligatorio.';
-      return;
-    }
-
-    if (!email) {
-      this.formError = 'El email es obligatorio.';
-      return;
-    }
-
-    this.isSaving = true;
-
-    const payload: UpdateCompanyRequest = {
-      company_id: this.editingCompany.id,
-      code,
-      name,
-      phone,
-      email,
-      updated_by: this.getUsername()
-    };
-
-    console.log('Payload actualizar empresa:', JSON.stringify(payload, null, 2));
-
-    this.companyService.updateCompany(payload).subscribe({
-      next: () => this.afterSuccessfulSave('Empresa actualizada correctamente.'),
-      error: (error) => {
-        console.error('Error actualizando empresa:', error);
-        console.error('Respuesta backend:', (error as { error?: unknown }).error);
-        this.handleSaveError(error, 'No se pudo actualizar la empresa.');
-      }
-    });
   }
 
   askCancel(company: Company): void {
@@ -451,7 +284,7 @@ export class CompanyMaintenanceComponent implements OnInit {
   }
 
   formatDate(value?: string | null): string {
-    return value || 'Sin registro';
+    return formatDateOnly(value);
   }
 
   trackByCompanyId(_: number, company: Company): number {
@@ -482,25 +315,17 @@ export class CompanyMaintenanceComponent implements OnInit {
     }
 
     const value = company[key];
+
+    if (isDateLikeField(String(key))) {
+      return formatDateOnly(value as string | null | undefined);
+    }
+
     return value === null || value === undefined || value === '' ? 'Sin registro' : String(value);
   }
 
   @HostListener('document:click')
   closeFiltersFromOutside(): void {
     this.filtersOpen = false;
-  }
-
-  private afterSuccessfulSave(message: string): void {
-    this.isSaving = false;
-    this.modalOpen = false;
-    this.editingCompany = null;
-    this.successMessage = message;
-    this.loadCompanies();
-  }
-
-  private handleSaveError(error: unknown, fallback: string): void {
-    this.isSaving = false;
-    this.handleHttpError(error, fallback, true);
   }
 
   private handleHttpError(error: unknown, fallback: string, formError = false): void {

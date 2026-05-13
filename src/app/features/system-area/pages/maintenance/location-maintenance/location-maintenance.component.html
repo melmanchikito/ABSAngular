@@ -40,7 +40,7 @@
         class="primary-btn btn-primary app-grid-icon-button"
         title="Nuevo"
         aria-label="Nuevo registro"
-        (click)="openCreateModal()"
+        routerLink="create"
       >
         <lucide-angular [img]="addIcon" [size]="18" [strokeWidth]="2.4"></lucide-angular>
       </button>
@@ -130,7 +130,6 @@
                 <ng-container [ngSwitch]="column.key">
                   <span *ngSwitchCase="'code'" class="code-badge">{{ location.code }}</span>
                   <div *ngSwitchCase="'name'" class="location-name">
-                    <span class="location-avatar">{{ getLocationInitial(location) }}</span>
                     <strong>{{ location.name }}</strong>
                   </div>
                   <app-status-badge
@@ -154,7 +153,7 @@
                       class="mini-action btn-icon"
                       title="Editar ubicacion"
                       aria-label="Editar ubicacion"
-                      (click)="$event.stopPropagation(); openEditModal(location)"
+                      [routerLink]="['edit', location.id]" (click)="$event.stopPropagation()"
                     >
                       <lucide-angular [img]="editIcon" [size]="16" [strokeWidth]="2.3"></lucide-angular>
                     </button>
@@ -189,128 +188,20 @@
     </article>
   </section>
 
-  <section class="map-section app-card">
-    <header class="panel-header">
-      <div>
-        <span class="eyebrow">Mapa Leaflet</span>
-        <h2>Referencia visual</h2>
+  <section class="map-section app-card" aria-label="Referencia visual de ubicaciones">
+    <header class="map-header">
+      <div class="map-title-group">
+        <span class="eyebrow">Referencia visual</span>
+        <h2>Mapa de ubicacion</h2>
       </div>
       <span class="map-note">Centro: Guayaquil</span>
     </header>
 
-    <div #locationsMap id="locationsMap" class="map-view"></div>
+    <div class="map-frame">
+      <div #locationsMap id="locationsMap" class="map-view"></div>
+    </div>
   </section>
 
-  <div class="modal-backdrop" *ngIf="modalOpen">
-    <section class="modal-panel" role="dialog" aria-modal="true" [attr.aria-label]="modalTitle">
-      <header class="modal-header">
-        <div>
-          <span class="eyebrow">{{ modalMode === 'create' ? 'Crear' : 'Editar' }}</span>
-          <h2>{{ modalTitle }}</h2>
-        </div>
-
-        <button
-          type="button"
-          class="close-btn btn-icon"
-          title="Cerrar"
-          aria-label="Cerrar"
-          (click)="closeModal()"
-          [disabled]="isSaving"
-        >
-          <lucide-angular [img]="closeIcon" [size]="18" [strokeWidth]="2.4"></lucide-angular>
-        </button>
-      </header>
-
-      <form class="location-form" (ngSubmit)="saveLocation()">
-        <label class="field" *ngIf="modalMode === 'create'">
-          <span>Codigo</span>
-          <input
-            type="text"
-            name="locationCode"
-            [(ngModel)]="locationForm.code"
-            placeholder="DEP-001"
-            autocomplete="off"
-            required
-          />
-        </label>
-
-        <label class="field" *ngIf="modalMode === 'edit'">
-          <span>Codigo</span>
-          <input type="text" name="editLocationCode" [(ngModel)]="editLocationForm.code" readonly />
-        </label>
-
-        <label class="field" *ngIf="modalMode === 'create'">
-          <span>Nombre</span>
-          <input
-            type="text"
-            name="locationName"
-            [(ngModel)]="locationForm.name"
-            placeholder="Administracion"
-            autocomplete="off"
-            required
-          />
-        </label>
-
-        <label class="field" *ngIf="modalMode === 'edit'">
-          <span>Nombre</span>
-          <input
-            type="text"
-            name="editLocationName"
-            [(ngModel)]="editLocationForm.name"
-            placeholder="Administracion"
-            autocomplete="off"
-            required
-          />
-        </label>
-
-        <label class="field" *ngIf="modalMode === 'create'">
-          <span>Direccion</span>
-          <textarea
-            name="locationAddress"
-            [(ngModel)]="locationForm.address"
-            placeholder="Calle Falsa 123"
-            rows="3"
-            required
-          ></textarea>
-        </label>
-
-        <label class="field" *ngIf="modalMode === 'edit'">
-          <span>Direccion</span>
-          <textarea
-            name="editLocationAddress"
-            [(ngModel)]="editLocationForm.address"
-            placeholder="Calle Falsa 123"
-            rows="3"
-            required
-          ></textarea>
-        </label>
-
-        <div class="form-map-block">
-          <div class="form-map-header">
-            <div>
-              <strong>Punto visual en mapa</strong>
-              <small>Este punto no se envia al backend.</small>
-            </div>
-            <span>{{ formatPoint(formPoint) }}</span>
-          </div>
-
-          <div #formMap class="form-map"></div>
-        </div>
-
-        <div class="message error compact" *ngIf="formError">{{ formError }}</div>
-
-        <footer class="modal-actions">
-          <button type="button" class="ghost-btn btn-outline" (click)="closeModal()" [disabled]="isSaving">
-            Cancelar
-          </button>
-
-          <button type="submit" class="primary-btn btn-primary" [disabled]="isSaving">
-            {{ isSaving ? 'Guardando...' : 'Guardar' }}
-          </button>
-        </footer>
-      </form>
-    </section>
-  </div>
 
   <app-confirm-dialog
     [open]="!!locationToCancel"
@@ -322,3 +213,4 @@
     (cancel)="closeCancelConfirm()"
   ></app-confirm-dialog>
 </section>
+

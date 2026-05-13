@@ -31,7 +31,7 @@
           </div>
         </section>
       </div>
-      <button type="button" class="primary-btn btn-primary app-grid-icon-button" title="Nuevo" aria-label="Nuevo registro" (click)="openCreateModal()">
+      <button type="button" class="primary-btn btn-primary app-grid-icon-button" title="Nuevo" aria-label="Nuevo registro" routerLink="create">
         <lucide-angular [img]="addIcon" [size]="18" [strokeWidth]="2.4"></lucide-angular>
       </button>
     </div>
@@ -131,7 +131,7 @@
                     class="icon-action btn-icon"
                     title="Editar sucursal"
                     aria-label="Editar sucursal"
-                    (click)="$event.stopPropagation(); openEditModal(branch)"
+                    [routerLink]="['edit', branch.id]" (click)="$event.stopPropagation()"
                   >
                     <lucide-angular [img]="editIcon" [size]="17" [strokeWidth]="2.3"></lucide-angular>
                   </button>
@@ -167,102 +167,6 @@
 
   </section>
 
-  <div class="modal-backdrop" *ngIf="modalOpen">
-    <section class="modal-panel" role="dialog" aria-modal="true" [attr.aria-label]="modalTitle">
-      <header class="modal-header">
-        <div>
-          <span class="eyebrow">{{ modalMode === 'create' ? 'Crear' : 'Editar' }}</span>
-          <h2>{{ modalTitle }}</h2>
-        </div>
-
-        <button
-          type="button"
-          class="close-btn btn-icon"
-          title="Cerrar"
-          aria-label="Cerrar"
-          (click)="closeModal()"
-          [disabled]="isSaving"
-        >
-          <lucide-angular [img]="closeIcon" [size]="18" [strokeWidth]="2.4"></lucide-angular>
-        </button>
-      </header>
-
-      <form class="branch-form" (ngSubmit)="saveBranch()">
-        <div class="alert-warning compact-alert field-wide" *ngIf="isLoadingDetail">
-          Cargando sucursal seleccionada...
-        </div>
-
-        <label class="field">
-          <span>Codigo</span>
-          <input
-            type="text"
-            name="branchCode"
-            [(ngModel)]="branchForm.code"
-            placeholder="SUC001"
-            autocomplete="off"
-            [readonly]="modalMode === 'edit'"
-            required
-          />
-        </label>
-
-        <label class="field">
-          <span>Nombre</span>
-          <input
-            type="text"
-            name="branchName"
-            [(ngModel)]="branchForm.name"
-            placeholder="Matriz"
-            autocomplete="off"
-            required
-          />
-        </label>
-
-        <label class="field">
-          <span>Empresa</span>
-          <select
-            name="branchCompany"
-            class="form-select"
-            [(ngModel)]="branchForm.company_id"
-            [disabled]="isLoadingCatalogs"
-            required
-          >
-            <option [ngValue]="null">Seleccione una empresa</option>
-            <option *ngFor="let company of companies; trackBy: trackByCompanyId" [ngValue]="company.id">
-              {{ company.name }}
-            </option>
-          </select>
-        </label>
-
-        <label class="field">
-          <span>Ubicacion</span>
-          <select
-            name="branchLocation"
-            class="form-select"
-            [(ngModel)]="branchForm.location_id"
-            [disabled]="isLoadingCatalogs"
-            required
-          >
-            <option [ngValue]="null">Seleccione una ubicacion</option>
-            <option *ngFor="let location of locations; trackBy: trackByLocationId" [ngValue]="location.id">
-              {{ location.name }} · {{ location.address }}
-            </option>
-          </select>
-        </label>
-
-        <div class="alert-error compact-alert field-wide" *ngIf="formError">{{ formError }}</div>
-
-        <footer class="modal-actions field-wide">
-          <button type="button" class="ghost-btn btn-outline" (click)="closeModal()" [disabled]="isSaving">
-            Cancelar
-          </button>
-
-          <button type="submit" class="primary-btn btn-primary" [disabled]="isSaving || isLoadingDetail">
-            {{ isSaving ? 'Guardando...' : 'Guardar' }}
-          </button>
-        </footer>
-      </form>
-    </section>
-  </div>
 
   <app-confirm-dialog
     [open]="!!branchToCancel"
@@ -274,3 +178,4 @@
     (cancel)="closeCancelConfirm()"
   ></app-confirm-dialog>
 </section>
+

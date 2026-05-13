@@ -12,6 +12,7 @@ import {
   ReactiveFormsModule,
   Validators
 } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import {
   CirclePlus,
   Edit3,
@@ -25,9 +26,11 @@ import {
 import { finalize } from 'rxjs';
 import { DataGridPaginationComponent } from '../../../../../shared/components/data-grid-pagination/data-grid-pagination.component';
 import { EmptyStateComponent } from '../../../../../shared/components/empty-state/empty-state.component';
+
 import { PageHeaderComponent } from '../../../../../shared/components/page-header/page-header.component';
-import { StatCardComponent } from '../../../../../shared/components/stat-card/stat-card.component';
 import { StatusBadgeComponent } from '../../../../../shared/components/status-badge/status-badge.component';
+import { StatCardComponent } from '../../../../../shared/components/stat-card/stat-card.component';
+import { formatDateOnly } from '../../../../../shared/utils/date-format.util';
 import {
   HelpdeskItem,
   InsertHelpdeskRequest,
@@ -36,7 +39,6 @@ import {
 import { HelpdeskMaintenanceService } from '../../../services/helpdesk-maintenance.service';
 
 type HelpdeskStatusFilter = 'all' | 'active' | 'inactive';
-type HelpdeskModalMode = 'create' | 'edit';
 type HelpdeskFormField = 'name' | 'user_id';
 type BackendErrorBody = Record<string, unknown>;
 
@@ -56,6 +58,7 @@ interface HelpdeskForm {
   imports: [
     CommonModule,
     ReactiveFormsModule,
+    RouterLink,
     LucideAngularModule,
     DataGridPaginationComponent,
     EmptyStateComponent,
@@ -85,8 +88,6 @@ export class HelpdeskMaintenanceComponent {
   readonly isLoading = signal(false);
   readonly isSaving = signal(false);
   readonly isLoadingDetail = signal(false);
-  readonly modalOpen = signal(false);
-  readonly modalMode = signal<HelpdeskModalMode>('create');
   readonly editingHelpdesk = signal<HelpdeskItem | null>(null);
   readonly toast = signal<ToastState | null>(null);
   readonly formError = signal('');
@@ -147,10 +148,6 @@ export class HelpdeskMaintenanceComponent {
 
     return this.helpdesks().find((item) => item.id === selectedId) ?? null;
   });
-
-  readonly modalTitle = computed(() =>
-    this.modalMode() === 'create' ? 'Nuevo helpdesk' : 'Editar helpdesk'
-  );
 
   private readonly fb = inject(NonNullableFormBuilder);
   readonly helpdeskForm = this.fb.group<HelpdeskForm>({
@@ -226,116 +223,6 @@ export class HelpdeskMaintenanceComponent {
       });
   }
 
-  openCreateModal(): void {
-    this.modalMode.set('create');
-    this.editingHelpdesk.set(null);
-    this.formError.set('');
-    this.helpdeskForm.reset({
-      name: '',
-      user_id: 0
-    });
-    this.modalOpen.set(true);
-  }
-
-  openEditModal(helpdesk: HelpdeskItem): void {
-    this.modalMode.set('edit');
-    this.editingHelpdesk.set(helpdesk);
-    this.formError.set('');
-    this.helpdeskForm.reset({
-      name: helpdesk.name,
-      user_id: Number(helpdesk.user_id)
-    });
-    this.modalOpen.set(true);
-    this.isLoadingDetail.set(true);
-
-    this.helpdeskService
-      .getHelpdeskById(helpdesk.id)
-      .pipe(finalize(() => this.isLoadingDetail.set(false)))
-      .subscribe({
-        next: (loadedHelpdesk) => {
-          this.editingHelpdesk.set(loadedHelpdesk);
-          this.upsertHelpdesk(loadedHelpdesk);
-          this.helpdeskForm.reset({
-            name: loadedHelpdesk.name,
-            user_id: Number(loadedHelpdesk.user_id)
-          });
-        },
-        error: (error) =>
-          this.handleHttpError(
-            error,
-            'No se pudo cargar el helpdesk seleccionado.',
-            true
-          )
-      });
-  }
-
-  closeModal(): void {
-    if (this.isSaving()) {
-      return;
-    }
-
-    this.modalOpen.set(false);
-    this.editingHelpdesk.set(null);
-    this.formError.set('');
-    this.isLoadingDetail.set(false);
-  }
-
-  saveHelpdesk(): void {
-    this.formError.set('');
-    this.helpdeskForm.markAllAsTouched();
-
-    if (this.helpdeskForm.invalid) {
-      this.formError.set('Revise los campos obligatorios antes de guardar.');
-      return;
-    }
-
-    const name = this.helpdeskForm.controls.name.getRawValue().trim();
-    const userId = Number(this.helpdeskForm.controls.user_id.getRawValue());
-
-    this.isSaving.set(true);
-
-    if (this.modalMode() === 'create') {
-      const payload: InsertHelpdeskRequest = {
-        name,
-        user_id: userId,
-        created_by: this.getUsername()
-      };
-
-      this.helpdeskService
-        .insertHelpdesk(payload)
-        .pipe(finalize(() => this.isSaving.set(false)))
-        .subscribe({
-          next: () => this.afterSuccessfulSave('Helpdesk creado correctamente.'),
-          error: (error) => this.handleHttpError(error, 'No se pudo crear el helpdesk.', true)
-        });
-
-      return;
-    }
-
-    const editing = this.editingHelpdesk();
-
-    if (!editing) {
-      this.isSaving.set(false);
-      this.formError.set('No se encontro el helpdesk seleccionado.');
-      return;
-    }
-
-    const payload: UpdateHelpdeskRequest = {
-      helpdesk_id: editing.id,
-      name,
-      user_id: userId,
-      updated_by: this.getUsername()
-    };
-
-    this.helpdeskService
-      .updateHelpdesk(payload)
-      .pipe(finalize(() => this.isSaving.set(false)))
-      .subscribe({
-        next: () => this.afterSuccessfulSave('Helpdesk actualizado correctamente.'),
-        error: (error) => this.handleHttpError(error, 'No se pudo actualizar el helpdesk.', true)
-      });
-  }
-
   fieldInvalid(field: HelpdeskFormField): boolean {
     const control = this.helpdeskForm.controls[field];
 
@@ -361,22 +248,11 @@ export class HelpdeskMaintenanceComponent {
   }
 
   formatDate(value?: string | null): string {
-    return value || 'Sin registro';
-  }
-
-  getHelpdeskInitial(helpdesk: HelpdeskItem): string {
-    return (helpdesk.name || '?').trim().charAt(0).toUpperCase();
+    return formatDateOnly(value);
   }
 
   trackByHelpdeskId(_: number, helpdesk: HelpdeskItem): number {
     return helpdesk.id;
-  }
-
-  private afterSuccessfulSave(message: string): void {
-    this.modalOpen.set(false);
-    this.editingHelpdesk.set(null);
-    this.setToast('success', message);
-    this.loadHelpdesks();
   }
 
   private upsertHelpdesk(helpdesk: HelpdeskItem): void {

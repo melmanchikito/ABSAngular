@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, HostListener, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import {
   Building2,
   ChevronLeft,
@@ -16,25 +17,26 @@ import {
   Trash2,
   X
 } from 'lucide-angular';
-import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog.component';
-import { DataGridPaginationComponent } from '../../../../shared/components/data-grid-pagination/data-grid-pagination.component';
-import { EmptyStateComponent } from '../../../../shared/components/empty-state/empty-state.component';
-import { PageHeaderComponent } from '../../../../shared/components/page-header/page-header.component';
-import { StatusBadgeComponent } from '../../../../shared/components/status-badge/status-badge.component';
-import { GridColumnConfig, GridFilterOption } from '../../../../shared/models/grid-view.model';
+import { ConfirmDialogComponent } from '../../../../../shared/components/confirm-dialog/confirm-dialog.component';
+import { DataGridPaginationComponent } from '../../../../../shared/components/data-grid-pagination/data-grid-pagination.component';
+import { EmptyStateComponent } from '../../../../../shared/components/empty-state/empty-state.component';
+import { PageHeaderComponent } from '../../../../../shared/components/page-header/page-header.component';
+
+import { formatDateOnly, isDateLikeField } from '../../../../../shared/utils/date-format.util';
+import { StatusBadgeComponent } from '../../../../../shared/components/status-badge/status-badge.component';
+import { GridColumnConfig, GridFilterOption } from '../../../../../shared/models/grid-view.model';
 import {
   BranchItem,
   CancelBranchRequest,
   InsertBranchRequest,
   UpdateBranchRequest
-} from '../../models/branch-maintenance.model';
-import { Company } from '../../models/company-maintenance.model';
-import { LocationItem } from '../../models/location-maintenance.model';
-import { BranchMaintenanceService } from '../../services/branch-maintenance.service';
-import { CompanyMaintenanceService } from '../../services/company-maintenance.service';
-import { LocationMaintenanceService } from '../../services/location-maintenance.service';
+} from '../../../models/branch-maintenance.model';
+import { Company } from '../../../models/company-maintenance.model';
+import { LocationItem } from '../../../models/location-maintenance.model';
+import { BranchMaintenanceService } from '../../../services/branch-maintenance.service';
+import { CompanyMaintenanceService } from '../../../services/company-maintenance.service';
+import { LocationMaintenanceService } from '../../../services/location-maintenance.service';
 
-type BranchModalMode = 'create' | 'edit';
 type BranchStatusFilter = 'all' | 'active' | 'inactive';
 type BranchGridColumn = keyof BranchItem | 'company_name' | 'location_name' | 'actions';
 type BackendErrorBody = Record<string, unknown>;
@@ -52,6 +54,7 @@ interface BranchForm {
   imports: [
     CommonModule,
     FormsModule,
+    RouterLink,
     LucideAngularModule,
     ConfirmDialogComponent,
     DataGridPaginationComponent,
@@ -116,8 +119,6 @@ export class BranchMaintenanceComponent implements OnInit {
   errorMessage = '';
   formError = '';
 
-  modalOpen = false;
-  modalMode: BranchModalMode = 'create';
   editingBranch: BranchItem | null = null;
   branchToCancel: BranchItem | null = null;
 
@@ -132,10 +133,6 @@ export class BranchMaintenanceComponent implements OnInit {
   ngOnInit(): void {
     this.loadCatalogs();
     this.loadBranches();
-  }
-
-  get modalTitle(): string {
-    return this.modalMode === 'create' ? 'Nueva sucursal' : 'Editar sucursal';
   }
 
   get filteredBranches(): BranchItem[] {
@@ -310,123 +307,6 @@ export class BranchMaintenanceComponent implements OnInit {
     this.selectedBranchId = branch.id;
   }
 
-  openCreateModal(): void {
-    this.modalMode = 'create';
-    this.editingBranch = null;
-    this.branchForm = this.createEmptyForm();
-    this.formError = '';
-    this.successMessage = '';
-    this.errorMessage = '';
-    this.modalOpen = true;
-  }
-
-  openEditModal(branch: BranchItem): void {
-    this.modalMode = 'edit';
-    this.editingBranch = branch;
-    this.branchForm = this.createFormFromBranch(branch);
-    this.formError = '';
-    this.successMessage = '';
-    this.errorMessage = '';
-    this.modalOpen = true;
-    this.isLoadingDetail = true;
-
-    this.branchService.getBranchById(branch.id).subscribe({
-      next: (loadedBranch) => {
-        this.isLoadingDetail = false;
-        this.editingBranch = loadedBranch;
-        this.branchForm = this.createFormFromBranch(loadedBranch);
-      },
-      error: (error) => {
-        this.isLoadingDetail = false;
-        this.handleHttpError(
-          error,
-          'No se pudo cargar la sucursal seleccionada para editar.',
-          true
-        );
-      }
-    });
-  }
-
-  closeModal(): void {
-    if (this.isSaving) {
-      return;
-    }
-
-    this.modalOpen = false;
-    this.editingBranch = null;
-    this.formError = '';
-    this.isLoadingDetail = false;
-  }
-
-  saveBranch(): void {
-    this.successMessage = '';
-    this.errorMessage = '';
-    this.formError = '';
-
-    const code = this.branchForm.code.trim();
-    const name = this.branchForm.name.trim();
-    const companyId = Number(this.branchForm.company_id);
-    const locationId = Number(this.branchForm.location_id);
-
-    if (this.modalMode === 'create' && !code) {
-      this.formError = 'El codigo es obligatorio.';
-      return;
-    }
-
-    if (!name) {
-      this.formError = 'El nombre es obligatorio.';
-      return;
-    }
-
-    if (!Number.isFinite(companyId) || companyId <= 0) {
-      this.formError = 'La empresa es obligatoria.';
-      return;
-    }
-
-    if (!Number.isFinite(locationId) || locationId <= 0) {
-      this.formError = 'La ubicacion es obligatoria.';
-      return;
-    }
-
-    this.isSaving = true;
-
-    if (this.modalMode === 'create') {
-      const payload: InsertBranchRequest = {
-        code,
-        name,
-        company_id: companyId,
-        location_id: locationId,
-        created_by: this.getUsername()
-      };
-
-      this.branchService.insertBranch(payload).subscribe({
-        next: () => this.afterSuccessfulSave('Sucursal creada correctamente.'),
-        error: (error) => this.handleSaveError(error, 'No se pudo crear la sucursal.')
-      });
-
-      return;
-    }
-
-    if (!this.editingBranch) {
-      this.isSaving = false;
-      this.formError = 'No se encontro la sucursal seleccionada.';
-      return;
-    }
-
-    const payload: UpdateBranchRequest = {
-      branch_id: this.editingBranch.id,
-      name,
-      company_id: companyId,
-      location_id: locationId,
-      updated_by: this.getUsername()
-    };
-
-    this.branchService.updateBranch(payload).subscribe({
-      next: () => this.afterSuccessfulSave('Sucursal actualizada correctamente.'),
-      error: (error) => this.handleSaveError(error, 'No se pudo actualizar la sucursal.')
-    });
-  }
-
   askCancel(branch: BranchItem): void {
     this.branchToCancel = branch;
     this.successMessage = '';
@@ -471,11 +351,7 @@ export class BranchMaintenanceComponent implements OnInit {
   }
 
   formatDate(value?: string | null): string {
-    return value || 'Sin registro';
-  }
-
-  getBranchInitial(branch: BranchItem): string {
-    return (branch.name || branch.code || '?').trim().charAt(0).toUpperCase();
+    return formatDateOnly(value);
   }
 
   getCompanyName(companyId: number): string {
@@ -538,6 +414,11 @@ export class BranchMaintenanceComponent implements OnInit {
     }
 
     const value = branch[key];
+
+    if (isDateLikeField(String(key))) {
+      return formatDateOnly(value as string | null | undefined);
+    }
+
     return value === null || value === undefined || value === '' ? 'Sin registro' : String(value);
   }
 
@@ -584,19 +465,6 @@ export class BranchMaintenanceComponent implements OnInit {
 
   private finishCatalogLoad(): void {
     this.isLoadingCatalogs = false;
-  }
-
-  private afterSuccessfulSave(message: string): void {
-    this.isSaving = false;
-    this.modalOpen = false;
-    this.editingBranch = null;
-    this.successMessage = message;
-    this.loadBranches();
-  }
-
-  private handleSaveError(error: unknown, fallback: string): void {
-    this.isSaving = false;
-    this.handleHttpError(error, fallback, true);
   }
 
   private handleHttpError(error: unknown, fallback: string, formError = false): void {

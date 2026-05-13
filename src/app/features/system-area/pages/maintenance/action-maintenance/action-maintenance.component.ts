@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, HostListener, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import {
   ChevronLeft,
   ChevronRight,
@@ -15,21 +16,22 @@ import {
   Trash2,
   X
 } from 'lucide-angular';
-import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog.component';
-import { DataGridPaginationComponent } from '../../../../shared/components/data-grid-pagination/data-grid-pagination.component';
-import { EmptyStateComponent } from '../../../../shared/components/empty-state/empty-state.component';
-import { PageHeaderComponent } from '../../../../shared/components/page-header/page-header.component';
-import { StatusBadgeComponent } from '../../../../shared/components/status-badge/status-badge.component';
-import { GridColumnConfig, GridFilterOption } from '../../../../shared/models/grid-view.model';
+import { ConfirmDialogComponent } from '../../../../../shared/components/confirm-dialog/confirm-dialog.component';
+import { DataGridPaginationComponent } from '../../../../../shared/components/data-grid-pagination/data-grid-pagination.component';
+import { EmptyStateComponent } from '../../../../../shared/components/empty-state/empty-state.component';
+import { PageHeaderComponent } from '../../../../../shared/components/page-header/page-header.component';
+
+import { formatDateOnly, isDateLikeField } from '../../../../../shared/utils/date-format.util';
+import { StatusBadgeComponent } from '../../../../../shared/components/status-badge/status-badge.component';
+import { GridColumnConfig, GridFilterOption } from '../../../../../shared/models/grid-view.model';
 import {
   ActionItem,
   CancelActionRequest,
   InsertActionRequest,
   UpdateActionRequest
-} from '../../models/action-maintenance.model';
-import { ActionMaintenanceService } from '../../services/action-maintenance.service';
+} from '../../../models/action-maintenance.model';
+import { ActionMaintenanceService } from '../../../services/action-maintenance.service';
 
-type ActionModalMode = 'create' | 'edit';
 type ActionStatusFilter = 'all' | 'active' | 'inactive';
 type ActionGridColumn = keyof ActionItem | 'actions';
 type BackendErrorBody = Record<string, unknown>;
@@ -45,6 +47,7 @@ interface ActionForm {
   imports: [
     CommonModule,
     FormsModule,
+    RouterLink,
     LucideAngularModule,
     ConfirmDialogComponent,
     DataGridPaginationComponent,
@@ -98,8 +101,6 @@ export class ActionMaintenanceComponent implements OnInit {
   errorMessage = '';
   formError = '';
 
-  modalOpen = false;
-  modalMode: ActionModalMode = 'create';
   editingAction: ActionItem | null = null;
   actionToCancel: ActionItem | null = null;
 
@@ -109,10 +110,6 @@ export class ActionMaintenanceComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadActions();
-  }
-
-  get modalTitle(): string {
-    return this.modalMode === 'create' ? 'Nueva accion' : 'Editar accion';
   }
 
   get filteredActions(): ActionItem[] {
@@ -222,107 +219,6 @@ export class ActionMaintenanceComponent implements OnInit {
     this.selectedActionId = action.id;
   }
 
-  openCreateModal(): void {
-    this.modalMode = 'create';
-    this.editingAction = null;
-    this.actionForm = this.createEmptyForm();
-    this.formError = '';
-    this.successMessage = '';
-    this.errorMessage = '';
-    this.modalOpen = true;
-  }
-
-  openEditModal(action: ActionItem): void {
-    this.modalMode = 'edit';
-    this.editingAction = action;
-    this.actionForm = this.createFormFromAction(action);
-    this.formError = '';
-    this.successMessage = '';
-    this.errorMessage = '';
-    this.modalOpen = true;
-    this.isLoadingDetail = true;
-
-    this.actionService.getActionById(action.id).subscribe({
-      next: (loadedAction) => {
-        this.isLoadingDetail = false;
-        this.editingAction = loadedAction;
-        this.actionForm = this.createFormFromAction(loadedAction);
-      },
-      error: (error) => {
-        this.isLoadingDetail = false;
-        this.handleHttpError(
-          error,
-          'No se pudo cargar la accion seleccionada para editar.',
-          true
-        );
-      }
-    });
-  }
-
-  closeModal(): void {
-    if (this.isSaving) {
-      return;
-    }
-
-    this.modalOpen = false;
-    this.editingAction = null;
-    this.formError = '';
-    this.isLoadingDetail = false;
-  }
-
-  saveAction(): void {
-    this.successMessage = '';
-    this.errorMessage = '';
-    this.formError = '';
-
-    const code = this.actionForm.code.trim();
-    const name = this.actionForm.name.trim();
-
-    if (this.modalMode === 'create' && !code) {
-      this.formError = 'El codigo es obligatorio.';
-      return;
-    }
-
-    if (!name) {
-      this.formError = 'El nombre es obligatorio.';
-      return;
-    }
-
-    this.isSaving = true;
-
-    if (this.modalMode === 'create') {
-      const payload: InsertActionRequest = {
-        code,
-        name,
-        created_by: this.getUsername()
-      };
-
-      this.actionService.insertAction(payload).subscribe({
-        next: () => this.afterSuccessfulSave('Accion creada correctamente.'),
-        error: (error) => this.handleSaveError(error, 'No se pudo crear la accion.')
-      });
-
-      return;
-    }
-
-    if (!this.editingAction) {
-      this.isSaving = false;
-      this.formError = 'No se encontro la accion seleccionada.';
-      return;
-    }
-
-    const payload: UpdateActionRequest = {
-      action_id: this.editingAction.id,
-      name,
-      updated_by: this.getUsername()
-    };
-
-    this.actionService.updateAction(payload).subscribe({
-      next: () => this.afterSuccessfulSave('Accion actualizada correctamente.'),
-      error: (error) => this.handleSaveError(error, 'No se pudo actualizar la accion.')
-    });
-  }
-
   askCancel(action: ActionItem): void {
     this.actionToCancel = action;
     this.successMessage = '';
@@ -367,11 +263,7 @@ export class ActionMaintenanceComponent implements OnInit {
   }
 
   formatDate(value?: string | null): string {
-    return value || 'Sin registro';
-  }
-
-  getActionInitial(action: ActionItem): string {
-    return (action.name || action.code || '?').trim().charAt(0).toUpperCase();
+    return formatDateOnly(value);
   }
 
   trackByActionId(_: number, action: ActionItem): number {
@@ -402,6 +294,11 @@ export class ActionMaintenanceComponent implements OnInit {
     }
 
     const value = action[key];
+
+    if (isDateLikeField(String(key))) {
+      return formatDateOnly(value as string | null | undefined);
+    }
+
     return value === null || value === undefined || value === '' ? 'Sin registro' : String(value);
   }
 
@@ -422,19 +319,6 @@ export class ActionMaintenanceComponent implements OnInit {
       code: action.code ?? '',
       name: action.name ?? ''
     };
-  }
-
-  private afterSuccessfulSave(message: string): void {
-    this.isSaving = false;
-    this.modalOpen = false;
-    this.editingAction = null;
-    this.successMessage = message;
-    this.loadActions();
-  }
-
-  private handleSaveError(error: unknown, fallback: string): void {
-    this.isSaving = false;
-    this.handleHttpError(error, fallback, true);
   }
 
   private handleHttpError(error: unknown, fallback: string, formError = false): void {

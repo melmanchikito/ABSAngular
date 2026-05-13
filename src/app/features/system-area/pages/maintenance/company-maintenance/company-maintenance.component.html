@@ -38,7 +38,7 @@
         class="primary-btn btn-primary app-grid-icon-button"
         title="Nuevo"
         aria-label="Nuevo registro"
-        (click)="openCreateModal()"
+        routerLink="create"
       >
         <lucide-angular [img]="addIcon" [size]="18" [strokeWidth]="2.4"></lucide-angular>
       </button>
@@ -138,7 +138,7 @@
                   class="icon-action btn-icon"
                   title="Editar empresa"
                   aria-label="Editar empresa"
-                  (click)="$event.stopPropagation(); openEditModal(company)"
+                  [routerLink]="['edit', company.id]" (click)="$event.stopPropagation()"
                 >
                   <lucide-angular [img]="editIcon" [size]="17" [strokeWidth]="2.3"></lucide-angular>
                 </button>
@@ -173,149 +173,6 @@
     ></app-data-grid-pagination>
   </section>
 
-  <div class="modal-backdrop" *ngIf="modalOpen">
-    <section class="modal-panel" role="dialog" aria-modal="true" [attr.aria-label]="modalTitle">
-      <header class="modal-header">
-        <div>
-          <span class="eyebrow">{{ modalMode === 'create' ? 'Crear' : 'Editar' }}</span>
-          <h2>{{ modalTitle }}</h2>
-        </div>
-
-        <button
-          type="button"
-          class="close-btn"
-          title="Cerrar"
-          aria-label="Cerrar"
-          (click)="closeModal()"
-          [disabled]="isSaving"
-        >
-          <lucide-angular [img]="closeIcon" [size]="18" [strokeWidth]="2.4"></lucide-angular>
-        </button>
-      </header>
-
-      <form class="company-form" (ngSubmit)="saveCompany()">
-        <label class="field" *ngIf="modalMode === 'create'">
-          <span>Codigo</span>
-          <input
-            type="text"
-            name="companyCode"
-            [(ngModel)]="companyForm.code"
-            placeholder="EMP-001"
-            autocomplete="off"
-            required
-          />
-        </label>
-
-        <label class="field" *ngIf="modalMode === 'create'">
-          <span>Nombre</span>
-          <input
-            type="text"
-            name="companyName"
-            [(ngModel)]="companyForm.name"
-            placeholder="Nombre de la empresa"
-            autocomplete="off"
-            required
-          />
-        </label>
-
-        <label class="field" *ngIf="modalMode === 'create'">
-          <span>Telefono</span>
-          <input
-            type="tel"
-            name="companyPhone"
-            [(ngModel)]="companyForm.phone"
-            placeholder="0999999999"
-            autocomplete="tel"
-            required
-          />
-        </label>
-
-        <label class="field" *ngIf="modalMode === 'create'">
-          <span>Email</span>
-          <input
-            type="email"
-            name="companyEmail"
-            [(ngModel)]="companyForm.email"
-            placeholder="empresa@correo.com"
-            autocomplete="email"
-            required
-          />
-        </label>
-
-        <label class="field" *ngIf="modalMode === 'create'">
-          <span>Sitio web</span>
-          <input
-            type="url"
-            name="companyWebsite"
-            [(ngModel)]="companyForm.website"
-            placeholder="https://empresa.com"
-            autocomplete="url"
-            required
-          />
-        </label>
-
-        <label class="field" *ngIf="modalMode === 'edit'">
-          <span>Codigo</span>
-          <input
-            type="text"
-            name="editCompanyCode"
-            [(ngModel)]="editCompanyForm.code"
-            placeholder="EMP-001"
-            autocomplete="off"
-            required
-          />
-        </label>
-
-        <label class="field" *ngIf="modalMode === 'edit'">
-          <span>Nombre</span>
-          <input
-            type="text"
-            name="editCompanyName"
-            [(ngModel)]="editCompanyForm.name"
-            placeholder="Nombre de la empresa"
-            autocomplete="off"
-            required
-          />
-        </label>
-
-        <label class="field" *ngIf="modalMode === 'edit'">
-          <span>Telefono</span>
-          <input
-            type="tel"
-            name="editCompanyPhone"
-            [(ngModel)]="editCompanyForm.phone"
-            placeholder="0999999999"
-            autocomplete="tel"
-            required
-          />
-        </label>
-
-        <label class="field" *ngIf="modalMode === 'edit'">
-          <span>Correo</span>
-          <input
-            type="email"
-            name="editCompanyEmail"
-            [(ngModel)]="editCompanyForm.email"
-            placeholder="empresa@correo.com"
-            autocomplete="email"
-            required
-          />
-        </label>
-
-        <div class="message error compact" *ngIf="formError">{{ formError }}</div>
-
-        <footer class="modal-actions">
-          <button type="button" class="ghost-btn btn-outline" (click)="closeModal()" [disabled]="isSaving">
-            Cancelar
-          </button>
-
-          <button type="submit" class="primary-btn btn-primary" [disabled]="isSaving">
-            {{ isSaving ? 'Guardando...' : 'Guardar' }}
-          </button>
-        </footer>
-      </form>
-    </section>
-  </div>
 
   <app-confirm-dialog
     [open]="!!companyToCancel"
@@ -327,3 +184,4 @@
     (cancel)="closeCancelConfirm()"
   ></app-confirm-dialog>
 </section>
+

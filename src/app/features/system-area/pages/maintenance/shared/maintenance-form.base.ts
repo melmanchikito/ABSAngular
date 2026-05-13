@@ -1,0 +1,225 @@
+import { Directive, inject } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { ArrowLeft, Save } from 'lucide-angular';
+import { Observable, forkJoin } from 'rxjs';
+import { ActionMaintenanceService } from '../../../services/action-maintenance.service';
+import { BranchMaintenanceService } from '../../../services/branch-maintenance.service';
+import { CompanyMaintenanceService } from '../../../services/company-maintenance.service';
+import { HelpdeskMaintenanceService } from '../../../services/helpdesk-maintenance.service';
+import { LocationMaintenanceService } from '../../../services/location-maintenance.service';
+import { ModuleMaintenanceService } from '../../../services/module-maintenance.service';
+import { OptionMaintenanceService } from '../../../services/option-maintenance.service';
+import { OptionTypeMaintenanceService } from '../../../services/option-type-maintenance.service';
+import { ProductMaintenanceService } from '../../../services/product-maintenance.service';
+import { UserMaintenanceService } from '../../../services/user-maintenance.service';
+import {
+  createMaintenanceFormConfig,
+  MaintenanceFormConfigServices
+} from './maintenance-form.config';
+import {
+  EntityRecord,
+  FormFieldConfig,
+  FormValue,
+  MaintenanceEntity,
+  MaintenanceFormConfig,
+  MaintenanceMode,
+  SelectOption
+} from './maintenance-form.types';
+import {
+  extractErrorMessage,
+  getUsername,
+  normalizeFormValue,
+  toNumberValue,
+  validateMaintenanceForm
+} from './maintenance-form.helpers';
+
+@Directive()
+export abstract class MaintenanceFormBase {
+  readonly backIcon = ArrowLeft;
+  readonly saveIcon = Save;
+
+  form: Record<string, FormValue> = {};
+  errors: Record<string, string> = {};
+  selectOptions: Record<string, readonly SelectOption[]> = {};
+  pageError = '';
+  isLoading = false;
+  isSaving = false;
+  submitted = false;
+
+  config!: MaintenanceFormConfig;
+  recordId: number | null = null;
+
+  abstract readonly mode: MaintenanceMode;
+  abstract readonly modeLabel: string;
+  abstract get title(): string;
+  abstract get subtitle(): string;
+
+  protected readonly route = inject(ActivatedRoute);
+  protected readonly router = inject(Router);
+  private readonly companyService = inject(CompanyMaintenanceService);
+  private readonly locationService = inject(LocationMaintenanceService);
+  private readonly branchService = inject(BranchMaintenanceService);
+  private readonly moduleService = inject(ModuleMaintenanceService);
+  private readonly actionService = inject(ActionMaintenanceService);
+  private readonly optionService = inject(OptionMaintenanceService);
+  private readonly optionTypeService = inject(OptionTypeMaintenanceService);
+  private readonly userService = inject(UserMaintenanceService);
+  private readonly helpdeskService = inject(HelpdeskMaintenanceService);
+  private readonly productService = inject(ProductMaintenanceService);
+
+  get visibleFields(): readonly FormFieldConfig[] {
+    return this.config.fields.filter((field) => this.mode === 'create' || !field.createOnly);
+  }
+
+  setupFormPage(): void {
+    const entity = this.route.snapshot.data['entity'] as MaintenanceEntity;
+    this.recordId = Number(this.route.snapshot.paramMap.get('id')) || null;
+    this.config = createMaintenanceFormConfig(entity, this.getConfigServices());
+    this.initializeForm();
+    this.loadSelectOptions();
+  }
+
+  getFieldValue(key: string): FormValue {
+    return this.form[key] ?? '';
+  }
+
+  setFieldValue(key: string, value: string): void {
+    const field = this.config.fields.find((item) => item.key === key);
+    this.form[key] = field?.numeric ? toNumberValue(value) : value;
+  }
+
+  fieldOptions(field: FormFieldConfig): readonly SelectOption[] {
+    if (field.options) {
+      return field.options;
+    }
+
+    return field.optionsKey ? this.selectOptions[field.optionsKey] ?? [] : [];
+  }
+
+  fieldInvalid(field: FormFieldConfig): boolean {
+    return Boolean(this.submitted && this.errors[field.key]);
+  }
+
+  isReadonly(field: FormFieldConfig): boolean {
+    return this.mode === 'edit' && Boolean(field.readonlyOnEdit);
+  }
+
+  goBack(): void {
+    void this.router.navigateByUrl(this.config.listUrl);
+  }
+
+  cancel(): void {
+    this.goBack();
+  }
+
+  protected validateCurrentForm(): boolean {
+    this.submitted = true;
+    this.errors = validateMaintenanceForm(this.visibleFields, this.form, this.config.entity, this.mode);
+
+    if (Object.keys(this.errors).length) {
+      this.pageError = 'Revise los campos obligatorios antes de guardar.';
+      return false;
+    }
+
+    this.pageError = '';
+    return true;
+  }
+
+  protected loadRecord(): void {
+    if (!this.recordId || !this.config.load) {
+      this.pageError = 'No se encontro el registro seleccionado.';
+      return;
+    }
+
+    this.isLoading = true;
+
+    this.config.load(this.recordId).subscribe({
+      next: (loadedRecord) => {
+        const record = loadedRecord as EntityRecord;
+
+        for (const field of this.config.fields) {
+          const value = record[field.key];
+          this.form[field.key] = normalizeFormValue(value, field);
+        }
+
+        this.isLoading = false;
+      },
+      error: (error) => {
+        this.isLoading = false;
+        this.pageError = extractErrorMessage(error, 'No se pudo cargar el registro seleccionado.');
+      }
+    });
+  }
+
+  protected buildCreatePayload(): EntityRecord {
+    return this.config.toCreatePayload(this.form, getUsername());
+  }
+
+  protected buildUpdatePayload(): EntityRecord | null {
+    if (!this.recordId) {
+      this.pageError = 'No se encontro el registro seleccionado.';
+      return null;
+    }
+
+    return this.config.toUpdatePayload(this.recordId, this.form, getUsername());
+  }
+
+  protected handleSaveSuccess(): void {
+    this.isSaving = false;
+    this.goBack();
+  }
+
+  protected handleSaveError(error: unknown, fallback: string): void {
+    this.isSaving = false;
+    this.pageError = extractErrorMessage(error, fallback);
+  }
+
+  private initializeForm(): void {
+    for (const field of this.config.fields) {
+      this.form[field.key] = field.numeric ? null : '';
+    }
+  }
+
+  private loadSelectOptions(): void {
+    const loaders = this.config.optionLoaders;
+
+    if (!loaders) {
+      return;
+    }
+
+    const entries = Object.entries(loaders);
+
+    if (!entries.length) {
+      return;
+    }
+
+    forkJoin(
+      entries.reduce<Record<string, Observable<readonly SelectOption[]>>>((acc, [key, loader]) => {
+        acc[key] = loader();
+        return acc;
+      }, {})
+    ).subscribe({
+      next: (options) => {
+        this.selectOptions = options;
+      },
+      error: () => {
+        this.pageError = 'No se pudieron cargar todos los catalogos del formulario.';
+      }
+    });
+  }
+
+  private getConfigServices(): MaintenanceFormConfigServices {
+    return {
+      companyService: this.companyService,
+      locationService: this.locationService,
+      branchService: this.branchService,
+      moduleService: this.moduleService,
+      actionService: this.actionService,
+      optionService: this.optionService,
+      optionTypeService: this.optionTypeService,
+      userService: this.userService,
+      helpdeskService: this.helpdeskService,
+      productService: this.productService
+    };
+  }
+}

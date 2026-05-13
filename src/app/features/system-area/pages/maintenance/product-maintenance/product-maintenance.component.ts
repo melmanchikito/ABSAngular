@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import {
   ChevronLeft,
   ChevronRight,
@@ -13,25 +14,24 @@ import {
   Trash2,
   X
 } from 'lucide-angular';
-import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog.component';
-import { DataGridPaginationComponent } from '../../../../shared/components/data-grid-pagination/data-grid-pagination.component';
-import { EmptyStateComponent } from '../../../../shared/components/empty-state/empty-state.component';
-import { PageHeaderComponent } from '../../../../shared/components/page-header/page-header.component';
-import { StatCardComponent } from '../../../../shared/components/stat-card/stat-card.component';
+import { ConfirmDialogComponent } from '../../../../../shared/components/confirm-dialog/confirm-dialog.component';
+import { DataGridPaginationComponent } from '../../../../../shared/components/data-grid-pagination/data-grid-pagination.component';
+import { EmptyStateComponent } from '../../../../../shared/components/empty-state/empty-state.component';
+import { PageHeaderComponent } from '../../../../../shared/components/page-header/page-header.component';
+import { formatDateOnly } from '../../../../../shared/utils/date-format.util';
 import {
   StatusBadgeComponent,
   StatusBadgeVariant
-} from '../../../../shared/components/status-badge/status-badge.component';
+} from '../../../../../shared/components/status-badge/status-badge.component';
 import {
   CancelProductRequest,
   InsertProductRequest,
   ProductItem,
   ProductSaleStatus,
   UpdateProductRequest
-} from '../../models/product-maintenance.model';
-import { ProductMaintenanceService } from '../../services/product-maintenance.service';
+} from '../../../models/product-maintenance.model';
+import { ProductMaintenanceService } from '../../../services/product-maintenance.service';
 
-type ProductModalMode = 'create' | 'edit';
 type ProductStatusFilter = 'all' | 'active' | 'inactive';
 type BackendErrorBody = Record<string, unknown>;
 
@@ -54,12 +54,12 @@ interface ProductForm {
   imports: [
     CommonModule,
     FormsModule,
+    RouterLink,
     LucideAngularModule,
     ConfirmDialogComponent,
     DataGridPaginationComponent,
     EmptyStateComponent,
     PageHeaderComponent,
-    StatCardComponent,
     StatusBadgeComponent
   ],
   templateUrl: './product-maintenance.component.html',
@@ -94,8 +94,6 @@ export class ProductMaintenanceComponent implements OnInit {
   errorMessage = '';
   formError = '';
 
-  modalOpen = false;
-  modalMode: ProductModalMode = 'create';
   editingProduct: ProductItem | null = null;
   productToCancel: ProductItem | null = null;
 
@@ -105,10 +103,6 @@ export class ProductMaintenanceComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadProducts();
-  }
-
-  get modalTitle(): string {
-    return this.modalMode === 'create' ? 'Nuevo producto' : 'Editar producto';
   }
 
   get totalProducts(): number {
@@ -227,172 +221,6 @@ export class ProductMaintenanceComponent implements OnInit {
     this.selectedProductId = product.id;
   }
 
-  openCreateModal(): void {
-    this.modalMode = 'create';
-    this.editingProduct = null;
-    this.productForm = this.createEmptyForm();
-    this.formError = '';
-    this.successMessage = '';
-    this.errorMessage = '';
-    this.modalOpen = true;
-  }
-
-  openEditModal(product: ProductItem): void {
-    this.modalMode = 'edit';
-    this.editingProduct = product;
-    this.productForm = this.createFormFromProduct(product);
-    this.formError = '';
-    this.successMessage = '';
-    this.errorMessage = '';
-    this.modalOpen = true;
-    this.isLoadingDetail = true;
-
-    this.productService.getProductById(product.id).subscribe({
-      next: (loadedProduct) => {
-        this.isLoadingDetail = false;
-        this.editingProduct = loadedProduct;
-        this.productForm = this.createFormFromProduct(loadedProduct);
-      },
-      error: (error) => {
-        this.isLoadingDetail = false;
-        this.handleHttpError(
-          error,
-          'No se pudo cargar el producto seleccionado para editar.',
-          true
-        );
-      }
-    });
-  }
-
-  closeModal(): void {
-    if (this.isSaving) {
-      return;
-    }
-
-    this.modalOpen = false;
-    this.editingProduct = null;
-    this.formError = '';
-    this.isLoadingDetail = false;
-  }
-
-  saveProduct(): void {
-    this.successMessage = '';
-    this.errorMessage = '';
-    this.formError = '';
-
-    const code = this.productForm.code.trim();
-    const name = this.productForm.name.trim();
-    const shortName = this.productForm.short_name.trim();
-    const description = this.productForm.description.trim();
-    const costPrice = Number(this.productForm.cost_price);
-    const priceMayor = Number(this.productForm.price_mayor);
-    const pricePublic = Number(this.productForm.price_public);
-    const oem = this.productForm.oem.trim();
-    const currency = this.productForm.currency.trim().toUpperCase();
-    const status = this.productForm.status;
-
-    if (!code) {
-      this.formError = 'El codigo es obligatorio.';
-      return;
-    }
-
-    if (!name) {
-      this.formError = 'El nombre es obligatorio.';
-      return;
-    }
-
-    if (!shortName) {
-      this.formError = 'El nombre corto es obligatorio.';
-      return;
-    }
-
-    if (!description) {
-      this.formError = 'La descripcion es obligatoria.';
-      return;
-    }
-
-    if (!this.isValidAmount(costPrice)) {
-      this.formError = 'El costo es obligatorio y debe ser numerico.';
-      return;
-    }
-
-    if (!this.isValidAmount(priceMayor)) {
-      this.formError = 'El precio mayor es obligatorio y debe ser numerico.';
-      return;
-    }
-
-    if (!this.isValidAmount(pricePublic)) {
-      this.formError = 'El precio publico es obligatorio y debe ser numerico.';
-      return;
-    }
-
-    if (!oem) {
-      this.formError = 'El OEM es obligatorio.';
-      return;
-    }
-
-    if (!currency) {
-      this.formError = 'La moneda es obligatoria.';
-      return;
-    }
-
-    if (!status) {
-      this.formError = 'El estado es obligatorio.';
-      return;
-    }
-
-    this.isSaving = true;
-
-    if (this.modalMode === 'create') {
-      const payload: InsertProductRequest = {
-        code,
-        name,
-        short_name: shortName,
-        description,
-        cost_price: costPrice,
-        price_mayor: priceMayor,
-        price_public: pricePublic,
-        oem,
-        currency,
-        status,
-        created_by: this.getUsername()
-      };
-
-      this.productService.insertProduct(payload).subscribe({
-        next: () => this.afterSuccessfulSave('Producto creado correctamente.'),
-        error: (error) => this.handleSaveError(error, 'No se pudo crear el producto.')
-      });
-
-      return;
-    }
-
-    if (!this.editingProduct) {
-      this.isSaving = false;
-      this.formError = 'No se encontro el producto seleccionado.';
-      return;
-    }
-
-    const payload: UpdateProductRequest = {
-      product_id: this.editingProduct.id,
-      code,
-      name,
-      short_name: shortName,
-      description,
-      cost_price: costPrice,
-      price_mayor: priceMayor,
-      price_public: pricePublic,
-      oem,
-      currency,
-      status,
-      updated_by: this.getUsername()
-    };
-
-    this.productService.updateProduct(payload).subscribe({
-      next: () => this.afterSuccessfulSave('Producto actualizado correctamente.'),
-      error: (error) => this.handleSaveError(error, 'No se pudo actualizar el producto.')
-    });
-  }
-
   askCancel(product: ProductItem): void {
     this.productToCancel = product;
     this.successMessage = '';
@@ -437,7 +265,7 @@ export class ProductMaintenanceComponent implements OnInit {
   }
 
   formatDate(value?: string | null): string {
-    return value || 'Sin registro';
+    return formatDateOnly(value);
   }
 
   formatAmount(value?: number | null): string {
@@ -447,10 +275,6 @@ export class ProductMaintenanceComponent implements OnInit {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2
     }).format(amount);
-  }
-
-  getProductInitial(product: ProductItem): string {
-    return (product.name || product.code || '?').trim().charAt(0).toUpperCase();
   }
 
   getStatusLabel(product: ProductItem): string {
@@ -519,19 +343,6 @@ export class ProductMaintenanceComponent implements OnInit {
 
   private isValidAmount(value: number): boolean {
     return Number.isFinite(value) && value >= 0;
-  }
-
-  private afterSuccessfulSave(message: string): void {
-    this.isSaving = false;
-    this.modalOpen = false;
-    this.editingProduct = null;
-    this.successMessage = message;
-    this.loadProducts();
-  }
-
-  private handleSaveError(error: unknown, fallback: string): void {
-    this.isSaving = false;
-    this.handleHttpError(error, fallback, true);
   }
 
   private handleHttpError(error: unknown, fallback: string, formError = false): void {

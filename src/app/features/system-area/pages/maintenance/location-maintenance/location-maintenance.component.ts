@@ -9,6 +9,7 @@ import {
   ViewChild
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import {
   ChevronLeft,
   ChevronRight,
@@ -29,16 +30,17 @@ import {
   InsertLocationRequest,
   LocationItem,
   UpdateLocationRequest
-} from '../../models/location-maintenance.model';
-import { LocationMaintenanceService } from '../../services/location-maintenance.service';
-import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog.component';
-import { DataGridPaginationComponent } from '../../../../shared/components/data-grid-pagination/data-grid-pagination.component';
-import { EmptyStateComponent } from '../../../../shared/components/empty-state/empty-state.component';
-import { PageHeaderComponent } from '../../../../shared/components/page-header/page-header.component';
-import { StatusBadgeComponent } from '../../../../shared/components/status-badge/status-badge.component';
-import { GridColumnConfig, GridFilterOption } from '../../../../shared/models/grid-view.model';
+} from '../../../models/location-maintenance.model';
+import { LocationMaintenanceService } from '../../../services/location-maintenance.service';
+import { ConfirmDialogComponent } from '../../../../../shared/components/confirm-dialog/confirm-dialog.component';
+import { DataGridPaginationComponent } from '../../../../../shared/components/data-grid-pagination/data-grid-pagination.component';
+import { EmptyStateComponent } from '../../../../../shared/components/empty-state/empty-state.component';
+import { PageHeaderComponent } from '../../../../../shared/components/page-header/page-header.component';
 
-type LocationModalMode = 'create' | 'edit';
+import { formatDateOnly, isDateLikeField } from '../../../../../shared/utils/date-format.util';
+import { StatusBadgeComponent } from '../../../../../shared/components/status-badge/status-badge.component';
+import { GridColumnConfig, GridFilterOption } from '../../../../../shared/models/grid-view.model';
+
 type LocationStatusFilter = 'all' | 'active' | 'inactive';
 type LocationGridColumn = keyof LocationItem | 'actions';
 type BackendErrorBody = Record<string, unknown>;
@@ -66,6 +68,7 @@ interface MapPoint {
   imports: [
     CommonModule,
     FormsModule,
+    RouterLink,
     LucideAngularModule,
     ConfirmDialogComponent,
     DataGridPaginationComponent,
@@ -122,8 +125,6 @@ export class LocationMaintenanceComponent implements OnInit, AfterViewInit, OnDe
   errorMessage = '';
   formError = '';
 
-  modalOpen = false;
-  modalMode: LocationModalMode = 'create';
   editingLocation: LocationItem | null = null;
   locationToCancel: LocationItem | null = null;
 
@@ -163,10 +164,6 @@ export class LocationMaintenanceComponent implements OnInit, AfterViewInit, OnDe
   ngOnDestroy(): void {
     this.mainMap?.remove();
     this.formMap?.remove();
-  }
-
-  get modalTitle(): string {
-    return this.modalMode === 'create' ? 'Nueva ubicacion' : 'Editar ubicacion';
   }
 
   get cancelLocationMessage(): string {
@@ -282,129 +279,6 @@ export class LocationMaintenanceComponent implements OnInit, AfterViewInit, OnDe
     setTimeout(() => this.invalidateMaps(), 0);
   }
 
-  openCreateModal(): void {
-    this.modalMode = 'create';
-    this.editingLocation = null;
-    this.locationForm = {
-      code: '',
-      name: '',
-      address: ''
-    };
-    this.editLocationForm = {
-      code: '',
-      name: '',
-      address: ''
-    };
-    this.formPoint = null;
-    this.formError = '';
-    this.successMessage = '';
-    this.errorMessage = '';
-    this.modalOpen = true;
-    setTimeout(() => this.initFormMap(), 0);
-  }
-
-  openEditModal(location: LocationItem): void {
-    this.modalMode = 'edit';
-    this.editingLocation = location;
-    this.editLocationForm = {
-      code: location.code,
-      name: location.name,
-      address: location.address
-    };
-    this.formPoint = null;
-    this.formError = '';
-    this.successMessage = '';
-    this.errorMessage = '';
-    this.modalOpen = true;
-    setTimeout(() => this.initFormMap(), 0);
-  }
-
-  closeModal(): void {
-    if (this.isSaving) {
-      return;
-    }
-
-    this.modalOpen = false;
-    this.editingLocation = null;
-    this.formError = '';
-    this.destroyFormMap();
-  }
-
-  saveLocation(): void {
-    this.successMessage = '';
-    this.errorMessage = '';
-    this.formError = '';
-
-    if (this.modalMode === 'create') {
-      const code = this.locationForm.code.trim();
-      const name = this.locationForm.name.trim();
-      const address = this.locationForm.address.trim();
-
-      if (!code) {
-        this.formError = 'El codigo es obligatorio.';
-        return;
-      }
-
-      if (!name) {
-        this.formError = 'El nombre es obligatorio.';
-        return;
-      }
-
-      if (!address) {
-        this.formError = 'La direccion es obligatoria.';
-        return;
-      }
-
-      this.isSaving = true;
-
-      const payload: InsertLocationRequest = {
-        code,
-        name,
-        address,
-        created_by: this.getUsername()
-      };
-
-      this.locationService.insertLocation(payload).subscribe({
-        next: () => this.afterSuccessfulSave('Ubicacion creada correctamente.'),
-        error: (error) => this.handleSaveError(error, 'No se pudo crear la ubicacion.')
-      });
-
-      return;
-    }
-
-    if (!this.editingLocation) {
-      this.formError = 'No se encontro la ubicacion seleccionada.';
-      return;
-    }
-
-    const name = this.editLocationForm.name.trim();
-    const address = this.editLocationForm.address.trim();
-
-    if (!name) {
-      this.formError = 'El nombre es obligatorio.';
-      return;
-    }
-
-    if (!address) {
-      this.formError = 'La direccion es obligatoria.';
-      return;
-    }
-
-    this.isSaving = true;
-
-    const payload: UpdateLocationRequest = {
-      location_id: this.editingLocation.id,
-      name,
-      address,
-      updated_by: this.getUsername()
-    };
-
-    this.locationService.updateLocation(payload).subscribe({
-      next: () => this.afterSuccessfulSave('Ubicacion actualizada correctamente.'),
-      error: (error) => this.handleSaveError(error, 'No se pudo actualizar la ubicacion.')
-    });
-  }
-
   askCancel(location: LocationItem): void {
     this.locationToCancel = location;
     this.successMessage = '';
@@ -449,7 +323,7 @@ export class LocationMaintenanceComponent implements OnInit, AfterViewInit, OnDe
   }
 
   formatDate(value?: string | null): string {
-    return value || 'Sin registro';
+    return formatDateOnly(value);
   }
 
   formatTime(value?: string | null): string {
@@ -459,10 +333,6 @@ export class LocationMaintenanceComponent implements OnInit, AfterViewInit, OnDe
 
     const timePart = value.split(' ')[1];
     return timePart || 'Sin registro';
-  }
-
-  getLocationInitial(location: LocationItem): string {
-    return (location.name || location.code || '?').trim().charAt(0).toUpperCase();
   }
 
   trackByLocationId(_: number, location: LocationItem): number {
@@ -493,6 +363,11 @@ export class LocationMaintenanceComponent implements OnInit, AfterViewInit, OnDe
     }
 
     const value = location[key];
+
+    if (isDateLikeField(String(key))) {
+      return formatDateOnly(value as string | null | undefined);
+    }
+
     return value === null || value === undefined || value === '' ? 'Sin registro' : String(value);
   }
 
@@ -612,20 +487,6 @@ export class LocationMaintenanceComponent implements OnInit, AfterViewInit, OnDe
     this.formMap?.remove();
     this.formMap = null;
     this.formMarker = null;
-  }
-
-  private afterSuccessfulSave(message: string): void {
-    this.isSaving = false;
-    this.modalOpen = false;
-    this.editingLocation = null;
-    this.successMessage = message;
-    this.destroyFormMap();
-    this.loadLocations();
-  }
-
-  private handleSaveError(error: unknown, fallback: string): void {
-    this.isSaving = false;
-    this.handleHttpError(error, fallback, true);
   }
 
   private handleHttpError(error: unknown, fallback: string, formError = false): void {

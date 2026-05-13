@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, HostListener, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import {
   ChevronLeft,
   ChevronRight,
@@ -15,24 +16,25 @@ import {
   Trash2,
   X
 } from 'lucide-angular';
-import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog.component';
-import { DataGridPaginationComponent } from '../../../../shared/components/data-grid-pagination/data-grid-pagination.component';
-import { EmptyStateComponent } from '../../../../shared/components/empty-state/empty-state.component';
-import { PageHeaderComponent } from '../../../../shared/components/page-header/page-header.component';
-import { StatusBadgeComponent } from '../../../../shared/components/status-badge/status-badge.component';
-import { GridColumnConfig, GridFilterOption } from '../../../../shared/models/grid-view.model';
-import { ModuleItem } from '../../models/module-maintenance.model';
+import { ConfirmDialogComponent } from '../../../../../shared/components/confirm-dialog/confirm-dialog.component';
+import { DataGridPaginationComponent } from '../../../../../shared/components/data-grid-pagination/data-grid-pagination.component';
+import { EmptyStateComponent } from '../../../../../shared/components/empty-state/empty-state.component';
+import { PageHeaderComponent } from '../../../../../shared/components/page-header/page-header.component';
+
+import { formatDateOnly, isDateLikeField } from '../../../../../shared/utils/date-format.util';
+import { StatusBadgeComponent } from '../../../../../shared/components/status-badge/status-badge.component';
+import { GridColumnConfig, GridFilterOption } from '../../../../../shared/models/grid-view.model';
+import { ModuleItem } from '../../../models/module-maintenance.model';
 import {
   CancelOptionRequest,
   InsertOptionRequest,
   OptionItem,
   OptionTypeItem,
   UpdateOptionRequest
-} from '../../models/option-maintenance.model';
-import { ModuleMaintenanceService } from '../../services/module-maintenance.service';
-import { OptionMaintenanceService } from '../../services/option-maintenance.service';
+} from '../../../models/option-maintenance.model';
+import { ModuleMaintenanceService } from '../../../services/module-maintenance.service';
+import { OptionMaintenanceService } from '../../../services/option-maintenance.service';
 
-type OptionModalMode = 'create' | 'edit';
 type OptionStatusFilter = 'all' | 'active' | 'inactive';
 type OptionGridColumn = keyof OptionItem | 'module_name' | 'type_name' | 'actions';
 type BackendErrorBody = Record<string, unknown>;
@@ -51,6 +53,7 @@ interface OptionForm {
   imports: [
     CommonModule,
     FormsModule,
+    RouterLink,
     LucideAngularModule,
     ConfirmDialogComponent,
     DataGridPaginationComponent,
@@ -116,8 +119,6 @@ export class OptionMaintenanceComponent implements OnInit {
   errorMessage = '';
   formError = '';
 
-  modalOpen = false;
-  modalMode: OptionModalMode = 'create';
   editingOption: OptionItem | null = null;
   optionToCancel: OptionItem | null = null;
 
@@ -131,10 +132,6 @@ export class OptionMaintenanceComponent implements OnInit {
   ngOnInit(): void {
     this.loadCatalogs();
     this.loadOptions();
-  }
-
-  get modalTitle(): string {
-    return this.modalMode === 'create' ? 'Nueva opcion' : 'Editar opcion';
   }
 
   get filteredOptions(): OptionItem[] {
@@ -294,131 +291,6 @@ export class OptionMaintenanceComponent implements OnInit {
     this.selectedOptionId = option.id;
   }
 
-  openCreateModal(): void {
-    this.modalMode = 'create';
-    this.editingOption = null;
-    this.optionForm = this.createEmptyForm();
-    this.formError = '';
-    this.successMessage = '';
-    this.errorMessage = '';
-    this.modalOpen = true;
-  }
-
-  openEditModal(option: OptionItem): void {
-    this.modalMode = 'edit';
-    this.editingOption = option;
-    this.optionForm = this.createFormFromOption(option);
-    this.formError = '';
-    this.successMessage = '';
-    this.errorMessage = '';
-    this.modalOpen = true;
-    this.isLoadingDetail = true;
-
-    this.optionService.getOptionById(option.id).subscribe({
-      next: (loadedOption) => {
-        this.isLoadingDetail = false;
-        this.editingOption = loadedOption;
-        this.optionForm = this.createFormFromOption(loadedOption);
-      },
-      error: (error) => {
-        this.isLoadingDetail = false;
-        this.handleHttpError(
-          error,
-          'No se pudo cargar la opcion seleccionada para editar.',
-          true
-        );
-      }
-    });
-  }
-
-  closeModal(): void {
-    if (this.isSaving) {
-      return;
-    }
-
-    this.modalOpen = false;
-    this.editingOption = null;
-    this.formError = '';
-    this.isLoadingDetail = false;
-  }
-
-  saveOption(): void {
-    this.successMessage = '';
-    this.errorMessage = '';
-    this.formError = '';
-
-    const code = this.optionForm.code.trim();
-    const name = this.optionForm.name.trim();
-    const order = Number(this.optionForm.order);
-    const moduleId = Number(this.optionForm.module_id);
-    const typeId = Number(this.optionForm.type_id);
-
-    if (this.modalMode === 'create' && !code) {
-      this.formError = 'El codigo es obligatorio.';
-      return;
-    }
-
-    if (!name) {
-      this.formError = 'El nombre es obligatorio.';
-      return;
-    }
-
-    if (!Number.isFinite(order)) {
-      this.formError = 'El orden es obligatorio y debe ser numerico.';
-      return;
-    }
-
-    if (!Number.isFinite(moduleId) || moduleId <= 0) {
-      this.formError = 'El modulo es obligatorio.';
-      return;
-    }
-
-    if (!Number.isFinite(typeId) || typeId <= 0) {
-      this.formError = 'El tipo de opcion es obligatorio.';
-      return;
-    }
-
-    this.isSaving = true;
-
-    if (this.modalMode === 'create') {
-      const payload: InsertOptionRequest = {
-        code,
-        name,
-        order,
-        module_id: moduleId,
-        type_id: typeId,
-        created_by: this.getUsername()
-      };
-
-      this.optionService.insertOption(payload).subscribe({
-        next: () => this.afterSuccessfulSave('Opcion creada correctamente.'),
-        error: (error) => this.handleSaveError(error, 'No se pudo crear la opcion.')
-      });
-
-      return;
-    }
-
-    if (!this.editingOption) {
-      this.isSaving = false;
-      this.formError = 'No se encontro la opcion seleccionada.';
-      return;
-    }
-
-    const payload: UpdateOptionRequest = {
-      option_id: this.editingOption.id,
-      name,
-      order,
-      module_id: moduleId,
-      type_id: typeId,
-      updated_by: this.getUsername()
-    };
-
-    this.optionService.updateOption(payload).subscribe({
-      next: () => this.afterSuccessfulSave('Opcion actualizada correctamente.'),
-      error: (error) => this.handleSaveError(error, 'No se pudo actualizar la opcion.')
-    });
-  }
-
   askCancel(option: OptionItem): void {
     this.optionToCancel = option;
     this.successMessage = '';
@@ -463,11 +335,7 @@ export class OptionMaintenanceComponent implements OnInit {
   }
 
   formatDate(value?: string | null): string {
-    return value || 'Sin registro';
-  }
-
-  getOptionInitial(option: OptionItem): string {
-    return (option.name || option.code || '?').trim().charAt(0).toUpperCase();
+    return formatDateOnly(value);
   }
 
   getModuleName(moduleId: number): string {
@@ -526,6 +394,11 @@ export class OptionMaintenanceComponent implements OnInit {
     }
 
     const value = option[key];
+
+    if (isDateLikeField(String(key))) {
+      return formatDateOnly(value as string | null | undefined);
+    }
+
     return value === null || value === undefined || value === '' ? 'Sin registro' : String(value);
   }
 
@@ -552,19 +425,6 @@ export class OptionMaintenanceComponent implements OnInit {
       module_id: option.module_id ?? null,
       type_id: option.type_id ?? null
     };
-  }
-
-  private afterSuccessfulSave(message: string): void {
-    this.isSaving = false;
-    this.modalOpen = false;
-    this.editingOption = null;
-    this.successMessage = message;
-    this.loadOptions();
-  }
-
-  private handleSaveError(error: unknown, fallback: string): void {
-    this.isSaving = false;
-    this.handleHttpError(error, fallback, true);
   }
 
   private handleHttpError(error: unknown, fallback: string, formError = false): void {

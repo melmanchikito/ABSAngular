@@ -15,6 +15,7 @@ import {
   ValidationErrors,
   Validators
 } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import {
   CirclePlus,
   Edit3,
@@ -31,8 +32,10 @@ import { finalize } from 'rxjs';
 import { ConfirmDialogComponent } from '../../../../../shared/components/confirm-dialog/confirm-dialog.component';
 import { DataGridPaginationComponent } from '../../../../../shared/components/data-grid-pagination/data-grid-pagination.component';
 import { EmptyStateComponent } from '../../../../../shared/components/empty-state/empty-state.component';
+
 import { PageHeaderComponent } from '../../../../../shared/components/page-header/page-header.component';
 import { StatusBadgeComponent } from '../../../../../shared/components/status-badge/status-badge.component';
+import { formatDateOnly, isDateLikeField } from '../../../../../shared/utils/date-format.util';
 import {
   GridColumnConfig,
   GridFilterOption,
@@ -47,7 +50,6 @@ import {
 import { UserMaintenanceService } from '../../../services/user-maintenance.service';
 
 type UserStatusFilter = 'all' | 'active' | 'inactive';
-type UserModalMode = 'create' | 'edit';
 type UserGridColumn = keyof UserItem | 'actions';
 type UserFormField =
   | 'username'
@@ -86,6 +88,7 @@ interface UserForm {
   imports: [
     CommonModule,
     ReactiveFormsModule,
+    RouterLink,
     LucideAngularModule,
     ConfirmDialogComponent,
     DataGridPaginationComponent,
@@ -151,8 +154,6 @@ export class UserMaintenanceComponent {
   readonly isLoading = signal(false);
   readonly isSaving = signal(false);
   readonly isLoadingDetail = signal(false);
-  readonly modalOpen = signal(false);
-  readonly modalMode = signal<UserModalMode>('create');
   readonly editingUser = signal<UserItem | null>(null);
   readonly userToCancel = signal<UserItem | null>(null);
   readonly toast = signal<ToastState | null>(null);
@@ -256,10 +257,6 @@ export class UserMaintenanceComponent {
     return `Esta seguro de que desea borrar ${username}?`;
   });
 
-  readonly modalTitle = computed(() =>
-    this.modalMode() === 'create' ? 'Nuevo usuario' : 'Editar usuario'
-  );
-
   private readonly userService = inject(UserMaintenanceService);
   private toastTimer: ReturnType<typeof setTimeout> | null = null;
 
@@ -332,147 +329,6 @@ export class UserMaintenanceComponent {
 
   selectUser(user: UserItem): void {
     this.selectedUserId.set(user.id);
-  }
-
-  openCreateModal(): void {
-    this.modalMode.set('create');
-    this.editingUser.set(null);
-    this.formError.set('');
-    this.setPasswordValidators(true);
-    this.userForm.reset({
-      username: '',
-      name: '',
-      lastname: '',
-      email: '',
-      password: '',
-      confirm_password: '',
-      role_id: null,
-      state: 'active',
-      phone: '',
-      identification: ''
-    });
-    this.userForm.controls.username.enable();
-    this.modalOpen.set(true);
-  }
-
-  openEditModal(user: UserItem): void {
-    this.modalMode.set('edit');
-    this.editingUser.set(user);
-    this.formError.set('');
-    this.setPasswordValidators(false);
-    this.patchForm(user);
-    this.userForm.controls.username.enable();
-    this.modalOpen.set(true);
-    this.isLoadingDetail.set(true);
-
-    this.userService
-      .getUserById(user.id)
-      .pipe(finalize(() => this.isLoadingDetail.set(false)))
-      .subscribe({
-        next: (loadedUser) => {
-          this.editingUser.set(loadedUser);
-          this.patchForm(loadedUser);
-        },
-        error: (error) =>
-          this.handleHttpError(
-            error,
-            'No se pudo cargar el usuario seleccionado.',
-            true
-          )
-      });
-  }
-
-  closeModal(): void {
-    if (this.isSaving()) {
-      return;
-    }
-
-    this.modalOpen.set(false);
-    this.editingUser.set(null);
-    this.formError.set('');
-    this.isLoadingDetail.set(false);
-  }
-
-  saveUser(): void {
-    this.formError.set('');
-    this.userForm.markAllAsTouched();
-
-    if (this.userForm.invalid) {
-      this.formError.set('Revise los campos obligatorios antes de guardar.');
-      return;
-    }
-
-    const roleId = Number(this.userForm.controls.role_id.value);
-
-    if (!Number.isFinite(roleId) || roleId <= 0) {
-      this.formError.set('El rol es obligatorio y debe ser numerico.');
-      return;
-    }
-
-    this.isSaving.set(true);
-
-    if (this.modalMode() === 'create') {
-      const payload: InsertUserRequest = {
-        username: this.userForm.controls.username.getRawValue().trim(),
-        name: this.userForm.controls.name.getRawValue().trim(),
-        lastname: this.userForm.controls.lastname.getRawValue().trim(),
-        email: this.userForm.controls.email.getRawValue().trim(),
-        password: this.userForm.controls.password.getRawValue(),
-        confirm_password: this.userForm.controls.confirm_password.getRawValue(),
-        role_id: roleId,
-        state: this.userForm.controls.state.getRawValue(),
-        phone: this.userForm.controls.phone.getRawValue().trim(),
-        identification: this.userForm.controls.identification.getRawValue().trim(),
-        created_by: this.getUsername()
-      };
-
-      this.userService
-        .insertUser(payload)
-        .pipe(finalize(() => this.isSaving.set(false)))
-        .subscribe({
-          next: () => this.afterSuccessfulSave('Usuario creado correctamente.'),
-          error: (error) => this.handleHttpError(error, 'No se pudo crear el usuario.', true)
-        });
-
-      return;
-    }
-
-    const editing = this.editingUser();
-
-    if (!editing) {
-      this.isSaving.set(false);
-      this.formError.set('No se encontro el usuario seleccionado.');
-      return;
-    }
-
-    const payload: UpdateUserRequest = {
-      user_id: editing.id,
-      username: this.userForm.controls.username.getRawValue().trim(),
-      name: this.userForm.controls.name.getRawValue().trim(),
-      lastname: this.userForm.controls.lastname.getRawValue().trim(),
-      email: this.userForm.controls.email.getRawValue().trim(),
-      role_id: roleId,
-      state: this.userForm.controls.state.getRawValue(),
-      phone: this.userForm.controls.phone.getRawValue().trim(),
-      identification: this.userForm.controls.identification.getRawValue().trim(),
-      updated_by: this.getUsername()
-    };
-
-    const password = this.userForm.controls.password.getRawValue();
-    const confirmPassword = this.userForm.controls.confirm_password.getRawValue();
-
-    if (password) {
-      payload.password = password;
-      payload.confirm_password = confirmPassword;
-    }
-
-    this.userService
-      .updateUser(payload)
-      .pipe(finalize(() => this.isSaving.set(false)))
-      .subscribe({
-        next: () => this.afterSuccessfulSave('Usuario actualizado correctamente.'),
-        error: (error) => this.handleHttpError(error, 'No se pudo actualizar el usuario.', true)
-      });
   }
 
   askCancel(user: UserItem): void {
@@ -548,15 +404,11 @@ export class UserMaintenanceComponent {
   }
 
   formatDate(value?: string | null): string {
-    return value || 'Sin registro';
+    return formatDateOnly(value);
   }
 
   getFullName(user: UserItem): string {
     return [user.name, user.lastname].filter(Boolean).join(' ').trim() || user.username;
-  }
-
-  getUserInitial(user: UserItem): string {
-    return (user.name || user.username || '?').trim().charAt(0).toUpperCase();
   }
 
   getStateLabel(user: UserItem): string {
@@ -635,6 +487,11 @@ export class UserMaintenanceComponent {
     }
 
     const value = user[key];
+
+    if (isDateLikeField(String(key))) {
+      return formatDateOnly(value as string | null | undefined);
+    }
+
     return value === null || value === undefined || value === '' ? 'Sin registro' : String(value);
   }
 
@@ -685,13 +542,6 @@ export class UserMaintenanceComponent {
     }
 
     return password === confirmPassword ? null : { passwordMismatch: true };
-  }
-
-  private afterSuccessfulSave(message: string): void {
-    this.modalOpen.set(false);
-    this.editingUser.set(null);
-    this.setToast('success', message);
-    this.loadUsers();
   }
 
   private handleHttpError(error: unknown, fallback: string, formError = false): void {
