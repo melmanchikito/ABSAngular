@@ -17,6 +17,7 @@ import {
   SystemAreaOption,
   SystemAreaSubmodule
 } from '../../models/system-area.model';
+import { PreferencesService } from '../../../../core/services/preferences.service';
 
 @Component({
   selector: 'app-system-area',
@@ -29,12 +30,16 @@ export class SystemAreaComponent {
   area: SystemAreaConfig = SYSTEM_AREA_CONFIG[DEFAULT_SYSTEM_AREA_KEY];
   submodule: SystemAreaSubmodule | null = null;
   activeCategory: SystemAreaCategoryKey = 'mantenimientos';
+  isCategoryExiting = false;
+  contentAnimationCycle = 0;
 
   private readonly destroyRef = inject(DestroyRef);
+  private categoryTransitionTimer?: ReturnType<typeof setTimeout>;
 
   constructor(
     private readonly route: ActivatedRoute,
-    private readonly router: Router
+    private readonly router: Router,
+    private readonly preferencesService: PreferencesService
   ) {
     this.route.paramMap
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -74,7 +79,14 @@ export class SystemAreaComponent {
         this.submodule =
           this.area.submodules?.find((item) => item.key === submoduleKey) ?? null;
         this.activeCategory = this.categories[0]?.key ?? 'mantenimientos';
+        this.contentAnimationCycle += 1;
       });
+
+    this.destroyRef.onDestroy(() => {
+      if (this.categoryTransitionTimer) {
+        clearTimeout(this.categoryTransitionTimer);
+      }
+    });
   }
 
   get categories(): SystemAreaCategory[] {
@@ -101,7 +113,27 @@ export class SystemAreaComponent {
   }
 
   selectCategory(category: SystemAreaCategory): void {
-    this.activeCategory = category.key;
+    if (category.key === this.activeCategory) {
+      return;
+    }
+
+    if (!this.preferencesService.snapshot.showAnimations) {
+      this.activeCategory = category.key;
+      this.contentAnimationCycle += 1;
+      return;
+    }
+
+    if (this.categoryTransitionTimer) {
+      clearTimeout(this.categoryTransitionTimer);
+    }
+
+    this.isCategoryExiting = true;
+
+    this.categoryTransitionTimer = setTimeout(() => {
+      this.activeCategory = category.key;
+      this.contentAnimationCycle += 1;
+      this.isCategoryExiting = false;
+    }, 150);
   }
 
   async selectOption(option: SystemAreaOption): Promise<void> {

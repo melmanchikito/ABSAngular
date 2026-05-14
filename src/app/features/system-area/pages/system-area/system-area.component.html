@@ -35,7 +35,11 @@
     </button>
   </div>
 
-  <div class="content-card app-card">
+  <div
+    class="content-card app-card"
+    [class.category-exiting]="isCategoryExiting"
+    [attr.data-motion-cycle]="contentAnimationCycle"
+  >
     <div class="content-header">
       <div>
         <h2>{{ activeCategoryConfig.label }}</h2>

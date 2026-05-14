@@ -13,6 +13,42 @@
   --system-shadow-hover: 0 10px 24px rgba(15, 23, 42, 0.12);
 }
 
+@keyframes system-module-enter {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 18px, 0);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes system-module-card-enter {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 18px, 0) scale(0.975);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@keyframes system-options-exit {
+  from {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+
+  to {
+    opacity: 0;
+    transform: translate3d(0, 10px, 0) scale(0.985);
+  }
+}
+
 .page-header {
   display: flex;
   align-items: center;
@@ -283,6 +319,95 @@
   background: var(--system-soft-bg);
   color: var(--abs-text-muted);
   font-weight: 700;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .page-header {
+    animation: system-module-enter var(--abs-motion-base) var(--abs-motion-ease-premium) both;
+  }
+
+  .section-btn {
+    animation: system-module-card-enter var(--abs-motion-slow) var(--abs-motion-ease-premium) both;
+  }
+
+  .section-btn:nth-child(1) {
+    animation-delay: 70ms;
+  }
+
+  .section-btn:nth-child(2) {
+    animation-delay: 125ms;
+  }
+
+  .section-btn:nth-child(3) {
+    animation-delay: 180ms;
+  }
+
+  .section-btn:nth-child(4) {
+    animation-delay: 235ms;
+  }
+
+  .content-card {
+    animation: system-module-card-enter var(--abs-motion-slow) var(--abs-motion-ease-premium) 260ms both;
+  }
+
+  .content-header {
+    animation: system-module-enter var(--abs-motion-base) var(--abs-motion-ease-premium) both;
+  }
+
+  .category-exiting .content-header,
+  .category-exiting .options-grid,
+  .category-exiting .empty-state {
+    animation: system-options-exit 150ms var(--abs-motion-ease) both;
+  }
+
+  .options-grid,
+  .empty-state {
+    animation: system-module-enter var(--abs-motion-base) var(--abs-motion-ease-premium) both;
+  }
+
+  .option-card {
+    animation: system-module-card-enter 420ms var(--abs-motion-ease-premium) both;
+  }
+
+  .option-card:nth-child(1) {
+    animation-delay: 45ms;
+  }
+
+  .option-card:nth-child(2) {
+    animation-delay: 80ms;
+  }
+
+  .option-card:nth-child(3) {
+    animation-delay: 115ms;
+  }
+
+  .option-card:nth-child(4) {
+    animation-delay: 150ms;
+  }
+
+  .option-card:nth-child(5) {
+    animation-delay: 185ms;
+  }
+
+  .option-card:nth-child(6) {
+    animation-delay: 220ms;
+  }
+
+  .option-card:nth-child(7) {
+    animation-delay: 255ms;
+  }
+
+  .option-card:nth-child(8) {
+    animation-delay: 290ms;
+  }
+
+  .option-card:nth-child(9) {
+    animation-delay: 325ms;
+  }
+
+  .option-card:nth-child(10) {
+    animation-delay: 360ms;
+  }
 }
 
 :host-context([data-theme='dark']) .system-page {
