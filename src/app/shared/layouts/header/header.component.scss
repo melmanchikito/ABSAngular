@@ -48,7 +48,6 @@
   font-size: var(--abs-font-size);
   box-sizing: border-box;
   box-shadow: 0 3px 10px rgba(15, 23, 42, 0.06);
-  transition: all 0.22s ease;
 }
 
 .search-wrap input:hover {
@@ -111,7 +110,6 @@
   color: var(--abs-text);
   cursor: pointer;
   box-shadow: 0 3px 10px rgba(15, 23, 42, 0.06);
-  transition: all 0.22s ease;
 }
 
 .tray-btn:hover,
@@ -282,7 +280,6 @@
   color: var(--abs-text);
   cursor: pointer;
   font: inherit;
-  transition: all 0.22s ease;
 }
 
 .user-box:hover,
@@ -366,7 +363,7 @@
   font: inherit;
   font-weight: 800;
   text-align: left;
-  transition: all 0.2s ease;
+  transition: background-color 0.18s ease, color 0.18s ease, border-color 0.18s ease;
 }
 
 .user-menu-item:last-child {
@@ -418,7 +415,13 @@
   color: var(--abs-success);
   border: 1.5px solid color-mix(in srgb, var(--abs-success) 42%, var(--abs-border));
   box-shadow: 0 3px 10px rgba(15, 23, 42, 0.07);
-  transition: all 0.22s ease;
+}
+
+.search-wrap input,
+.tray-btn,
+.user-box,
+.network-box {
+  transition: transform 0.18s ease, border-color 0.2s ease, background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .network-box:hover {

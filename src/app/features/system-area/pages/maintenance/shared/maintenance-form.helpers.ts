@@ -72,7 +72,9 @@ export function validateMaintenanceForm(
 
     if (field.numeric && textValue && !Number.isFinite(Number(value))) {
       errors[field.key] = `${field.label} debe ser numerico.`;
+      continue;
     }
+
   }
 
   const hasPasswordFields =

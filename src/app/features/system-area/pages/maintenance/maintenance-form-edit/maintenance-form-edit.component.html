@@ -73,6 +73,9 @@
                   {{ option.label }}
                 </option>
               </select>
+              <small class="field-error" *ngIf="fieldHasEmptyOptions(field)">
+                {{ fieldEmptyOptionsMessage(field) }}
+              </small>
 
               <ng-template #inputField>
                 <input

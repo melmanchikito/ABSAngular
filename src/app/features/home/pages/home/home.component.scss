@@ -11,6 +11,7 @@
   isolation: isolate;
   overflow: visible;
   border-radius: 22px;
+  contain: layout paint;
 }
 
 .home-hero,
@@ -197,6 +198,7 @@ p {
   border-radius: 18px;
   position: relative;
   overflow: hidden;
+  contain: layout paint;
 }
 
 .metric-card::after {
@@ -254,10 +256,22 @@ p {
 .dashboard-grid {
   min-height: 880px;
   margin-top: 4px;
+  contain: layout paint;
 }
 
 .dashboard-widget {
   min-width: 0;
+  will-change: transform;
+}
+
+.dashboard-grid:not(.dashboard-editing) .grid-stack-item {
+  transition: none !important;
+}
+
+.dashboard-grid.dashboard-editing .grid-stack-item {
+  transition:
+    transform 0.18s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.18s ease;
 }
 
 .dashboard-grid:not(.dashboard-editing) .dashboard-widget,
@@ -283,6 +297,7 @@ p {
   border-radius: 18px;
   display: flex;
   flex-direction: column;
+  contain: layout paint;
 }
 
 .widget-head {
@@ -338,6 +353,7 @@ p {
   width: 100%;
   height: 100%;
   min-height: 230px;
+  contain: layout paint;
 }
 
 .gauge-shell .dashboard-chart {
@@ -512,8 +528,8 @@ p {
   box-shadow:
     0 18px 48px rgba(0, 0, 0, 0.2),
     inset 0 1px 0 rgba(255, 255, 255, 0.14);
-  backdrop-filter: blur(20px) saturate(145%);
-  -webkit-backdrop-filter: blur(20px) saturate(145%);
+  backdrop-filter: blur(14px) saturate(132%);
+  -webkit-backdrop-filter: blur(14px) saturate(132%);
 }
 
 :host-context(.animations-disabled) .dashboard-grid .grid-stack-item {

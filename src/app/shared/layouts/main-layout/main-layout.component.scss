@@ -3,6 +3,7 @@
   --sidebar-tablet: var(--abs-sidebar-width-tablet, 210px);
   --sidebar-collapsed: var(--abs-sidebar-width-collapsed, 76px);
   --layout-gap: var(--abs-layout-gap, 24px);
+  --layout-motion: cubic-bezier(0.22, 1, 0.36, 1);
 }
 .fondo {
   position: relative;
@@ -56,20 +57,29 @@
    SIDEBAR
 ========================= */
 .card_sidebar {
-  width: 220px;
+  width: var(--sidebar-open);
   height: 100dvh;
-  background: var(--abs-sidebar-bg);
+  box-sizing: border-box;
+  background: transparent;
   color: var(--abs-text);
   position: fixed;
   left: 0;
   top: 0;
   display: flex;
   flex-direction: column;
-  box-shadow: var(--abs-shadow-sm, 0 4px 14px rgba(0, 0, 0, 0.08));
-  border-right: 1px solid var(--abs-border-soft, var(--abs-border));
+  padding: 10px 10px 10px 0;
+  box-shadow: none;
+  border-right: 0;
   z-index: 20;
-  padding-top: 8px;
-  transition: width 0.3s ease, box-shadow 0.25s ease;
+  contain: layout paint;
+  transform: translate3d(0, 0, 0);
+  will-change: transform, opacity;
+  transition:
+    width 0.28s var(--layout-motion),
+    transform 0.28s var(--layout-motion),
+    opacity 0.24s ease,
+    box-shadow 0.24s ease,
+    border-color 0.24s ease;
 }
 
 /* =========================
@@ -77,15 +87,16 @@
 ========================= */
 .toggle-sidebar {
   position: absolute;
-  top: 14px;
-  right: -16px;
+  top: 18px;
+  right: -12px;
 
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  border: 2px solid var(--abs-surface);
+  width: 38px;
+  height: 38px;
+  border-radius: 14px;
+  border: 1.5px solid color-mix(in srgb, var(--abs-border) 70%, transparent);
 
-  background: var(--abs-primary);
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--abs-primary) 92%, #fff), var(--abs-primary));
   color: #fff;
 
   cursor: pointer;
@@ -97,13 +108,20 @@
 
   font-weight: 700;
 
-  box-shadow: var(--abs-shadow-md, 0 10px 25px rgba(0, 0, 0, 0.18));
-  transition: all 0.25s ease;
+  box-shadow:
+    0 12px 26px rgba(15, 23, 42, 0.18),
+    0 0 0 4px color-mix(in srgb, var(--abs-bg) 88%, transparent);
+  will-change: transform;
+  transition:
+    transform 0.2s var(--layout-motion),
+    background-color 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
 }
 
 .toggle-sidebar:hover {
   background: var(--abs-primary-hover);
-  transform: scale(1.08);
+  transform: translateX(1px) scale(1.04);
 }
 
 .toggle-sidebar:focus-visible {
@@ -130,8 +148,8 @@
   min-height: 100dvh;
   background: transparent;
   transition:
-    margin-left 0.3s ease,
-    width 0.3s ease;
+    margin-left 0.28s var(--layout-motion),
+    width 0.28s var(--layout-motion);
   padding-left: 0;
   box-sizing: border-box;
 }
@@ -157,12 +175,13 @@
   overflow: visible;
   transform: translateY(0);
   transition:
-    max-height 0.34s ease,
-    min-height 0.34s ease,
+    min-height 0.26s var(--layout-motion),
+    max-height 0.26s var(--layout-motion),
     opacity 0.24s ease,
-    transform 0.34s ease,
-    backdrop-filter 0.34s ease,
-    box-shadow 0.34s ease;
+    transform 0.3s var(--layout-motion),
+    box-shadow 0.28s ease,
+    background-color 0.24s ease;
+  will-change: transform, opacity;
 }
 
 .card_header.header-hidden {
@@ -256,7 +275,6 @@
   padding: 1rem;
   min-height: calc(100dvh - var(--abs-header-height, 72px));
   transition:
-    min-height 0.34s ease,
     padding 0.24s ease;
 }
 
@@ -304,15 +322,10 @@
 }
 
 :host-context([data-theme='liquid-glass']) .card_sidebar {
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.035)),
-    rgba(6, 12, 24, 0.64);
-  border-right-color: rgba(255, 255, 255, 0.16);
-  box-shadow:
-    18px 0 48px rgba(0, 0, 0, 0.25),
-    inset -1px 0 0 rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(24px) saturate(155%);
-  -webkit-backdrop-filter: blur(24px) saturate(155%);
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
 }
 
 :host-context([data-theme='liquid-glass']) .card_header {
@@ -380,7 +393,8 @@
    SIDEBAR COLAPSADO
 ========================= */
 .sidebar-collapsed .card_sidebar {
-  width: 76px;
+  width: var(--sidebar-collapsed);
+  padding-right: 8px;
 }
 
 .sidebar-collapsed .right_content {
@@ -394,7 +408,7 @@
 ========================= */
 @media (max-width: 1024px) {
   .card_sidebar {
-    width: 210px;
+    width: var(--sidebar-tablet);
   }
 
   .right_content {
@@ -430,9 +444,11 @@
     top: 0;
     width: 100%;
     height: auto;
+    padding: 0;
     box-shadow: var(--abs-shadow-sm, 0 4px 14px rgba(0, 0, 0, 0.08));
     border-right: none;
     border-bottom: 1px solid var(--abs-border-soft, var(--abs-border));
+    border-radius: 0;
   }
 
   .sidebar-collapsed .card_sidebar {
@@ -448,10 +464,10 @@
   }
 
   .toggle-sidebar {
-    top: 14px;
+    top: 16px;
     right: 14px;
-    width: 32px;
-    height: 32px;
+    width: 34px;
+    height: 34px;
     font-size: 14px;
   }
 

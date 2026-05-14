@@ -1,5 +1,15 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, ElementRef, NgZone, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  NgZone,
+  OnDestroy,
+  OnInit,
+  ViewChild
+} from '@angular/core';
 import { Router } from '@angular/router';
 import {
   BarChart3,
@@ -24,7 +34,7 @@ import type { EChartsCoreOption, EChartsType } from 'echarts/core';
 import * as echarts from 'echarts/core';
 import { BarChart, GaugeChart, LineChart, PieChart } from 'echarts/charts';
 import { GridComponent, LegendComponent, TitleComponent, TooltipComponent } from 'echarts/components';
-import { LabelLayout, UniversalTransition } from 'echarts/features';
+import { LabelLayout } from 'echarts/features';
 import { CanvasRenderer } from 'echarts/renderers';
 import { AuthService } from '../../../../core/services/auth.service';
 import { PreferencesService } from '../../../../core/services/preferences.service';
@@ -90,7 +100,6 @@ echarts.use([
   TitleComponent,
   TooltipComponent,
   LabelLayout,
-  UniversalTransition,
   CanvasRenderer
 ]);
 
@@ -106,7 +115,8 @@ echarts.use([
   ],
   providers: [provideEchartsCore({ echarts })],
   templateUrl: './home.component.html',
-  styleUrl: './home.component.scss'
+  styleUrl: './home.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('dashboardGrid') private dashboardGrid?: ElementRef<HTMLElement>;
@@ -230,6 +240,9 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   private preferencesSubscription?: Subscription;
   private grid?: GridStack;
   private resizeObserver?: ResizeObserver;
+  private resizeAnimationFrame: number | null = null;
+  private resizeDebounceTimer?: ReturnType<typeof setTimeout>;
+  private saveLayoutTimer?: ReturnType<typeof setTimeout>;
 
   readonly dashboardWidgets: DashboardWidget[] = this.createDashboardWidgets();
   chartOptions!: Record<ChartKey, EChartsCoreOption>;
@@ -239,7 +252,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     private readonly authService: AuthService,
     private readonly router: Router,
     private readonly preferencesService: PreferencesService,
-    private readonly zone: NgZone
+    private readonly zone: NgZone,
+    private readonly changeDetector: ChangeDetectorRef
   ) {
     this.chartOptions = this.buildChartOptions();
   }
@@ -247,8 +261,9 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnInit(): void {
     this.preferencesSubscription = this.preferencesService.preferences$.subscribe((prefs) => {
       this.chartOptions = this.buildChartOptions();
-      this.grid?.setAnimation(prefs.showAnimations);
-      this.resizeChartsSoon();
+      this.grid?.setAnimation(prefs.showAnimations && this.isDashboardEditing);
+      this.resizeChartsSoon(120);
+      this.changeDetector.markForCheck();
     });
   }
 
@@ -261,6 +276,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnDestroy(): void {
     this.preferencesSubscription?.unsubscribe();
     this.resizeObserver?.disconnect();
+    this.clearResizeWork();
+    this.clearSaveLayoutWork();
     this.grid?.destroy(false);
     this.chartInstances.clear();
   }
@@ -300,7 +317,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     });
     this.grid.batchUpdate(false);
     this.saveGridLayout();
-    this.resizeChartsSoon();
+    this.resizeChartsSoon(80);
   }
 
   toggleDashboardEditing(): void {
@@ -310,7 +327,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 
   onChartInit(instance: unknown, widgetId: string): void {
     this.chartInstances.set(widgetId, instance as EChartsType);
-    this.resizeChartsSoon();
+    this.resizeChartsSoon(80);
   }
 
   trackWidget(_: number, widget: DashboardWidget): string {
@@ -334,7 +351,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
         cellHeight: 112,
         margin: '18px 38px',
         float: false,
-        animate: this.preferencesService.snapshot.showAnimations,
+        animate: false,
         disableDrag: true,
         disableResize: true,
         draggable: {
@@ -347,17 +364,28 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
       gridElement
     );
 
-    this.grid.on('change dragstop resizestop', () => {
-      this.saveGridLayout();
-      this.resizeChartsSoon();
+    this.grid.on('change', () => {
+      if (this.isDashboardEditing) {
+        this.saveGridLayoutSoon();
+      }
+
+      this.resizeChartsSoon(140);
+    });
+
+    this.grid.on('dragstop resizestop', () => {
+      if (this.isDashboardEditing) {
+        this.saveGridLayout();
+      }
+
+      this.resizeChartsSoon(60);
     });
 
     if (typeof ResizeObserver !== 'undefined') {
-      this.resizeObserver = new ResizeObserver(() => this.resizeChartsSoon());
+      this.resizeObserver = new ResizeObserver(() => this.resizeChartsSoon(160));
       this.resizeObserver.observe(gridElement);
     }
 
-    this.resizeChartsSoon();
+    this.resizeChartsSoon(120);
     this.syncGridEditingState();
   }
 
@@ -368,6 +396,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.grid.enableMove(this.isDashboardEditing);
     this.grid.enableResize(this.isDashboardEditing);
+    this.grid.setAnimation(this.preferencesService.snapshot.showAnimations && this.isDashboardEditing);
   }
 
   private saveGridLayout(): void {
@@ -389,10 +418,38 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     localStorage.setItem(this.dashboardLayoutKey, JSON.stringify(layout));
   }
 
-  private resizeChartsSoon(): void {
-    requestAnimationFrame(() => {
-      this.chartInstances.forEach((instance) => instance.resize());
-    });
+  private saveGridLayoutSoon(): void {
+    this.clearSaveLayoutWork();
+    this.saveLayoutTimer = setTimeout(() => this.saveGridLayout(), 260);
+  }
+
+  private resizeChartsSoon(delay = 90): void {
+    this.clearResizeWork();
+    this.resizeDebounceTimer = setTimeout(() => {
+      this.resizeAnimationFrame = requestAnimationFrame(() => {
+        this.resizeAnimationFrame = null;
+        this.chartInstances.forEach((instance) => instance.resize());
+      });
+    }, delay);
+  }
+
+  private clearResizeWork(): void {
+    if (this.resizeDebounceTimer) {
+      clearTimeout(this.resizeDebounceTimer);
+      this.resizeDebounceTimer = undefined;
+    }
+
+    if (this.resizeAnimationFrame !== null) {
+      cancelAnimationFrame(this.resizeAnimationFrame);
+      this.resizeAnimationFrame = null;
+    }
+  }
+
+  private clearSaveLayoutWork(): void {
+    if (this.saveLayoutTimer) {
+      clearTimeout(this.saveLayoutTimer);
+      this.saveLayoutTimer = undefined;
+    }
   }
 
   private createDashboardWidgets(): DashboardWidget[] {
@@ -517,6 +574,20 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   private buildChartOptions(): Record<ChartKey, EChartsCoreOption> {
     const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
     const animationsEnabled = this.preferencesService.snapshot.showAnimations;
+    const chartMotion: EChartsCoreOption = animationsEnabled
+      ? {
+          animation: true,
+          animationDuration: 420,
+          animationDurationUpdate: 260,
+          animationEasing: 'cubicOut',
+          animationEasingUpdate: 'cubicOut',
+          animationThreshold: 140
+        }
+      : {
+          animation: false,
+          animationDuration: 0,
+          animationDurationUpdate: 0
+        };
     const text = isDark ? '#e5e7eb' : '#1f2937';
     const muted = isDark ? '#94a3b8' : '#64748b';
     const gridLine = isDark ? 'rgba(148, 163, 184, 0.22)' : 'rgba(100, 116, 139, 0.22)';
@@ -527,7 +598,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 
     return {
       systemTrend: {
-        animation: animationsEnabled,
+        ...chartMotion,
         color: [primary, info, success],
         tooltip: { trigger: 'axis' },
         legend: { top: 0, textStyle: { color: muted } },
@@ -572,7 +643,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
         ]
       },
       ticketFlow: {
-        animation: animationsEnabled,
+        ...chartMotion,
         color: [primary, success, warning],
         tooltip: { trigger: 'axis' },
         legend: { top: 0, textStyle: { color: muted } },
@@ -595,7 +666,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
         ]
       },
       moduleShare: {
-        animation: animationsEnabled,
+        ...chartMotion,
         color: [primary, info, success, warning, '#7c3aed', '#475569'],
         tooltip: { trigger: 'item' },
         legend: {
@@ -625,7 +696,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
         ]
       },
       healthGauge: {
-        animation: animationsEnabled,
+        ...chartMotion,
         series: [
           {
             type: 'gauge',

@@ -10,10 +10,13 @@ export type MaintenanceEntity =
   | 'optionTypes'
   | 'users'
   | 'helpdesks'
-  | 'products';
+  | 'products'
+  | 'positions'
+  | 'departments'
+  | 'employees';
 
 export type MaintenanceMode = 'create' | 'edit';
-export type FieldType = 'text' | 'email' | 'number' | 'password' | 'select' | 'textarea' | 'checkbox';
+export type FieldType = 'text' | 'email' | 'number' | 'password' | 'select' | 'textarea' | 'checkbox' | 'date';
 export type EntityRecord = Record<string, unknown>;
 export type FormValue = string | number | boolean | null;
 
@@ -31,10 +34,16 @@ export interface FormFieldConfig {
   minLength?: number;
   maxLength?: number;
   createOnly?: boolean;
+  hideOnCreate?: boolean;
+  hideOnEdit?: boolean;
   readonlyOnEdit?: boolean;
   numeric?: boolean;
+  sourceKeys?: readonly string[];
   options?: readonly SelectOption[];
   optionsKey?: string;
+  createOptionsKey?: string;
+  editOptionsKey?: string;
+  emptyOptionsMessage?: string;
 }
 
 export interface MaintenanceFormConfig {

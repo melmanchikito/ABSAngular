@@ -1,0 +1,197 @@
+<section class="employee-page page-shell">
+  <app-page-header
+    eyebrow="RRHH"
+    title="Mantenimiento - Empleados"
+    subtitle="Administra los empleados registrados en recursos humanos."
+    [icon]="employeeIcon"
+  >
+    <div page-actions class="app-page-actions" (click)="$event.stopPropagation()">
+      <div class="app-grid-filter-menu">
+        <button
+          type="button"
+          class="btn-outline app-grid-filter-trigger app-grid-icon-button"
+          [class.active]="filtersOpen || statusFilter !== 'all'"
+          title="Filtros"
+          aria-label="Abrir filtros"
+          (click)="toggleFilters($event)"
+        >
+          <lucide-angular [img]="filterIcon" [size]="17" [strokeWidth]="2.4"></lucide-angular>
+        </button>
+
+        <section class="app-grid-filter-panel" *ngIf="filtersOpen" (click)="$event.stopPropagation()">
+          <strong class="app-grid-filter-title">Filtros del listado</strong>
+          <label class="app-grid-filter-field">
+            <span>Estado</span>
+            <select [(ngModel)]="statusFilterDraft">
+              <option *ngFor="let option of statusFilterOptions" [ngValue]="option.value">{{ option.label }}</option>
+            </select>
+          </label>
+          <div class="app-grid-filter-actions">
+            <button type="button" class="btn-outline" (click)="clearFilters()">Limpiar</button>
+            <button type="button" class="btn-primary" (click)="applyFilters()">Aplicar</button>
+          </div>
+        </section>
+      </div>
+
+      <button
+        type="button"
+        class="primary-btn btn-primary app-grid-icon-button"
+        title="Nuevo"
+        aria-label="Nuevo"
+        routerLink="create"
+      >
+        <lucide-angular [img]="addIcon" [size]="18" [strokeWidth]="2.4"></lucide-angular>
+      </button>
+    </div>
+  </app-page-header>
+
+  <div class="alert-success" *ngIf="successMessage">{{ successMessage }}</div>
+  <div class="alert-error" *ngIf="errorMessage">{{ errorMessage }}</div>
+
+  <section class="content-grid">
+    <article class="employees-panel app-card app-grid-card">
+      <header class="app-grid-header">
+        <div class="app-grid-title">
+          <span class="app-grid-eyebrow">Listado</span>
+          <h2 class="app-grid-heading">Empleados</h2>
+        </div>
+      </header>
+
+      <section class="app-grid-toolbar">
+        <label class="app-grid-search">
+          <lucide-angular [img]="searchIcon" [size]="18" [strokeWidth]="2.3"></lucide-angular>
+          <input
+            type="search"
+            name="employeeSearch"
+            [(ngModel)]="searchTerm"
+            (ngModelChange)="onFiltersChange()"
+            placeholder="Buscar por codigo, nombre, cedula o email..."
+            autocomplete="off"
+          />
+        </label>
+
+        <button
+          type="button"
+          class="ghost-btn btn-outline refresh-btn app-grid-icon-button"
+          title="Actualizar"
+          aria-label="Actualizar listado"
+          (click)="loadEmployees()"
+          [disabled]="isLoading"
+        >
+          <lucide-angular [img]="refreshIcon" [size]="17" [strokeWidth]="2.3"></lucide-angular>
+        </button>
+      </section>
+
+      <div class="app-grid-table-wrapper">
+        <table class="employee-table app-table app-grid-table">
+          <thead>
+            <tr>
+              <th
+                *ngFor="let column of gridColumns; trackBy: trackByColumnKey"
+                [class]="getColumnClass(column)"
+                [style.width]="column.width || null"
+              >
+                {{ column.label }}
+              </th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngIf="isLoading">
+              <td [attr.colspan]="gridColumns.length">
+                <app-empty-state message="Cargando empleados..." [icon]="employeeIcon"></app-empty-state>
+              </td>
+            </tr>
+
+            <tr *ngIf="!isLoading && !employees.length">
+              <td [attr.colspan]="gridColumns.length">
+                <app-empty-state message="No existen empleados registrados." [icon]="employeeIcon"></app-empty-state>
+              </td>
+            </tr>
+
+            <tr *ngIf="!isLoading && employees.length && !filteredEmployees.length">
+              <td [attr.colspan]="gridColumns.length">
+                <app-empty-state
+                  message="No se encontraron empleados con los filtros aplicados."
+                  [icon]="searchIcon"
+                ></app-empty-state>
+              </td>
+            </tr>
+
+            <tr
+              *ngFor="let employee of paginatedEmployees; trackBy: trackByEmployeeId"
+              class="employee-row app-grid-row-clickable"
+              [class.app-grid-row-selected]="selectedEmployeeId === employee.id"
+              (click)="selectEmployee(employee)"
+            >
+              <td *ngFor="let column of gridColumns; trackBy: trackByColumnKey" [class]="getColumnClass(column)">
+                <ng-container [ngSwitch]="column.key">
+                  <app-status-badge
+                    *ngSwitchCase="'canceled'"
+                    [label]="employee.canceled ? 'Inactiva' : 'Activa'"
+                    [variant]="employee.canceled ? 'inactive' : 'active'"
+                  ></app-status-badge>
+
+                  <div *ngSwitchCase="'actions'" class="app-grid-actions">
+                    <button
+                      type="button"
+                      class="icon-action btn-icon"
+                      title="Ver empleado"
+                      aria-label="Ver empleado"
+                      (click)="$event.stopPropagation(); selectEmployee(employee)"
+                    >
+                      <lucide-angular [img]="detailIcon" [size]="17" [strokeWidth]="2.3"></lucide-angular>
+                    </button>
+
+                    <button
+                      type="button"
+                      class="icon-action btn-icon"
+                      title="Editar empleado"
+                      aria-label="Editar empleado"
+                      [routerLink]="['edit', employee.id]"
+                      (click)="$event.stopPropagation()"
+                    >
+                      <lucide-angular [img]="editIcon" [size]="17" [strokeWidth]="2.3"></lucide-angular>
+                    </button>
+
+                    <button
+                      type="button"
+                      class="icon-action danger btn-icon"
+                      title="Borrar empleado"
+                      aria-label="Borrar empleado"
+                      [disabled]="employee.canceled"
+                      (click)="$event.stopPropagation(); askCancel(employee)"
+                    >
+                      <lucide-angular [img]="trashIcon" [size]="17" [strokeWidth]="2.3"></lucide-angular>
+                    </button>
+                  </div>
+
+                  <span *ngSwitchDefault>{{ formatGridValue(employee, column.key) }}</span>
+                </ng-container>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <app-data-grid-pagination
+        [showing]="showingCount"
+        [totalItems]="filteredEmployees.length"
+        itemLabel="empleados"
+        [currentPage]="currentPage"
+        [totalPages]="totalPages"
+        (pageChange)="setPage($event)"
+      ></app-data-grid-pagination>
+    </article>
+  </section>
+
+  <app-confirm-dialog
+    [open]="!!employeeToCancel"
+    title="Anular empleado"
+    [message]="cancelEmployeeMessage"
+    confirmLabel="Anular empleado"
+    [loading]="isSaving"
+    (confirm)="confirmCancel()"
+    (cancel)="closeCancelConfirm()"
+  ></app-confirm-dialog>
+</section>

@@ -6,10 +6,21 @@ export interface UserItem {
   name: string;
   lastname?: string | null;
   email: string;
+  code?: string | null;
   role_id?: number | null;
   state?: UserState | boolean | number | null;
   phone?: string | null;
+  employee_id?: number | string | null;
+  employee_code?: string | null;
+  employee_name?: string | null;
+  employee?: {
+    id?: number | string | null;
+    code?: string | null;
+    employee_code?: string | null;
+    name?: string | null;
+  } | null;
   identification?: string | null;
+  is_developer?: boolean | number | string | null;
   developer?: boolean | number | string | null;
   canceled?: boolean;
   canceled_at?: string | null;
@@ -35,11 +46,9 @@ export interface ApiResponse<T> {
 export interface InsertUserRequest {
   name: string;
   email: string;
-  role_id: number;
-  state: string;
   phone: string;
-  identification: string;
-  developer: boolean;
+  is_developer: boolean;
+  employee_id: number;
   created_by: string;
 }
 
@@ -47,11 +56,9 @@ export interface UpdateUserRequest {
   user_id: number;
   name: string;
   email: string;
-  role_id: number;
-  state: string;
   phone: string;
-  identification: string;
-  developer: boolean;
+  is_developer: boolean;
+  employee_id: number;
   updated_by: string;
 }
 

@@ -4,33 +4,53 @@
   width: 100%;
   height: 100%;
   max-height: 100dvh;
-  background: var(--abs-sidebar-bg);
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--abs-surface) 7%, transparent), transparent 28%),
+    var(--abs-sidebar-bg);
   color: var(--abs-text);
-  border-right: 1px solid var(--abs-border-soft, var(--abs-border));
-  box-shadow: var(--abs-shadow-sm, 0 4px 14px rgba(0, 0, 0, 0.08));
-  transition: all 0.3s ease;
+  border: 1px solid var(--abs-border-soft, var(--abs-border));
+  border-left: 0;
+  border-radius: 0 20px 20px 0;
+  box-shadow: 10px 0 28px rgba(15, 23, 42, 0.12);
+  contain: layout paint;
+  transform: translate3d(0, 0, 0);
+  transition:
+    background-color 0.24s ease,
+    border-color 0.24s ease,
+    box-shadow 0.24s ease,
+    opacity 0.24s ease,
+    transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
   overflow: hidden;
 }
 
 .card_image {
   display: flex;
   align-items: center;
+  justify-content: flex-start;
   width: 100%;
-  min-height: 100px;
-  padding: 1rem;
-  border-bottom: 1px solid var(--abs-border-soft, var(--abs-border));
+  min-height: 88px;
+  padding: 1rem 1.1rem 0.9rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--abs-border-soft, var(--abs-border)) 76%, transparent);
   background: linear-gradient(
     180deg,
-    color-mix(in srgb, var(--abs-surface) 75%, transparent),
-    color-mix(in srgb, var(--abs-sidebar-bg) 100%, transparent)
+    color-mix(in srgb, var(--abs-surface) 68%, transparent),
+    transparent
   );
-  transition: all 0.3s ease;
+  transition:
+    background-color 0.24s ease,
+    border-color 0.24s ease,
+    opacity 0.22s ease,
+    transform 0.24s ease;
 }
 
 .logo {
-  width: 160px;
+  width: 154px;
+  max-width: 100%;
   height: auto;
-  transition: width 0.3s ease, opacity 0.3s ease;
+  transform-origin: left center;
+  transition:
+    opacity 0.22s ease,
+    transform 0.24s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .card_options {
@@ -39,7 +59,7 @@
   min-height: 0;
   overflow-y: auto;
   overflow-x: hidden;
-  padding: 0.75rem 0 1rem;
+  padding: 0.9rem 0 1rem;
   overscroll-behavior: contain;
   -webkit-overflow-scrolling: touch;
 }
@@ -63,8 +83,8 @@
 
 .card_options nav {
   width: 100%;
-  padding-left: 5%;
-  transition: padding 0.3s ease;
+  padding: 0 0.8rem 0 0.7rem;
+  box-sizing: border-box;
 }
 
 .card_options ul {
@@ -73,7 +93,7 @@
   list-style: none;
   width: 100%;
   color: var(--abs-text);
-  gap: 0.35rem;
+  gap: 0.32rem;
   padding: 0;
   margin: 0;
 }
@@ -83,31 +103,41 @@
   display: flex;
   align-items: center;
   gap: 0.85rem;
-  min-height: 48px;
-  width: 90%;
+  min-height: 46px;
+  width: 100%;
   font-size: var(--abs-font-size, 15px);
-  border-radius: 12px;
+  border-radius: 13px;
   padding: 0 0.75rem;
   cursor: pointer;
-  transition: all 0.25s ease;
+  transition:
+    transform 0.2s cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease,
+    box-shadow 0.2s ease;
   white-space: nowrap;
   color: var(--abs-text);
   border: 1px solid transparent;
+  will-change: transform;
 }
 
 .item:hover {
-  transform: translateX(3px);
-  background: var(--abs-surface-hover, var(--abs-surface-soft));
-  border-color: var(--abs-border-soft, var(--abs-border));
-  box-shadow: var(--abs-shadow-xs, 0 1px 4px rgba(0, 0, 0, 0.06));
+  transform: translateX(2px);
+  background: color-mix(in srgb, var(--abs-surface-hover, var(--abs-surface-soft)) 88%, transparent);
+  border-color: color-mix(in srgb, var(--abs-border-soft, var(--abs-border)) 85%, transparent);
+  box-shadow: 0 6px 14px rgba(15, 23, 42, 0.08);
 }
 
 .item.active,
 .active {
   color: var(--abs-primary);
-  background: color-mix(in srgb, var(--abs-primary) 12%, var(--abs-surface));
-  border-color: color-mix(in srgb, var(--abs-primary) 28%, var(--abs-border));
-  box-shadow: inset 3px 0 0 var(--abs-primary);
+  background:
+    linear-gradient(90deg, color-mix(in srgb, var(--abs-primary) 15%, transparent), transparent 78%),
+    color-mix(in srgb, var(--abs-primary) 8%, var(--abs-surface));
+  border-color: color-mix(in srgb, var(--abs-primary) 24%, var(--abs-border));
+  box-shadow:
+    inset 3px 0 0 var(--abs-primary),
+    0 7px 18px color-mix(in srgb, var(--abs-primary) 10%, transparent);
 }
 
 .icon {
@@ -128,6 +158,7 @@
   transition: opacity 0.2s ease, transform 0.2s ease;
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 /* FLECHA */
@@ -147,14 +178,12 @@
 
 /* SUBMENÚ DESPLEGABLE */
 .submenu {
-  width: 86%;
-  margin-left: 4%;
-  margin-top: 0.15rem;
-  margin-bottom: 0.45rem;
-  padding: 0.5rem;
+  width: calc(100% - 0.5rem);
+  margin: 0.18rem 0 0.55rem 0.5rem;
+  padding: 0.45rem;
   border-left: 2px solid var(--abs-primary);
-  background: color-mix(in srgb, var(--abs-surface-soft) 88%, transparent);
-  border: 1px solid var(--abs-border-soft, var(--abs-border));
+  background: color-mix(in srgb, var(--abs-surface-soft) 82%, transparent);
+  border: 1px solid color-mix(in srgb, var(--abs-border-soft, var(--abs-border)) 82%, transparent);
   border-left-color: var(--abs-primary);
   border-radius: 0 14px 14px 0;
   box-shadow: var(--abs-shadow-xs, 0 1px 4px rgba(0, 0, 0, 0.06));
@@ -175,7 +204,11 @@
   cursor: pointer;
   text-align: left;
   font-size: 13px;
-  transition: all 0.22s ease;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.18s ease;
   font-family: inherit;
 }
 
@@ -196,24 +229,24 @@
 }
 
 .separator {
-  border-top: 1px solid var(--abs-border-soft, var(--abs-border));
-  margin-top: 10px;
+  border-top: 1px solid color-mix(in srgb, var(--abs-border-soft, var(--abs-border)) 75%, transparent);
+  margin: 0.75rem auto 0.55rem;
   height: 0 !important;
   padding: 0;
-  width: 90%;
+  width: calc(100% - 1rem);
 }
 
 /* LIQUID GLASS */
 :host-context([data-theme='liquid-glass']) .card {
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.035)),
-    rgba(6, 12, 24, 0.66);
+    linear-gradient(180deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.032)),
+    rgba(6, 12, 24, 0.62);
   border-right-color: rgba(255, 255, 255, 0.16);
   box-shadow:
-    18px 0 50px rgba(0, 0, 0, 0.26),
+    14px 0 36px rgba(0, 0, 0, 0.22),
     inset -1px 0 0 rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(24px) saturate(155%);
-  -webkit-backdrop-filter: blur(24px) saturate(155%);
+  backdrop-filter: blur(16px) saturate(138%);
+  -webkit-backdrop-filter: blur(16px) saturate(138%);
 }
 
 :host-context([data-theme='liquid-glass']) .card_image {
@@ -240,9 +273,9 @@
     rgba(255, 255, 255, 0.06);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.14),
-    0 8px 20px rgba(0, 0, 0, 0.12);
-  backdrop-filter: blur(14px) saturate(145%);
-  -webkit-backdrop-filter: blur(14px) saturate(145%);
+    0 8px 18px rgba(0, 0, 0, 0.1);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
 }
 
 :host-context([data-theme='liquid-glass']) .item.active,
@@ -266,8 +299,8 @@
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.12),
     0 10px 26px rgba(0, 0, 0, 0.14);
-  backdrop-filter: blur(16px) saturate(145%);
-  -webkit-backdrop-filter: blur(16px) saturate(145%);
+  backdrop-filter: blur(10px) saturate(125%);
+  -webkit-backdrop-filter: blur(10px) saturate(125%);
 }
 
 :host-context([data-theme='liquid-glass']) .submenu-item:hover,
@@ -302,11 +335,14 @@
 /* MODO COLAPSADO */
 .card.collapsed .card_image {
   justify-content: center;
-  padding: 1rem 0.4rem;
+  min-height: 78px;
+  padding: 0.9rem 0.35rem;
 }
 
 .card.collapsed .logo {
   width: 42px;
+  transform: scale(0.94);
+  transform-origin: center;
 }
 
 .card.collapsed .card_options nav {
@@ -314,7 +350,8 @@
 }
 
 .card.collapsed .item {
-  width: 52px;
+  width: 48px;
+  min-height: 46px;
   justify-content: center;
   margin: 0 auto;
   padding: 0;
@@ -348,7 +385,7 @@
 }
 
 .card.collapsed .separator {
-  width: 70%;
+  width: 44px;
   margin-left: auto;
   margin-right: auto;
 }
@@ -358,6 +395,7 @@
   .card {
     border-right: none;
     border-bottom: 1px solid var(--abs-border-soft, var(--abs-border));
+    border-radius: 0;
     height: auto;
     max-height: none;
     box-shadow: var(--abs-shadow-sm, 0 4px 14px rgba(0, 0, 0, 0.08));

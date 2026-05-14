@@ -93,7 +93,7 @@
               class="dashboard-chart"
               [options]="chartOptions[widget.chartKey || 'systemTrend']"
               [initOpts]="chartInitOpts"
-              [autoResize]="true"
+              [autoResize]="false"
               (chartInit)="onChartInit($event, widget.id)"
             ></div>
           </div>
@@ -104,7 +104,7 @@
               class="dashboard-chart"
               [options]="chartOptions[widget.chartKey || 'healthGauge']"
               [initOpts]="chartInitOpts"
-              [autoResize]="true"
+              [autoResize]="false"
               (chartInit)="onChartInit($event, widget.id)"
             ></div>
           </div>

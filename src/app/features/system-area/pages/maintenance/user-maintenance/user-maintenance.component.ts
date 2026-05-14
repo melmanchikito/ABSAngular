@@ -50,7 +50,7 @@ import {
 import { UserMaintenanceService } from '../../../services/user-maintenance.service';
 
 type UserStatusFilter = 'all' | 'active' | 'inactive';
-type UserGridColumn = keyof UserItem | 'actions';
+type UserGridColumn = keyof UserItem | 'employee_display_code' | 'actions';
 type UserFormField = 'name' | 'email' | 'role_id' | 'state' | 'phone' | 'identification';
 type BackendErrorBody = Record<string, unknown>;
 
@@ -111,7 +111,7 @@ export class UserMaintenanceComponent {
     { key: 'name', label: 'Nombre' },
     { key: 'email', label: 'Email' },
     { key: 'role_id', label: 'Rol ID', width: '120px' },
-    { key: 'identification', label: 'Codigo Empleado' },
+    { key: 'employee_display_code', label: 'Codigo Empleado' },
     { key: 'phone', label: 'Celular' },
     { key: 'canceled', label: 'Estado', width: '140px' },
     { key: 'created_at', label: 'Fecha creacion', width: '190px' },
@@ -200,7 +200,8 @@ export class UserMaintenanceComponent {
         String(user.role_id ?? ''),
         String(user.state ?? ''),
         user.phone ?? '',
-        user.identification ?? '',
+        this.getEmployeeCode(user),
+        user.employee_name ?? '',
       ].some((value) => value.toLowerCase().includes(term));
     });
   });
@@ -446,6 +447,10 @@ export class UserMaintenanceComponent {
       return '';
     }
 
+    if (key === 'employee_display_code') {
+      return this.getEmployeeCode(user) || 'Sin registro';
+    }
+
     const value = user[key];
 
     if (isDateLikeField(String(key))) {
@@ -453,6 +458,17 @@ export class UserMaintenanceComponent {
     }
 
     return value === null || value === undefined || value === '' ? 'Sin registro' : String(value);
+  }
+
+  private getEmployeeCode(user: UserItem): string {
+    return String(
+      user.employee_code ||
+      user.code ||
+      user.employee?.code ||
+      user.employee?.employee_code ||
+      user.employee_id ||
+      ''
+    ).trim();
   }
 
   trackByUserId(_: number, user: UserItem): number {

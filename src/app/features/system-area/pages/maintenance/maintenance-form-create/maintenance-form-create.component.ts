@@ -34,9 +34,45 @@ export class MaintenanceFormCreateComponent extends MaintenanceFormBase implemen
 
     this.isSaving = true;
 
-    this.config.create(this.buildCreatePayload()).subscribe({
-      next: () => this.handleSaveSuccess(),
-      error: (error) => this.handleSaveError(error, 'No se pudo crear el registro.')
+    const payload = this.buildCreatePayload();
+
+    if (this.config.entity === 'users') {
+      console.log('CREATE USER PAYLOAD:', payload);
+    }
+
+    this.config.create(payload).subscribe({
+      next: (response) => {
+        if (this.config.entity === 'users') {
+          console.log('CREATE USER RESPONSE:', response);
+        }
+
+        this.handleSaveSuccess();
+      },
+      error: (error) => {
+        if (this.config.entity === 'users') {
+          this.logCreateUserError(error);
+        }
+
+        this.handleSaveError(error, 'No se pudo crear el registro.');
+      }
     });
+  }
+
+  private logCreateUserError(error: unknown): void {
+    const httpError = error as {
+      error?: {
+        message?: unknown;
+        errors?: unknown;
+      };
+      status?: unknown;
+      statusText?: unknown;
+    };
+
+    console.error('CREATE USER ERROR:', error);
+    console.error('CREATE USER ERROR RESPONSE:', httpError.error);
+    console.error('CREATE USER VALIDATION:', httpError.error?.message);
+    console.error('CREATE USER VALIDATION ERRORS:', httpError.error?.errors);
+    console.error('CREATE USER STATUS:', httpError.status);
+    console.error('CREATE USER STATUS TEXT:', httpError.statusText);
   }
 }

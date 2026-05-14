@@ -3,6 +3,7 @@ import { FIELD_LIMITS } from '../../../../../shared/constants/field-limits.const
 import { ActionMaintenanceService } from '../../../services/action-maintenance.service';
 import { BranchMaintenanceService } from '../../../services/branch-maintenance.service';
 import { CompanyMaintenanceService } from '../../../services/company-maintenance.service';
+import { EmployeeMaintenanceService } from '../../../services/employee-maintenance.service';
 import { HelpdeskMaintenanceService } from '../../../services/helpdesk-maintenance.service';
 import { LocationMaintenanceService } from '../../../services/location-maintenance.service';
 import { ModuleMaintenanceService } from '../../../services/module-maintenance.service';
@@ -10,6 +11,8 @@ import { OptionMaintenanceService } from '../../../services/option-maintenance.s
 import { OptionTypeMaintenanceService } from '../../../services/option-type-maintenance.service';
 import { ProductMaintenanceService } from '../../../services/product-maintenance.service';
 import { UserMaintenanceService } from '../../../services/user-maintenance.service';
+import { DepartmentMaintenanceService } from '../../../../rrhh-area/services/department-maintenance.service';
+import { PositionMaintenanceService } from '../../../../rrhh-area/services/position-maintenance.service';
 import {
   FormFieldConfig,
   MaintenanceEntity,
@@ -19,6 +22,7 @@ import { cleanPayload } from './maintenance-form.helpers';
 
 export interface MaintenanceFormConfigServices {
   companyService: CompanyMaintenanceService;
+  employeeService: EmployeeMaintenanceService;
   locationService: LocationMaintenanceService;
   branchService: BranchMaintenanceService;
   moduleService: ModuleMaintenanceService;
@@ -28,6 +32,8 @@ export interface MaintenanceFormConfigServices {
   userService: UserMaintenanceService;
   helpdeskService: HelpdeskMaintenanceService;
   productService: ProductMaintenanceService;
+  positionService: PositionMaintenanceService;
+  departmentService: DepartmentMaintenanceService;
 }
 
 export function createMaintenanceFormConfig(
@@ -224,21 +230,43 @@ export function createMaintenanceFormConfig(
       fields: [
         { key: 'name', label: 'Nombre', required: true, minLength: 2 },
         { key: 'email', label: 'Email', type: 'email', required: true },
-        { key: 'role_id', label: 'Rol ID', type: 'number', required: true, numeric: true },
+        { key: 'role_id', label: 'Rol ID', type: 'number', required: true, numeric: true, hideOnCreate: true, hideOnEdit: true },
         {
           key: 'state',
           label: 'Estado',
           type: 'select',
           required: true,
+          hideOnCreate: true,
+          hideOnEdit: true,
           options: [
             { value: 'active', label: 'Activo' },
             { value: 'inactive', label: 'Inactivo' }
           ]
         },
         { key: 'phone', label: 'Celular', required: true, minLength: 7 },
-        { key: 'identification', label: 'Identificación', required: true, minLength: 6 },
-        { key: 'developer', label: 'Desarrollador', type: 'checkbox' }
+        {
+          key: 'employee_id',
+          label: 'Empleado',
+          type: 'select',
+          required: true,
+          numeric: true,
+          createOptionsKey: 'employeesWithoutUser',
+          editOptionsKey: 'employees',
+          sourceKeys: ['employee.id'],
+          emptyOptionsMessage: 'No existen empleados disponibles para vincular.'
+        },
+        { key: 'is_developer', label: 'Desarrollador', type: 'checkbox', sourceKeys: ['developer'] }
       ],
+      optionLoaders: {
+        employees: () =>
+          services.employeeService.getEmployees().pipe(
+            map((items) => items.map(toCatalogOption))
+          ),
+        employeesWithoutUser: () =>
+          services.employeeService.getEmployeesWithoutUser().pipe(
+            map((items) => items.map(toCatalogOption))
+          )
+      },
       load: (id) => services.userService.getUserById(id),
       create: (payload) => services.userService.insertUser(payload as never),
       update: (payload) => services.userService.updateUser(payload as never),
@@ -246,23 +274,19 @@ export function createMaintenanceFormConfig(
         cleanPayload({
           name: form['name'],
           email: form['email'],
-          role_id: form['role_id'],
-          state: form['state'],
           phone: form['phone'],
-          identification: form['identification'],
-          developer: Boolean(form['developer']),
-          created_by: username
+          is_developer: Boolean(form['is_developer']),
+          employee_id: toEmployeeIdPayloadValue(form['employee_id']),
+          created_by: toAuditUser(username)
         }),
       toUpdatePayload: (id, form, username) =>
         cleanPayload({
           user_id: id,
           name: form['name'],
           email: form['email'],
-          role_id: form['role_id'],
-          state: form['state'],
           phone: form['phone'],
-          identification: form['identification'],
-          developer: Boolean(form['developer']),
+          is_developer: Boolean(form['is_developer']),
+          employee_id: toEmployeeIdPayloadValue(form['employee_id']),
           updated_by: username
         })
     },
@@ -320,6 +344,123 @@ export function createMaintenanceFormConfig(
       update: (payload) => services.productService.updateProduct(payload as never),
       toCreatePayload: (form, username) => cleanPayload({ ...form, created_by: username }),
       toUpdatePayload: (id, form, username) => cleanPayload({ product_id: id, ...form, updated_by: username })
+    },
+    employees: {
+      entity,
+      eyebrow: 'RRHH',
+      listTitle: 'Mantenimiento - Empleados',
+      createTitle: 'Crear empleado',
+      editTitle: 'Editar empleado',
+      createSubtitle: 'Registra un nuevo empleado de recursos humanos.',
+      editSubtitle: 'Actualiza el empleado seleccionado.',
+      listUrl: '/main/modulo/rrhh/empleado/mantenimientos/empleados',
+      idParam: 'employee_id',
+      fields: [
+        { ...baseFields.code, readonlyOnEdit: false, maxLength: 20 },
+        { key: 'first_name', label: 'Primer nombre', required: true, minLength: 2, maxLength: 50 },
+        { key: 'middle_name', label: 'Segundo nombre', maxLength: 50 },
+        { key: 'first_surname', label: 'Primer apellido', required: true, minLength: 2, maxLength: 50 },
+        { key: 'second_surname', label: 'Segundo apellido', maxLength: 50 },
+        { key: 'cedula', label: 'Cedula', required: true, minLength: 6, maxLength: 12 },
+        { key: 'email', label: 'Email', type: 'email', required: true, maxLength: 30 },
+        { key: 'phone', label: 'Celular', required: true, minLength: 7, maxLength: 15 },
+        { key: 'address', label: 'Direccion', type: 'textarea', required: true, maxLength: 255 },
+        {
+          key: 'sex',
+          label: 'Sexo',
+          type: 'select',
+          required: true,
+          options: [
+            { value: 'M', label: 'Masculino' },
+            { value: 'F', label: 'Femenino' }
+          ]
+        },
+        { key: 'birthdate', label: 'Fecha de nacimiento', type: 'date', required: true },
+        { key: 'integration_date', label: 'Fecha de ingreso', type: 'date', required: true },
+        {
+          key: 'company_id',
+          label: 'Empresa',
+          type: 'select',
+          required: true,
+          numeric: true,
+          optionsKey: 'companies',
+          sourceKeys: ['company.id']
+        },
+        {
+          key: 'branch_id',
+          label: 'Sucursal',
+          type: 'select',
+          required: true,
+          numeric: true,
+          optionsKey: 'branches',
+          sourceKeys: ['branch.id']
+        },
+        {
+          key: 'department_id',
+          label: 'Departamento',
+          type: 'select',
+          required: true,
+          numeric: true,
+          optionsKey: 'departments',
+          sourceKeys: ['department.id']
+        },
+        {
+          key: 'position_id',
+          label: 'Cargo',
+          type: 'select',
+          required: true,
+          numeric: true,
+          optionsKey: 'positions',
+          sourceKeys: ['position.id']
+        }
+      ],
+      optionLoaders: {
+        companies: () => services.companyService.getCompanies().pipe(map((items) => items.map(toCatalogOption))),
+        branches: () => services.branchService.getBranches().pipe(map((items) => items.map(toCatalogOption))),
+        departments: () => services.departmentService.getDepartments().pipe(map((items) => items.map(toCatalogOption))),
+        positions: () => services.positionService.getPositions().pipe(map((items) => items.map(toCatalogOption)))
+      },
+      load: (id) => services.employeeService.getEmployeeById(id),
+      create: (payload) => services.employeeService.insertEmployee(payload as never),
+      update: (payload) => services.employeeService.updateEmployee(payload as never),
+      toCreatePayload: (form, username) => toEmployeeCreatePayload(form, username),
+      toUpdatePayload: (id, form, username) => toEmployeeUpdatePayload(id, form, username)
+    },
+    positions: {
+      entity,
+      eyebrow: 'RRHH',
+      listTitle: 'Mantenimiento - Cargos',
+      createTitle: 'Crear cargo',
+      editTitle: 'Editar cargo',
+      createSubtitle: 'Registra un nuevo cargo de recursos humanos.',
+      editSubtitle: 'Actualiza el cargo seleccionado.',
+      listUrl: '/main/modulo/rrhh/empleado/mantenimientos/cargos',
+      idParam: 'position_id',
+      fields: [baseFields.code, baseFields.name],
+      load: (id) => services.positionService.getPositionById(id),
+      create: (payload) => services.positionService.insertPosition(payload as never),
+      update: (payload) => services.positionService.updatePosition(payload as never),
+      toCreatePayload: (form, username) => cleanPayload({ ...form, created_by: username }),
+      toUpdatePayload: (id, form, username) =>
+        cleanPayload({ position_id: id, name: form['name'], updated_by: username })
+    },
+    departments: {
+      entity,
+      eyebrow: 'RRHH',
+      listTitle: 'Mantenimiento - Departamentos',
+      createTitle: 'Crear departamento',
+      editTitle: 'Editar departamento',
+      createSubtitle: 'Registra un nuevo departamento de recursos humanos.',
+      editSubtitle: 'Actualiza el departamento seleccionado.',
+      listUrl: '/main/modulo/rrhh/empleado/mantenimientos/departamentos',
+      idParam: 'department_id',
+      fields: [baseFields.code, baseFields.name],
+      load: (id) => services.departmentService.getDepartmentById(id),
+      create: (payload) => services.departmentService.insertDepartment(payload as never),
+      update: (payload) => services.departmentService.updateDepartment(payload as never),
+      toCreatePayload: (form, username) => cleanPayload({ ...form, created_by: username }),
+      toUpdatePayload: (id, form, username) =>
+        cleanPayload({ department_id: id, name: form['name'], updated_by: username })
     }
   };
 
@@ -339,4 +480,81 @@ function applyDefaultMaxLength(field: FormFieldConfig): FormFieldConfig {
   const maxLength = FIELD_LIMITS[field.key];
 
   return maxLength ? { ...field, maxLength } : field;
+}
+
+function toEmployeeIdPayloadValue(value: unknown): number {
+  const numericValue = Number(String(value ?? '').trim());
+
+  return Number.isFinite(numericValue) ? numericValue : Number.NaN;
+}
+
+function toAuditUser(value: unknown): string {
+  const username = String(value ?? '').trim();
+
+  return username && username !== 'Usuario' ? username : 'admin';
+}
+
+function toCatalogOption(item: { id: number; code?: string | null; name?: string | null }): { value: number; label: string } {
+  const code = String(item.code ?? '').trim();
+  const name = String(item.name ?? '').trim();
+
+  return {
+    value: item.id,
+    label: code && name ? `${code} - ${name}` : name || code || String(item.id)
+  };
+}
+
+function toEmployeeCreatePayload(form: Record<string, unknown>, username: string): Record<string, unknown> {
+  return {
+    code: toTrimmedString(form['code']),
+    first_name: toTrimmedString(form['first_name']),
+    middle_name: toTrimmedString(form['middle_name']),
+    first_surname: toTrimmedString(form['first_surname']),
+    second_surname: toTrimmedString(form['second_surname']),
+    cedula: toTrimmedString(form['cedula']),
+    email: toTrimmedString(form['email']),
+    phone: toTrimmedString(form['phone']),
+    address: toTrimmedString(form['address']),
+    sex: toTrimmedString(form['sex']),
+    birthdate: toTrimmedString(form['birthdate']),
+    integration_date: toTrimmedString(form['integration_date']),
+    company_id: toNumberPayloadValue(form['company_id']),
+    branch_id: toNumberPayloadValue(form['branch_id']),
+    department_id: toNumberPayloadValue(form['department_id']),
+    position_id: toNumberPayloadValue(form['position_id']),
+    created_by: toAuditUser(username)
+  };
+}
+
+function toEmployeeUpdatePayload(id: number, form: Record<string, unknown>, username: string): Record<string, unknown> {
+  return {
+    employee_id: id,
+    code: toTrimmedString(form['code']),
+    first_name: toTrimmedString(form['first_name']),
+    middle_name: toTrimmedString(form['middle_name']),
+    first_surname: toTrimmedString(form['first_surname']),
+    second_surname: toTrimmedString(form['second_surname']),
+    cedula: toTrimmedString(form['cedula']),
+    email: toTrimmedString(form['email']),
+    phone: toTrimmedString(form['phone']),
+    address: toTrimmedString(form['address']),
+    sex: toTrimmedString(form['sex']),
+    birthdate: toTrimmedString(form['birthdate']),
+    integration_date: toTrimmedString(form['integration_date']),
+    company_id: toNumberPayloadValue(form['company_id']),
+    branch_id: toNumberPayloadValue(form['branch_id']),
+    department_id: toNumberPayloadValue(form['department_id']),
+    position_id: toNumberPayloadValue(form['position_id']),
+    updated_by: username
+  };
+}
+
+function toTrimmedString(value: unknown): string {
+  return String(value ?? '').trim();
+}
+
+function toNumberPayloadValue(value: unknown): number {
+  const numericValue = Number(String(value ?? '').trim());
+
+  return Number.isFinite(numericValue) ? numericValue : Number.NaN;
 }

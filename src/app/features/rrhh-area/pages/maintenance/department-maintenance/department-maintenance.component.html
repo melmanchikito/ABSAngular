@@ -1,0 +1,197 @@
+<section class="department-page page-shell">
+  <app-page-header
+    eyebrow="RRHH"
+    title="Mantenimiento - Departamentos"
+    subtitle="Administra los departamentos disponibles para recursos humanos."
+    [icon]="departmentIcon"
+  >
+    <div page-actions class="app-page-actions" (click)="$event.stopPropagation()">
+      <div class="app-grid-filter-menu">
+        <button
+          type="button"
+          class="btn-outline app-grid-filter-trigger app-grid-icon-button"
+          [class.active]="filtersOpen || statusFilter !== 'all'"
+          title="Filtros"
+          aria-label="Abrir filtros"
+          (click)="toggleFilters($event)"
+        >
+          <lucide-angular [img]="filterIcon" [size]="17" [strokeWidth]="2.4"></lucide-angular>
+        </button>
+
+        <section class="app-grid-filter-panel" *ngIf="filtersOpen" (click)="$event.stopPropagation()">
+          <strong class="app-grid-filter-title">Filtros del listado</strong>
+          <label class="app-grid-filter-field">
+            <span>Estado</span>
+            <select [(ngModel)]="statusFilterDraft">
+              <option *ngFor="let option of statusFilterOptions" [ngValue]="option.value">{{ option.label }}</option>
+            </select>
+          </label>
+          <div class="app-grid-filter-actions">
+            <button type="button" class="btn-outline" (click)="clearFilters()">Limpiar</button>
+            <button type="button" class="btn-primary" (click)="applyFilters()">Aplicar</button>
+          </div>
+        </section>
+      </div>
+
+      <button
+        type="button"
+        class="primary-btn btn-primary app-grid-icon-button"
+        title="Nuevo"
+        aria-label="Nuevo"
+        routerLink="create"
+      >
+        <lucide-angular [img]="addIcon" [size]="18" [strokeWidth]="2.4"></lucide-angular>
+      </button>
+    </div>
+  </app-page-header>
+
+  <div class="alert-success" *ngIf="successMessage">{{ successMessage }}</div>
+  <div class="alert-error" *ngIf="errorMessage">{{ errorMessage }}</div>
+
+  <section class="content-grid">
+    <article class="departments-panel app-card app-grid-card">
+      <header class="app-grid-header">
+        <div class="app-grid-title">
+          <span class="app-grid-eyebrow">Listado</span>
+          <h2 class="app-grid-heading">Departamentos</h2>
+        </div>
+      </header>
+
+      <section class="app-grid-toolbar">
+        <label class="app-grid-search">
+          <lucide-angular [img]="searchIcon" [size]="18" [strokeWidth]="2.3"></lucide-angular>
+          <input
+            type="search"
+            name="departmentSearch"
+            [(ngModel)]="searchTerm"
+            (ngModelChange)="onFiltersChange()"
+            placeholder="Buscar por codigo o nombre..."
+            autocomplete="off"
+          />
+        </label>
+
+        <button
+          type="button"
+          class="ghost-btn btn-outline refresh-btn app-grid-icon-button"
+          title="Actualizar"
+          aria-label="Actualizar listado"
+          (click)="loadDepartments()"
+          [disabled]="isLoading"
+        >
+          <lucide-angular [img]="refreshIcon" [size]="17" [strokeWidth]="2.3"></lucide-angular>
+        </button>
+      </section>
+
+      <div class="app-grid-table-wrapper">
+        <table class="department-table app-table app-grid-table">
+          <thead>
+            <tr>
+              <th
+                *ngFor="let column of gridColumns; trackBy: trackByColumnKey"
+                [class]="getColumnClass(column)"
+                [style.width]="column.width || null"
+              >
+                {{ column.label }}
+              </th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngIf="isLoading">
+              <td [attr.colspan]="gridColumns.length">
+                <app-empty-state message="Cargando departamentos..." [icon]="departmentIcon"></app-empty-state>
+              </td>
+            </tr>
+
+            <tr *ngIf="!isLoading && !departments.length">
+              <td [attr.colspan]="gridColumns.length">
+                <app-empty-state message="No existen departamentos registrados." [icon]="departmentIcon"></app-empty-state>
+              </td>
+            </tr>
+
+            <tr *ngIf="!isLoading && departments.length && !filteredDepartments.length">
+              <td [attr.colspan]="gridColumns.length">
+                <app-empty-state
+                  message="No se encontraron departamentos con los filtros aplicados."
+                  [icon]="searchIcon"
+                ></app-empty-state>
+              </td>
+            </tr>
+
+            <tr
+              *ngFor="let department of paginatedDepartments; trackBy: trackByDepartmentId"
+              class="department-row app-grid-row-clickable"
+              [class.app-grid-row-selected]="selectedDepartmentId === department.id"
+              (click)="selectDepartment(department)"
+            >
+              <td *ngFor="let column of gridColumns; trackBy: trackByColumnKey" [class]="getColumnClass(column)">
+                <ng-container [ngSwitch]="column.key">
+                  <app-status-badge
+                    *ngSwitchCase="'canceled'"
+                    [label]="department.canceled ? 'Inactiva' : 'Activa'"
+                    [variant]="department.canceled ? 'inactive' : 'active'"
+                  ></app-status-badge>
+
+                  <div *ngSwitchCase="'actions'" class="app-grid-actions">
+                    <button
+                      type="button"
+                      class="icon-action btn-icon"
+                      title="Ver departamento"
+                      aria-label="Ver departamento"
+                      (click)="$event.stopPropagation(); selectDepartment(department)"
+                    >
+                      <lucide-angular [img]="detailIcon" [size]="17" [strokeWidth]="2.3"></lucide-angular>
+                    </button>
+
+                    <button
+                      type="button"
+                      class="icon-action btn-icon"
+                      title="Editar departamento"
+                      aria-label="Editar departamento"
+                      [routerLink]="['edit', department.id]"
+                      (click)="$event.stopPropagation()"
+                    >
+                      <lucide-angular [img]="editIcon" [size]="17" [strokeWidth]="2.3"></lucide-angular>
+                    </button>
+
+                    <button
+                      type="button"
+                      class="icon-action danger btn-icon"
+                      title="Borrar departamento"
+                      aria-label="Borrar departamento"
+                      [disabled]="department.canceled"
+                      (click)="$event.stopPropagation(); askCancel(department)"
+                    >
+                      <lucide-angular [img]="trashIcon" [size]="17" [strokeWidth]="2.3"></lucide-angular>
+                    </button>
+                  </div>
+
+                  <span *ngSwitchDefault>{{ formatGridValue(department, column.key) }}</span>
+                </ng-container>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <app-data-grid-pagination
+        [showing]="showingCount"
+        [totalItems]="filteredDepartments.length"
+        itemLabel="departamentos"
+        [currentPage]="currentPage"
+        [totalPages]="totalPages"
+        (pageChange)="setPage($event)"
+      ></app-data-grid-pagination>
+    </article>
+  </section>
+
+  <app-confirm-dialog
+    [open]="!!departmentToCancel"
+    title="Anular departamento"
+    [message]="cancelDepartmentMessage"
+    confirmLabel="Anular departamento"
+    [loading]="isSaving"
+    (confirm)="confirmCancel()"
+    (cancel)="closeCancelConfirm()"
+  ></app-confirm-dialog>
+</section>

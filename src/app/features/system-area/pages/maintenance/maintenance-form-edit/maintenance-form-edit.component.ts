@@ -39,6 +39,10 @@ export class MaintenanceFormEditComponent extends MaintenanceFormBase implements
       return;
     }
 
+    if (this.config.entity === 'users') {
+      console.log('EDIT USER PAYLOAD:', payload);
+    }
+
     this.isSaving = true;
 
     this.config.update(payload).subscribe({

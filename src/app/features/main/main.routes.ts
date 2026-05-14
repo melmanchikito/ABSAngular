@@ -2,6 +2,10 @@ import { Routes } from '@angular/router';
 import { MainLayoutComponent } from '../../shared/layouts/main-layout/main-layout.component';
 import { HomeComponent } from '../home/pages/home/home.component';
 import { MailComponent } from '../mail/pages/mail/mail.component';
+import { DepartmentMaintenanceComponent } from '../rrhh-area/pages/maintenance/department-maintenance/department-maintenance.component';
+import { EmployeeMaintenanceComponent } from '../rrhh-area/pages/maintenance/employee-maintenance/employee-maintenance.component';
+import { PositionMaintenanceComponent } from '../rrhh-area/pages/maintenance/position-maintenance/position-maintenance.component';
+import { RrhhAreaComponent } from '../rrhh-area/pages/rrhh-area/rrhh-area.component';
 import { ActionMaintenanceComponent } from '../system-area/pages/maintenance/action-maintenance/action-maintenance.component';
 import { BranchMaintenanceComponent } from '../system-area/pages/maintenance/branch-maintenance/branch-maintenance.component';
 import { CompanyMaintenanceComponent } from '../system-area/pages/maintenance/company-maintenance/company-maintenance.component';
@@ -250,6 +254,51 @@ export const MAIN_ROUTES: Routes = [
         pathMatch: 'full'
       },
       {
+        path: 'maintenance/cargos',
+        redirectTo: 'modulo/rrhh/empleado/mantenimientos/cargos',
+        pathMatch: 'full'
+      },
+      {
+        path: 'maintenance/cargos/create',
+        redirectTo: 'modulo/rrhh/empleado/mantenimientos/cargos/create',
+        pathMatch: 'full'
+      },
+      {
+        path: 'maintenance/cargos/edit/:id',
+        redirectTo: 'modulo/rrhh/empleado/mantenimientos/cargos/edit/:id',
+        pathMatch: 'full'
+      },
+      {
+        path: 'maintenance/departamentos',
+        redirectTo: 'modulo/rrhh/empleado/mantenimientos/departamentos',
+        pathMatch: 'full'
+      },
+      {
+        path: 'maintenance/departamentos/create',
+        redirectTo: 'modulo/rrhh/empleado/mantenimientos/departamentos/create',
+        pathMatch: 'full'
+      },
+      {
+        path: 'maintenance/departamentos/edit/:id',
+        redirectTo: 'modulo/rrhh/empleado/mantenimientos/departamentos/edit/:id',
+        pathMatch: 'full'
+      },
+      {
+        path: 'maintenance/empleados',
+        redirectTo: 'modulo/rrhh/empleado/mantenimientos/empleados',
+        pathMatch: 'full'
+      },
+      {
+        path: 'maintenance/empleados/create',
+        redirectTo: 'modulo/rrhh/empleado/mantenimientos/empleados/create',
+        pathMatch: 'full'
+      },
+      {
+        path: 'maintenance/empleados/edit/:id',
+        redirectTo: 'modulo/rrhh/empleado/mantenimientos/empleados/edit/:id',
+        pathMatch: 'full'
+      },
+      {
         path: 'modulo/sistema/configuracion/mantenimientos/empresas/create',
         component: MaintenanceFormCreateComponent,
         data: { entity: 'companies' }
@@ -388,6 +437,57 @@ export const MAIN_ROUTES: Routes = [
       {
         path: 'modulo/producto/produccion-distribucion/productos',
         component: ProductMaintenanceComponent
+      },
+      {
+        path: 'modulo/rrhh',
+        redirectTo: 'modulo/rrhh/empleado',
+        pathMatch: 'full'
+      },
+      {
+        path: 'modulo/rrhh/empleado/mantenimientos/cargos/create',
+        component: MaintenanceFormCreateComponent,
+        data: { entity: 'positions' }
+      },
+      {
+        path: 'modulo/rrhh/empleado/mantenimientos/cargos/edit/:id',
+        component: MaintenanceFormEditComponent,
+        data: { entity: 'positions' }
+      },
+      {
+        path: 'modulo/rrhh/empleado/mantenimientos/cargos',
+        component: PositionMaintenanceComponent
+      },
+      {
+        path: 'modulo/rrhh/empleado/mantenimientos/empleados/create',
+        component: MaintenanceFormCreateComponent,
+        data: { entity: 'employees' }
+      },
+      {
+        path: 'modulo/rrhh/empleado/mantenimientos/empleados/edit/:id',
+        component: MaintenanceFormEditComponent,
+        data: { entity: 'employees' }
+      },
+      {
+        path: 'modulo/rrhh/empleado/mantenimientos/empleados',
+        component: EmployeeMaintenanceComponent
+      },
+      {
+        path: 'modulo/rrhh/empleado/mantenimientos/departamentos/create',
+        component: MaintenanceFormCreateComponent,
+        data: { entity: 'departments' }
+      },
+      {
+        path: 'modulo/rrhh/empleado/mantenimientos/departamentos/edit/:id',
+        component: MaintenanceFormEditComponent,
+        data: { entity: 'departments' }
+      },
+      {
+        path: 'modulo/rrhh/empleado/mantenimientos/departamentos',
+        component: DepartmentMaintenanceComponent
+      },
+      {
+        path: 'modulo/rrhh/:submoduleKey',
+        component: RrhhAreaComponent
       },
       {
         path: 'modulo/:moduleKey/:submoduleKey',
