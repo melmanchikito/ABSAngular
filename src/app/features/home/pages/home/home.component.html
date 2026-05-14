@@ -1,9 +1,9 @@
 <section class="home-page page-shell non-operational-page visual-page-background">
   <header class="home-hero">
     <div>
-      <span class="eyebrow">Inicio</span>
+      <span class="eyebrow">Dashboard ERP</span>
       <h1>Bienvenido, {{ username }}</h1>
-      <p>Gestiona tus modulos y accesos desde un solo lugar.</p>
+      <p>Indicadores, modulos y actividad operativa del sistema ABS.</p>
     </div>
 
     <div class="hero-summary">
@@ -11,98 +11,131 @@
         <lucide-angular [img]="chartIcon" [size]="22" [strokeWidth]="2.4"></lucide-angular>
       </span>
       <div>
-        <strong>Resumen del dia</strong>
-        <small>Actividad y accesos principales</small>
+        <strong>{{ layoutUpdatedLabel }}</strong>
+        <small>Widgets movibles y redimensionables</small>
       </div>
+      <button
+        type="button"
+        class="layout-reset-btn"
+        title="Restaurar layout"
+        aria-label="Restaurar layout del dashboard"
+        (click)="resetDashboardLayout()"
+      >
+        <lucide-angular [img]="resetIcon" [size]="17" [strokeWidth]="2.45"></lucide-angular>
+      </button>
     </div>
   </header>
 
-  <section class="metrics-grid">
-    <article class="metric-card" *ngFor="let metric of metrics">
-      <strong>{{ metric.value }}</strong>
-      <span>{{ metric.label }}</span>
-      <small>{{ metric.helper }}</small>
-    </article>
-  </section>
-
-  <section class="home-grid">
-    <article class="home-card quick-panel">
-      <header class="panel-head">
-        <div>
-          <span class="eyebrow">Accesos rapidos</span>
-          <h2>Modulos principales</h2>
-        </div>
-      </header>
-
-      <div class="quick-grid">
-        <button
-          type="button"
-          class="quick-card"
-          *ngFor="let item of quickAccess"
-          (click)="navigate(item.route)"
-        >
-          <span class="quick-icon">
-            <lucide-angular [img]="item.icon" [size]="21" [strokeWidth]="2.35"></lucide-angular>
-          </span>
-          <span>
-            <strong>{{ item.label }}</strong>
-            <small>{{ item.description }}</small>
-          </span>
-        </button>
-      </div>
-    </article>
-
-    <aside class="home-card day-panel">
-      <header class="panel-head">
-        <div>
-          <span class="eyebrow">Panel informativo</span>
-          <h2>Resumen</h2>
-        </div>
-      </header>
-
-      <div class="info-list">
-        <article>
-          <span class="info-icon">
-            <lucide-angular [img]="bellIcon" [size]="18" [strokeWidth]="2.35"></lucide-angular>
-          </span>
-          <div>
-            <strong>3 notificaciones nuevas</strong>
-            <small>Revisa la bandeja del header.</small>
-          </div>
-        </article>
-
-        <article>
-          <span class="info-icon">
-            <lucide-angular [img]="birthdayIcon" [size]="18" [strokeWidth]="2.35"></lucide-angular>
-          </span>
-          <div>
-            <strong>2 cumpleanos hoy</strong>
-            <small>German Machado y Maria Perez.</small>
-          </div>
-        </article>
-      </div>
-    </aside>
-  </section>
-
-  <section class="home-card activity-panel">
-    <header class="panel-head">
+  <section class="kpi-grid" aria-label="KPIs principales">
+    <article class="metric-card" *ngFor="let kpi of kpis">
+      <span class="metric-icon">
+        <lucide-angular [img]="kpi.icon" [size]="20" [strokeWidth]="2.35"></lucide-angular>
+      </span>
       <div>
-        <span class="eyebrow">Actividad reciente</span>
-        <h2>Ultimas acciones</h2>
+        <strong>{{ kpi.value }}</strong>
+        <span>{{ kpi.label }}</span>
+        <small>{{ kpi.helper }}</small>
       </div>
-    </header>
+      <em>{{ kpi.trend }}</em>
+    </article>
+  </section>
 
-    <div class="activity-list">
-      <article *ngFor="let activity of recentActivity">
-        <span class="activity-icon">
-          <lucide-angular [img]="clockIcon" [size]="17" [strokeWidth]="2.35"></lucide-angular>
-        </span>
-        <div>
-          <strong>{{ activity.title }}</strong>
-          <small>{{ activity.detail }}</small>
-        </div>
-        <em>{{ activity.time }}</em>
-      </article>
-    </div>
+  <section #dashboardGrid class="dashboard-grid grid-stack" aria-label="Dashboard avanzado">
+    <article
+      class="dashboard-widget grid-stack-item"
+      *ngFor="let widget of dashboardWidgets; trackBy: trackWidget"
+      [attr.gs-id]="widget.id"
+      [attr.gs-x]="widget.layout.x"
+      [attr.gs-y]="widget.layout.y"
+      [attr.gs-w]="widget.layout.w"
+      [attr.gs-h]="widget.layout.h"
+    >
+      <div class="grid-stack-item-content dashboard-panel">
+        <header class="widget-head">
+          <div>
+            <span class="eyebrow">{{ widget.eyebrow }}</span>
+            <h2>{{ widget.title }}</h2>
+            <p>{{ widget.subtitle }}</p>
+          </div>
+
+          <button
+            type="button"
+            class="widget-drag-handle"
+            title="Mover widget"
+            aria-label="Mover widget"
+          >
+            <i class="pi pi-arrows-alt"></i>
+          </button>
+        </header>
+
+        <ng-container [ngSwitch]="widget.type">
+          <div class="chart-shell" *ngSwitchCase="'chart'">
+            <div
+              echarts
+              class="dashboard-chart"
+              [options]="chartOptions[widget.chartKey || 'systemTrend']"
+              [initOpts]="chartInitOpts"
+              [autoResize]="true"
+              (chartInit)="onChartInit($event, widget.id)"
+            ></div>
+          </div>
+
+          <div class="chart-shell gauge-shell" *ngSwitchCase="'gauge'">
+            <div
+              echarts
+              class="dashboard-chart"
+              [options]="chartOptions[widget.chartKey || 'healthGauge']"
+              [initOpts]="chartInitOpts"
+              [autoResize]="true"
+              (chartInit)="onChartInit($event, widget.id)"
+            ></div>
+          </div>
+
+          <div class="module-list" *ngSwitchCase="'modules'">
+            <article *ngFor="let module of moduleStatuses">
+              <div class="module-row-head">
+                <div>
+                  <strong>{{ module.name }}</strong>
+                  <small>{{ module.owner }}</small>
+                </div>
+                <p-tag [value]="module.status" [severity]="module.severity"></p-tag>
+              </div>
+              <p-progressBar [value]="module.progress" [showValue]="false"></p-progressBar>
+              <span class="progress-label">{{ module.progress }}% operativo</span>
+            </article>
+          </div>
+
+          <div class="activity-list" *ngSwitchCase="'activity'">
+            <article *ngFor="let activity of recentActivity">
+              <span class="activity-icon">
+                <lucide-angular [img]="clockIcon" [size]="17" [strokeWidth]="2.35"></lucide-angular>
+              </span>
+              <div>
+                <strong>{{ activity.title }}</strong>
+                <small>{{ activity.detail }}</small>
+              </div>
+              <p-tag [value]="activity.time" [severity]="activity.severity"></p-tag>
+            </article>
+          </div>
+
+          <div class="quick-grid" *ngSwitchCase="'quick'">
+            <button
+              type="button"
+              class="quick-card"
+              *ngFor="let item of quickAccess; trackBy: trackQuickAccess"
+              (click)="navigate(item.route)"
+            >
+              <span class="quick-icon">
+                <lucide-angular [img]="item.icon" [size]="20" [strokeWidth]="2.35"></lucide-angular>
+              </span>
+              <span>
+                <strong>{{ item.label }}</strong>
+                <small>{{ item.description }}</small>
+              </span>
+            </button>
+          </div>
+        </ng-container>
+      </div>
+    </article>
   </section>
 </section>

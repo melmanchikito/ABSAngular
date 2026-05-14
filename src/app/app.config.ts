@@ -5,11 +5,14 @@ import { routes } from './app.routes';
 import { authInterceptor } from './core/interceptors/auth.interceptor';
 import { loaderInterceptor } from './core/interceptors/loader.interceptor';
 import { provideAnimations } from '@angular/platform-browser/animations';
+import { providePrimeNG } from 'primeng/config';
+
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideAnimations(),
+    providePrimeNG({ theme: 'none' }),
     provideRouter(routes),
     provideHttpClient(
       withInterceptors([

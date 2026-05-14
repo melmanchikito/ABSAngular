@@ -36,6 +36,8 @@
             ],
             "styles": [
               "node_modules/leaflet/dist/leaflet.css",
+              "node_modules/primeicons/primeicons.css",
+              "node_modules/gridstack/dist/gridstack.min.css",
               "src/styles.scss"
             ]
           },
