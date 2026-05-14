@@ -4,6 +4,9 @@
   --home-soft-bg: color-mix(in srgb, var(--abs-surface-soft) 91%, var(--abs-surface));
   --home-hover-bg: color-mix(in srgb, var(--abs-primary) 8%, var(--abs-surface));
   --home-shadow: 0 10px 28px rgba(15, 23, 42, 0.12);
+  --dashboard-column-gap: 1cm;
+  --dashboard-row-gap: 32px;
+  --dashboard-section-gap: 34px;
   position: relative;
   isolation: isolate;
   overflow: visible;
@@ -23,7 +26,7 @@
 .home-hero {
   justify-content: space-between;
   gap: 1rem;
-  margin-bottom: 1rem;
+  margin-bottom: var(--dashboard-section-gap);
   padding: 1.25rem;
   border: 1.5px solid var(--home-border);
   border-radius: 20px;
@@ -93,9 +96,31 @@ p {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  flex: 0 0 auto;
+  line-height: 0;
   border: 1.5px solid color-mix(in srgb, var(--abs-primary) 34%, var(--home-border));
   background: color-mix(in srgb, var(--abs-primary) 11%, var(--abs-surface));
   color: var(--abs-primary);
+}
+
+.summary-icon lucide-angular,
+.metric-icon lucide-angular,
+.quick-icon lucide-angular,
+.activity-icon lucide-angular {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  line-height: 0;
+}
+
+.summary-icon svg,
+.metric-icon svg,
+.quick-icon svg,
+.activity-icon svg {
+  display: block;
+  margin: auto;
 }
 
 .summary-icon {
@@ -106,6 +131,7 @@ p {
 }
 
 .layout-reset-btn,
+.dashboard-edit-btn,
 .widget-drag-handle {
   border: 1.5px solid var(--home-border);
   background: var(--home-card-bg);
@@ -117,14 +143,28 @@ p {
   box-shadow: var(--abs-shadow-xs, 0 1px 4px rgba(0, 0, 0, 0.08));
 }
 
+.dashboard-edit-btn,
 .layout-reset-btn {
   width: 38px;
   height: 38px;
-  margin-left: auto;
   border-radius: 12px;
 }
 
+.dashboard-edit-btn {
+  margin-left: auto;
+}
+
+.dashboard-edit-btn.active {
+  border-color: color-mix(in srgb, var(--abs-primary) 62%, var(--home-border));
+  background: color-mix(in srgb, var(--abs-primary) 15%, var(--abs-surface));
+  color: var(--abs-primary);
+  box-shadow:
+    var(--abs-shadow-xs, 0 1px 4px rgba(0, 0, 0, 0.08)),
+    0 0 0 3px color-mix(in srgb, var(--abs-primary) 13%, transparent);
+}
+
 .layout-reset-btn:hover,
+.dashboard-edit-btn:hover,
 .widget-drag-handle:hover {
   border-color: color-mix(in srgb, var(--abs-primary) 48%, var(--home-border));
   color: var(--abs-primary);
@@ -134,8 +174,9 @@ p {
 .kpi-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(170px, 1fr));
-  gap: 0.85rem;
-  margin-bottom: 1rem;
+  column-gap: var(--dashboard-column-gap);
+  row-gap: var(--dashboard-row-gap);
+  margin-bottom: var(--dashboard-section-gap);
 }
 
 .metric-card,
@@ -146,7 +187,11 @@ p {
 }
 
 .metric-card {
-  gap: 0.8rem;
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr);
+  align-items: center;
+  column-gap: 0.95rem;
+  row-gap: 0.45rem;
   min-height: 112px;
   padding: 1rem;
   border-radius: 18px;
@@ -163,10 +208,16 @@ p {
 }
 
 .metric-icon {
-  width: 44px;
-  height: 44px;
-  min-width: 44px;
+  width: 48px;
+  height: 48px;
+  min-width: 48px;
+  place-self: center;
   border-radius: 14px;
+}
+
+.metric-icon lucide-angular {
+  width: 24px;
+  height: 24px;
 }
 
 .metric-card strong {
@@ -202,10 +253,27 @@ p {
 
 .dashboard-grid {
   min-height: 880px;
+  margin-top: 4px;
 }
 
 .dashboard-widget {
   min-width: 0;
+}
+
+.dashboard-grid:not(.dashboard-editing) .dashboard-widget,
+.dashboard-grid:not(.dashboard-editing) .dashboard-panel {
+  cursor: default;
+}
+
+.dashboard-grid.dashboard-editing .dashboard-panel {
+  outline: 2px dashed color-mix(in srgb, var(--abs-primary) 34%, transparent);
+  outline-offset: -8px;
+}
+
+.dashboard-grid.dashboard-editing .widget-head {
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--abs-primary) 12%, transparent), transparent 58%),
+    color-mix(in srgb, var(--home-soft-bg) 88%, transparent);
 }
 
 .dashboard-panel {
@@ -247,6 +315,11 @@ p {
   border-radius: 12px;
   font-size: 0.9rem;
   touch-action: none;
+  cursor: grab;
+}
+
+.widget-drag-handle:active {
+  cursor: grabbing;
 }
 
 .chart-shell,
@@ -481,7 +554,7 @@ p {
     top: auto !important;
     width: 100% !important;
     height: auto !important;
-    margin-bottom: 0.85rem;
+    margin-bottom: var(--dashboard-row-gap);
     transform: none !important;
   }
 

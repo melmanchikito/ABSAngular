@@ -11,10 +11,22 @@
         <lucide-angular [img]="chartIcon" [size]="22" [strokeWidth]="2.4"></lucide-angular>
       </span>
       <div>
-        <strong>{{ layoutUpdatedLabel }}</strong>
-        <small>Widgets movibles y redimensionables</small>
+        <strong>{{ dashboardModeLabel }}</strong>
+        <small>{{ isDashboardEditing ? 'Puedes mover y redimensionar widgets' : 'Activa el lapiz para editar el layout' }}</small>
       </div>
       <button
+        type="button"
+        class="dashboard-edit-btn"
+        [class.active]="isDashboardEditing"
+        [attr.aria-pressed]="isDashboardEditing"
+        title="Editar dashboard"
+        aria-label="Editar dashboard"
+        (click)="toggleDashboardEditing()"
+      >
+        <lucide-angular [img]="editIcon" [size]="17" [strokeWidth]="2.45"></lucide-angular>
+      </button>
+      <button
+        *ngIf="isDashboardEditing"
         type="button"
         class="layout-reset-btn"
         title="Restaurar layout"
@@ -40,7 +52,12 @@
     </article>
   </section>
 
-  <section #dashboardGrid class="dashboard-grid grid-stack" aria-label="Dashboard avanzado">
+  <section
+    #dashboardGrid
+    class="dashboard-grid grid-stack"
+    [class.dashboard-editing]="isDashboardEditing"
+    aria-label="Dashboard avanzado"
+  >
     <article
       class="dashboard-widget grid-stack-item"
       *ngFor="let widget of dashboardWidgets; trackBy: trackWidget"
@@ -59,6 +76,7 @@
           </div>
 
           <button
+            *ngIf="isDashboardEditing"
             type="button"
             class="widget-drag-handle"
             title="Mover widget"

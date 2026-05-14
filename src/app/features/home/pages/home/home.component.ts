@@ -10,6 +10,7 @@ import {
   LucideAngularModule,
   MonitorCog,
   Package,
+  Pencil,
   RefreshCcw,
   Users
 } from 'lucide-angular';
@@ -113,6 +114,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   readonly bellIcon = Bell;
   readonly chartIcon = BarChart3;
   readonly clockIcon = Clock3;
+  readonly editIcon = Pencil;
   readonly resetIcon = RefreshCcw;
 
   readonly chartInitOpts = {
@@ -223,14 +225,15 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     { name: 'Finanzas', owner: 'Contable', progress: 68, status: 'Revision', severity: 'secondary' }
   ];
 
-  readonly dashboardWidgets: DashboardWidget[] = this.createDashboardWidgets();
-  chartOptions!: Record<ChartKey, EChartsCoreOption>;
-
   private readonly dashboardLayoutKey = 'abs_home_dashboard_layout';
   private readonly chartInstances = new Map<string, EChartsType>();
   private preferencesSubscription?: Subscription;
   private grid?: GridStack;
   private resizeObserver?: ResizeObserver;
+
+  readonly dashboardWidgets: DashboardWidget[] = this.createDashboardWidgets();
+  chartOptions!: Record<ChartKey, EChartsCoreOption>;
+  isDashboardEditing = false;
 
   constructor(
     private readonly authService: AuthService,
@@ -266,8 +269,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     return this.authService.getName() || localStorage.getItem('username') || 'Usuario';
   }
 
-  get layoutUpdatedLabel(): string {
-    return localStorage.getItem(this.dashboardLayoutKey) ? 'Layout personalizado' : 'Layout ABS';
+  get dashboardModeLabel(): string {
+    return this.isDashboardEditing ? 'Edicion activa' : 'Dashboard bloqueado';
   }
 
   navigate(route: string): void {
@@ -275,6 +278,10 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   resetDashboardLayout(): void {
+    if (!this.isDashboardEditing) {
+      return;
+    }
+
     localStorage.removeItem(this.dashboardLayoutKey);
 
     if (!this.grid) {
@@ -294,6 +301,11 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     this.grid.batchUpdate(false);
     this.saveGridLayout();
     this.resizeChartsSoon();
+  }
+
+  toggleDashboardEditing(): void {
+    this.isDashboardEditing = !this.isDashboardEditing;
+    this.syncGridEditingState();
   }
 
   onChartInit(instance: unknown, widgetId: string): void {
@@ -319,10 +331,12 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     this.grid = GridStack.init(
       {
         column: 12,
-        cellHeight: 96,
-        margin: 12,
+        cellHeight: 112,
+        margin: '18px 38px',
         float: false,
         animate: this.preferencesService.snapshot.showAnimations,
+        disableDrag: true,
+        disableResize: true,
         draggable: {
           handle: '.widget-drag-handle'
         },
@@ -344,6 +358,16 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     this.resizeChartsSoon();
+    this.syncGridEditingState();
+  }
+
+  private syncGridEditingState(): void {
+    if (!this.grid) {
+      return;
+    }
+
+    this.grid.enableMove(this.isDashboardEditing);
+    this.grid.enableResize(this.isDashboardEditing);
   }
 
   private saveGridLayout(): void {
