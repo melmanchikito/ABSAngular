@@ -1,0 +1,781 @@
+:root {
+  --abs-motion-instant: 90ms;
+  --abs-motion-fast: 180ms;
+  --abs-motion-base: 320ms;
+  --abs-motion-slow: 520ms;
+  --abs-motion-route: 640ms;
+  --abs-motion-ease: cubic-bezier(0.22, 0.72, 0.2, 1);
+  --abs-motion-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --abs-motion-ease-premium: cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+@keyframes abs-fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes abs-slide-up {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 18px, 0);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes abs-scale-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 16px, 0) scale(0.965);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@keyframes abs-dropdown-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, -12px, 0) scale(0.965);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@keyframes abs-page-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 22px, 0) scale(0.985);
+    filter: blur(4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+    filter: blur(0);
+  }
+}
+
+@keyframes abs-component-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 18px, 0) scale(0.975);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@keyframes abs-panel-left-in {
+  from {
+    opacity: 0;
+    transform: translate3d(-32px, 0, 0);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes abs-panel-top-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, -24px, 0);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes abs-row-fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes abs-alert-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, -10px, 0) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@keyframes abs-layout-assemble {
+  from {
+    opacity: 0;
+    transform: scale(0.988);
+    filter: blur(5px);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0);
+  }
+}
+
+@keyframes abs-login-stage-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 26px, 0) scale(0.96);
+    filter: blur(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+    filter: blur(0);
+  }
+}
+
+@keyframes abs-login-panel-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 20px, 0) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@keyframes abs-login-piece-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 14px, 0) scale(0.985);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@keyframes abs-login-orbit-in {
+  from {
+    opacity: 0;
+    transform: translate3d(22px, 24px, 0) scale(0.9);
+  }
+
+  to {
+    opacity: 0.8;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@keyframes abs-login-piece-exit-left {
+  from {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+    filter: blur(0);
+  }
+
+  to {
+    opacity: 0;
+    transform: translate3d(-34px, 10px, 0) scale(0.96);
+    filter: blur(5px);
+  }
+}
+
+@keyframes abs-login-piece-exit-right {
+  from {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+    filter: blur(0);
+  }
+
+  to {
+    opacity: 0;
+    transform: translate3d(42px, -8px, 0) scale(0.96);
+    filter: blur(5px);
+  }
+}
+
+@keyframes abs-login-frame-disassemble {
+  0% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+    filter: blur(0);
+  }
+
+  64% {
+    opacity: 0.88;
+    transform: translate3d(0, -4px, 0) scale(0.985);
+    filter: blur(2px);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate3d(0, 18px, 0) scale(0.94);
+    filter: blur(10px);
+  }
+}
+
+@keyframes abs-login-backdrop-exit {
+  from {
+    opacity: 1;
+    transform: scale(1.01);
+    filter: blur(1.5px) saturate(112%) brightness(0.94);
+  }
+
+  to {
+    opacity: 0.28;
+    transform: scale(1.08);
+    filter: blur(9px) saturate(92%) brightness(0.7);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  :where(.page-shell, .profile-page, .non-operational-page, .visual-page-background) {
+    animation: abs-page-in var(--abs-motion-route) var(--abs-motion-ease-premium) both;
+  }
+
+  :where(
+    .page-header,
+    .page-toolbar,
+    .home-hero,
+    .app-card-header,
+    .app-grid-header,
+    .section-title,
+    .panel-head,
+    .maintenance-header,
+    .form-header
+  ) {
+    animation: abs-slide-up var(--abs-motion-base) var(--abs-motion-ease-premium) both;
+  }
+
+  :where(
+    .app-card,
+    .content-card,
+    .app-panel,
+    .profile-card,
+    .home-card,
+    .metric-card,
+    .form-card,
+    .table-card,
+    .modal-panel,
+    .info-footer,
+    .empty-state,
+    .user-card,
+    .maintenance-card,
+    .section-card
+  ) {
+    animation: abs-component-in var(--abs-motion-slow) var(--abs-motion-ease-premium) both;
+    transition:
+      border-color var(--abs-motion-base) var(--abs-motion-ease),
+      box-shadow var(--abs-motion-base) var(--abs-motion-ease),
+      background-color var(--abs-motion-base) var(--abs-motion-ease),
+      color var(--abs-motion-base) var(--abs-motion-ease),
+      filter var(--abs-motion-fast) var(--abs-motion-ease),
+      transform var(--abs-motion-fast) var(--abs-motion-ease);
+  }
+
+  :where(.table-wrapper, .app-grid-table-wrapper, .table-shell) {
+    animation: abs-slide-up var(--abs-motion-slow) var(--abs-motion-ease-premium) both;
+  }
+
+  :where(.app-table tbody tr, .app-grid-table tbody tr, table tbody tr) {
+    animation: abs-row-fade-in var(--abs-motion-base) var(--abs-motion-ease-out) both;
+    transition:
+      background-color var(--abs-motion-fast) var(--abs-motion-ease),
+      color var(--abs-motion-fast) var(--abs-motion-ease);
+  }
+
+  :where(.app-table tbody tr, .app-grid-table tbody tr, table tbody tr):nth-child(1) {
+    animation-delay: 35ms;
+  }
+
+  :where(.app-table tbody tr, .app-grid-table tbody tr, table tbody tr):nth-child(2) {
+    animation-delay: 55ms;
+  }
+
+  :where(.app-table tbody tr, .app-grid-table tbody tr, table tbody tr):nth-child(3) {
+    animation-delay: 75ms;
+  }
+
+  :where(.app-table tbody tr, .app-grid-table tbody tr, table tbody tr):nth-child(4) {
+    animation-delay: 95ms;
+  }
+
+  :where(.app-table tbody tr, .app-grid-table tbody tr, table tbody tr):nth-child(5) {
+    animation-delay: 115ms;
+  }
+
+  :where(.app-table tbody tr, .app-grid-table tbody tr, table tbody tr):nth-child(6) {
+    animation-delay: 135ms;
+  }
+
+  :where(
+    form,
+    .company-form,
+    .location-form,
+    .branch-form,
+    .module-form,
+    .option-form,
+    .option-type-form,
+    .action-form,
+    .user-form,
+    .maintenance-form
+  ) {
+    animation: abs-slide-up var(--abs-motion-base) var(--abs-motion-ease-premium) both;
+  }
+
+  :where(
+    form .field,
+    form .form-field,
+    form .form-group,
+    form .pref-row,
+    .profile-page .pref-row,
+    .company-form > *,
+    .location-form > *,
+    .branch-form > *,
+    .module-form > *,
+    .option-form > *,
+    .option-type-form > *,
+    .action-form > *,
+    .user-form > *,
+    .maintenance-form > *
+  ) {
+    animation: abs-slide-up var(--abs-motion-base) var(--abs-motion-ease-premium) both;
+  }
+
+  :where(
+    input,
+    select,
+    textarea,
+    .form-control,
+    .form-select,
+    .field input,
+    .field select,
+    .field textarea,
+    .app-grid-search,
+    .select-shell,
+    .switch span,
+    .switch span::before
+  ) {
+    transition:
+      border-color var(--abs-motion-base) var(--abs-motion-ease),
+      background-color var(--abs-motion-base) var(--abs-motion-ease),
+      box-shadow var(--abs-motion-base) var(--abs-motion-ease),
+      color var(--abs-motion-base) var(--abs-motion-ease),
+      outline-color var(--abs-motion-base) var(--abs-motion-ease),
+      transform var(--abs-motion-fast) var(--abs-motion-ease);
+  }
+
+  :where(input, select, textarea, .form-control, .form-select):focus,
+  :where(.input-wrap:focus-within, .select-shell:focus-within) {
+    transform: translate3d(0, -1px, 0);
+  }
+
+  :where(
+    .alert-success,
+    .alert-error,
+    .alert-warning,
+    .toast-message,
+    .message,
+    .field-error,
+    .image-success,
+    .image-error,
+    .saved,
+    .alert,
+    .panel-empty
+  ) {
+    animation: abs-alert-in var(--abs-motion-base) var(--abs-motion-ease-premium) both;
+  }
+
+  :where(.app-modal-backdrop, .modal-backdrop) {
+    animation: abs-fade-in var(--abs-motion-fast) var(--abs-motion-ease-out) both;
+  }
+
+  :where(.app-modal, .modal-card, .modal, .modal-panel) {
+    animation: abs-scale-in var(--abs-motion-slow) var(--abs-motion-ease-premium) both;
+  }
+
+  :where(.tray-panel, .user-menu, .dropdown-menu, .menu-panel, .app-grid-filter-panel, .submenu) {
+    animation: abs-dropdown-in var(--abs-motion-base) var(--abs-motion-ease-premium) both;
+    transform-origin: top right;
+  }
+
+  :where(
+    button,
+    a,
+    .btn-primary,
+    .btn-secondary,
+    .btn-danger,
+    .btn-outline,
+    .btn-icon,
+    .primary-action,
+    .liquid-theme-option,
+    .chip-group button,
+    .submenu-item,
+    .user-menu-item,
+    .tray-btn,
+    .item,
+    .quick-card,
+    .pagination-btn
+  ) {
+    transition:
+      border-color var(--abs-motion-base) var(--abs-motion-ease),
+      background-color var(--abs-motion-base) var(--abs-motion-ease),
+      background var(--abs-motion-base) var(--abs-motion-ease),
+      color var(--abs-motion-base) var(--abs-motion-ease),
+      box-shadow var(--abs-motion-base) var(--abs-motion-ease),
+      filter var(--abs-motion-fast) var(--abs-motion-ease),
+      transform var(--abs-motion-fast) var(--abs-motion-ease);
+  }
+
+  .home-page :where(.metric-card, .home-card, .quick-card, .info-list article, .activity-list article),
+  .summary-grid > * {
+    animation: abs-component-in var(--abs-motion-slow) var(--abs-motion-ease-premium) both;
+  }
+
+  .home-page .metric-card:nth-child(1),
+  .home-page .quick-card:nth-child(1),
+  .home-page .info-list article:nth-child(1),
+  .home-page .activity-list article:nth-child(1),
+  .summary-grid > *:nth-child(1) {
+    animation-delay: 70ms;
+  }
+
+  .home-page .metric-card:nth-child(2),
+  .home-page .quick-card:nth-child(2),
+  .home-page .info-list article:nth-child(2),
+  .home-page .activity-list article:nth-child(2),
+  .summary-grid > *:nth-child(2) {
+    animation-delay: 130ms;
+  }
+
+  .home-page .metric-card:nth-child(3),
+  .home-page .quick-card:nth-child(3),
+  .home-page .info-list article:nth-child(3),
+  .home-page .activity-list article:nth-child(3),
+  .summary-grid > *:nth-child(3) {
+    animation-delay: 190ms;
+  }
+
+  .home-page .metric-card:nth-child(4),
+  .home-page .quick-card:nth-child(4),
+  .home-page .info-list article:nth-child(4),
+  .home-page .activity-list article:nth-child(4),
+  .summary-grid > *:nth-child(4) {
+    animation-delay: 250ms;
+  }
+
+  .home-page .metric-card:nth-child(5),
+  .home-page .quick-card:nth-child(5),
+  .home-page .info-list article:nth-child(5),
+  .home-page .activity-list article:nth-child(5),
+  .summary-grid > *:nth-child(5) {
+    animation-delay: 310ms;
+  }
+
+  .home-page .metric-card:nth-child(6),
+  .home-page .quick-card:nth-child(6),
+  .home-page .info-list article:nth-child(6),
+  .home-page .activity-list article:nth-child(6),
+  .summary-grid > *:nth-child(6) {
+    animation-delay: 370ms;
+  }
+
+  :where(.home-card, .metric-card, .quick-card, .info-list article, .activity-list article):hover {
+    transition:
+      transform var(--abs-motion-fast) var(--abs-motion-ease),
+      border-color var(--abs-motion-base) var(--abs-motion-ease),
+      box-shadow var(--abs-motion-base) var(--abs-motion-ease),
+      background-color var(--abs-motion-base) var(--abs-motion-ease);
+  }
+
+  .auth-shell .auth-stage {
+    animation: abs-login-stage-in 0.72s var(--abs-motion-ease-premium) both;
+  }
+
+  .auth-shell .auth-card {
+    animation: abs-login-panel-in 0.62s var(--abs-motion-ease-premium) 0.08s both;
+  }
+
+  .auth-shell .brand-panel {
+    animation: abs-login-panel-in 0.62s var(--abs-motion-ease-premium) 0.18s both;
+  }
+
+  .auth-shell :where(.card-header, .auth-form > *, .brand-copy > *) {
+    animation: abs-login-piece-in 0.48s var(--abs-motion-ease-premium) both;
+  }
+
+  .auth-shell .card-header {
+    animation-delay: 0.18s;
+  }
+
+  .auth-shell .auth-form > *:nth-child(1) {
+    animation-delay: 0.22s;
+  }
+
+  .auth-shell .auth-form > *:nth-child(2) {
+    animation-delay: 0.27s;
+  }
+
+  .auth-shell .auth-form > *:nth-child(3) {
+    animation-delay: 0.32s;
+  }
+
+  .auth-shell .auth-form > *:nth-child(4) {
+    animation-delay: 0.37s;
+  }
+
+  .auth-shell .auth-form > *:nth-child(5) {
+    animation-delay: 0.42s;
+  }
+
+  .auth-shell .auth-form > *:nth-child(6) {
+    animation-delay: 0.47s;
+  }
+
+  .auth-shell .brand-copy > *:nth-child(1) {
+    animation-delay: 0.28s;
+  }
+
+  .auth-shell .brand-copy > *:nth-child(2) {
+    animation-delay: 0.34s;
+  }
+
+  .auth-shell .brand-copy > *:nth-child(3) {
+    animation-delay: 0.4s;
+  }
+
+  .auth-shell .brand-copy > *:nth-child(4) {
+    animation-delay: 0.46s;
+  }
+
+  .auth-shell .brand-copy > *:nth-child(5) {
+    animation-delay: 0.52s;
+  }
+
+  .auth-shell .brand-orbit {
+    animation: abs-login-orbit-in 0.9s var(--abs-motion-ease-premium) 0.32s both;
+  }
+
+  .auth-shell.login-success-exit {
+    pointer-events: none;
+  }
+
+  .auth-shell.login-success-exit::before {
+    animation: abs-login-backdrop-exit 0.78s var(--abs-motion-ease-premium) both;
+  }
+
+  .auth-shell.login-success-exit .auth-stage {
+    animation: abs-login-frame-disassemble 0.72s var(--abs-motion-ease-premium) both;
+  }
+
+  .auth-shell.login-success-exit .card-header {
+    animation: abs-login-piece-exit-left 0.46s var(--abs-motion-ease-premium) 0.02s both;
+  }
+
+  .auth-shell.login-success-exit .auth-form > * {
+    animation: abs-login-piece-exit-left 0.48s var(--abs-motion-ease-premium) both;
+  }
+
+  .auth-shell.login-success-exit .auth-form > *:nth-child(1) {
+    animation-delay: 0.04s;
+  }
+
+  .auth-shell.login-success-exit .auth-form > *:nth-child(2) {
+    animation-delay: 0.08s;
+  }
+
+  .auth-shell.login-success-exit .auth-form > *:nth-child(3) {
+    animation-delay: 0.12s;
+  }
+
+  .auth-shell.login-success-exit .auth-form > *:nth-child(4) {
+    animation-delay: 0.16s;
+  }
+
+  .auth-shell.login-success-exit .auth-form > *:nth-child(5) {
+    animation-delay: 0.2s;
+  }
+
+  .auth-shell.login-success-exit .auth-form > *:nth-child(6) {
+    animation-delay: 0.24s;
+  }
+
+  .auth-shell.login-success-exit .brand-copy > *,
+  .auth-shell.login-success-exit .brand-orbit {
+    animation: abs-login-piece-exit-right 0.5s var(--abs-motion-ease-premium) both;
+  }
+
+  .auth-shell.login-success-exit .brand-copy > *:nth-child(1) {
+    animation-delay: 0.06s;
+  }
+
+  .auth-shell.login-success-exit .brand-copy > *:nth-child(2) {
+    animation-delay: 0.1s;
+  }
+
+  .auth-shell.login-success-exit .brand-copy > *:nth-child(3) {
+    animation-delay: 0.14s;
+  }
+
+  .auth-shell.login-success-exit .brand-copy > *:nth-child(4) {
+    animation-delay: 0.18s;
+  }
+
+  .auth-shell.login-success-exit .brand-copy > *:nth-child(5),
+  .auth-shell.login-success-exit .brand-orbit {
+    animation-delay: 0.22s;
+  }
+
+  .login-entry-sequence {
+    animation: abs-layout-assemble 0.56s var(--abs-motion-ease-premium) both;
+  }
+
+  .login-entry-sequence .card_sidebar {
+    animation: abs-panel-left-in 0.62s var(--abs-motion-ease-premium) 0.12s both;
+  }
+
+  .login-entry-sequence .card_sidebar :where(.card_image, .item, .separator) {
+    animation: abs-slide-up 0.44s var(--abs-motion-ease-premium) both;
+  }
+
+  .login-entry-sequence .card_sidebar .card_image {
+    animation-delay: 0.34s;
+  }
+
+  .login-entry-sequence .card_sidebar .item:nth-of-type(1) {
+    animation-delay: 0.42s;
+  }
+
+  .login-entry-sequence .card_sidebar .item:nth-of-type(2) {
+    animation-delay: 0.48s;
+  }
+
+  .login-entry-sequence .card_sidebar .item:nth-of-type(3) {
+    animation-delay: 0.54s;
+  }
+
+  .login-entry-sequence .card_sidebar .item:nth-of-type(4) {
+    animation-delay: 0.6s;
+  }
+
+  .login-entry-sequence .right_content > .card_header,
+  .login-entry-sequence app-header .card_header {
+    animation: abs-panel-top-in 0.58s var(--abs-motion-ease-premium) 0.62s both;
+  }
+
+  .login-entry-sequence app-header :where(.card_input, .tray-wrap, .user-wrap, .network-box) {
+    animation: abs-slide-up 0.42s var(--abs-motion-ease-premium) both;
+  }
+
+  .login-entry-sequence app-header .card_input {
+    animation-delay: 0.78s;
+  }
+
+  .login-entry-sequence app-header .tray-wrap:nth-child(1) {
+    animation-delay: 0.84s;
+  }
+
+  .login-entry-sequence app-header .tray-wrap:nth-child(2) {
+    animation-delay: 0.9s;
+  }
+
+  .login-entry-sequence app-header .user-wrap {
+    animation-delay: 0.96s;
+  }
+
+  .login-entry-sequence app-header .network-box {
+    animation-delay: 1.02s;
+  }
+
+  .login-entry-sequence .card_main {
+    animation: abs-page-in 0.64s var(--abs-motion-ease-premium) 0.88s both;
+  }
+
+  .login-entry-sequence .home-page .home-hero {
+    animation-delay: 1.02s;
+  }
+
+  .login-entry-sequence .home-page .metric-card:nth-child(1),
+  .login-entry-sequence .home-page .quick-card:nth-child(1),
+  .login-entry-sequence .home-page .info-list article:nth-child(1),
+  .login-entry-sequence .home-page .activity-list article:nth-child(1) {
+    animation-delay: 1.14s;
+  }
+
+  .login-entry-sequence .home-page .metric-card:nth-child(2),
+  .login-entry-sequence .home-page .quick-card:nth-child(2),
+  .login-entry-sequence .home-page .info-list article:nth-child(2),
+  .login-entry-sequence .home-page .activity-list article:nth-child(2) {
+    animation-delay: 1.22s;
+  }
+
+  .login-entry-sequence .home-page .metric-card:nth-child(3),
+  .login-entry-sequence .home-page .quick-card:nth-child(3),
+  .login-entry-sequence .home-page .activity-list article:nth-child(3) {
+    animation-delay: 1.3s;
+  }
+
+  .login-entry-sequence .home-page .metric-card:nth-child(4),
+  .login-entry-sequence .home-page .quick-card:nth-child(4) {
+    animation-delay: 1.38s;
+  }
+
+  .login-entry-sequence .home-page .quick-card:nth-child(5) {
+    animation-delay: 1.46s;
+  }
+
+  .login-entry-sequence .home-page .quick-card:nth-child(6) {
+    animation-delay: 1.54s;
+  }
+}
+
+html.animations-disabled {
+  scroll-behavior: auto !important;
+}
+
+html.animations-disabled *,
+html.animations-disabled *::before,
+html.animations-disabled *::after {
+  animation: none !important;
+  scroll-behavior: auto !important;
+  transition: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    scroll-behavior: auto !important;
+    transition: none !important;
+  }
+}

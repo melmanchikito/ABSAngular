@@ -250,11 +250,15 @@
 
     <div class="pref-row">
       <div>
-        <h3>Animaciones</h3>
-        <p>Transiciones y micro-interacciones visuales.</p>
+        <h3>Desactivar animaciones</h3>
+        <p>Reduce movimientos visuales y deja las transiciones en cero.</p>
       </div>
       <label class="switch">
-        <input type="checkbox" [ngModel]="prefs.showAnimations" (ngModelChange)="update({ showAnimations: $event })" />
+        <input
+          type="checkbox"
+          [ngModel]="!prefs.showAnimations"
+          (ngModelChange)="setAnimationsDisabled($event)"
+        />
         <span></span>
       </label>
     </div>

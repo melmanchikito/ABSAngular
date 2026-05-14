@@ -169,6 +169,10 @@ export class ProfileComponent implements OnInit, OnDestroy {
     this.update({ cardDensity });
   }
 
+  setAnimationsDisabled(disabled: boolean): void {
+    this.update({ showAnimations: !disabled });
+  }
+
   openImagePicker(input: HTMLInputElement): void {
     input.click();
   }

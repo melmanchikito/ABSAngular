@@ -13,6 +13,7 @@ import {
 } from 'lucide-angular';
 import { AuthApiService } from '../../services/auth-api.service';
 import { NavigationService } from '../../../../core/services/navigation.service';
+import { MotionService } from '../../../../core/services/motion.service';
 
 @Component({
   selector: 'app-login',
@@ -35,11 +36,13 @@ export class LoginComponent {
   form: FormGroup;
   showPassword = false;
   isSubmitting = false;
+  isLoginExiting = false;
 
   constructor(
     private readonly fb: FormBuilder,
     private readonly authApiService: AuthApiService,
-    private readonly navigationService: NavigationService
+    private readonly navigationService: NavigationService,
+    private readonly motionService: MotionService
   ) {
     this.form = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
@@ -87,6 +90,7 @@ try {
 
   if (result.route === 'main') {
     console.log('NAVEGANDO A MAIN');
+    await this.playLoginExitTransition();
     await this.navigationService.goToMain();
   }
 } finally {
@@ -101,5 +105,16 @@ try {
   goToRecoverPassword(event: Event): void {
     event.preventDefault();
     void this.navigationService.goToRecoverPassword();
+  }
+
+  private async playLoginExitTransition(): Promise<void> {
+    if (!this.motionService.animationsEnabled) {
+      return;
+    }
+
+    this.isLoginExiting = true;
+    this.motionService.markLoginDashboardTransition();
+
+    await new Promise((resolve) => setTimeout(resolve, 720));
   }
 }

@@ -5,6 +5,7 @@ import { Eye, EyeOff, LucideAngularModule, Menu, X } from 'lucide-angular';
 import { SidebarComponent } from '../sidebar/sidebar.component';
 import { HeaderComponent } from '../header/header.component';
 import { AuthService } from '../../../core/services/auth.service';
+import { MotionService } from '../../../core/services/motion.service';
 import { SessionTimeoutAlertComponent } from '../../components/alert/session-timeout-alert/session-timeout-alert.component';
 
 @Component({
@@ -34,6 +35,7 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
   networkType = navigator.onLine ? 'Con internet' : 'Sin internet';
 
   private readonly headerVisibleStorageKey = 'headerVisible';
+  private loginEntryTimer?: ReturnType<typeof setTimeout>;
 
   private onlineHandler = () => {
     this.isOnline = true;
@@ -45,15 +47,32 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
     this.networkType = 'Sin internet';
   };
 
-  constructor(private readonly authService: AuthService) {}
+  runLoginEntrySequence = false;
+
+  constructor(
+    private readonly authService: AuthService,
+    private readonly motionService: MotionService
+  ) {}
 
   ngOnInit(): void {
     this.loadHeaderPreference();
+    this.runLoginEntrySequence = this.motionService.consumeLoginDashboardTransition();
+
+    if (this.runLoginEntrySequence) {
+      this.loginEntryTimer = setTimeout(() => {
+        this.runLoginEntrySequence = false;
+      }, 1900);
+    }
+
     window.addEventListener('online', this.onlineHandler);
     window.addEventListener('offline', this.offlineHandler);
   }
 
   ngOnDestroy(): void {
+    if (this.loginEntryTimer) {
+      clearTimeout(this.loginEntryTimer);
+    }
+
     window.removeEventListener('online', this.onlineHandler);
     window.removeEventListener('offline', this.offlineHandler);
   }

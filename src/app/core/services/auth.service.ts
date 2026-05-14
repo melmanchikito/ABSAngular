@@ -65,7 +65,7 @@ export class AuthService {
     this.cookieService.deleteCookie('isLogin');
     this.cookieService.deleteCookie('FirstPassword');
 
-    localStorage.clear();
+    this.clearSessionStorage();
     this.permissionsService.clearPermissions();
     this.userSubject.next(null);
 
@@ -136,5 +136,24 @@ export class AuthService {
       this.logout();
       window.location.href = '/auth/login';
     }, 15 * 60 * 1000);
+  }
+
+  private clearSessionStorage(): void {
+    [
+      'token',
+      'authToken',
+      'accessToken',
+      'jwt',
+      'jwt_token',
+      'user_id',
+      'userId',
+      'username',
+      'userName',
+      'user',
+      'email',
+      'profileImage',
+      'profileImageUrl',
+      'userPermissions'
+    ].forEach((key) => localStorage.removeItem(key));
   }
 }
