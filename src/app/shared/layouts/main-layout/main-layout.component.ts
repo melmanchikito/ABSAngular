@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
-import { Eye, EyeOff, LucideAngularModule, Menu, X } from 'lucide-angular';
+import { ChevronLeft, ChevronRight, Eye, EyeOff, LucideAngularModule } from 'lucide-angular';
 import { SidebarComponent } from '../sidebar/sidebar.component';
 import { HeaderComponent } from '../header/header.component';
 import { AuthService } from '../../../core/services/auth.service';
@@ -26,8 +26,8 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
   activeSection = 'Sistema';
   sidebarCollapsed = false;
   headerVisible = true;
-  menuIcon = Menu;
-  closeIcon = X;
+  expandSidebarIcon = ChevronRight;
+  collapseSidebarIcon = ChevronLeft;
   showHeaderIcon = Eye;
   hideHeaderIcon = EyeOff;
 
@@ -35,6 +35,7 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
   networkType = navigator.onLine ? 'Con internet' : 'Sin internet';
 
   private readonly headerVisibleStorageKey = 'headerVisible';
+  private readonly mobileSidebarBreakpoint = '(max-width: 768px)';
   private loginEntryTimer?: ReturnType<typeof setTimeout>;
 
   private onlineHandler = () => {
@@ -88,6 +89,16 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
 
   onSelectSection(section: string): void {
     this.activeSection = section;
+  }
+
+  closeSidebarOnMobile(): void {
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    if (window.matchMedia(this.mobileSidebarBreakpoint).matches) {
+      this.sidebarCollapsed = true;
+    }
   }
 
   get username(): string {

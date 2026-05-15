@@ -3,8 +3,14 @@
   --sidebar-tablet: var(--abs-sidebar-width-tablet, 210px);
   --sidebar-collapsed: var(--abs-sidebar-width-collapsed, 76px);
   --layout-gap: var(--abs-layout-gap, 24px);
+  --sidebar-visible: var(--sidebar-open);
   --layout-motion: cubic-bezier(0.22, 1, 0.36, 1);
 }
+
+.sidebar-collapsed {
+  --sidebar-visible: var(--sidebar-collapsed);
+}
+
 .fondo {
   position: relative;
   display: flex;
@@ -67,7 +73,7 @@
   top: 0;
   display: flex;
   flex-direction: column;
-  padding: 10px 10px 10px 0;
+  padding: 10px 0 10px 0;
   box-shadow: none;
   border-right: 0;
   z-index: 20;
@@ -75,11 +81,14 @@
   transform: translate3d(0, 0, 0);
   will-change: transform, opacity;
   transition:
-    width 0.28s var(--layout-motion),
-    transform 0.28s var(--layout-motion),
-    opacity 0.24s ease,
-    box-shadow 0.24s ease,
-    border-color 0.24s ease;
+    transform 260ms var(--layout-motion),
+    opacity 220ms ease;
+}
+
+.card_sidebar app-sidebar {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 
 /* =========================
@@ -87,17 +96,17 @@
 ========================= */
 .toggle-sidebar {
   position: absolute;
-  top: 18px;
-  right: -12px;
+  top: 22px;
+  right: 20px;
 
-  width: 38px;
-  height: 38px;
+  width: 36px;
+  height: 36px;
   border-radius: 14px;
-  border: 1.5px solid color-mix(in srgb, var(--abs-border) 70%, transparent);
+  border: 1px solid color-mix(in srgb, var(--abs-border) 78%, transparent);
 
   background:
-    linear-gradient(135deg, color-mix(in srgb, var(--abs-primary) 92%, #fff), var(--abs-primary));
-  color: #fff;
+    linear-gradient(135deg, color-mix(in srgb, var(--abs-surface) 94%, transparent), color-mix(in srgb, var(--abs-bg) 64%, transparent));
+  color: var(--abs-primary);
 
   cursor: pointer;
   z-index: 30;
@@ -109,19 +118,29 @@
   font-weight: 700;
 
   box-shadow:
-    0 12px 26px rgba(15, 23, 42, 0.18),
-    0 0 0 4px color-mix(in srgb, var(--abs-bg) 88%, transparent);
+    0 10px 22px rgba(15, 23, 42, 0.14),
+    0 0 0 4px color-mix(in srgb, var(--abs-bg) 86%, transparent);
   will-change: transform;
   transition:
-    transform 0.2s var(--layout-motion),
-    background-color 0.2s ease,
-    box-shadow 0.2s ease,
-    border-color 0.2s ease;
+    transform 180ms var(--layout-motion),
+    background-color 180ms ease,
+    border-color 180ms ease,
+    color 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.sidebar-collapsed .toggle-sidebar {
+  right: calc((var(--sidebar-collapsed) - 36px) / 2);
 }
 
 .toggle-sidebar:hover {
-  background: var(--abs-primary-hover);
-  transform: translateX(1px) scale(1.04);
+  background: color-mix(in srgb, var(--abs-primary) 10%, var(--abs-surface));
+  border-color: color-mix(in srgb, var(--abs-primary) 42%, var(--abs-border));
+  color: var(--abs-primary-hover);
+  transform: scale(1.03);
+  box-shadow:
+    0 14px 28px rgba(15, 23, 42, 0.18),
+    0 0 0 4px color-mix(in srgb, var(--abs-primary) 9%, transparent);
 }
 
 .toggle-sidebar:focus-visible {
@@ -141,15 +160,15 @@
 .right_content {
   position: relative;
   z-index: 1;
-  margin-left: calc(var(--sidebar-open) + var(--layout-gap));
+  margin-left: calc(var(--sidebar-visible) + var(--layout-gap));
   display: flex;
   flex-direction: column;
-  width: calc(100% - var(--sidebar-open) - var(--layout-gap));
+  width: calc(100% - var(--sidebar-visible) - var(--layout-gap));
   min-height: 100dvh;
   background: transparent;
   transition:
-    margin-left 0.28s var(--layout-motion),
-    width 0.28s var(--layout-motion);
+    margin-left 260ms var(--layout-motion),
+    width 260ms var(--layout-motion);
   padding-left: 0;
   box-sizing: border-box;
 }
@@ -175,12 +194,12 @@
   overflow: visible;
   transform: translateY(0);
   transition:
-    min-height 0.26s var(--layout-motion),
-    max-height 0.26s var(--layout-motion),
-    opacity 0.24s ease,
-    transform 0.3s var(--layout-motion),
-    box-shadow 0.28s ease,
-    background-color 0.24s ease;
+    min-height 240ms var(--layout-motion),
+    max-height 240ms var(--layout-motion),
+    opacity 200ms ease,
+    transform 260ms var(--layout-motion),
+    box-shadow 220ms ease,
+    background-color 220ms ease;
   will-change: transform, opacity;
 }
 
@@ -190,7 +209,7 @@
   opacity: 0;
   overflow: hidden;
   pointer-events: none;
-  transform: translateY(-18px);
+  transform: translate3d(0, -12px, 0);
 }
 
 .header-visibility-btn {
@@ -214,11 +233,11 @@
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
   transition:
-    transform 0.22s ease,
-    background 0.22s ease,
-    border-color 0.22s ease,
-    color 0.22s ease,
-    box-shadow 0.22s ease;
+    transform 180ms var(--layout-motion),
+    background 180ms ease,
+    border-color 180ms ease,
+    color 180ms ease,
+    box-shadow 180ms ease;
 }
 
 .header-visibility-btn:hover {
@@ -275,7 +294,8 @@
   padding: 1rem;
   min-height: calc(100dvh - var(--abs-header-height, 72px));
   transition:
-    padding 0.24s ease;
+    padding 220ms ease,
+    min-height 240ms var(--layout-motion);
 }
 
 .header-hidden-layout .card_main {
@@ -347,10 +367,11 @@
 :host-context([data-theme='liquid-glass']) .toggle-sidebar {
   border-color: rgba(255, 255, 255, 0.2);
   background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.22), transparent),
-    var(--abs-primary);
+    linear-gradient(135deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.045)),
+    rgba(8, 15, 28, 0.66);
+  color: #fff;
   box-shadow:
-    0 14px 32px rgba(240, 68, 75, 0.25),
+    0 14px 32px rgba(0, 0, 0, 0.26),
     inset 0 1px 0 rgba(255, 255, 255, 0.28);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
@@ -358,10 +379,11 @@
 
 :host-context([data-theme='liquid-glass']) .toggle-sidebar:hover {
   background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.28), transparent),
-    var(--abs-primary-hover);
+    linear-gradient(135deg, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0.06)),
+    rgba(240, 68, 75, 0.2);
   box-shadow:
-    0 18px 38px rgba(240, 68, 75, 0.34),
+    0 16px 34px rgba(0, 0, 0, 0.3),
+    0 0 0 3px rgba(240, 68, 75, 0.12),
     inset 0 1px 0 rgba(255, 255, 255, 0.32);
 }
 
@@ -393,13 +415,12 @@
    SIDEBAR COLAPSADO
 ========================= */
 .sidebar-collapsed .card_sidebar {
-  width: var(--sidebar-collapsed);
-  padding-right: 8px;
+  transform: translate3d(calc(var(--sidebar-collapsed) - var(--sidebar-open)), 0, 0);
 }
 
 .sidebar-collapsed .right_content {
-  margin-left: calc(var(--sidebar-collapsed) + var(--layout-gap));
-  width: calc(100% - var(--sidebar-collapsed) - var(--layout-gap));
+  margin-left: calc(var(--sidebar-visible) + var(--layout-gap));
+  width: calc(100% - var(--sidebar-visible) - var(--layout-gap));
   padding-left: 0;
 }
 
@@ -411,18 +432,18 @@
     width: var(--sidebar-tablet);
   }
 
-  .right_content {
-    margin-left: calc(var(--sidebar-tablet) + var(--layout-gap));
-    width: calc(100% - var(--sidebar-tablet) - var(--layout-gap));
+  .fondo:not(.sidebar-collapsed) {
+    --sidebar-visible: var(--sidebar-tablet);
   }
 
   .sidebar-collapsed .card_sidebar {
-    width: 76px;
+    transform: translate3d(calc(var(--sidebar-collapsed) - var(--sidebar-tablet)), 0, 0);
   }
 
+  .right_content,
   .sidebar-collapsed .right_content {
-    margin-left: calc(var(--sidebar-collapsed) + var(--layout-gap));
-    width: calc(100% - var(--sidebar-collapsed) - var(--layout-gap));
+    margin-left: calc(var(--sidebar-visible) + var(--layout-gap));
+    width: calc(100% - var(--sidebar-visible) - var(--layout-gap));
   }
 
   .card_main {
@@ -449,10 +470,12 @@
     border-right: none;
     border-bottom: 1px solid var(--abs-border-soft, var(--abs-border));
     border-radius: 0;
+    transform: none;
   }
 
   .sidebar-collapsed .card_sidebar {
     width: 100%;
+    transform: none;
   }
 
   .right_content,
@@ -464,11 +487,15 @@
   }
 
   .toggle-sidebar {
-    top: 16px;
-    right: 14px;
+    top: 15px;
+    right: 18px;
     width: 34px;
     height: 34px;
     font-size: 14px;
+  }
+
+  .sidebar-collapsed .toggle-sidebar {
+    right: 18px;
   }
 
   .card_header {
@@ -517,6 +544,10 @@
     width: 30px;
     height: 30px;
     font-size: 13px;
+  }
+
+  .sidebar-collapsed .toggle-sidebar {
+    right: 18px;
   }
 
   .right_content,

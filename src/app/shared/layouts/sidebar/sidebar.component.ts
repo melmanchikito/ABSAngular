@@ -45,6 +45,7 @@ interface SidebarArea {
 export class SidebarComponent {
   @Input() collapsed = false;
   @Output() selectSection = new EventEmitter<string>();
+  @Output() optionSelected = new EventEmitter<void>();
 
   activeArea: string | null = null;
   activeChild: string | null = null;
@@ -146,6 +147,7 @@ export class SidebarComponent {
         void this.navigationService.goToArea(area.areaKey);
       }
 
+      this.optionSelected.emit();
       return;
     }
 
@@ -157,6 +159,7 @@ export class SidebarComponent {
     this.activeChild = child.label;
     this.expandedArea = area.name;
     this.selectSection.emit(child.label);
+    this.optionSelected.emit();
 
     if (child.areaKey && child.submoduleKey) {
       void this.navigationService.goToAreaSubmodule(child.areaKey, child.submoduleKey);
@@ -173,6 +176,7 @@ export class SidebarComponent {
     this.activeChild = null;
     this.expandedArea = null;
     this.selectSection.emit('Correo');
+    this.optionSelected.emit();
 
     void this.navigationService.goToMail();
   }

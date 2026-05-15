@@ -7,7 +7,7 @@
   <section class="card_sidebar">
     <button class="toggle-sidebar" type="button" (click)="toggleSidebar()">
       <lucide-angular
-        [img]="sidebarCollapsed ? menuIcon : closeIcon"
+        [img]="sidebarCollapsed ? expandSidebarIcon : collapseSidebarIcon"
         [size]="18"
         [strokeWidth]="2.6"
       ></lucide-angular>
@@ -16,6 +16,7 @@
     <app-sidebar
       [collapsed]="sidebarCollapsed"
       (selectSection)="onSelectSection($event)"
+      (optionSelected)="closeSidebarOnMobile()"
     ></app-sidebar>
   </section>
 
