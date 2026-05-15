@@ -63,8 +63,9 @@
           <input
             type="search"
             name="departmentSearch"
-            [(ngModel)]="searchTerm"
-            (ngModelChange)="onFiltersChange()"
+            [ngModel]="searchTerm"
+            appDebouncedSearch
+            (debouncedSearch)="searchTerm = $event; onFiltersChange()"
             placeholder="Buscar por codigo o nombre..."
             autocomplete="off"
           />

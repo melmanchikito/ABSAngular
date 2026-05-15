@@ -85,8 +85,9 @@
           <input
             type="search"
             name="optionSearch"
-            [(ngModel)]="searchTerm"
-            (ngModelChange)="onFiltersChange()"
+            [ngModel]="searchTerm"
+            appDebouncedSearch
+            (debouncedSearch)="searchTerm = $event; onFiltersChange()"
             placeholder="Buscar por codigo, nombre, modulo o tipo..."
             autocomplete="off"
           />

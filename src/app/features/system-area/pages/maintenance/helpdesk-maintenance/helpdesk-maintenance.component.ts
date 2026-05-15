@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
+  HostListener,
   computed,
   inject,
   signal
@@ -21,6 +22,7 @@ import {
   LucideAngularModule,
   RefreshCcw,
   Search,
+  SlidersHorizontal,
   X
 } from 'lucide-angular';
 import { finalize } from 'rxjs';
@@ -29,7 +31,7 @@ import { EmptyStateComponent } from '../../../../../shared/components/empty-stat
 
 import { PageHeaderComponent } from '../../../../../shared/components/page-header/page-header.component';
 import { StatusBadgeComponent } from '../../../../../shared/components/status-badge/status-badge.component';
-import { StatCardComponent } from '../../../../../shared/components/stat-card/stat-card.component';
+import { DebouncedSearchDirective } from '../../../../../shared/directives/debounced-search.directive';
 import { formatDateTime } from '../../../../../shared/utils/date-format.util';
 import {
   HelpdeskItem,
@@ -63,8 +65,8 @@ interface HelpdeskForm {
     DataGridPaginationComponent,
     EmptyStateComponent,
     PageHeaderComponent,
-    StatCardComponent,
-    StatusBadgeComponent
+    StatusBadgeComponent,
+    DebouncedSearchDirective
   ],
   templateUrl: './helpdesk-maintenance.component.html',
   styleUrl: './helpdesk-maintenance.component.scss',
@@ -76,13 +78,21 @@ export class HelpdeskMaintenanceComponent {
   readonly editIcon = Edit3;
   readonly refreshIcon = RefreshCcw;
   readonly searchIcon = Search;
+  readonly filterIcon = SlidersHorizontal;
   readonly viewIcon = Eye;
   readonly closeIcon = X;
+  readonly statusFilterOptions: readonly { value: HelpdeskStatusFilter; label: string }[] = [
+    { value: 'all', label: 'Todos' },
+    { value: 'active', label: 'Activos' },
+    { value: 'inactive', label: 'Inactivos' }
+  ];
 
   readonly pageSize = 7;
   readonly helpdesks = signal<HelpdeskItem[]>([]);
   readonly searchTerm = signal('');
   readonly statusFilter = signal<HelpdeskStatusFilter>('all');
+  readonly statusFilterDraft = signal<HelpdeskStatusFilter>('all');
+  readonly filtersOpen = signal(false);
   readonly currentPage = signal(1);
   readonly selectedHelpdeskId = signal<number | null>(null);
   readonly isLoading = signal(false);
@@ -91,14 +101,6 @@ export class HelpdeskMaintenanceComponent {
   readonly editingHelpdesk = signal<HelpdeskItem | null>(null);
   readonly toast = signal<ToastState | null>(null);
   readonly formError = signal('');
-
-  readonly totalHelpdesks = computed(() => this.helpdesks().length);
-  readonly activeHelpdesksCount = computed(
-    () => this.helpdesks().filter((item) => !item.canceled).length
-  );
-  readonly inactiveHelpdesksCount = computed(
-    () => this.helpdesks().filter((item) => item.canceled).length
-  );
 
   readonly filteredHelpdesks = computed(() => {
     const term = this.searchTerm().trim().toLowerCase();
@@ -198,6 +200,27 @@ export class HelpdeskMaintenanceComponent {
     this.currentPage.set(1);
   }
 
+  toggleFilters(event?: MouseEvent): void {
+    event?.stopPropagation();
+    this.statusFilterDraft.set(this.statusFilter());
+    this.filtersOpen.update((open) => !open);
+  }
+
+  updateStatusFilterDraft(filter: HelpdeskStatusFilter): void {
+    this.statusFilterDraft.set(filter);
+  }
+
+  applyFilters(): void {
+    this.setStatusFilter(this.statusFilterDraft());
+    this.filtersOpen.set(false);
+  }
+
+  clearFilters(): void {
+    this.statusFilterDraft.set('all');
+    this.setStatusFilter('all');
+    this.filtersOpen.set(false);
+  }
+
   previousPage(): void {
     this.currentPage.set(Math.max(1, this.currentPage() - 1));
   }
@@ -253,6 +276,13 @@ export class HelpdeskMaintenanceComponent {
 
   trackByHelpdeskId(_: number, helpdesk: HelpdeskItem): number {
     return helpdesk.id;
+  }
+
+  @HostListener('document:click')
+  closeFiltersFromOutside(): void {
+    if (this.filtersOpen()) {
+      this.filtersOpen.set(false);
+    }
   }
 
   private upsertHelpdesk(helpdesk: HelpdeskItem): void {

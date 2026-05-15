@@ -5,48 +5,73 @@
     subtitle="Administra los productos registrados en el sistema."
     [icon]="productIcon"
   >
-    <button
-      page-actions
-      type="button"
-      class="primary-btn btn-primary app-grid-icon-button"
-      title="Nuevo"
-      aria-label="Nuevo"
-      routerLink="create"
-    >
-      <lucide-angular [img]="addIcon" [size]="18" [strokeWidth]="2.4"></lucide-angular>
-    </button>
+    <div page-actions class="app-page-actions" (click)="$event.stopPropagation()">
+      <div class="app-grid-filter-menu">
+        <button
+          type="button"
+          class="btn-outline app-grid-filter-trigger app-grid-icon-button"
+          [class.active]="filtersOpen || statusFilter !== 'all'"
+          title="Filtros"
+          aria-label="Abrir filtros"
+          (click)="toggleFilters($event)"
+        >
+          <lucide-angular [img]="filterIcon" [size]="17" [strokeWidth]="2.4"></lucide-angular>
+        </button>
+
+        <section class="app-grid-filter-panel" *ngIf="filtersOpen" (click)="$event.stopPropagation()">
+          <strong class="app-grid-filter-title">Filtros del listado</strong>
+          <label class="app-grid-filter-field">
+            <span>Estado</span>
+            <select [(ngModel)]="statusFilterDraft">
+              <option *ngFor="let option of statusFilterOptions" [ngValue]="option.value">
+                {{ option.label }}
+              </option>
+            </select>
+          </label>
+          <div class="app-grid-filter-actions">
+            <button type="button" class="btn-outline" (click)="clearFilters()">Limpiar</button>
+            <button type="button" class="btn-primary" (click)="applyFilters()">Aplicar</button>
+          </div>
+        </section>
+      </div>
+
+      <button
+        type="button"
+        class="primary-btn btn-primary app-grid-icon-button"
+        title="Nuevo"
+        aria-label="Nuevo"
+        routerLink="create"
+      >
+        <lucide-angular [img]="addIcon" [size]="18" [strokeWidth]="2.4"></lucide-angular>
+      </button>
+    </div>
   </app-page-header>
 
   <div class="alert-success" *ngIf="successMessage">{{ successMessage }}</div>
   <div class="alert-error" *ngIf="errorMessage">{{ errorMessage }}</div>
 
   <section class="content-grid">
-    <article class="products-panel app-card">
-      <header class="panel-header">
-        <div>
-          <span class="eyebrow">Listado</span>
-          <h2>Productos</h2>
+    <article class="products-panel app-card app-grid-card">
+      <header class="app-grid-header">
+        <div class="app-grid-title">
+          <span class="app-grid-eyebrow">Listado</span>
+          <h2 class="app-grid-heading">Productos</h2>
         </div>
       </header>
 
-      <section class="toolbar">
-        <label class="search-box">
+      <section class="app-grid-toolbar">
+        <label class="app-grid-search">
           <lucide-angular [img]="searchIcon" [size]="18" [strokeWidth]="2.3"></lucide-angular>
           <input
             type="search"
             name="productSearch"
-            [(ngModel)]="searchTerm"
-            (ngModelChange)="onFiltersChange()"
+            [ngModel]="searchTerm"
+            appDebouncedSearch
+            (debouncedSearch)="searchTerm = $event; onFiltersChange()"
             placeholder="Buscar por codigo, nombre, OEM, moneda o estado..."
             autocomplete="off"
           />
         </label>
-
-        <div class="filter-pills" aria-label="Filtro por estado">
-          <button type="button" class="filter-pill" [class.active]="statusFilter === 'all'" (click)="setStatusFilter('all')">Todos</button>
-          <button type="button" class="filter-pill" [class.active]="statusFilter === 'active'" (click)="setStatusFilter('active')">Activos</button>
-          <button type="button" class="filter-pill" [class.active]="statusFilter === 'inactive'" (click)="setStatusFilter('inactive')">Inactivos</button>
-        </div>
 
         <button
           type="button"
@@ -60,8 +85,8 @@
         </button>
       </section>
 
-      <div class="table-shell table-wrapper">
-        <table class="product-table app-table">
+      <div class="app-grid-table-wrapper">
+        <table class="product-table app-table app-grid-table">
           <thead>
             <tr>
               <th>Codigo</th>
@@ -75,7 +100,7 @@
               <th>Moneda</th>
               <th>Estado</th>
               <th>Fecha creacion</th>
-              <th>Acciones</th>
+              <th class="app-grid-col-actions">Acciones</th>
             </tr>
           </thead>
 
@@ -103,8 +128,8 @@
 
             <tr
               *ngFor="let product of paginatedProducts; trackBy: trackByProductId"
-              class="product-row"
-              [class.selected]="selectedProductId === product.id"
+              class="product-row app-grid-row-clickable"
+              [class.app-grid-row-selected]="selectedProductId === product.id"
               (click)="selectProduct(product)"
             >
               <td>
@@ -131,8 +156,8 @@
                 ></app-status-badge>
               </td>
               <td>{{ formatDate(product.created_at) }}</td>
-              <td>
-                <div class="actions-cell table-actions">
+              <td class="app-grid-col-actions">
+                <div class="app-grid-actions">
                   <button
                     type="button"
                     class="icon-action btn-icon"

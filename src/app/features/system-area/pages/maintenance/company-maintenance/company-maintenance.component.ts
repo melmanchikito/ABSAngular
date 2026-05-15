@@ -27,6 +27,7 @@ import { StatusBadgeComponent } from '../../../../../shared/components/status-ba
 import { GridColumnConfig, GridFilterOption } from '../../../../../shared/models/grid-view.model';
 import { ConfirmDialogComponent } from '../../../../../shared/components/confirm-dialog/confirm-dialog.component';
 import { DataGridPaginationComponent } from '../../../../../shared/components/data-grid-pagination/data-grid-pagination.component';
+import { DebouncedSearchDirective } from '../../../../../shared/directives/debounced-search.directive';
 import { PageHeaderComponent } from '../../../../../shared/components/page-header/page-header.component';
 import { formatDateTime, isDateLikeField } from '../../../../../shared/utils/date-format.util';
 
@@ -60,7 +61,8 @@ interface EditCompanyForm {
     PageHeaderComponent,
     StatusBadgeComponent,
     ConfirmDialogComponent,
-    DataGridPaginationComponent
+    DataGridPaginationComponent,
+    DebouncedSearchDirective
   ],
   templateUrl: './company-maintenance.component.html',
   styleUrl: './company-maintenance.component.scss'

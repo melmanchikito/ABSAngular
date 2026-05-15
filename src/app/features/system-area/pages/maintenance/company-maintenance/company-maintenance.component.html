@@ -62,8 +62,9 @@
         <input
           type="search"
           name="companySearch"
-          [(ngModel)]="searchTerm"
-          (ngModelChange)="onFiltersChange()"
+          [ngModel]="searchTerm"
+          appDebouncedSearch
+          (debouncedSearch)="searchTerm = $event; onFiltersChange()"
           placeholder="Buscar empresa..."
           autocomplete="off"
         />
@@ -165,7 +166,7 @@
 
     <app-data-grid-pagination
       [showing]="showingCount"
-        [pageSize]="pageSize"
+      [pageSize]="pageSize"
       [totalItems]="filteredCompanies.length"
       itemLabel="empresas"
       [currentPage]="currentPage"

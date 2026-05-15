@@ -55,8 +55,9 @@
           <input
             type="search"
             name="branchSearch"
-            [(ngModel)]="searchTerm"
-            (ngModelChange)="onFiltersChange()"
+            [ngModel]="searchTerm"
+            appDebouncedSearch
+            (debouncedSearch)="searchTerm = $event; onFiltersChange()"
             placeholder="Buscar por codigo, nombre, empresa o ubicacion..."
             autocomplete="off"
           />

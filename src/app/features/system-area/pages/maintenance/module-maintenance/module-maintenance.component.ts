@@ -18,6 +18,7 @@ import {
 } from 'lucide-angular';
 import { ConfirmDialogComponent } from '../../../../../shared/components/confirm-dialog/confirm-dialog.component';
 import { DataGridPaginationComponent } from '../../../../../shared/components/data-grid-pagination/data-grid-pagination.component';
+import { DebouncedSearchDirective } from '../../../../../shared/directives/debounced-search.directive';
 import { EmptyStateComponent } from '../../../../../shared/components/empty-state/empty-state.component';
 import { PageHeaderComponent } from '../../../../../shared/components/page-header/page-header.component';
 import { formatDateTime, isDateLikeField } from '../../../../../shared/utils/date-format.util';
@@ -51,6 +52,7 @@ interface ModuleForm {
     LucideAngularModule,
     ConfirmDialogComponent,
     DataGridPaginationComponent,
+    DebouncedSearchDirective,
     EmptyStateComponent,
     PageHeaderComponent,
     StatusBadgeComponent

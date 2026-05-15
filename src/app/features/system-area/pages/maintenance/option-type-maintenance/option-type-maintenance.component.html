@@ -55,7 +55,8 @@
             #optionTypeSearch
             type="search"
             [value]="searchTerm()"
-            (input)="updateSearchTerm(optionTypeSearch.value)"
+            appDebouncedSearch
+            (debouncedSearch)="updateSearchTerm($event)"
             placeholder="Buscar por codigo o nombre..."
             autocomplete="off"
           />

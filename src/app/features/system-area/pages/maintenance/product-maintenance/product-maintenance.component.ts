@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import {
@@ -11,11 +11,13 @@ import {
   Package,
   RefreshCcw,
   Search,
+  SlidersHorizontal,
   Trash2,
   X
 } from 'lucide-angular';
 import { ConfirmDialogComponent } from '../../../../../shared/components/confirm-dialog/confirm-dialog.component';
 import { DataGridPaginationComponent } from '../../../../../shared/components/data-grid-pagination/data-grid-pagination.component';
+import { DebouncedSearchDirective } from '../../../../../shared/directives/debounced-search.directive';
 import { EmptyStateComponent } from '../../../../../shared/components/empty-state/empty-state.component';
 import { PageHeaderComponent } from '../../../../../shared/components/page-header/page-header.component';
 import { formatDateTime } from '../../../../../shared/utils/date-format.util';
@@ -58,6 +60,7 @@ interface ProductForm {
     LucideAngularModule,
     ConfirmDialogComponent,
     DataGridPaginationComponent,
+    DebouncedSearchDirective,
     EmptyStateComponent,
     PageHeaderComponent,
     StatusBadgeComponent
@@ -73,8 +76,14 @@ export class ProductMaintenanceComponent implements OnInit {
   readonly editIcon = Edit3;
   readonly refreshIcon = RefreshCcw;
   readonly searchIcon = Search;
+  readonly filterIcon = SlidersHorizontal;
   readonly trashIcon = Trash2;
   readonly closeIcon = X;
+  readonly statusFilterOptions: readonly { value: ProductStatusFilter; label: string }[] = [
+    { value: 'all', label: 'Todos' },
+    { value: 'active', label: 'Activos' },
+    { value: 'inactive', label: 'Inactivos' }
+  ];
   readonly statusOptions: ProductSaleStatus[] = [
     'activo venta',
     'inactivo venta',
@@ -85,6 +94,8 @@ export class ProductMaintenanceComponent implements OnInit {
   selectedProductId: number | null = null;
   searchTerm = '';
   statusFilter: ProductStatusFilter = 'all';
+  statusFilterDraft: ProductStatusFilter = 'all';
+  filtersOpen = false;
   currentPage = 1;
   pageSize = 6;
   isLoading = false;
@@ -205,6 +216,23 @@ export class ProductMaintenanceComponent implements OnInit {
     this.onFiltersChange();
   }
 
+  toggleFilters(event?: MouseEvent): void {
+    event?.stopPropagation();
+    this.statusFilterDraft = this.statusFilter;
+    this.filtersOpen = !this.filtersOpen;
+  }
+
+  applyFilters(): void {
+    this.setStatusFilter(this.statusFilterDraft);
+    this.filtersOpen = false;
+  }
+
+  clearFilters(): void {
+    this.statusFilterDraft = 'all';
+    this.setStatusFilter('all');
+    this.filtersOpen = false;
+  }
+
   previousPage(): void {
     this.currentPage = Math.max(1, this.currentPage - 1);
   }
@@ -309,6 +337,13 @@ export class ProductMaintenanceComponent implements OnInit {
 
   trackByProductId(_: number, product: ProductItem): number {
     return product.id;
+  }
+
+  @HostListener('document:click')
+  closeFiltersFromOutside(): void {
+    if (this.filtersOpen) {
+      this.filtersOpen = false;
+    }
   }
 
   private createEmptyForm(): ProductForm {

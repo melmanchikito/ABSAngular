@@ -77,7 +77,8 @@
             #userSearch
             type="search"
             [value]="searchTerm()"
-            (input)="updateSearchTerm(userSearch.value)"
+            appDebouncedSearch
+            (debouncedSearch)="updateSearchTerm($event)"
             placeholder="Buscar por usuario, nombre, email o identificacion..."
             autocomplete="off"
           />

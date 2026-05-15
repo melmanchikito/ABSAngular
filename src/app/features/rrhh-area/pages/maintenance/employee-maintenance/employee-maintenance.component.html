@@ -63,8 +63,9 @@
           <input
             type="search"
             name="employeeSearch"
-            [(ngModel)]="searchTerm"
-            (ngModelChange)="onFiltersChange()"
+            [ngModel]="searchTerm"
+            appDebouncedSearch
+            (debouncedSearch)="searchTerm = $event; onFiltersChange()"
             placeholder="Buscar por codigo, nombre, cedula o email..."
             autocomplete="off"
           />

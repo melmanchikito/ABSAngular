@@ -65,8 +65,9 @@
           <input
             type="search"
             name="locationSearch"
-            [(ngModel)]="searchTerm"
-            (ngModelChange)="onFiltersChange()"
+            [ngModel]="searchTerm"
+            appDebouncedSearch
+            (debouncedSearch)="searchTerm = $event; onFiltersChange()"
             placeholder="Buscar por codigo, nombre o direccion..."
             autocomplete="off"
           />
