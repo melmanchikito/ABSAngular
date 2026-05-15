@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { AccentColor, AppPreferences, AppTheme, CardDensity, FontSize } from '../models/preferences.model';
+import { AccentColor, AppPreferences, AppTheme, CardDensity, FontSize, HeaderVariant } from '../models/preferences.model';
 import {
   applyPreferencesToDocument,
   DEFAULT_PREFERENCES,
@@ -45,6 +45,10 @@ export class PreferencesService {
 
   setCardDensity(cardDensity: CardDensity): void {
     this.update({ cardDensity });
+  }
+
+  setHeaderVariant(headerVariant: HeaderVariant): void {
+    this.update({ headerVariant });
   }
 
   update(data: Partial<AppPreferences>): void {

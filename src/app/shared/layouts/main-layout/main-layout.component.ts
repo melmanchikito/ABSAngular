@@ -2,10 +2,13 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 import { ChevronLeft, ChevronRight, Eye, EyeOff, LucideAngularModule } from 'lucide-angular';
+import { Subscription } from 'rxjs';
 import { SidebarComponent } from '../sidebar/sidebar.component';
 import { HeaderComponent } from '../header/header.component';
 import { AuthService } from '../../../core/services/auth.service';
 import { MotionService } from '../../../core/services/motion.service';
+import { PreferencesService } from '../../../core/services/preferences.service';
+import { HeaderVariant } from '../../../core/models/preferences.model';
 import { SessionTimeoutAlertComponent } from '../../components/alert/session-timeout-alert/session-timeout-alert.component';
 
 @Component({
@@ -26,6 +29,7 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
   activeSection = 'Sistema';
   sidebarCollapsed = false;
   headerVisible = true;
+  headerVariant: HeaderVariant = 'classic';
   expandSidebarIcon = ChevronRight;
   collapseSidebarIcon = ChevronLeft;
   showHeaderIcon = Eye;
@@ -36,6 +40,7 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
 
   private readonly headerVisibleStorageKey = 'headerVisible';
   private readonly mobileSidebarBreakpoint = '(max-width: 768px)';
+  private preferencesSubscription?: Subscription;
   private loginEntryTimer?: ReturnType<typeof setTimeout>;
 
   private onlineHandler = () => {
@@ -52,10 +57,16 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
 
   constructor(
     private readonly authService: AuthService,
-    private readonly motionService: MotionService
+    private readonly motionService: MotionService,
+    private readonly preferencesService: PreferencesService
   ) {}
 
   ngOnInit(): void {
+    this.headerVariant = this.preferencesService.snapshot.headerVariant;
+    this.preferencesSubscription = this.preferencesService.preferences$.subscribe((preferences) => {
+      this.headerVariant = preferences.headerVariant;
+    });
+
     this.loadHeaderPreference();
     this.runLoginEntrySequence = this.motionService.consumeLoginDashboardTransition();
 
@@ -76,6 +87,7 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
 
     window.removeEventListener('online', this.onlineHandler);
     window.removeEventListener('offline', this.offlineHandler);
+    this.preferencesSubscription?.unsubscribe();
   }
 
   toggleSidebar(): void {

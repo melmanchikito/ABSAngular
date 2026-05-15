@@ -1,4 +1,9 @@
-<header class="card_header">
+<header
+  class="card_header"
+  [class.floating-header]="variant === 'floating'"
+  [class.floating-collapsed]="variant === 'floating' && floatingCollapsed"
+>
+  <ng-container *ngIf="variant === 'classic'; else floatingHeader">
   <div class="card_user">
     <div class="card_input">
       <div class="search-wrap">
@@ -154,4 +159,160 @@
       </div>
     </div>
   </div>
+  </ng-container>
+
+  <ng-template #floatingHeader>
+    <div
+      class="floating-shell"
+      [class.is-collapsed]="floatingCollapsed"
+      (click)="keepPanelOpen($event)"
+    >
+      <div class="floating-wing floating-left">
+        <label class="floating-search">
+          <lucide-angular
+            class="searchIcon"
+            [img]="searchIcon"
+            [size]="17"
+            [strokeWidth]="2.3"
+          ></lucide-angular>
+          <input type="text" placeholder="Buscar en ABS" />
+        </label>
+
+        <div
+          class="network-box floating-icon"
+          [class.offline]="!isOnline"
+          [title]="networkType"
+        >
+          <lucide-angular
+            class="network-icon"
+            [img]="networkIcon"
+            [size]="18"
+            [strokeWidth]="2.4"
+          ></lucide-angular>
+        </div>
+      </div>
+
+      <button
+        type="button"
+        class="floating-avatar"
+        [attr.aria-label]="floatingCollapsed ? 'Mostrar header' : 'Ocultar header'"
+        [title]="floatingCollapsed ? 'Mostrar header' : 'Ocultar header'"
+        (click)="toggleFloatingHeader($event)"
+      >
+        <img [src]="displayImage" alt="Foto de perfil" />
+      </button>
+
+      <div class="floating-wing floating-right">
+        <div class="header-trays floating-trays">
+          <div class="tray-wrap">
+            <button
+              type="button"
+              class="tray-btn"
+              title="Notificaciones"
+              aria-label="Notificaciones"
+              [class.active]="activePanel === 'notifications'"
+              (click)="togglePanel('notifications', $event)"
+            >
+              <lucide-angular [img]="notificationIcon" [size]="18" [strokeWidth]="2.35"></lucide-angular>
+              <span class="tray-badge" *ngIf="unreadNotifications">{{ unreadNotifications }}</span>
+            </button>
+
+            <section
+              class="tray-panel"
+              *ngIf="activePanel === 'notifications'"
+              (click)="keepPanelOpen($event)"
+            >
+              <header class="panel-head">
+                <div>
+                  <h3>Notificaciones</h3>
+                  <span>{{ unreadNotifications }} nuevas</span>
+                </div>
+              </header>
+
+              <div class="panel-list" *ngIf="notifications.length; else emptyFloatingNotifications">
+                <article
+                  class="notification-item"
+                  *ngFor="let notification of notifications"
+                  [class.unread]="notification.unread"
+                >
+                  <span class="item-icon">
+                    <lucide-angular [img]="notification.icon" [size]="17" [strokeWidth]="2.3"></lucide-angular>
+                  </span>
+                  <span class="item-content">
+                    <strong>{{ notification.title }}</strong>
+                    <small>{{ notification.description }}</small>
+                    <em>{{ notification.time }}</em>
+                  </span>
+                </article>
+              </div>
+
+              <ng-template #emptyFloatingNotifications>
+                <div class="panel-empty">No tienes notificaciones.</div>
+              </ng-template>
+
+              <button type="button" class="panel-action">Ver todas</button>
+            </section>
+          </div>
+
+          <button
+            type="button"
+            class="tray-btn home-btn"
+            title="Home"
+            aria-label="Ir al home"
+            (click)="goToHome($event)"
+          >
+            <lucide-angular [img]="homeIcon" [size]="18" [strokeWidth]="2.35"></lucide-angular>
+          </button>
+        </div>
+
+        <div class="user-wrap">
+          <button
+            type="button"
+            class="user-box floating-user"
+            [class.active]="activePanel === 'user'"
+            aria-label="Menu de usuario"
+            (click)="togglePanel('user', $event)"
+          >
+            <span class="floating-username">{{ username || 'Usuario' }}</span>
+            <lucide-angular
+              class="user-chevron"
+              [class.open]="activePanel === 'user'"
+              [img]="chevronIcon"
+              [size]="16"
+              [strokeWidth]="2.5"
+            ></lucide-angular>
+          </button>
+
+          <section
+            class="user-menu"
+            *ngIf="activePanel === 'user'"
+            (click)="keepPanelOpen($event)"
+          >
+            <header class="user-menu-head">
+              <img [src]="displayImage" alt="Foto de perfil" class="menu-image" />
+              <div>
+                <strong>{{ username || 'Usuario' }}</strong>
+                <small>Cuenta ABS</small>
+              </div>
+            </header>
+
+            <button type="button" class="user-menu-item" (click)="goToProfile($event)">
+              <lucide-angular [img]="userIcon" [size]="17" [strokeWidth]="2.3"></lucide-angular>
+              Preferencias
+            </button>
+
+            <button type="button" class="user-menu-item" (click)="goToMail($event)">
+              <lucide-angular [img]="mailIcon" [size]="17" [strokeWidth]="2.3"></lucide-angular>
+              Correo
+            </button>
+
+            <button type="button" class="user-menu-item danger" (click)="logout($event)">
+              <lucide-angular [img]="logoutIcon" [size]="17" [strokeWidth]="2.3"></lucide-angular>
+              Cerrar sesion
+            </button>
+          </section>
+        </div>
+      </div>
+    </div>
+  </ng-template>
 </header>

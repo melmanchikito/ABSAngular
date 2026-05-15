@@ -20,6 +20,7 @@ import { Subscription } from 'rxjs';
 import { ProfileImageService } from '../../../features/profile/services/profile-image.service';
 import { NavigationService } from '../../../core/services/navigation.service';
 import { AuthApiService } from '../../../features/auth/services/auth-api.service';
+import { HeaderVariant } from '../../../core/models/preferences.model';
 
 interface BrowserNetworkInformation {
   type?: string;
@@ -49,6 +50,7 @@ type HeaderPanel = 'notifications' | 'user' | null;
 export class HeaderComponent implements OnInit, OnDestroy {
   @Input() img: string | null = null;
   @Input() username: string | null = null;
+  @Input() variant: HeaderVariant = 'classic';
 
   isOnline = navigator.onLine;
   networkType = 'Con internet';
@@ -61,6 +63,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   mailIcon = Mail;
   userIcon = UserRound;
   activePanel: HeaderPanel = null;
+  floatingCollapsed = false;
 
   profileImageUrl: string | null = null;
 
@@ -89,6 +92,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   ];
 
   private imageSubscription?: Subscription;
+  private readonly floatingHeaderStorageKey = 'abs_floating_header_collapsed';
 
   constructor(
     private readonly authApiService: AuthApiService,
@@ -97,6 +101,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    this.loadFloatingHeaderState();
     this.updateNetworkStatus();
 
     window.addEventListener('online', this.updateNetworkStatus);
@@ -131,6 +136,18 @@ export class HeaderComponent implements OnInit, OnDestroy {
   togglePanel(panel: Exclude<HeaderPanel, null>, event: MouseEvent): void {
     event.stopPropagation();
     this.activePanel = this.activePanel === panel ? null : panel;
+  }
+
+  toggleFloatingHeader(event: MouseEvent): void {
+    event.stopPropagation();
+
+    if (this.variant !== 'floating') {
+      return;
+    }
+
+    this.floatingCollapsed = !this.floatingCollapsed;
+    this.activePanel = null;
+    localStorage.setItem(this.floatingHeaderStorageKey, String(this.floatingCollapsed));
   }
 
   keepPanelOpen(event: MouseEvent): void {
@@ -181,4 +198,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.networkType = connection?.type === 'wifi' ? 'WiFi' : 'Con internet';
     this.networkIcon = Wifi;
   };
+
+  private loadFloatingHeaderState(): void {
+    this.floatingCollapsed = localStorage.getItem(this.floatingHeaderStorageKey) === 'true';
+  }
 }

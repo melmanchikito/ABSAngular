@@ -1,4 +1,12 @@
-import { AccentColor, AppPreferences, AppTheme, CardDensity, FontSize, SystemWallpaper } from '../models/preferences.model';
+import {
+  AccentColor,
+  AppPreferences,
+  AppTheme,
+  CardDensity,
+  FontSize,
+  HeaderVariant,
+  SystemWallpaper
+} from '../models/preferences.model';
 
 export const PREFERENCES_STORAGE_KEYS = {
   preferences: 'abs_preferences',
@@ -9,6 +17,8 @@ export const PREFERENCES_STORAGE_KEYS = {
   publicWallpaper: 'wallpaperSelected',
   wallpaperEnabled: 'abs_wallpaper_enabled',
   publicWallpaperEnabled: 'wallpaperEnabled',
+  headerVariant: 'abs_header_variant',
+  legacyHeaderStyle: 'abs_header_style',
   animationsDisabled: 'animationsDisabled'
 } as const;
 
@@ -27,6 +37,7 @@ export const DEFAULT_PREFERENCES: AppPreferences = {
   retryFailedSync: true,
 
   showAnimations: true,
+  headerVariant: 'classic',
   compactSidebar: false,
   roundedCards: true,
   showProductImages: true,
@@ -70,6 +81,7 @@ const WALLPAPER_ASSETS: Record<AppPreferences['wallpaper'], string> = {
 
 const THEMES: readonly AppTheme[] = ['light', 'dark', 'system', 'liquid-glass'];
 const FONT_SIZES: readonly FontSize[] = ['small', 'medium', 'large', 'extralarge'];
+const HEADER_VARIANTS: readonly HeaderVariant[] = ['classic', 'floating'];
 const ACCENT_COLORS: readonly AccentColor[] = ['absRed', 'executiveRed', 'enterpriseGray', 'premiumNight'];
 const CARD_DENSITIES: readonly CardDensity[] = ['compact', 'normal', 'comfortable'];
 export function loadStoredPreferences(storage: Storage = localStorage): AppPreferences {
@@ -105,6 +117,8 @@ export function persistStoredPreferences(
   storage.setItem(PREFERENCES_STORAGE_KEYS.publicWallpaper, normalizedPrefs.wallpaper);
   storage.setItem(PREFERENCES_STORAGE_KEYS.wallpaperEnabled, String(normalizedPrefs.wallpaperEnabled));
   storage.setItem(PREFERENCES_STORAGE_KEYS.publicWallpaperEnabled, String(normalizedPrefs.wallpaperEnabled));
+  storage.setItem(PREFERENCES_STORAGE_KEYS.headerVariant, normalizedPrefs.headerVariant);
+  storage.setItem(PREFERENCES_STORAGE_KEYS.legacyHeaderStyle, normalizedPrefs.headerVariant);
   storage.setItem(PREFERENCES_STORAGE_KEYS.animationsDisabled, String(!normalizedPrefs.showAnimations));
 
   return normalizedPrefs;
@@ -153,6 +167,8 @@ export function applyPreferencesToDocument(
 
   root.classList.toggle('animations-disabled', !normalizedPrefs.showAnimations);
   root.setAttribute('data-animations', normalizedPrefs.showAnimations ? 'enabled' : 'disabled');
+  root.setAttribute('data-header-variant', normalizedPrefs.headerVariant);
+  root.setAttribute('data-header-style', normalizedPrefs.headerVariant);
 }
 
 export function normalizePreferences(rawPreferences: unknown): AppPreferences {
@@ -177,6 +193,11 @@ export function normalizePreferences(rawPreferences: unknown): AppPreferences {
     retryFailedSync: parseBoolean(source['retryFailedSync']) ?? DEFAULT_PREFERENCES.retryFailedSync,
 
     showAnimations,
+    headerVariant: parseEnum(
+      source['headerVariant'] ?? source['headerStyle'],
+      HEADER_VARIANTS,
+      DEFAULT_PREFERENCES.headerVariant
+    ),
     compactSidebar: parseBoolean(source['compactSidebar']) ?? DEFAULT_PREFERENCES.compactSidebar,
     roundedCards: parseBoolean(source['roundedCards']) ?? DEFAULT_PREFERENCES.roundedCards,
     showProductImages: parseBoolean(source['showProductImages']) ?? DEFAULT_PREFERENCES.showProductImages,
@@ -225,6 +246,9 @@ function loadLegacyPreferences(
     storage.getItem(PREFERENCES_STORAGE_KEYS.wallpaperEnabled) ??
     storage.getItem(PREFERENCES_STORAGE_KEYS.publicWallpaperEnabled);
   const animationsDisabled = storage.getItem(PREFERENCES_STORAGE_KEYS.animationsDisabled);
+  const headerVariant =
+    storage.getItem(PREFERENCES_STORAGE_KEYS.headerVariant) ||
+    storage.getItem(PREFERENCES_STORAGE_KEYS.legacyHeaderStyle);
 
   return normalizePreferences({
     ...basePreferences,
@@ -232,6 +256,7 @@ function loadLegacyPreferences(
     ...(accentColor ? { accentColor } : {}),
     ...(wallpaper ? { wallpaper } : {}),
     ...(wallpaperEnabled !== null ? { wallpaperEnabled } : {}),
+    ...(headerVariant ? { headerVariant } : {}),
     ...(animationsDisabled !== null ? { animationsDisabled } : {})
   });
 }

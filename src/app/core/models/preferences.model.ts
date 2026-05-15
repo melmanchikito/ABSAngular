@@ -1,5 +1,6 @@
 export type AppTheme = 'light' | 'dark' | 'system' | 'liquid-glass';
 export type FontSize = 'small' | 'medium' | 'large' | 'extralarge';
+export type HeaderVariant = 'classic' | 'floating';
 
 export type AccentColor =
   | 'absRed'
@@ -32,6 +33,7 @@ export interface AppPreferences {
   retryFailedSync: boolean;
 
   showAnimations: boolean;
+  headerVariant: HeaderVariant;
   compactSidebar: boolean;
   roundedCards: boolean;
   showProductImages: boolean;

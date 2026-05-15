@@ -16,7 +16,14 @@ import {
 import { Subscription } from 'rxjs';
 import { PreferencesService } from '../../../../core/services/preferences.service';
 import { AuthService } from '../../../../core/services/auth.service';
-import { AccentColor, AppTheme, CardDensity, FontSize, SystemWallpaper } from '../../../../core/models/preferences.model';
+import {
+  AccentColor,
+  AppTheme,
+  CardDensity,
+  FontSize,
+  HeaderVariant,
+  SystemWallpaper
+} from '../../../../core/models/preferences.model';
 import { ProfileImageService } from '../../services/profile-image.service';
 
 interface SelectOption<T extends string> {
@@ -49,6 +56,11 @@ export class ProfileComponent implements OnInit, OnDestroy {
     { value: 'dark', label: 'Oscuro', description: 'Mayor contraste para trabajo continuo.' },
     { value: 'system', label: 'Sistema', description: 'Usa la preferencia del dispositivo.' },
     { value: 'liquid-glass', label: 'Liquid Glass', description: 'Vidrio translúcido con profundidad visual.' }
+  ];
+
+  readonly headerVariantOptions: readonly SelectOption<HeaderVariant>[] = [
+    { value: 'classic', label: 'Clasico', description: 'Header actual con distribucion amplia.' },
+    { value: 'floating', label: 'Compacto flotante', description: 'Barra redondeada con avatar central colapsable.' }
   ];
 
   readonly accentOptions: readonly SelectOption<AccentColor>[] = [
@@ -167,6 +179,10 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
   setCardDensity(cardDensity: CardDensity): void {
     this.update({ cardDensity });
+  }
+
+  setHeaderVariant(headerVariant: HeaderVariant): void {
+    this.update({ headerVariant });
   }
 
   setAnimationsDisabled(disabled: boolean): void {

@@ -1,7 +1,8 @@
 <div
   class="fondo"
   [class.sidebar-collapsed]="sidebarCollapsed"
-  [class.header-hidden-layout]="!headerVisible"
+  [class.header-hidden-layout]="headerVariant === 'classic' && !headerVisible"
+  [class.floating-header-layout]="headerVariant === 'floating'"
   [class.login-entry-sequence]="runLoginEntrySequence"
 >
   <section class="card_sidebar">
@@ -22,7 +23,7 @@
 
   <div class="right_content">
     <button
-      *ngIf="headerVisible"
+      *ngIf="headerVariant === 'classic' && headerVisible"
       class="header-visibility-btn header-hide-btn"
       type="button"
       aria-label="Ocultar header"
@@ -38,18 +39,20 @@
 
     <section
       class="card_header"
-      [class.header-hidden]="!headerVisible"
-      [attr.aria-hidden]="!headerVisible"
-      [attr.inert]="!headerVisible ? '' : null"
+      [class.header-hidden]="headerVariant === 'classic' && !headerVisible"
+      [class.floating-header-host]="headerVariant === 'floating'"
+      [attr.aria-hidden]="headerVariant === 'classic' && !headerVisible"
+      [attr.inert]="headerVariant === 'classic' && !headerVisible ? '' : null"
     >
       <app-header
         [img]="img"
         [username]="username"
+        [variant]="headerVariant"
       ></app-header>
     </section>
 
     <button
-      *ngIf="!headerVisible"
+      *ngIf="headerVariant === 'classic' && !headerVisible"
       class="header-visibility-btn header-show-btn"
       type="button"
       aria-label="Mostrar header"
