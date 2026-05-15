@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, DestroyRef, EventEmitter, Input, Output, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router } from '@angular/router';
 import {
   ChartColumn,
@@ -14,6 +15,8 @@ import {
 } from 'lucide-angular';
 import { filter } from 'rxjs';
 import { NavigationService } from '../../../core/services/navigation.service';
+import { PreferencesService } from '../../../core/services/preferences.service';
+import { AppTheme } from '../../../core/models/preferences.model';
 import { AuthApiService } from '../../../features/auth/services/auth-api.service';
 import {
   SystemAreaKey,
@@ -43,6 +46,9 @@ interface SidebarArea {
   styleUrl: './sidebar.component.scss'
 })
 export class SidebarComponent {
+  private static readonly defaultLogo = 'assets/auth/LogoAR.svg';
+  private static readonly darkLogo = 'assets/auth/Autoradiador_grande(blanco)2.png';
+
   @Input() collapsed = false;
   @Output() selectSection = new EventEmitter<string>();
   @Output() optionSelected = new EventEmitter<void>();
@@ -50,10 +56,14 @@ export class SidebarComponent {
   activeArea: string | null = null;
   activeChild: string | null = null;
   expandedArea: string | null = null;
+  sidebarLogoSrc = SidebarComponent.defaultLogo;
 
   readonly chevronRightIcon = ChevronRight;
   readonly mailIcon = Mail;
   readonly logoutIcon = LogOut;
+
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly preferencesService = inject(PreferencesService);
 
   readonly areas: SidebarArea[] = [
     {
@@ -129,6 +139,14 @@ export class SidebarComponent {
     private readonly navigationService: NavigationService,
     private readonly router: Router
   ) {
+    this.sidebarLogoSrc = this.getLogoForTheme(this.preferencesService.snapshot.theme);
+
+    this.preferencesService.preferences$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((preferences) => {
+        this.sidebarLogoSrc = this.getLogoForTheme(preferences.theme);
+      });
+
     this.syncActiveState(this.router.url);
 
     this.router.events
@@ -233,5 +251,18 @@ export class SidebarComponent {
       this.expandedArea = null;
       return;
     }
+  }
+
+  private getLogoForTheme(theme: AppTheme): string {
+    const useDarkLogo =
+      theme === 'dark' ||
+      theme === 'liquid-glass' ||
+      (theme === 'system' && this.prefersDarkScheme());
+
+    return useDarkLogo ? SidebarComponent.darkLogo : SidebarComponent.defaultLogo;
+  }
+
+  private prefersDarkScheme(): boolean {
+    return typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches;
   }
 }
