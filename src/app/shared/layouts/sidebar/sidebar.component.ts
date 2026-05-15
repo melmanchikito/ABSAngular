@@ -83,7 +83,8 @@ export class SidebarComponent {
         { label: 'Marketing', areaKey: 'clientes', submoduleKey: 'marketing' },
         { label: 'Cobranza', areaKey: 'clientes', submoduleKey: 'cobranza' },
         { label: 'Codigo IMP', areaKey: 'clientes', submoduleKey: 'codigo-imp' },
-        { label: 'Legal', areaKey: 'clientes', submoduleKey: 'legal' }
+        { label: 'Legal', areaKey: 'clientes', submoduleKey: 'legal' },
+        { label: 'Comercial', areaKey: 'clientes', submoduleKey: 'comercial' }
       ]
     },
     {

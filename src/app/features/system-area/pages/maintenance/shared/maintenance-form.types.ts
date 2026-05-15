@@ -11,6 +11,7 @@ export type MaintenanceEntity =
   | 'users'
   | 'helpdesks'
   | 'products'
+  | 'sellers'
   | 'positions'
   | 'departments'
   | 'employees';

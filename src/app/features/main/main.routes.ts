@@ -119,6 +119,15 @@ const MAINTENANCE_ROUTES: readonly MaintenanceRouteConfig[] = [
       )
   },
   {
+    slug: 'vendedores',
+    path: 'modulo/clientes/comercial/mantenimientos/vendedores',
+    entity: 'sellers',
+    loadComponent: () =>
+      import('../clients-area/pages/maintenance/seller-maintenance/seller-maintenance.component').then(
+        (m) => m.SellerMaintenanceComponent
+      )
+  },
+  {
     slug: 'cargos',
     path: 'modulo/rrhh/empleado/mantenimientos/cargos',
     entity: 'positions',
@@ -279,9 +288,19 @@ export const MAIN_ROUTES: Routes = [
         pathMatch: 'full'
       },
       {
+        path: 'modulo/clientes',
+        redirectTo: 'modulo/clientes/comercial',
+        pathMatch: 'full'
+      },
+      {
         path: 'modulo/rrhh/:submoduleKey',
         loadComponent: () =>
           import('../rrhh-area/pages/rrhh-area/rrhh-area.component').then((m) => m.RrhhAreaComponent)
+      },
+      {
+        path: 'modulo/clientes/:submoduleKey',
+        loadComponent: () =>
+          import('../clients-area/pages/clients-area/clients-area.component').then((m) => m.ClientsAreaComponent)
       },
       {
         path: 'modulo/:moduleKey/:submoduleKey',

@@ -20,6 +20,7 @@ export type SystemAreaSubmoduleKey =
   | 'empleado'
   | 'proveedores'
   | 'administracion'
+  | 'comercial'
   | 'marketing'
   | 'cobranza'
   | 'codigo-imp'

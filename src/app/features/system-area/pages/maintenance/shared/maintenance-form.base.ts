@@ -15,6 +15,7 @@ import { ProductMaintenanceService } from '../../../services/product-maintenance
 import { DepartmentMaintenanceService } from '../../../../rrhh-area/services/department-maintenance.service';
 import { UserMaintenanceService } from '../../../services/user-maintenance.service';
 import { PositionMaintenanceService } from '../../../../rrhh-area/services/position-maintenance.service';
+import { SellerMaintenanceService } from '../../../../clients-area/services/seller-maintenance.service';
 import {
   createMaintenanceFormConfig,
   MaintenanceFormConfigServices
@@ -69,6 +70,7 @@ export abstract class MaintenanceFormBase {
   private readonly userService = inject(UserMaintenanceService);
   private readonly helpdeskService = inject(HelpdeskMaintenanceService);
   private readonly productService = inject(ProductMaintenanceService);
+  private readonly sellerService = inject(SellerMaintenanceService);
   private readonly positionService = inject(PositionMaintenanceService);
   private readonly departmentService = inject(DepartmentMaintenanceService);
 
@@ -347,6 +349,7 @@ export abstract class MaintenanceFormBase {
       userService: this.userService,
       helpdeskService: this.helpdeskService,
       productService: this.productService,
+      sellerService: this.sellerService,
       positionService: this.positionService,
       departmentService: this.departmentService
     };

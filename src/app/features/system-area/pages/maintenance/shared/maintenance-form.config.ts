@@ -13,6 +13,7 @@ import { ProductMaintenanceService } from '../../../services/product-maintenance
 import { UserMaintenanceService } from '../../../services/user-maintenance.service';
 import { DepartmentMaintenanceService } from '../../../../rrhh-area/services/department-maintenance.service';
 import { PositionMaintenanceService } from '../../../../rrhh-area/services/position-maintenance.service';
+import { SellerMaintenanceService } from '../../../../clients-area/services/seller-maintenance.service';
 import {
   FormFieldConfig,
   MaintenanceEntity,
@@ -32,6 +33,7 @@ export interface MaintenanceFormConfigServices {
   userService: UserMaintenanceService;
   helpdeskService: HelpdeskMaintenanceService;
   productService: ProductMaintenanceService;
+  sellerService: SellerMaintenanceService;
   positionService: PositionMaintenanceService;
   departmentService: DepartmentMaintenanceService;
 }
@@ -344,6 +346,24 @@ export function createMaintenanceFormConfig(
       update: (payload) => services.productService.updateProduct(payload as never),
       toCreatePayload: (form, username) => cleanPayload({ ...form, created_by: username }),
       toUpdatePayload: (id, form, username) => cleanPayload({ product_id: id, ...form, updated_by: username })
+    },
+    sellers: {
+      entity,
+      eyebrow: 'Clientes',
+      listTitle: 'Mantenimiento - Vendedores',
+      createTitle: 'Crear vendedor',
+      editTitle: 'Editar vendedor',
+      createSubtitle: 'Registra un nuevo vendedor del area comercial.',
+      editSubtitle: 'Actualiza el vendedor seleccionado.',
+      listUrl: '/main/modulo/clientes/comercial/mantenimientos/vendedores',
+      idParam: 'seller_id',
+      fields: [baseFields.code, baseFields.name],
+      load: (id) => services.sellerService.getSellerById(id),
+      create: (payload) => services.sellerService.insertSeller(payload as never),
+      update: (payload) => services.sellerService.updateSeller(payload as never),
+      toCreatePayload: (form, username) => cleanPayload({ ...form, created_by: username }),
+      toUpdatePayload: (id, form, username) =>
+        cleanPayload({ seller_id: id, name: form['name'], updated_by: username })
     },
     employees: {
       entity,

@@ -177,8 +177,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     },
     {
       label: 'Clientes',
-      description: 'Marketing, cobranza y legal.',
-      route: '/main/modulo/clientes/marketing',
+      description: 'Comercial, vendedores y clientes.',
+      route: '/main/modulo/clientes/comercial',
       icon: Users
     },
     {
