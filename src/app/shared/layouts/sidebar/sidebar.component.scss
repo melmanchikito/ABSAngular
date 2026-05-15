@@ -355,11 +355,15 @@
 
 .card.collapsed .item {
   width: 46px;
+  height: 44px;
+  flex: 0 0 46px;
   min-height: 44px;
+  align-items: center;
   justify-content: center;
   margin: 0 calc((var(--sidebar-collapsed, 76px) - 46px) / 2) 0 auto;
   padding: 0;
   gap: 0;
+  box-sizing: border-box;
 }
 
 .card.collapsed .item:hover {
@@ -373,16 +377,32 @@
     0 6px 16px color-mix(in srgb, var(--abs-primary) 8%, transparent);
 }
 
+.card.collapsed .icon {
+  flex: 0 0 22px;
+  width: 22px;
+  min-width: 22px;
+  height: 22px;
+  margin: 0;
+  line-height: 0;
+}
+
 .card.collapsed .item-text {
+  flex: 0 0 0;
   opacity: 0;
   width: 0;
+  min-width: 0;
+  max-width: 0;
+  margin: 0;
   overflow: hidden;
-  transform: translateX(-8px);
+  transform: none;
 }
 
 .card.collapsed .arrow {
+  flex: 0 0 0;
   opacity: 0;
   width: 0;
+  min-width: 0;
+  margin-left: 0;
   overflow: hidden;
 }
 
@@ -457,8 +477,10 @@
   }
 
   .card.collapsed .item-text {
+    flex: 0 1 auto;
     opacity: 1;
     width: auto;
+    max-width: none;
     overflow: visible;
     transform: none;
   }
@@ -557,8 +579,10 @@
   }
 
   .card.collapsed .item-text {
+    flex: 1 1 auto;
     opacity: 1;
     width: auto;
+    max-width: none;
     overflow: hidden;
     transform: none;
   }

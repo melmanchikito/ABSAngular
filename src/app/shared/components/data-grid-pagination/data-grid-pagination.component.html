@@ -1,75 +1,69 @@
 <footer class="data-grid-pagination app-grid-footer">
-  <span class="pagination-count app-grid-count">
-    {{ countLabel }}
-  </span>
+  <p class="pagination-count app-grid-count">
+    {{ rangeLabel }}
+  </p>
 
-  <div class="pagination-actions app-grid-pagination" aria-label="Paginacion del listado">
+  <nav class="pagination-actions app-grid-pagination" aria-label="Paginacion del listado">
     <button
       type="button"
-      class="pagination-btn"
-      title="Ir al inicio"
-      aria-label="Ir al inicio"
+      class="pagination-btn pagination-edge"
+      title="Primera pagina"
+      aria-label="Primera pagina"
       [disabled]="isFirstPage"
       (click)="goToFirst()"
     >
-      <lucide-angular [img]="firstIcon" [size]="16" [strokeWidth]="2.5"></lucide-angular>
+      &laquo;
     </button>
 
     <button
       type="button"
-      class="pagination-btn page-jump"
-      title="Retroceder 5 paginas"
-      aria-label="Retroceder 5 paginas"
-      [disabled]="isFirstPage"
-      (click)="goBackFive()"
-    >
-      -5
-    </button>
-
-    <button
-      type="button"
-      class="pagination-btn"
+      class="pagination-btn pagination-edge"
       title="Pagina anterior"
       aria-label="Pagina anterior"
       [disabled]="isFirstPage"
       (click)="goToPrevious()"
     >
-      <lucide-angular [img]="previousIcon" [size]="16" [strokeWidth]="2.5"></lucide-angular>
+      &lsaquo;
     </button>
 
-    <strong class="page-indicator">{{ safeCurrentPage }} / {{ safeTotalPages }}</strong>
+    <ng-container *ngFor="let item of paginationItems; trackBy: trackByPaginationItem">
+      <button
+        *ngIf="item.type === 'page'; else paginationEllipsis"
+        type="button"
+        class="pagination-btn pagination-page"
+        [class.active]="item.page === safeCurrentPage"
+        [attr.aria-current]="item.page === safeCurrentPage ? 'page' : null"
+        [attr.aria-label]="'Pagina ' + item.page"
+        (click)="goToPage(item.page)"
+      >
+        {{ item.page }}
+      </button>
+
+      <ng-template #paginationEllipsis>
+        <span class="pagination-ellipsis" aria-hidden="true">...</span>
+      </ng-template>
+    </ng-container>
 
     <button
       type="button"
-      class="pagination-btn"
+      class="pagination-btn pagination-edge"
       title="Pagina siguiente"
       aria-label="Pagina siguiente"
       [disabled]="isLastPage"
       (click)="goToNext()"
     >
-      <lucide-angular [img]="nextIcon" [size]="16" [strokeWidth]="2.5"></lucide-angular>
+      &rsaquo;
     </button>
 
     <button
       type="button"
-      class="pagination-btn page-jump"
-      title="Avanzar 5 paginas"
-      aria-label="Avanzar 5 paginas"
-      [disabled]="isLastPage"
-      (click)="goForwardFive()"
-    >
-      +5
-    </button>
-
-    <button
-      type="button"
-      class="pagination-btn"
-      title="Ir al final"
-      aria-label="Ir al final"
+      class="pagination-btn pagination-edge"
+      title="Ultima pagina"
+      aria-label="Ultima pagina"
       [disabled]="isLastPage"
       (click)="goToLast()"
     >
-      <lucide-angular [img]="lastIcon" [size]="16" [strokeWidth]="2.5"></lucide-angular>
+      &raquo;
     </button>
-  </div>
+  </nav>
 </footer>
