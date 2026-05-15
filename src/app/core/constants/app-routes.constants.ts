@@ -8,7 +8,7 @@ export const APP_ROUTES = {
   home: 'main/home',
   tickets: 'main/tickets',
   helpdesk: 'main/tickets',
-  profile: 'main/profile' ,
+  profile: 'main/profile',
   mail: 'main/correo',
   systemarea: 'main/modulo/sistema/configuracion',
   area: 'main/modulo',
