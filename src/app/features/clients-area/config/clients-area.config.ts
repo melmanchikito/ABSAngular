@@ -9,6 +9,7 @@ import {
   FolderKanban,
   Gauge,
   HandCoins,
+  Link2,
   Package,
   Scale,
   ScrollText,
@@ -180,6 +181,12 @@ export const CLIENTS_AREA_CONFIG: ClientsAreaConfig = {
           { label: 'Soportes de venta', description: 'Archivos y respaldos comerciales.', icon: FileCheck2 }
         ],
         [
+          {
+            label: 'Gestion comercial de dispositivos',
+            description: 'Vinculacion de vendedores con equipos comerciales.',
+            icon: Link2,
+            route: route('comercial/procesos/gestion-comercial-dispositivos')
+          },
           { label: 'Gestion comercial', description: 'Seguimiento de oportunidades y actividades.', icon: ClipboardCheck }
         ],
         [

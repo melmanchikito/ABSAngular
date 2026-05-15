@@ -283,6 +283,13 @@ export const MAIN_ROUTES: Routes = [
       ...legacyMaintenanceRedirects,
       ...maintenanceRoutes,
       {
+        path: 'modulo/clientes/comercial/procesos/gestion-comercial-dispositivos',
+        loadComponent: () =>
+          import(
+            '../clients-area/pages/process/commercial-device-management/commercial-device-management.component'
+          ).then((m) => m.CommercialDeviceManagementComponent)
+      },
+      {
         path: 'modulo/rrhh',
         redirectTo: 'modulo/rrhh/empleado',
         pathMatch: 'full'

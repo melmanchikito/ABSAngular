@@ -1,0 +1,229 @@
+<section class="commercial-device-page page-shell">
+  <app-page-header
+    eyebrow="Clientes / Comercial / Procesos"
+    title="Gestion comercial de dispositivos"
+    subtitle="Vincula vendedores con dispositivos o equipos comerciales y consulta asignaciones activas."
+    [icon]="pageIcon"
+  >
+    <div page-actions class="app-page-actions" (click)="$event.stopPropagation()">
+      <div class="app-grid-filter-menu">
+        <button
+          type="button"
+          class="btn-outline app-grid-filter-trigger app-grid-icon-button"
+          [class.active]="filtersOpen || statusFilter !== 'all'"
+          title="Filtros"
+          aria-label="Abrir filtros"
+          (click)="toggleFilters($event)"
+        >
+          <lucide-angular [img]="filterIcon" [size]="17" [strokeWidth]="2.4"></lucide-angular>
+        </button>
+
+        <section class="app-grid-filter-panel" *ngIf="filtersOpen" (click)="$event.stopPropagation()">
+          <strong class="app-grid-filter-title">Filtros del listado</strong>
+          <label class="app-grid-filter-field">
+            <span>Estado</span>
+            <select [(ngModel)]="statusFilterDraft">
+              <option *ngFor="let option of statusFilterOptions" [ngValue]="option.value">{{ option.label }}</option>
+            </select>
+          </label>
+          <div class="app-grid-filter-actions">
+            <button type="button" class="btn-outline" (click)="clearFilters()">Limpiar</button>
+            <button type="button" class="btn-primary" (click)="applyFilters()">Aplicar</button>
+          </div>
+        </section>
+      </div>
+    </div>
+  </app-page-header>
+
+  <nav class="process-breadcrumb" aria-label="Ruta del proceso">
+    <span>Clientes</span>
+    <span>Comercial</span>
+    <span>Procesos</span>
+    <strong>Gestion comercial de dispositivos</strong>
+  </nav>
+
+  <div class="alert-success" *ngIf="successMessage">{{ successMessage }}</div>
+  <div class="alert-error" *ngIf="errorMessage">{{ errorMessage }}</div>
+
+  <section class="process-layout">
+    <article class="assignment-form-card app-card">
+      <header class="form-card-header">
+        <div>
+          <span class="form-eyebrow">Proceso comercial</span>
+          <h2>{{ formTitle }}</h2>
+          <p>Selecciona el vendedor y el dispositivo que quedaran vinculados para gestion comercial.</p>
+        </div>
+      </header>
+
+      <div class="alert-error compact-alert" *ngIf="formError">{{ formError }}</div>
+
+      <form class="assignment-form" (ngSubmit)="saveAssignment()">
+        <label class="form-field">
+          <span class="field-label">Vendedor</span>
+          <select name="seller" [(ngModel)]="form.seller_id">
+            <option [ngValue]="null">Seleccione un vendedor...</option>
+            <option *ngFor="let seller of sellers; trackBy: trackByOptionId" [ngValue]="seller.id">
+              {{ formatOption(seller) }}
+            </option>
+          </select>
+        </label>
+
+        <label class="form-field">
+          <span class="field-label">Dispositivo/equipo</span>
+          <select name="device" [(ngModel)]="form.device_id">
+            <option [ngValue]="null">Seleccione un equipo...</option>
+            <option *ngFor="let device of devices; trackBy: trackByOptionId" [ngValue]="device.id">
+              {{ formatOption(device) }}
+            </option>
+          </select>
+        </label>
+
+        <div class="form-actions">
+          <button type="button" class="btn-outline" (click)="clearForm()" [disabled]="isSaving">
+            Limpiar
+          </button>
+          <button type="submit" class="btn-primary" [disabled]="isSaving">
+            <lucide-angular [img]="assignIcon" [size]="17" [strokeWidth]="2.4"></lucide-angular>
+            {{ saveLabel }}
+          </button>
+        </div>
+      </form>
+    </article>
+
+    <article class="assignments-panel app-card app-grid-card">
+      <header class="app-grid-header">
+        <div class="app-grid-title">
+          <span class="app-grid-eyebrow">Listado</span>
+          <h2 class="app-grid-heading">Asignaciones comerciales</h2>
+        </div>
+      </header>
+
+      <section class="app-grid-toolbar">
+        <label class="app-grid-search">
+          <lucide-angular [img]="searchIcon" [size]="18" [strokeWidth]="2.3"></lucide-angular>
+          <input
+            type="search"
+            name="assignmentSearch"
+            [ngModel]="searchTerm"
+            appDebouncedSearch
+            (debouncedSearch)="searchTerm = $event; onFiltersChange()"
+            placeholder="Buscar por vendedor, equipo o serie..."
+            autocomplete="off"
+          />
+        </label>
+
+        <button
+          type="button"
+          class="ghost-btn btn-outline refresh-btn app-grid-icon-button"
+          title="Actualizar"
+          aria-label="Actualizar listado"
+          (click)="loadProcess()"
+          [disabled]="isLoading"
+        >
+          <lucide-angular [img]="refreshIcon" [size]="17" [strokeWidth]="2.3"></lucide-angular>
+        </button>
+      </section>
+
+      <div class="app-grid-table-wrapper">
+        <table class="assignment-table app-table app-grid-table">
+          <thead>
+            <tr>
+              <th
+                *ngFor="let column of gridColumns; trackBy: trackByColumnKey"
+                [class]="getColumnClass(column)"
+                [style.width]="column.width || null"
+              >
+                {{ column.label }}
+              </th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngIf="isLoading">
+              <td [attr.colspan]="gridColumns.length">
+                <app-empty-state message="Cargando asignaciones..." [icon]="pageIcon"></app-empty-state>
+              </td>
+            </tr>
+
+            <tr *ngIf="!isLoading && !assignments.length">
+              <td [attr.colspan]="gridColumns.length">
+                <app-empty-state message="No existen asignaciones comerciales." [icon]="pageIcon"></app-empty-state>
+              </td>
+            </tr>
+
+            <tr *ngIf="!isLoading && assignments.length && !filteredAssignments.length">
+              <td [attr.colspan]="gridColumns.length">
+                <app-empty-state
+                  message="No se encontraron asignaciones con los filtros aplicados."
+                  [icon]="searchIcon"
+                ></app-empty-state>
+              </td>
+            </tr>
+
+            <tr
+              *ngFor="let assignment of paginatedAssignments; trackBy: trackByAssignmentId"
+              class="assignment-row app-grid-row-clickable"
+              [class.app-grid-row-selected]="selectedAssignmentId === assignment.id"
+              (click)="selectAssignment(assignment)"
+            >
+              <td *ngFor="let column of gridColumns; trackBy: trackByColumnKey" [class]="getColumnClass(column)">
+                <ng-container [ngSwitch]="column.key">
+                  <app-status-badge
+                    *ngSwitchCase="'status'"
+                    [label]="assignment.status === 'active' ? 'Activa' : 'Inactiva'"
+                    [variant]="assignment.status === 'active' ? 'active' : 'inactive'"
+                  ></app-status-badge>
+
+                  <div *ngSwitchCase="'actions'" class="app-grid-actions">
+                    <button
+                      type="button"
+                      class="icon-action btn-icon"
+                      title="Editar asignacion"
+                      aria-label="Editar asignacion"
+                      (click)="$event.stopPropagation(); editAssignment(assignment)"
+                    >
+                      <lucide-angular [img]="editIcon" [size]="17" [strokeWidth]="2.3"></lucide-angular>
+                    </button>
+
+                    <button
+                      type="button"
+                      class="icon-action danger btn-icon"
+                      title="Cancelar asignacion"
+                      aria-label="Cancelar asignacion"
+                      [disabled]="assignment.status === 'inactive'"
+                      (click)="$event.stopPropagation(); askCancel(assignment)"
+                    >
+                      <lucide-angular [img]="trashIcon" [size]="17" [strokeWidth]="2.3"></lucide-angular>
+                    </button>
+                  </div>
+
+                  <span *ngSwitchDefault>{{ formatGridValue(assignment, column.key) }}</span>
+                </ng-container>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <app-data-grid-pagination
+        [showing]="showingCount"
+        [pageSize]="pageSize"
+        [totalItems]="filteredAssignments.length"
+        itemLabel="asignaciones"
+        [currentPage]="currentPage"
+        [totalPages]="totalPages"
+        (pageChange)="setPage($event)"
+      ></app-data-grid-pagination>
+    </article>
+  </section>
+
+  <app-confirm-dialog
+    [open]="!!assignmentToCancel"
+    title="Cancelar vinculacion"
+    [message]="cancelAssignmentMessage"
+    confirmLabel="Cancelar vinculacion"
+    [loading]="isSaving"
+    (confirm)="confirmCancel()"
+    (cancel)="closeCancelConfirm()"
+  ></app-confirm-dialog>
+</section>
