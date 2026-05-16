@@ -11,7 +11,7 @@ import {
   Mail,
   MonitorCog,
   Package,
-  Users
+  Users,
 } from 'lucide-angular';
 import { filter } from 'rxjs';
 import { NavigationService } from '../../../core/services/navigation.service';
@@ -20,7 +20,7 @@ import { AppTheme } from '../../../core/models/preferences.model';
 import { AuthApiService } from '../../../features/auth/services/auth-api.service';
 import {
   SystemAreaKey,
-  SystemAreaSubmoduleKey
+  SystemAreaSubmoduleKey,
 } from '../../../features/system-area/models/system-area.model';
 
 type SidebarIcon = typeof CircleDollarSign;
@@ -43,7 +43,7 @@ interface SidebarArea {
   standalone: true,
   imports: [CommonModule, LucideAngularModule],
   templateUrl: './sidebar.component.html',
-  styleUrl: './sidebar.component.scss'
+  styleUrl: './sidebar.component.scss',
 })
 export class SidebarComponent {
   private static readonly defaultLogo = 'assets/auth/LogoAR.svg';
@@ -72,8 +72,8 @@ export class SidebarComponent {
       areaKey: 'finanzas',
       children: [
         { label: 'Contable y SRI', areaKey: 'finanzas', submoduleKey: 'contable-sri' },
-        { label: 'Caja y Tesoreria', areaKey: 'finanzas', submoduleKey: 'caja-tesoreria' }
-      ]
+        { label: 'Caja y Tesoreria', areaKey: 'finanzas', submoduleKey: 'caja-tesoreria' },
+      ],
     },
     {
       name: 'RRHH',
@@ -82,8 +82,8 @@ export class SidebarComponent {
       children: [
         { label: 'Empleado', areaKey: 'rrhh', submoduleKey: 'empleado' },
         { label: 'Proveedores', areaKey: 'rrhh', submoduleKey: 'proveedores' },
-        { label: 'Administracion', areaKey: 'rrhh', submoduleKey: 'administracion' }
-      ]
+        { label: 'Administracion', areaKey: 'rrhh', submoduleKey: 'administracion' },
+      ],
     },
     {
       name: 'Clientes',
@@ -94,8 +94,8 @@ export class SidebarComponent {
         { label: 'Cobranza', areaKey: 'clientes', submoduleKey: 'cobranza' },
         { label: 'Codigo IMP', areaKey: 'clientes', submoduleKey: 'codigo-imp' },
         { label: 'Legal', areaKey: 'clientes', submoduleKey: 'legal' },
-        { label: 'Comercial', areaKey: 'clientes', submoduleKey: 'comercial' }
-      ]
+        { label: 'Comercial', areaKey: 'clientes', submoduleKey: 'comercial' },
+      ],
     },
     {
       name: 'Producto',
@@ -105,22 +105,20 @@ export class SidebarComponent {
         {
           label: 'Produccion y Distribucion',
           areaKey: 'producto',
-          submoduleKey: 'produccion-distribucion'
+          submoduleKey: 'produccion-distribucion',
         },
         {
           label: 'Compras e Importaciones',
           areaKey: 'producto',
-          submoduleKey: 'compras-importaciones'
-        }
-      ]
+          submoduleKey: 'compras-importaciones',
+        },
+      ],
     },
     {
       name: 'Analisis',
       icon: ChartColumn,
       areaKey: 'analisis',
-      children: [
-        { label: 'AM y R', areaKey: 'analisis', submoduleKey: 'am-r' }
-      ]
+      children: [{ label: 'AM y R', areaKey: 'analisis', submoduleKey: 'am-r' }],
     },
     {
       name: 'Sistema',
@@ -129,15 +127,15 @@ export class SidebarComponent {
       children: [
         { label: 'Configuracion', areaKey: 'sistema', submoduleKey: 'configuracion' },
         { label: 'Helpdesk', areaKey: 'sistema', submoduleKey: 'help-desk' },
-        { label: 'Developer', areaKey: 'sistema', submoduleKey: 'developer' }
-      ]
-    }
+        { label: 'Developer', areaKey: 'sistema', submoduleKey: 'developer' },
+      ],
+    },
   ];
 
   constructor(
     private readonly authApiService: AuthApiService,
     private readonly navigationService: NavigationService,
-    private readonly router: Router
+    private readonly router: Router,
   ) {
     this.sidebarLogoSrc = this.getLogoForTheme(this.preferencesService.snapshot.theme);
 
@@ -150,7 +148,10 @@ export class SidebarComponent {
     this.syncActiveState(this.router.url);
 
     this.router.events
-      .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
+      .pipe(
+        filter((event): event is NavigationEnd => event instanceof NavigationEnd),
+        takeUntilDestroyed(this.destroyRef),
+      )
       .subscribe((event) => this.syncActiveState(event.urlAfterRedirects));
   }
 
@@ -215,14 +216,14 @@ export class SidebarComponent {
 
     if (moduleRoot) {
       const activeArea = this.areas.find(
-        (area) => area.areaKey && normalizedUrl.startsWith(`${moduleRoot}/${area.areaKey}`)
+        (area) => area.areaKey && normalizedUrl.startsWith(`${moduleRoot}/${area.areaKey}`),
       );
 
       if (activeArea) {
         const activeChild = activeArea.children.find((child) =>
           child.submoduleKey
             ? normalizedUrl.includes(`${moduleRoot}/${activeArea.areaKey}/${child.submoduleKey}`)
-            : false
+            : false,
         );
 
         this.activeArea = activeArea.name;
@@ -263,6 +264,8 @@ export class SidebarComponent {
   }
 
   private prefersDarkScheme(): boolean {
-    return typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    return (
+      typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches
+    );
   }
 }

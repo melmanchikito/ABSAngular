@@ -3,12 +3,13 @@
   [class.sidebar-collapsed]="sidebarCollapsed"
   [class.header-hidden-layout]="headerVariant === 'classic' && !headerVisible"
   [class.floating-header-layout]="headerVariant === 'floating'"
+  [class.sidebar-right]="sidebarPosition === 'right'"
   [class.login-entry-sequence]="runLoginEntrySequence"
 >
   <section class="card_sidebar">
     <button class="toggle-sidebar" type="button" (click)="toggleSidebar()">
       <lucide-angular
-        [img]="sidebarCollapsed ? expandSidebarIcon : collapseSidebarIcon"
+        [img]="sidebarToggleIcon"
         [size]="18"
         [strokeWidth]="2.6"
       ></lucide-angular>

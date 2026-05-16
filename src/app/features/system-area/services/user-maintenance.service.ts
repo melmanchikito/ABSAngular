@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { catchError, map, Observable, tap, throwError } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { CookieService } from '../../../core/services/cookie.service';
 import {
@@ -9,50 +9,38 @@ import {
   InsertUserRequest,
   UpdateUserRequest,
   UserItem,
-  UserListResponse
+  UserListResponse,
 } from '../models/user-maintenance.model';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class UserMaintenanceService {
   private readonly apiUrl = environment.apiUrl;
 
   constructor(
     private readonly http: HttpClient,
-    private readonly cookieService: CookieService
+    private readonly cookieService: CookieService,
   ) {}
 
   getUsers(): Observable<UserItem[]> {
     return this.http
-      .get<ApiResponse<UserListResponse>>(
-        `${this.apiUrl}/store/user/select`,
-        {
-          headers: this.getHeaders(),
-          withCredentials: true
-        }
-      )
-      .pipe(
-        tap((response) => {
-          console.log('USER GRID RESPONSE:', response);
-          console.log('USER GRID LIST:', response.data?.list ?? []);
-        }),
-        map((response) => response.data?.list ?? [])
-      );
+      .get<ApiResponse<UserListResponse>>(`${this.apiUrl}/store/user/select`, {
+        headers: this.getHeaders(),
+        withCredentials: true,
+      })
+      .pipe(map((response) => response.data?.list ?? []));
   }
 
   getUserById(userId: number): Observable<UserItem> {
     const params = new HttpParams().set('user_id', String(userId));
 
     return this.http
-      .get<ApiResponse<UserItem>>(
-        `${this.apiUrl}/store/user/select-one`,
-        {
-          headers: this.getHeaders(),
-          params,
-          withCredentials: true
-        }
-      )
+      .get<ApiResponse<UserItem>>(`${this.apiUrl}/store/user/select-one`, {
+        headers: this.getHeaders(),
+        params,
+        withCredentials: true,
+      })
       .pipe(
         map((response) => {
           if (!response.data) {
@@ -60,76 +48,33 @@ export class UserMaintenanceService {
           }
 
           return response.data;
-        })
+        }),
       );
   }
 
   insertUser(payload: InsertUserRequest): Observable<ApiResponse<UserItem>> {
     const url = `${this.apiUrl}/register`;
 
-    console.log('CREATE USER URL:', url);
-    console.log('CREATE USER PAYLOAD:', payload);
-
-    return this.http
-      .post<ApiResponse<UserItem>>(
-        url,
-        payload,
-        {
-          headers: this.getHeaders(),
-          withCredentials: true
-        }
-      )
-      .pipe(
-        tap((response) => {
-          console.log('CREATE USER RESPONSE:', response);
-        }),
-        catchError((error: unknown) => {
-          this.logCreateUserError(error);
-
-          return throwError(() => error);
-        })
-      );
+    return this.http.post<ApiResponse<UserItem>>(url, payload, {
+      headers: this.getHeaders(),
+      withCredentials: true,
+    });
   }
 
   updateUser(payload: UpdateUserRequest): Observable<ApiResponse<UserItem>> {
     const url = `${this.apiUrl}/store/user/update`;
 
-    console.log('EDIT USER URL:', url);
-    console.log('EDIT USER PAYLOAD:', payload);
-
-    return this.http
-      .post<ApiResponse<UserItem>>(
-        url,
-        payload,
-        {
-          headers: this.getHeaders(),
-          withCredentials: true
-        }
-      )
-      .pipe(
-        tap((response) => {
-          console.log('EDIT USER RESPONSE:', response);
-        }),
-        catchError((error: unknown) => {
-          console.error('EDIT USER ERROR:', error);
-          console.error('EDIT USER ERROR RESPONSE:', (error as { error?: unknown }).error);
-          console.error('EDIT USER STATUS:', (error as { status?: unknown }).status);
-          console.error('EDIT USER STATUS TEXT:', (error as { statusText?: unknown }).statusText);
-
-          return throwError(() => error);
-        })
-      );
+    return this.http.post<ApiResponse<UserItem>>(url, payload, {
+      headers: this.getHeaders(),
+      withCredentials: true,
+    });
   }
 
   cancelUser(payload: CancelUserRequest): Observable<ApiResponse<UserItem>> {
-    return this.http.post<ApiResponse<UserItem>>(
-      `${this.apiUrl}/store/user/canceled`,
-      payload,
-      {
-        headers: this.getHeaders(),
-        withCredentials: true
-      }
-    );
+    return this.http.post<ApiResponse<UserItem>>(`${this.apiUrl}/store/user/canceled`, payload, {
+      headers: this.getHeaders(),
+      withCredentials: true,
+    });
   }
 
   private getHeaders(): HttpHeaders {
@@ -139,14 +84,11 @@ export class UserMaintenanceService {
       'Content-Type': 'application/json',
       'X-Device-Platform': 'web',
       'X-Device-Id': localStorage.getItem('device_id') || 'web-device',
-      'X-Device-Fingerprint':
-        localStorage.getItem('device_fingerprint') || 'web-fingerprint'
+      'X-Device-Fingerprint': localStorage.getItem('device_fingerprint') || 'web-fingerprint',
     };
 
     if (token) {
-      headers['Authorization'] = token.startsWith('Bearer ')
-        ? token
-        : `Bearer ${token}`;
+      headers['Authorization'] = token.startsWith('Bearer ') ? token : `Bearer ${token}`;
     }
 
     return new HttpHeaders(headers);
@@ -172,23 +114,5 @@ export class UserMaintenanceService {
       .replace(/^Bearer\s+/i, '')
       .replaceAll('"', '')
       .trim();
-  }
-
-  private logCreateUserError(error: unknown): void {
-    const httpError = error as {
-      error?: {
-        message?: unknown;
-        errors?: unknown;
-      };
-      status?: unknown;
-      statusText?: unknown;
-    };
-
-    console.error('CREATE USER ERROR:', error);
-    console.error('CREATE USER ERROR RESPONSE:', httpError.error);
-    console.error('CREATE USER VALIDATION:', httpError.error?.message);
-    console.error('CREATE USER VALIDATION ERRORS:', httpError.error?.errors);
-    console.error('CREATE USER STATUS:', httpError.status);
-    console.error('CREATE USER STATUS TEXT:', httpError.statusText);
   }
 }

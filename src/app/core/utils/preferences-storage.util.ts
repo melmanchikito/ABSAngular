@@ -5,6 +5,7 @@ import {
   CardDensity,
   FontSize,
   HeaderVariant,
+  SidebarPosition,
   SystemWallpaper
 } from '../models/preferences.model';
 
@@ -19,6 +20,7 @@ export const PREFERENCES_STORAGE_KEYS = {
   publicWallpaperEnabled: 'wallpaperEnabled',
   headerVariant: 'abs_header_variant',
   legacyHeaderStyle: 'abs_header_style',
+  sidebarPosition: 'abs_sidebar_position',
   animationsDisabled: 'animationsDisabled'
 } as const;
 
@@ -38,6 +40,7 @@ export const DEFAULT_PREFERENCES: AppPreferences = {
 
   showAnimations: true,
   headerVariant: 'classic',
+  sidebarPosition: 'left',
   compactSidebar: false,
   roundedCards: true,
   showProductImages: true,
@@ -82,6 +85,7 @@ const WALLPAPER_ASSETS: Record<AppPreferences['wallpaper'], string> = {
 const THEMES: readonly AppTheme[] = ['light', 'dark', 'system', 'liquid-glass'];
 const FONT_SIZES: readonly FontSize[] = ['small', 'medium', 'large', 'extralarge'];
 const HEADER_VARIANTS: readonly HeaderVariant[] = ['classic', 'floating'];
+const SIDEBAR_POSITIONS: readonly SidebarPosition[] = ['left', 'right'];
 const ACCENT_COLORS: readonly AccentColor[] = ['absRed', 'executiveRed', 'enterpriseGray', 'premiumNight'];
 const CARD_DENSITIES: readonly CardDensity[] = ['compact', 'normal', 'comfortable'];
 export function loadStoredPreferences(storage: Storage = localStorage): AppPreferences {
@@ -119,6 +123,7 @@ export function persistStoredPreferences(
   storage.setItem(PREFERENCES_STORAGE_KEYS.publicWallpaperEnabled, String(normalizedPrefs.wallpaperEnabled));
   storage.setItem(PREFERENCES_STORAGE_KEYS.headerVariant, normalizedPrefs.headerVariant);
   storage.setItem(PREFERENCES_STORAGE_KEYS.legacyHeaderStyle, normalizedPrefs.headerVariant);
+  storage.setItem(PREFERENCES_STORAGE_KEYS.sidebarPosition, normalizedPrefs.sidebarPosition);
   storage.setItem(PREFERENCES_STORAGE_KEYS.animationsDisabled, String(!normalizedPrefs.showAnimations));
 
   return normalizedPrefs;
@@ -169,6 +174,7 @@ export function applyPreferencesToDocument(
   root.setAttribute('data-animations', normalizedPrefs.showAnimations ? 'enabled' : 'disabled');
   root.setAttribute('data-header-variant', normalizedPrefs.headerVariant);
   root.setAttribute('data-header-style', normalizedPrefs.headerVariant);
+  root.setAttribute('data-sidebar-position', normalizedPrefs.sidebarPosition);
 }
 
 export function normalizePreferences(rawPreferences: unknown): AppPreferences {
@@ -198,6 +204,7 @@ export function normalizePreferences(rawPreferences: unknown): AppPreferences {
       HEADER_VARIANTS,
       DEFAULT_PREFERENCES.headerVariant
     ),
+    sidebarPosition: parseEnum(source['sidebarPosition'], SIDEBAR_POSITIONS, DEFAULT_PREFERENCES.sidebarPosition),
     compactSidebar: parseBoolean(source['compactSidebar']) ?? DEFAULT_PREFERENCES.compactSidebar,
     roundedCards: parseBoolean(source['roundedCards']) ?? DEFAULT_PREFERENCES.roundedCards,
     showProductImages: parseBoolean(source['showProductImages']) ?? DEFAULT_PREFERENCES.showProductImages,
@@ -249,6 +256,7 @@ function loadLegacyPreferences(
   const headerVariant =
     storage.getItem(PREFERENCES_STORAGE_KEYS.headerVariant) ||
     storage.getItem(PREFERENCES_STORAGE_KEYS.legacyHeaderStyle);
+  const sidebarPosition = storage.getItem(PREFERENCES_STORAGE_KEYS.sidebarPosition);
 
   return normalizePreferences({
     ...basePreferences,
@@ -257,6 +265,7 @@ function loadLegacyPreferences(
     ...(wallpaper ? { wallpaper } : {}),
     ...(wallpaperEnabled !== null ? { wallpaperEnabled } : {}),
     ...(headerVariant ? { headerVariant } : {}),
+    ...(sidebarPosition ? { sidebarPosition } : {}),
     ...(animationsDisabled !== null ? { animationsDisabled } : {})
   });
 }

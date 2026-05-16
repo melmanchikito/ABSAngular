@@ -10,7 +10,7 @@ import { MaintenanceFormBase } from '../shared/maintenance-form.base';
   standalone: true,
   imports: [CommonModule, FormsModule, LucideAngularModule, PageHeaderComponent],
   templateUrl: './maintenance-form-edit.component.html',
-  styleUrl: './maintenance-form-edit.component.scss'
+  styleUrl: './maintenance-form-edit.component.scss',
 })
 export class MaintenanceFormEditComponent extends MaintenanceFormBase implements OnInit {
   readonly mode = 'edit';
@@ -39,15 +39,11 @@ export class MaintenanceFormEditComponent extends MaintenanceFormBase implements
       return;
     }
 
-    if (this.config.entity === 'users') {
-      console.log('EDIT USER PAYLOAD:', payload);
-    }
-
     this.isSaving = true;
 
     this.config.update(payload).subscribe({
       next: () => this.handleSaveSuccess(),
-      error: (error) => this.handleSaveError(error, 'No se pudo actualizar el registro.')
+      error: (error) => this.handleSaveError(error, 'No se pudo actualizar el registro.'),
     });
   }
 }

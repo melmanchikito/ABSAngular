@@ -33,13 +33,17 @@
 
           <div
             class="submenu"
-            *ngIf="expandedArea === area.name && area.children.length && !collapsed"
+            *ngIf="area.children.length && !collapsed"
+            [class.open]="expandedArea === area.name"
+            [style.max-height.px]="expandedArea === area.name ? area.children.length * 38 + 36 : 0"
+            [attr.aria-hidden]="expandedArea === area.name ? 'false' : 'true'"
           >
             <button
               type="button"
               class="submenu-item"
               *ngFor="let child of area.children"
               [class.submenu-active]="activeChild === child.label"
+              [tabIndex]="expandedArea === area.name ? 0 : -1"
               (click)="selectChild(area, child)"
             >
               <span class="submenu-dot"></span>

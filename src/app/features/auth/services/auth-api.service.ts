@@ -8,7 +8,7 @@ import {
   LogoutResponse,
   NewPasswordResponse,
   OtpResponse,
-  ValidateEmailResponse
+  ValidateEmailResponse,
 } from '../../../core/models/auth.model';
 import { UserPermissions } from '../../../core/models/permissions.model';
 import { AuthService } from '../../../core/services/auth.service';
@@ -29,7 +29,7 @@ export interface LoginFlowResult {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthApiService {
   private readonly apiUrl = environment.apiUrl;
@@ -38,41 +38,35 @@ export class AuthApiService {
     private readonly http: HttpClient,
     private readonly authService: AuthService,
     private readonly permissionsService: PermissionsService,
-    private readonly navigationService: NavigationService
+    private readonly navigationService: NavigationService,
   ) {}
 
   async handleLogin(email: string, password: string): Promise<LoginFlowResult> {
     const response = await firstValueFrom(
-      this.http.post<ApiResponse<LoginResponse>>(
-        `${this.apiUrl}/login`,
-        { email, password }
-        
-      ).pipe(
+      this.http.post<ApiResponse<LoginResponse>>(`${this.apiUrl}/login`, { email, password }).pipe(
         catchError((error) =>
           of({
             code: error.status ?? 0,
             error_code: 'FETCH_ERROR',
-            message: error.error?.message ?? 'Error desconocido al iniciar sesión'
-          })
-        )
-      )
+            message: error.error?.message ?? 'Error desconocido al iniciar sesión',
+          }),
+        ),
+      ),
     );
-    //debugger;
-      
+
     if ('error_code' in response) {
       return {
         success: false,
-        error: response.message || 'No se pudo iniciar sesión'
+        error: response.message || 'No se pudo iniciar sesión',
       };
     }
 
     const data = response.data;
-    
 
     if (!data) {
       return {
         success: false,
-        error: 'La respuesta del servidor no contiene datos'
+        error: 'La respuesta del servidor no contiene datos',
       };
     }
 
@@ -86,7 +80,7 @@ export class AuthApiService {
       return {
         success: true,
         route: 'new-password',
-        message: 'Se requiere cambio de contraseña'
+        message: 'Se requiere cambio de contraseña',
       };
     }
 
@@ -99,7 +93,7 @@ export class AuthApiService {
       return {
         success: true,
         route: 'two-factor',
-        message: 'Validación OTP requerida'
+        message: 'Validación OTP requerida',
       };
     }
 
@@ -111,7 +105,7 @@ export class AuthApiService {
       token: loginToken,
       userId: loginUserId,
       nameUsuario: loginName,
-      email
+      email,
     });
 
     this.saveAuthData(loginToken, loginUserId, loginName, email);
@@ -121,65 +115,62 @@ export class AuthApiService {
     if (!permissionsResponse.success) {
       return {
         success: false,
-        error: permissionsResponse.error
+        error: permissionsResponse.error,
       };
     }
 
     return {
       success: true,
-      route: 'main'
+      route: 'main',
     };
   }
 
-async handlePermissions(userId: number): Promise<{ success: boolean; error?: string }> {
-  try {
-    const response = await firstValueFrom(
-      this.http.get<ApiResponse<PermissionsApiResponse>>(
-        `${this.apiUrl}/user-permissions_module`,
-        { params: { user_id: String(userId) } }
-      )
-    );
+  async handlePermissions(userId: number): Promise<{ success: boolean; error?: string }> {
+    try {
+      const response = await firstValueFrom(
+        this.http.get<ApiResponse<PermissionsApiResponse>>(
+          `${this.apiUrl}/user-permissions_module`,
+          { params: { user_id: String(userId) } },
+        ),
+      );
 
-    const apiResponse = response as {
-      code?: number;
-      message?: string;
-      data?: PermissionsApiResponse;
-      error_code?: string;
-    };
+      const apiResponse = response as {
+        code?: number;
+        message?: string;
+        data?: PermissionsApiResponse;
+        error_code?: string;
+      };
 
-    const data = apiResponse.data;
+      const data = apiResponse.data;
 
-    const permissions: UserPermissions = {
-      id: Number(data?.user_id ?? userId),
-      priorityPermissions: data?.priority_permissions ?? [],
-      permissions: data?.permissions ?? []
-    };
+      const permissions: UserPermissions = {
+        id: Number(data?.user_id ?? userId),
+        priorityPermissions: data?.priority_permissions ?? [],
+        permissions: data?.permissions ?? [],
+      };
 
-    this.permissionsService.setPermissions(permissions);
+      this.permissionsService.setPermissions(permissions);
 
-    return { success: true };
-  } catch (error) {
-    console.warn('No se pudieron cargar permisos. Se usarán permisos vacíos.', error);
+      return { success: true };
+    } catch (error) {
+      console.warn('No se pudieron cargar permisos. Se usarán permisos vacíos.', error);
 
-    const permissions: UserPermissions = {
-      id: userId,
-      priorityPermissions: [],
-      permissions: []
-    };
+      const permissions: UserPermissions = {
+        id: userId,
+        priorityPermissions: [],
+        permissions: [],
+      };
 
-    this.permissionsService.setPermissions(permissions);
+      this.permissionsService.setPermissions(permissions);
 
-    return { success: true };
+      return { success: true };
+    }
   }
-}
   async handleLogout(): Promise<void> {
     await firstValueFrom(
-      this.http.post<ApiResponse<LogoutResponse>>(
-        `${this.apiUrl}/logout`,
-        {}
-      ).pipe(
-        catchError(() => of(null))
-      )
+      this.http
+        .post<ApiResponse<LogoutResponse>>(`${this.apiUrl}/logout`, {})
+        .pipe(catchError(() => of(null))),
     );
 
     this.authService.setIsLogin('false');
@@ -190,33 +181,30 @@ async handlePermissions(userId: number): Promise<{ success: boolean; error?: str
     await this.navigationService.goToLogin();
   }
 
-  async handleRecover(
-    email: string
-  ): Promise<{
+  async handleRecover(email: string): Promise<{
     success: boolean;
     error?: string;
     message?: string;
     route?: 'two-factor' | 'new-password';
   }> {
     const response = await firstValueFrom(
-      this.http.post<ApiResponse<ValidateEmailResponse>>(
-        `${this.apiUrl}/validate-email`,
-        { email }
-      ).pipe(
-        catchError((error) =>
-          of({
-            code: error.status ?? 0,
-            error_code: 'FETCH_ERROR',
-            message: error.error?.message ?? 'Error al validar el correo'
-          })
-        )
-      )
+      this.http
+        .post<ApiResponse<ValidateEmailResponse>>(`${this.apiUrl}/validate-email`, { email })
+        .pipe(
+          catchError((error) =>
+            of({
+              code: error.status ?? 0,
+              error_code: 'FETCH_ERROR',
+              message: error.error?.message ?? 'Error al validar el correo',
+            }),
+          ),
+        ),
     );
 
     if ('error_code' in response) {
       return {
         success: false,
-        error: response.message || 'No se pudo validar el correo'
+        error: response.message || 'No se pudo validar el correo',
       };
     }
 
@@ -230,20 +218,20 @@ async handlePermissions(userId: number): Promise<{ success: boolean; error?: str
 
       return {
         success: true,
-        route: 'two-factor'
+        route: 'two-factor',
       };
     }
 
     if (isSeller) {
       return {
         success: true,
-        route: 'new-password'
+        route: 'new-password',
       };
     }
 
     return {
       success: true,
-      message: 'Contacta a Desarrollo para activar 2FA.'
+      message: 'Contacta a Desarrollo para activar 2FA.',
     };
   }
 
@@ -251,18 +239,16 @@ async handlePermissions(userId: number): Promise<{ success: boolean; error?: str
     password: string,
     passwordConfirmation: string,
     userId?: number,
-    isFirstChange?: boolean
+    isFirstChange?: boolean,
   ): Promise<{ success: boolean; error?: string; message?: string }> {
     if (password !== passwordConfirmation) {
       return {
         success: false,
-        error: 'Las contraseñas no coinciden'
+        error: 'Las contraseñas no coinciden',
       };
     }
 
-    const url = isFirstChange
-      ? `${this.apiUrl}/new-password-first`
-      : `${this.apiUrl}/new-password`;
+    const url = isFirstChange ? `${this.apiUrl}/new-password-first` : `${this.apiUrl}/new-password`;
 
     const body = isFirstChange
       ? { user_id: userId, password, password_confirmation: passwordConfirmation }
@@ -274,29 +260,29 @@ async handlePermissions(userId: number): Promise<{ success: boolean; error?: str
           of({
             code: error.status ?? 0,
             error_code: 'FETCH_ERROR',
-            message: error.error?.message ?? 'Error al cambiar la contraseña'
-          })
-        )
-      )
+            message: error.error?.message ?? 'Error al cambiar la contraseña',
+          }),
+        ),
+      ),
     );
 
     if ('error_code' in response) {
       return {
         success: false,
-        error: response.message || 'No se pudo cambiar la contraseña'
+        error: response.message || 'No se pudo cambiar la contraseña',
       };
     }
 
     return {
       success: true,
-      message: response.message || 'Contraseña actualizada correctamente'
+      message: response.message || 'Contraseña actualizada correctamente',
     };
   }
 
   async handleOtp(
     otpCode: string,
     email: string,
-    userId: number
+    userId: number,
   ): Promise<{
     success: boolean;
     error?: string;
@@ -304,13 +290,9 @@ async handlePermissions(userId: number): Promise<{ success: boolean; error?: str
     route?: 'main' | 'login';
   }> {
     const isLogin = this.authService.getIsLogin() === 'true';
-    const url = isLogin
-      ? `${this.apiUrl}/validate-login-2fa`
-      : `${this.apiUrl}/validate-2fa`;
+    const url = isLogin ? `${this.apiUrl}/validate-login-2fa` : `${this.apiUrl}/validate-2fa`;
 
-    const body = isLogin
-      ? { otp: otpCode, user_id: userId }
-      : { otp: otpCode, email };
+    const body = isLogin ? { otp: otpCode, user_id: userId } : { otp: otpCode, email };
 
     const response = await firstValueFrom(
       this.http.post<ApiResponse<OtpResponse>>(url, body).pipe(
@@ -318,37 +300,28 @@ async handlePermissions(userId: number): Promise<{ success: boolean; error?: str
           of({
             code: error.status ?? 0,
             error_code: 'FETCH_ERROR',
-            message: error.error?.message ?? 'Error al validar OTP'
-          })
-          
-        )
-        
-      )
-      
+            message: error.error?.message ?? 'Error al validar OTP',
+          }),
+        ),
+      ),
     );
 
     if ('error_code' in response) {
       return {
         success: false,
-        error: response.message || 'No se pudo validar el código OTP'
+        error: response.message || 'No se pudo validar el código OTP',
       };
     }
-// PONLO AQUÍ
-
-
     if (isLogin) {
       const token = this.extractToken(response.data);
       const storedUserId = Number(this.authService.getUserId() || 0);
       const nameUsuario = this.authService.getName() || 'Usuario';
 
-
-       
-
       this.authService.login({
         token,
         userId: storedUserId,
         nameUsuario,
-        email
+        email,
       });
 
       this.saveAuthData(token, storedUserId, nameUsuario, email);
@@ -358,21 +331,21 @@ async handlePermissions(userId: number): Promise<{ success: boolean; error?: str
       if (!permissionsResponse.success) {
         return {
           success: false,
-          error: permissionsResponse.error
+          error: permissionsResponse.error,
         };
       }
 
       return {
         success: true,
         message: 'Validación de login realizada con éxito.',
-        route: 'main'
+        route: 'main',
       };
     }
 
     return {
       success: true,
       message: 'Validación correcta. Continúa con la recuperación.',
-      route: 'login'
+      route: 'login',
     };
   }
 

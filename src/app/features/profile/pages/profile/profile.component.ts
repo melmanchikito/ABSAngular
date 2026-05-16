@@ -22,6 +22,7 @@ import {
   CardDensity,
   FontSize,
   HeaderVariant,
+  SidebarPosition,
   SystemWallpaper
 } from '../../../../core/models/preferences.model';
 import { ProfileImageService } from '../../services/profile-image.service';
@@ -61,6 +62,11 @@ export class ProfileComponent implements OnInit, OnDestroy {
   readonly headerVariantOptions: readonly SelectOption<HeaderVariant>[] = [
     { value: 'classic', label: 'Clasico', description: 'Header actual con distribucion amplia.' },
     { value: 'floating', label: 'Compacto flotante', description: 'Barra redondeada con avatar central colapsable.' }
+  ];
+
+  readonly sidebarPositionOptions: readonly SelectOption<SidebarPosition>[] = [
+    { value: 'left', label: 'Izquierda', description: 'Menu lateral en la posicion actual.' },
+    { value: 'right', label: 'Derecha', description: 'Menu lateral anclado al borde derecho.' }
   ];
 
   readonly accentOptions: readonly SelectOption<AccentColor>[] = [
@@ -183,6 +189,10 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
   setHeaderVariant(headerVariant: HeaderVariant): void {
     this.update({ headerVariant });
+  }
+
+  setSidebarPosition(sidebarPosition: SidebarPosition): void {
+    this.update({ sidebarPosition });
   }
 
   setAnimationsDisabled(disabled: boolean): void {

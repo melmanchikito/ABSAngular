@@ -8,7 +8,7 @@ import { HeaderComponent } from '../header/header.component';
 import { AuthService } from '../../../core/services/auth.service';
 import { MotionService } from '../../../core/services/motion.service';
 import { PreferencesService } from '../../../core/services/preferences.service';
-import { HeaderVariant } from '../../../core/models/preferences.model';
+import { HeaderVariant, SidebarPosition } from '../../../core/models/preferences.model';
 import { SessionTimeoutAlertComponent } from '../../components/alert/session-timeout-alert/session-timeout-alert.component';
 
 @Component({
@@ -30,6 +30,7 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
   sidebarCollapsed = false;
   headerVisible = true;
   headerVariant: HeaderVariant = 'classic';
+  sidebarPosition: SidebarPosition = 'left';
   expandSidebarIcon = ChevronRight;
   collapseSidebarIcon = ChevronLeft;
   showHeaderIcon = Eye;
@@ -63,8 +64,10 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.headerVariant = this.preferencesService.snapshot.headerVariant;
+    this.sidebarPosition = this.preferencesService.snapshot.sidebarPosition;
     this.preferencesSubscription = this.preferencesService.preferences$.subscribe((preferences) => {
       this.headerVariant = preferences.headerVariant;
+      this.sidebarPosition = preferences.sidebarPosition;
     });
 
     this.loadHeaderPreference();
@@ -92,6 +95,14 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
 
   toggleSidebar(): void {
     this.sidebarCollapsed = !this.sidebarCollapsed;
+  }
+
+  get sidebarToggleIcon() {
+    if (this.sidebarPosition === 'right') {
+      return this.sidebarCollapsed ? ChevronLeft : ChevronRight;
+    }
+
+    return this.sidebarCollapsed ? this.expandSidebarIcon : this.collapseSidebarIcon;
   }
 
   toggleHeader(): void {

@@ -23,6 +23,13 @@
   overflow: hidden;
 }
 
+:host-context(.sidebar-right) .card {
+  border-right: 0;
+  border-left: 1px solid var(--abs-border-soft, var(--abs-border));
+  border-radius: 18px 0 0 18px;
+  box-shadow: -8px 0 24px rgba(15, 23, 42, 0.1);
+}
+
 .card_image {
   display: flex;
   align-items: center;
@@ -43,6 +50,11 @@
     transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
+:host-context(.sidebar-right) .card_image {
+  justify-content: flex-end;
+  padding: 1rem 1.05rem 0.9rem 4.9rem;
+}
+
 .logo {
   width: 150px;
   max-width: 100%;
@@ -51,6 +63,10 @@
   transition:
     opacity 0.22s ease,
     transform 0.24s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+:host-context(.sidebar-right) .logo {
+  transform-origin: right center;
 }
 
 .card_options {
@@ -178,15 +194,34 @@
 /* SUBMENÚ DESPLEGABLE */
 .submenu {
   width: calc(100% - 0.7rem);
-  margin: 0.16rem 0 0.55rem 0.7rem;
-  padding: 0.42rem;
+  max-height: 0;
+  margin: 0 0 0 0.7rem;
+  padding: 0 0.42rem;
   border-left: 2px solid color-mix(in srgb, var(--abs-primary) 74%, transparent);
   background: color-mix(in srgb, var(--abs-surface-soft) 82%, transparent);
   border: 1px solid color-mix(in srgb, var(--abs-border-soft, var(--abs-border)) 82%, transparent);
   border-left-color: color-mix(in srgb, var(--abs-primary) 74%, transparent);
   border-radius: 0 12px 12px 0;
   box-shadow: var(--abs-shadow-xs, 0 1px 4px rgba(0, 0, 0, 0.06));
-  animation: submenuIn 0.22s ease;
+  opacity: 0;
+  overflow: hidden;
+  pointer-events: none;
+  transform: translate3d(0, -8px, 0) scale(0.98);
+  transform-origin: top center;
+  transition:
+    max-height 380ms cubic-bezier(0.16, 1, 0.3, 1),
+    margin 380ms cubic-bezier(0.16, 1, 0.3, 1),
+    padding 380ms cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 300ms ease,
+    transform 380ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.submenu.open {
+  margin: 0.16rem 0 0.55rem 0.7rem;
+  padding: 0.42rem;
+  opacity: 1;
+  pointer-events: auto;
+  transform: translate3d(0, 0, 0) scale(1);
 }
 
 .submenu-item {
@@ -250,6 +285,12 @@
     inset -1px 0 0 rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(16px) saturate(138%);
   -webkit-backdrop-filter: blur(16px) saturate(138%);
+}
+
+:host-context([data-theme='liquid-glass']):host-context(.sidebar-right) .card {
+  box-shadow:
+    -14px 0 36px rgba(0, 0, 0, 0.22),
+    inset 1px 0 0 rgba(255, 255, 255, 0.1);
 }
 
 :host-context([data-theme='liquid-glass']) .card_image {
@@ -323,18 +364,6 @@
 }
 
 /* ANIMACIÓN */
-@keyframes submenuIn {
-  from {
-    opacity: 0;
-    transform: translateY(-4px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
 /* MODO COLAPSADO */
 .card.collapsed .card_image {
   justify-content: flex-start;
@@ -342,11 +371,20 @@
   padding: 0.9rem 0.82rem 0.9rem 0.35rem;
 }
 
+:host-context(.sidebar-right) .card.collapsed .card_image {
+  justify-content: flex-end;
+  padding: 0.9rem 0.35rem 0.9rem 0.82rem;
+}
+
 .card.collapsed .logo {
   width: 34px;
   opacity: 0;
   transform: scale(0.86);
   transform-origin: left center;
+}
+
+:host-context(.sidebar-right) .card.collapsed .logo {
+  transform-origin: right center;
 }
 
 .card.collapsed .card_options nav {
@@ -410,10 +448,24 @@
   display: none;
 }
 
+:host-context(.animations-disabled) .submenu {
+  transition-duration: 0ms;
+}
+
 .card.collapsed .separator {
   width: 46px;
   margin-left: auto;
   margin-right: calc((var(--sidebar-collapsed, 76px) - 46px) / 2);
+}
+
+:host-context(.sidebar-right) .card.collapsed .item {
+  margin-right: auto;
+  margin-left: calc((var(--sidebar-collapsed, 76px) - 46px) / 2);
+}
+
+:host-context(.sidebar-right) .card.collapsed .separator {
+  margin-right: auto;
+  margin-left: calc((var(--sidebar-collapsed, 76px) - 46px) / 2);
 }
 
 /* RESPONSIVE TABLET / CELULAR */
@@ -427,9 +479,19 @@
     box-shadow: var(--abs-shadow-sm, 0 4px 14px rgba(0, 0, 0, 0.08));
   }
 
+  :host-context(.sidebar-right) .card {
+    border-left: 0;
+    border-radius: 0;
+    box-shadow: var(--abs-shadow-sm, 0 4px 14px rgba(0, 0, 0, 0.08));
+  }
+
   .card_image {
     min-height: 64px;
     justify-content: center;
+    padding: 0.6rem;
+  }
+
+  :host-context(.sidebar-right) .card_image {
     padding: 0.6rem;
   }
 
@@ -537,6 +599,12 @@
     padding: 0.55rem 3.6rem 0.55rem 0.85rem;
   }
 
+  :host-context(.sidebar-right) .card_image,
+  :host-context(.sidebar-right) .card.collapsed .card_image {
+    justify-content: flex-end;
+    padding: 0.55rem 0.85rem 0.55rem 3.6rem;
+  }
+
   .logo,
   .card.collapsed .logo {
     width: 115px;
@@ -607,6 +675,11 @@
   .submenu {
     display: block;
     width: calc(100% - 1rem);
+    margin: 0 0 0 0.85rem;
+    padding: 0 0.35rem;
+  }
+
+  .submenu.open {
     margin: 0.1rem 0 0.45rem 0.85rem;
     padding: 0.35rem;
   }

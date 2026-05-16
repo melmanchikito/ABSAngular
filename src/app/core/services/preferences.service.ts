@@ -1,6 +1,14 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { AccentColor, AppPreferences, AppTheme, CardDensity, FontSize, HeaderVariant } from '../models/preferences.model';
+import {
+  AccentColor,
+  AppPreferences,
+  AppTheme,
+  CardDensity,
+  FontSize,
+  HeaderVariant,
+  SidebarPosition
+} from '../models/preferences.model';
 import {
   applyPreferencesToDocument,
   DEFAULT_PREFERENCES,
@@ -49,6 +57,10 @@ export class PreferencesService {
 
   setHeaderVariant(headerVariant: HeaderVariant): void {
     this.update({ headerVariant });
+  }
+
+  setSidebarPosition(sidebarPosition: SidebarPosition): void {
+    this.update({ sidebarPosition });
   }
 
   update(data: Partial<AppPreferences>): void {

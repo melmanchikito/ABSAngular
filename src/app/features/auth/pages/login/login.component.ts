@@ -9,7 +9,7 @@ import {
   LockKeyhole,
   LogIn,
   LucideAngularModule,
-  Mail
+  Mail,
 } from 'lucide-angular';
 import { AuthApiService } from '../../services/auth-api.service';
 import { NavigationService } from '../../../../core/services/navigation.service';
@@ -20,7 +20,7 @@ import { MotionService } from '../../../../core/services/motion.service';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, LucideAngularModule],
   templateUrl: './login.component.html',
-  styleUrl: './login.component.scss'
+  styleUrl: './login.component.scss',
 })
 export class LoginComponent {
   readonly alertIcon = CircleAlert;
@@ -42,11 +42,11 @@ export class LoginComponent {
     private readonly fb: FormBuilder,
     private readonly authApiService: AuthApiService,
     private readonly navigationService: NavigationService,
-    private readonly motionService: MotionService
+    private readonly motionService: MotionService,
   ) {
     this.form = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required]]
+      password: ['', [Validators.required]],
     });
   }
 
@@ -62,40 +62,35 @@ export class LoginComponent {
 
     const email = this.form.get('email')?.value ?? '';
     const password = this.form.get('password')?.value ?? '';
-try {
-  const result = await this.authApiService.handleLogin(email, password);
+    try {
+      const result = await this.authApiService.handleLogin(email, password);
 
-  console.log('RESULTADO LOGIN COMPONENT:', result);
+      if (!result.success) {
+        this.errorMessage = result.error || 'No se pudo iniciar sesión';
+        return;
+      }
 
-  if (!result.success) {
-    this.errorMessage = result.error || 'No se pudo iniciar sesión';
-    return;
-  }
+      if (result.message) {
+        this.infoMessage = result.message;
+      }
 
-  if (result.message) {
-    this.infoMessage = result.message;
-  }
+      if (result.route === 'new-password') {
+        await this.navigationService.goToNewPassword();
+        return;
+      }
 
-  if (result.route === 'new-password') {
-    console.log('NAVEGANDO A NEW PASSWORD');
-    await this.navigationService.goToNewPassword();
-    return;
-  }
+      if (result.route === 'two-factor') {
+        await this.navigationService.goToTwoFactor();
+        return;
+      }
 
-  if (result.route === 'two-factor') {
-    console.log('NAVEGANDO A TWO FACTOR');
-    await this.navigationService.goToTwoFactor();
-    return;
-  }
-
-  if (result.route === 'main') {
-    console.log('NAVEGANDO A MAIN');
-    await this.playLoginExitTransition();
-    await this.navigationService.goToMain();
-  }
-} finally {
-  this.isSubmitting = false;
-}
+      if (result.route === 'main') {
+        await this.playLoginExitTransition();
+        await this.navigationService.goToMain();
+      }
+    } finally {
+      this.isSubmitting = false;
+    }
   }
 
   togglePasswordVisibility(): void {

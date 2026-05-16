@@ -1,6 +1,7 @@
 export type AppTheme = 'light' | 'dark' | 'system' | 'liquid-glass';
 export type FontSize = 'small' | 'medium' | 'large' | 'extralarge';
 export type HeaderVariant = 'classic' | 'floating';
+export type SidebarPosition = 'left' | 'right';
 
 export type AccentColor =
   | 'absRed'
@@ -34,6 +35,7 @@ export interface AppPreferences {
 
   showAnimations: boolean;
   headerVariant: HeaderVariant;
+  sidebarPosition: SidebarPosition;
   compactSidebar: boolean;
   roundedCards: boolean;
   showProductImages: boolean;

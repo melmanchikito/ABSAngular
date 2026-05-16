@@ -317,6 +317,23 @@
 
     <div class="pref-row">
       <div>
+        <h3>PosiciÃ³n del menÃº lateral</h3>
+        <p>Elige en quÃ© borde se ancla el menÃº principal.</p>
+      </div>
+      <div class="chip-group" role="radiogroup" aria-label="Posicion del menu lateral">
+        <button
+          type="button"
+          *ngFor="let option of sidebarPositionOptions"
+          [class.active]="prefs.sidebarPosition === option.value"
+          (click)="setSidebarPosition(option.value)"
+        >
+          {{ option.label }}
+        </button>
+      </div>
+    </div>
+
+    <div class="pref-row">
+      <div>
         <h3>Imágenes de productos</h3>
         <p>Muestra miniaturas en listas y documentos.</p>
       </div>

@@ -39,6 +39,7 @@ interface HeaderNotification {
 }
 
 type HeaderPanel = 'notifications' | 'user' | null;
+type FloatingHeaderState = 'expanded' | 'collapsing' | 'collapsed' | 'expanding';
 
 @Component({
   selector: 'app-header',
@@ -64,6 +65,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   userIcon = UserRound;
   activePanel: HeaderPanel = null;
   floatingCollapsed = false;
+  floatingHeaderState: FloatingHeaderState = 'expanded';
 
   profileImageUrl: string | null = null;
 
@@ -92,7 +94,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
   ];
 
   private imageSubscription?: Subscription;
+  private floatingMotionTimer: number | null = null;
   private readonly floatingHeaderStorageKey = 'abs_floating_header_collapsed';
+  private readonly floatingCollapseDuration = 940;
+  private readonly floatingExpandDuration = 520;
 
   constructor(
     private readonly authApiService: AuthApiService,
@@ -118,6 +123,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     window.removeEventListener('online', this.updateNetworkStatus);
     window.removeEventListener('offline', this.updateNetworkStatus);
     this.imageSubscription?.unsubscribe();
+    this.clearFloatingMotionTimer();
   }
 
   get displayImage(): string {
@@ -126,6 +132,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   get unreadNotifications(): number {
     return this.notifications.filter((notification) => notification.unread).length;
+  }
+
+  get floatingHeaderHidden(): boolean {
+    return this.floatingHeaderState === 'collapsed' || this.floatingHeaderState === 'collapsing';
   }
 
   @HostListener('document:click')
@@ -145,9 +155,14 @@ export class HeaderComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.floatingCollapsed = !this.floatingCollapsed;
     this.activePanel = null;
-    localStorage.setItem(this.floatingHeaderStorageKey, String(this.floatingCollapsed));
+
+    if (this.floatingHeaderHidden) {
+      this.expandFloatingHeader();
+      return;
+    }
+
+    this.collapseFloatingHeader();
   }
 
   keepPanelOpen(event: MouseEvent): void {
@@ -201,5 +216,57 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   private loadFloatingHeaderState(): void {
     this.floatingCollapsed = localStorage.getItem(this.floatingHeaderStorageKey) === 'true';
+    this.floatingHeaderState = this.floatingCollapsed ? 'collapsed' : 'expanded';
+  }
+
+  private collapseFloatingHeader(): void {
+    localStorage.setItem(this.floatingHeaderStorageKey, 'true');
+    this.clearFloatingMotionTimer();
+
+    if (this.animationsDisabled()) {
+      this.floatingCollapsed = true;
+      this.floatingHeaderState = 'collapsed';
+      return;
+    }
+
+    this.floatingCollapsed = false;
+    this.floatingHeaderState = 'collapsing';
+    this.floatingMotionTimer = window.setTimeout(() => {
+      this.floatingCollapsed = true;
+      this.floatingHeaderState = 'collapsed';
+      this.floatingMotionTimer = null;
+    }, this.floatingCollapseDuration);
+  }
+
+  private expandFloatingHeader(): void {
+    localStorage.setItem(this.floatingHeaderStorageKey, 'false');
+    this.clearFloatingMotionTimer();
+
+    if (this.animationsDisabled()) {
+      this.floatingCollapsed = false;
+      this.floatingHeaderState = 'expanded';
+      return;
+    }
+
+    this.floatingCollapsed = false;
+    this.floatingHeaderState = 'expanding';
+    this.floatingMotionTimer = window.setTimeout(() => {
+      this.floatingHeaderState = 'expanded';
+      this.floatingMotionTimer = null;
+    }, this.floatingExpandDuration);
+  }
+
+  private animationsDisabled(): boolean {
+    const root = document.documentElement;
+    return root.classList.contains('animations-disabled') || root.getAttribute('data-animations') === 'disabled';
+  }
+
+  private clearFloatingMotionTimer(): void {
+    if (this.floatingMotionTimer === null) {
+      return;
+    }
+
+    window.clearTimeout(this.floatingMotionTimer);
+    this.floatingMotionTimer = null;
   }
 }

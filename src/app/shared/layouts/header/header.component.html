@@ -164,7 +164,11 @@
   <ng-template #floatingHeader>
     <div
       class="floating-shell"
-      [class.is-collapsed]="floatingCollapsed"
+      [class.is-expanded]="floatingHeaderState === 'expanded'"
+      [class.is-collapsing]="floatingHeaderState === 'collapsing'"
+      [class.is-collapsed]="floatingHeaderState === 'collapsed'"
+      [class.is-expanding]="floatingHeaderState === 'expanding'"
+      [class.is-hidden]="floatingHeaderHidden"
       (click)="keepPanelOpen($event)"
     >
       <div class="floating-wing floating-left">
@@ -195,8 +199,8 @@
       <button
         type="button"
         class="floating-avatar"
-        [attr.aria-label]="floatingCollapsed ? 'Mostrar header' : 'Ocultar header'"
-        [title]="floatingCollapsed ? 'Mostrar header' : 'Ocultar header'"
+        [attr.aria-label]="floatingHeaderHidden ? 'Mostrar header' : 'Ocultar header'"
+        [title]="floatingHeaderHidden ? 'Mostrar header' : 'Ocultar header'"
         (click)="toggleFloatingHeader($event)"
       >
         <img [src]="displayImage" alt="Foto de perfil" />
