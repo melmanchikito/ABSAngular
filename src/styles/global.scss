@@ -3,26 +3,56 @@
 @use './themes/dark.scss';
 @use './themes/liquid-glass.scss';
 :root {
-  --abs-font-size: 15px;
+  --abs-font-size: 14.5px;
+  --font-size-base: 1rem;
+  --font-size-xs: 0.76rem;
+  --font-size-sm: 0.88rem;
+  --font-size-md: 1rem;
+  --font-size-lg: 1.12rem;
+  --font-size-xl: 1.28rem;
+  --font-size-2xl: 1.55rem;
+  --line-height-tight: 1.2;
+  --line-height-base: 1.5;
+  --line-height-relaxed: 1.65;
   --abs-accent: #c72026;
   --abs-gold: #d4af37;
 }
 
 /* Tamaño de fuente */
 .font-small {
-  --abs-font-size: 13px;
+  --abs-font-size: 13.5px;
+  --font-size-xs: 0.74rem;
+  --font-size-sm: 0.86rem;
+  --font-size-lg: 1.08rem;
+  --font-size-xl: 1.2rem;
+  --font-size-2xl: 1.42rem;
 }
 
 .font-medium {
-  --abs-font-size: 15px;
+  --abs-font-size: 14.5px;
+  --font-size-xs: 0.76rem;
+  --font-size-sm: 0.88rem;
+  --font-size-lg: 1.12rem;
+  --font-size-xl: 1.28rem;
+  --font-size-2xl: 1.55rem;
 }
 
 .font-large {
-  --abs-font-size: 17px;
+  --abs-font-size: 18px;
+  --font-size-xs: 0.78rem;
+  --font-size-sm: 0.9rem;
+  --font-size-lg: 1.15rem;
+  --font-size-xl: 1.34rem;
+  --font-size-2xl: 1.68rem;
 }
 
 .font-extralarge {
-  --abs-font-size: 19px;
+  --abs-font-size: 20px;
+  --font-size-xs: 0.8rem;
+  --font-size-sm: 0.92rem;
+  --font-size-lg: 1.2rem;
+  --font-size-xl: 1.42rem;
+  --font-size-2xl: 1.82rem;
 }
 
 /* Paletas ABS */
@@ -76,6 +106,7 @@ body {
   min-height: 100%;
   font-family: v.$font-family-base;
   font-size: var(--abs-font-size);
+  line-height: var(--line-height-base);
   background: var(--abs-bg);
   color: var(--abs-text);
 }
@@ -94,6 +125,25 @@ input,
 select,
 textarea {
   font-family: inherit;
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-base);
+}
+
+button,
+label,
+table,
+.page-shell,
+.profile-page,
+.modal,
+.app-panel,
+.content-card,
+.app-grid-card,
+.table-card,
+.dashboard-panel,
+.home-page,
+.sidebar,
+.header {
+  font-size: var(--font-size-base);
 }
 
 html,

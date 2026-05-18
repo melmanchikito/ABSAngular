@@ -640,13 +640,16 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     const warning = '#f59e0b';
     const info = '#2563eb';
     const t = (key: string) => this.translateService.instant(key) as string;
+    const rootFontSize = this.getRootFontSize();
+    const chartFontSize = Math.round(rootFontSize * 0.82);
 
     return {
       systemTrend: {
         ...chartMotion,
         color: [primary, info, success],
+        textStyle: { fontSize: chartFontSize },
         tooltip: { trigger: 'axis' },
-        legend: { top: 0, textStyle: { color: muted } },
+        legend: { top: 0, textStyle: { color: muted, fontSize: chartFontSize } },
         grid: { left: 32, right: 16, top: 48, bottom: 28 },
         xAxis: {
           type: 'category',
@@ -698,8 +701,9 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
       ticketFlow: {
         ...chartMotion,
         color: [primary, success, warning],
+        textStyle: { fontSize: chartFontSize },
         tooltip: { trigger: 'axis' },
-        legend: { top: 0, textStyle: { color: muted } },
+        legend: { top: 0, textStyle: { color: muted, fontSize: chartFontSize } },
         grid: { left: 32, right: 18, top: 48, bottom: 30 },
         xAxis: {
           type: 'category',
@@ -727,12 +731,13 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
       moduleShare: {
         ...chartMotion,
         color: [primary, info, success, warning, '#7c3aed', '#475569'],
+        textStyle: { fontSize: chartFontSize },
         tooltip: { trigger: 'item' },
         legend: {
           orient: 'vertical',
           right: 8,
           top: 'center',
-          textStyle: { color: muted }
+          textStyle: { color: muted, fontSize: chartFontSize }
         },
         series: [
           {
@@ -756,6 +761,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
       },
       healthGauge: {
         ...chartMotion,
+        textStyle: { fontSize: chartFontSize },
         series: [
           {
             type: 'gauge',
@@ -778,15 +784,20 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
               valueAnimation: animationsEnabled,
               formatter: '{value}%',
               color: text,
-              fontSize: 28,
+              fontSize: Math.round(rootFontSize * 1.75),
               fontWeight: 900,
               offsetCenter: [0, '48%']
             },
-            title: { color: muted, offsetCenter: [0, '76%'], fontSize: 12 },
+            title: { color: muted, offsetCenter: [0, '76%'], fontSize: chartFontSize },
             data: [{ value: 94, name: t('HOME.STATUS_OPERATIONAL') }]
           }
         ]
       }
     };
+  }
+
+  private getRootFontSize(): number {
+    const parsed = Number.parseFloat(getComputedStyle(document.documentElement).fontSize);
+    return Number.isFinite(parsed) ? parsed : 16;
   }
 }
