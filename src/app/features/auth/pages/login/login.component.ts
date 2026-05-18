@@ -14,11 +14,12 @@ import {
 import { AuthApiService } from '../../services/auth-api.service';
 import { NavigationService } from '../../../../core/services/navigation.service';
 import { MotionService } from '../../../../core/services/motion.service';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, LucideAngularModule],
+  imports: [CommonModule, ReactiveFormsModule, LucideAngularModule, TranslatePipe],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
 })

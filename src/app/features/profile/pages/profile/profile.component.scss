@@ -22,6 +22,26 @@
   flex-wrap: wrap;
 }
 
+.profile-title-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.profile-title-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  min-width: 42px;
+  border-radius: 14px;
+  border: 1.5px solid var(--abs-border);
+  background: var(--abs-surface);
+  color: var(--abs-primary);
+}
+
 .page-header h1 {
   font-size: clamp(1.35rem, 2vw, 1.75rem);
   margin: 0;
@@ -32,6 +52,29 @@
 .page-header p {
   margin: 0.25rem 0 0;
   color: var(--abs-text-muted);
+}
+
+.page-breadcrumb {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.35rem;
+  color: var(--abs-text-muted);
+  font-size: 0.82rem;
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+.page-breadcrumb span:not(.current)::after {
+  content: '/';
+  margin-left: 0.4rem;
+  color: color-mix(in srgb, var(--abs-text-muted) 48%, transparent);
+  font-weight: 700;
+}
+
+.page-breadcrumb .current {
+  color: var(--abs-primary);
 }
 
 .header-actions {

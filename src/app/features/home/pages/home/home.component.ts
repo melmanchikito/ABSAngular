@@ -38,6 +38,7 @@ import { LabelLayout } from 'echarts/features';
 import { CanvasRenderer } from 'echarts/renderers';
 import { AuthService } from '../../../../core/services/auth.service';
 import { PreferencesService } from '../../../../core/services/preferences.service';
+import { TranslatePipe } from '@ngx-translate/core';
 
 type ChartKey = 'systemTrend' | 'ticketFlow' | 'moduleShare' | 'healthGauge';
 type DashboardWidgetType = 'chart' | 'gauge' | 'modules' | 'activity' | 'quick';
@@ -111,7 +112,8 @@ echarts.use([
     LucideAngularModule,
     NgxEchartsDirective,
     ProgressBarModule,
-    TagModule
+    TagModule,
+    TranslatePipe
   ],
   providers: [provideEchartsCore({ echarts })],
   templateUrl: './home.component.html',

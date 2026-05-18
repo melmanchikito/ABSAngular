@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { TranslatePipe } from '@ngx-translate/core';
 
 interface PaginationItem {
   type: 'page' | 'ellipsis';
@@ -10,7 +11,7 @@ interface PaginationItem {
 @Component({
   selector: 'app-data-grid-pagination',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, TranslatePipe],
   templateUrl: './data-grid-pagination.component.html',
   styleUrl: './data-grid-pagination.component.scss'
 })

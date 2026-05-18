@@ -18,6 +18,7 @@ import { NavigationService } from '../../../core/services/navigation.service';
 import { PreferencesService } from '../../../core/services/preferences.service';
 import { AppTheme } from '../../../core/models/preferences.model';
 import { AuthApiService } from '../../../features/auth/services/auth-api.service';
+import { TranslatePipe } from '@ngx-translate/core';
 import {
   SystemAreaKey,
   SystemAreaSubmoduleKey,
@@ -27,12 +28,14 @@ type SidebarIcon = typeof CircleDollarSign;
 
 interface SidebarChild {
   label: string;
+  translationKey: string;
   areaKey?: SystemAreaKey;
   submoduleKey?: SystemAreaSubmoduleKey;
 }
 
 interface SidebarArea {
   name: string;
+  translationKey: string;
   icon: SidebarIcon;
   areaKey?: SystemAreaKey;
   children: SidebarChild[];
@@ -41,7 +44,7 @@ interface SidebarArea {
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [CommonModule, LucideAngularModule],
+  imports: [CommonModule, LucideAngularModule, TranslatePipe],
   templateUrl: './sidebar.component.html',
   styleUrl: './sidebar.component.scss',
 })
@@ -68,47 +71,53 @@ export class SidebarComponent {
   readonly areas: SidebarArea[] = [
     {
       name: 'Finanzas',
+      translationKey: 'SIDEBAR.FINANCE',
       icon: CircleDollarSign,
       areaKey: 'finanzas',
       children: [
-        { label: 'Contable y SRI', areaKey: 'finanzas', submoduleKey: 'contable-sri' },
-        { label: 'Caja y Tesoreria', areaKey: 'finanzas', submoduleKey: 'caja-tesoreria' },
+        { label: 'Contable y SRI', translationKey: 'SIDEBAR.ACCOUNTING_SRI', areaKey: 'finanzas', submoduleKey: 'contable-sri' },
+        { label: 'Caja y Tesoreria', translationKey: 'SIDEBAR.CASH_TREASURY', areaKey: 'finanzas', submoduleKey: 'caja-tesoreria' },
       ],
     },
     {
       name: 'RRHH',
+      translationKey: 'SIDEBAR.HR',
       icon: Users,
       areaKey: 'rrhh',
       children: [
-        { label: 'Empleado', areaKey: 'rrhh', submoduleKey: 'empleado' },
-        { label: 'Proveedores', areaKey: 'rrhh', submoduleKey: 'proveedores' },
-        { label: 'Administracion', areaKey: 'rrhh', submoduleKey: 'administracion' },
+        { label: 'Empleado', translationKey: 'SIDEBAR.EMPLOYEE', areaKey: 'rrhh', submoduleKey: 'empleado' },
+        { label: 'Proveedores', translationKey: 'SIDEBAR.SUPPLIERS', areaKey: 'rrhh', submoduleKey: 'proveedores' },
+        { label: 'Administracion', translationKey: 'SIDEBAR.ADMINISTRATION', areaKey: 'rrhh', submoduleKey: 'administracion' },
       ],
     },
     {
       name: 'Clientes',
+      translationKey: 'SIDEBAR.CLIENTS',
       icon: Users,
       areaKey: 'clientes',
       children: [
-        { label: 'Marketing', areaKey: 'clientes', submoduleKey: 'marketing' },
-        { label: 'Cobranza', areaKey: 'clientes', submoduleKey: 'cobranza' },
-        { label: 'Codigo IMP', areaKey: 'clientes', submoduleKey: 'codigo-imp' },
-        { label: 'Legal', areaKey: 'clientes', submoduleKey: 'legal' },
-        { label: 'Comercial', areaKey: 'clientes', submoduleKey: 'comercial' },
+        { label: 'Marketing', translationKey: 'SIDEBAR.MARKETING', areaKey: 'clientes', submoduleKey: 'marketing' },
+        { label: 'Cobranza', translationKey: 'SIDEBAR.COLLECTIONS', areaKey: 'clientes', submoduleKey: 'cobranza' },
+        { label: 'Codigo IMP', translationKey: 'SIDEBAR.IMP_CODE', areaKey: 'clientes', submoduleKey: 'codigo-imp' },
+        { label: 'Legal', translationKey: 'SIDEBAR.LEGAL', areaKey: 'clientes', submoduleKey: 'legal' },
+        { label: 'Comercial', translationKey: 'SIDEBAR.COMMERCIAL', areaKey: 'clientes', submoduleKey: 'comercial' },
       ],
     },
     {
       name: 'Producto',
+      translationKey: 'SIDEBAR.PRODUCT',
       icon: Package,
       areaKey: 'producto',
       children: [
         {
           label: 'Produccion y Distribucion',
+          translationKey: 'SIDEBAR.PRODUCTION_DISTRIBUTION',
           areaKey: 'producto',
           submoduleKey: 'produccion-distribucion',
         },
         {
           label: 'Compras e Importaciones',
+          translationKey: 'SIDEBAR.PURCHASES_IMPORTS',
           areaKey: 'producto',
           submoduleKey: 'compras-importaciones',
         },
@@ -116,18 +125,20 @@ export class SidebarComponent {
     },
     {
       name: 'Analisis',
+      translationKey: 'SIDEBAR.ANALYSIS',
       icon: ChartColumn,
       areaKey: 'analisis',
-      children: [{ label: 'AM y R', areaKey: 'analisis', submoduleKey: 'am-r' }],
+      children: [{ label: 'AM y R', translationKey: 'SIDEBAR.AM_R', areaKey: 'analisis', submoduleKey: 'am-r' }],
     },
     {
       name: 'Sistema',
+      translationKey: 'SIDEBAR.SYSTEM',
       icon: MonitorCog,
       areaKey: 'sistema',
       children: [
-        { label: 'Configuracion', areaKey: 'sistema', submoduleKey: 'configuracion' },
-        { label: 'Helpdesk', areaKey: 'sistema', submoduleKey: 'help-desk' },
-        { label: 'Developer', areaKey: 'sistema', submoduleKey: 'developer' },
+        { label: 'Configuracion', translationKey: 'SIDEBAR.CONFIGURATION', areaKey: 'sistema', submoduleKey: 'configuracion' },
+        { label: 'Helpdesk', translationKey: 'SIDEBAR.HELPDESK', areaKey: 'sistema', submoduleKey: 'help-desk' },
+        { label: 'Developer', translationKey: 'SIDEBAR.DEVELOPER', areaKey: 'sistema', submoduleKey: 'developer' },
       ],
     },
   ];

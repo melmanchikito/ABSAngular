@@ -16,7 +16,7 @@
 
         <input
           type="text"
-          placeholder="Que estas buscando?"
+          [placeholder]="'HEADER.SEARCH_PLACEHOLDER' | translate"
         />
       </div>
     </div>
@@ -27,8 +27,8 @@
           <button
             type="button"
             class="tray-btn"
-            title="Notificaciones"
-            aria-label="Notificaciones"
+            [title]="'HEADER.NOTIFICATIONS' | translate"
+            [attr.aria-label]="'HEADER.NOTIFICATIONS' | translate"
             [class.active]="activePanel === 'notifications'"
             (click)="togglePanel('notifications', $event)"
           >
@@ -43,8 +43,8 @@
           >
             <header class="panel-head">
               <div>
-                <h3>Notificaciones</h3>
-                <span>{{ unreadNotifications }} nuevas</span>
+                <h3>{{ 'HEADER.NOTIFICATIONS' | translate }}</h3>
+                <span>{{ 'HEADER.NEW_NOTIFICATIONS' | translate:{ count: unreadNotifications } }}</span>
               </div>
             </header>
 
@@ -66,10 +66,10 @@
             </div>
 
             <ng-template #emptyNotifications>
-              <div class="panel-empty">No tienes notificaciones.</div>
+              <div class="panel-empty">{{ 'HEADER.EMPTY_NOTIFICATIONS' | translate }}</div>
             </ng-template>
 
-            <button type="button" class="panel-action">Ver todas</button>
+            <button type="button" class="panel-action">{{ 'HEADER.VIEW_ALL' | translate }}</button>
           </section>
         </div>
 
@@ -77,8 +77,8 @@
           <button
             type="button"
             class="tray-btn home-btn"
-            title="Home"
-            aria-label="Ir al home"
+            [title]="'COMMON.HOME' | translate"
+            [attr.aria-label]="'HEADER.GO_HOME' | translate"
             (click)="goToHome($event)"
           >
             <lucide-angular [img]="homeIcon" [size]="19" [strokeWidth]="2.35"></lucide-angular>
@@ -91,7 +91,7 @@
           type="button"
           class="user-box"
           [class.active]="activePanel === 'user'"
-          aria-label="Menu de usuario"
+          [attr.aria-label]="'HEADER.USER_MENU' | translate"
           (click)="togglePanel('user', $event)"
         >
           <img
@@ -102,7 +102,7 @@
 
           <div class="card_text">
             <p class="username">
-              {{ username || 'Usuario' }}
+              {{ username || ('COMMON.USER' | translate) }}
             </p>
           </div>
 
@@ -121,26 +121,26 @@
           (click)="keepPanelOpen($event)"
         >
           <header class="user-menu-head">
-            <img [src]="displayImage" alt="Foto de perfil" class="menu-image" />
+            <img [src]="displayImage" [alt]="'HEADER.PROFILE_PHOTO' | translate" class="menu-image" />
             <div>
-              <strong>{{ username || 'Usuario' }}</strong>
-              <small>Cuenta ABS</small>
+              <strong>{{ username || ('COMMON.USER' | translate) }}</strong>
+              <small>{{ 'HEADER.ABS_ACCOUNT' | translate }}</small>
             </div>
           </header>
 
           <button type="button" class="user-menu-item" (click)="goToProfile($event)">
             <lucide-angular [img]="userIcon" [size]="17" [strokeWidth]="2.3"></lucide-angular>
-            Preferencias
+            {{ 'COMMON.PREFERENCES' | translate }}
           </button>
 
           <button type="button" class="user-menu-item" (click)="goToMail($event)">
             <lucide-angular [img]="mailIcon" [size]="17" [strokeWidth]="2.3"></lucide-angular>
-            Correo
+            {{ 'COMMON.MAIL' | translate }}
           </button>
 
           <button type="button" class="user-menu-item danger" (click)="logout($event)">
             <lucide-angular [img]="logoutIcon" [size]="17" [strokeWidth]="2.3"></lucide-angular>
-            Cerrar sesion
+            {{ 'COMMON.LOGOUT' | translate }}
           </button>
         </section>
       </div>
@@ -148,7 +148,7 @@
       <div
         class="network-box"
         [class.offline]="!isOnline"
-        [title]="networkType"
+        [title]="(isOnline ? 'HEADER.ONLINE' : 'HEADER.OFFLINE') | translate"
       >
         <lucide-angular
           class="network-icon"
@@ -179,13 +179,13 @@
             [size]="17"
             [strokeWidth]="2.3"
           ></lucide-angular>
-          <input type="text" placeholder="Buscar en ABS" />
+          <input type="text" [placeholder]="'HEADER.FLOATING_SEARCH_PLACEHOLDER' | translate" />
         </label>
 
         <div
           class="network-box floating-icon"
           [class.offline]="!isOnline"
-          [title]="networkType"
+          [title]="(isOnline ? 'HEADER.ONLINE' : 'HEADER.OFFLINE') | translate"
         >
           <lucide-angular
             class="network-icon"
@@ -199,11 +199,11 @@
       <button
         type="button"
         class="floating-avatar"
-        [attr.aria-label]="floatingHeaderHidden ? 'Mostrar header' : 'Ocultar header'"
-        [title]="floatingHeaderHidden ? 'Mostrar header' : 'Ocultar header'"
+        [attr.aria-label]="(floatingHeaderHidden ? 'HEADER.SHOW_HEADER' : 'HEADER.HIDE_HEADER') | translate"
+        [title]="(floatingHeaderHidden ? 'HEADER.SHOW_HEADER' : 'HEADER.HIDE_HEADER') | translate"
         (click)="toggleFloatingHeader($event)"
       >
-        <img [src]="displayImage" alt="Foto de perfil" />
+        <img [src]="displayImage" [alt]="'HEADER.PROFILE_PHOTO' | translate" />
       </button>
 
       <div class="floating-wing floating-right">
@@ -212,8 +212,8 @@
             <button
               type="button"
               class="tray-btn"
-              title="Notificaciones"
-              aria-label="Notificaciones"
+              [title]="'HEADER.NOTIFICATIONS' | translate"
+              [attr.aria-label]="'HEADER.NOTIFICATIONS' | translate"
               [class.active]="activePanel === 'notifications'"
               (click)="togglePanel('notifications', $event)"
             >
@@ -228,8 +228,8 @@
             >
               <header class="panel-head">
                 <div>
-                  <h3>Notificaciones</h3>
-                  <span>{{ unreadNotifications }} nuevas</span>
+                  <h3>{{ 'HEADER.NOTIFICATIONS' | translate }}</h3>
+                  <span>{{ 'HEADER.NEW_NOTIFICATIONS' | translate:{ count: unreadNotifications } }}</span>
                 </div>
               </header>
 
@@ -251,18 +251,18 @@
               </div>
 
               <ng-template #emptyFloatingNotifications>
-                <div class="panel-empty">No tienes notificaciones.</div>
+                <div class="panel-empty">{{ 'HEADER.EMPTY_NOTIFICATIONS' | translate }}</div>
               </ng-template>
 
-              <button type="button" class="panel-action">Ver todas</button>
+              <button type="button" class="panel-action">{{ 'HEADER.VIEW_ALL' | translate }}</button>
             </section>
           </div>
 
           <button
             type="button"
             class="tray-btn home-btn"
-            title="Home"
-            aria-label="Ir al home"
+            [title]="'COMMON.HOME' | translate"
+            [attr.aria-label]="'HEADER.GO_HOME' | translate"
             (click)="goToHome($event)"
           >
             <lucide-angular [img]="homeIcon" [size]="18" [strokeWidth]="2.35"></lucide-angular>
@@ -274,10 +274,10 @@
             type="button"
             class="user-box floating-user"
             [class.active]="activePanel === 'user'"
-            aria-label="Menu de usuario"
+            [attr.aria-label]="'HEADER.USER_MENU' | translate"
             (click)="togglePanel('user', $event)"
           >
-            <span class="floating-username">{{ username || 'Usuario' }}</span>
+            <span class="floating-username">{{ username || ('COMMON.USER' | translate) }}</span>
             <lucide-angular
               class="user-chevron"
               [class.open]="activePanel === 'user'"
@@ -293,26 +293,26 @@
             (click)="keepPanelOpen($event)"
           >
             <header class="user-menu-head">
-              <img [src]="displayImage" alt="Foto de perfil" class="menu-image" />
+              <img [src]="displayImage" [alt]="'HEADER.PROFILE_PHOTO' | translate" class="menu-image" />
               <div>
-                <strong>{{ username || 'Usuario' }}</strong>
-                <small>Cuenta ABS</small>
+                <strong>{{ username || ('COMMON.USER' | translate) }}</strong>
+                <small>{{ 'HEADER.ABS_ACCOUNT' | translate }}</small>
               </div>
             </header>
 
             <button type="button" class="user-menu-item" (click)="goToProfile($event)">
               <lucide-angular [img]="userIcon" [size]="17" [strokeWidth]="2.3"></lucide-angular>
-              Preferencias
+              {{ 'COMMON.PREFERENCES' | translate }}
             </button>
 
             <button type="button" class="user-menu-item" (click)="goToMail($event)">
               <lucide-angular [img]="mailIcon" [size]="17" [strokeWidth]="2.3"></lucide-angular>
-              Correo
+              {{ 'COMMON.MAIL' | translate }}
             </button>
 
             <button type="button" class="user-menu-item danger" (click)="logout($event)">
               <lucide-angular [img]="logoutIcon" [size]="17" [strokeWidth]="2.3"></lucide-angular>
-              Cerrar sesion
+              {{ 'COMMON.LOGOUT' | translate }}
             </button>
           </section>
         </div>

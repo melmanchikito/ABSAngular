@@ -140,15 +140,15 @@
                   <strong>{{ product.name }}</strong>
                 </div>
               </td>
-              <td>{{ product.short_name || 'Sin registro' }}</td>
+              <td>{{ product.short_name || '-' }}</td>
               <td>
-                <span class="description-text">{{ product.description || 'Sin registro' }}</span>
+                <span class="description-text">{{ product.description || '-' }}</span>
               </td>
               <td>{{ formatAmount(product.cost_price) }}</td>
               <td>{{ formatAmount(product.price_mayor) }}</td>
               <td>{{ formatAmount(product.price_public) }}</td>
-              <td>{{ product.oem || 'Sin registro' }}</td>
-              <td>{{ product.currency || 'Sin registro' }}</td>
+              <td>{{ product.oem || '-' }}</td>
+              <td>{{ product.currency || '-' }}</td>
               <td>
                 <app-status-badge
                   [label]="getStatusLabel(product)"
@@ -202,7 +202,7 @@
           <div>
             <span class="eyebrow">Detalle producto</span>
             <h2>{{ product.name }}</h2>
-            <p>{{ product.description || 'Sin registro' }}</p>
+            <p>{{ product.description || '-' }}</p>
           </div>
         </div>
 

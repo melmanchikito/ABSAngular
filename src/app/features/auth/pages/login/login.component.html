@@ -4,8 +4,8 @@
       <div class="card-header">
         <img class="card-logo" src="assets/auth/LogoAR.svg" alt="Logo ABS" />
         <div>
-          <span class="eyebrow">Acceso seguro</span>
-          <h2 id="login-title">Iniciar sesion</h2>
+          <span class="eyebrow">{{ 'LOGIN.SECURE_ACCESS' | translate }}</span>
+          <h2 id="login-title">{{ 'LOGIN.TITLE' | translate }}</h2>
         </div>
       </div>
 
@@ -21,7 +21,7 @@
         </div>
 
         <label class="field" for="email">
-          <span>Usuario</span>
+          <span>{{ 'LOGIN.USER' | translate }}</span>
           <div class="input-wrap">
             <lucide-angular class="field-icon" [img]="mailIcon" [size]="18" [strokeWidth]="2.2"></lucide-angular>
             <input
@@ -35,13 +35,13 @@
         </label>
 
         <label class="field" for="password">
-          <span>Contrasena</span>
+          <span>{{ 'LOGIN.PASSWORD' | translate }}</span>
           <div class="input-wrap">
             <lucide-angular class="field-icon" [img]="lockIcon" [size]="18" [strokeWidth]="2.2"></lucide-angular>
             <input
               id="password"
               [type]="showPassword ? 'text' : 'password'"
-              placeholder="Ingresa tu contrasena"
+              [placeholder]="'LOGIN.PASSWORD_PLACEHOLDER' | translate"
               autocomplete="current-password"
               formControlName="password"
               (copy)="$event.preventDefault()"
@@ -51,7 +51,7 @@
               class="icon-button"
               type="button"
               (click)="togglePasswordVisibility()"
-              [attr.aria-label]="showPassword ? 'Ocultar contrasena' : 'Mostrar contrasena'"
+              [attr.aria-label]="(showPassword ? 'LOGIN.HIDE_PASSWORD' : 'LOGIN.SHOW_PASSWORD') | translate"
             >
               <lucide-angular
                 [img]="showPassword ? eyeOffIcon : eyeIcon"
@@ -63,12 +63,12 @@
         </label>
 
         <div class="form-row">
-          <a href="#" (click)="goToRecoverPassword($event)">Olvide mi contrasena</a>
+          <a href="#" (click)="goToRecoverPassword($event)">{{ 'LOGIN.FORGOT_PASSWORD' | translate }}</a>
         </div>
 
         <button class="primary-action" type="submit" [disabled]="isSubmitting">
           <lucide-angular [img]="loginIcon" [size]="18" [strokeWidth]="2.4"></lucide-angular>
-          {{ isSubmitting ? 'Ingresando...' : 'Iniciar sesion' }}
+          {{ (isSubmitting ? 'LOGIN.SUBMITTING' : 'LOGIN.SUBMIT') | translate }}
         </button>
       </form>
     </section>
@@ -81,13 +81,13 @@
       </div>
 
       <div class="brand-copy">
-        <span class="brand-kicker">Sistema ERP</span>
+        <span class="brand-kicker">{{ 'LOGIN.BRAND_KICKER' | translate }}</span>
         <h1>ABS</h1>
-        <h2>Sistema de Gestion Empresarial</h2>
+        <h2>{{ 'LOGIN.BRAND_TITLE' | translate }}</h2>
         <p>
-          Administra modulos, procesos y operaciones desde una plataforma integrada.
+          {{ 'LOGIN.BRAND_TEXT' | translate }}
         </p>
-        <span class="brand-badge">Conoce mas</span>
+        <span class="brand-badge">{{ 'LOGIN.LEARN_MORE' | translate }}</span>
       </div>
     </aside>
   </section>

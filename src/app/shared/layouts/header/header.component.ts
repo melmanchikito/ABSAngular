@@ -21,6 +21,7 @@ import { ProfileImageService } from '../../../features/profile/services/profile-
 import { NavigationService } from '../../../core/services/navigation.service';
 import { AuthApiService } from '../../../features/auth/services/auth-api.service';
 import { HeaderVariant } from '../../../core/models/preferences.model';
+import { TranslatePipe } from '@ngx-translate/core';
 
 interface BrowserNetworkInformation {
   type?: string;
@@ -44,7 +45,7 @@ type FloatingHeaderState = 'expanded' | 'collapsing' | 'collapsed' | 'expanding'
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [CommonModule, LucideAngularModule],
+  imports: [CommonModule, LucideAngularModule, TranslatePipe],
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss']
 })

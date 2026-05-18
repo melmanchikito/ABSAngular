@@ -11,13 +11,15 @@ import {
   RefreshCcw,
   ShieldCheck,
   ShoppingCart,
-  Upload
+  Upload,
+  UserCircle
 } from 'lucide-angular';
 import { Subscription } from 'rxjs';
 import { PreferencesService } from '../../../../core/services/preferences.service';
 import { AuthService } from '../../../../core/services/auth.service';
 import {
   AccentColor,
+  AppLanguage,
   AppTheme,
   CardDensity,
   FontSize,
@@ -26,6 +28,8 @@ import {
   SystemWallpaper
 } from '../../../../core/models/preferences.model';
 import { ProfileImageService } from '../../services/profile-image.service';
+import { LanguageService } from '../../../../core/services/language.service';
+import { TranslatePipe } from '@ngx-translate/core';
 
 interface SelectOption<T extends string> {
   value: T;
@@ -37,7 +41,7 @@ interface SelectOption<T extends string> {
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule, FormsModule, LucideAngularModule],
+  imports: [CommonModule, FormsModule, LucideAngularModule, TranslatePipe],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.scss'
 })
@@ -51,6 +55,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
   readonly appearanceIcon = Palette;
   readonly ordersIcon = ShoppingCart;
   readonly uploadIcon = Upload;
+  readonly profileIcon = UserCircle;
 
   readonly themeOptions: readonly SelectOption<AppTheme>[] = [
     { value: 'light', label: 'Claro', description: 'Interfaz limpia para espacios iluminados.' },
@@ -86,6 +91,11 @@ export class ProfileComponent implements OnInit, OnDestroy {
     { value: 'lockScreen', label: 'Lock screen', asset: 'assets/auth/lockScreen.webp' }
   ];
 
+  readonly languageOptions: readonly SelectOption<AppLanguage>[] = [
+    { value: 'es', label: 'LANGUAGES.ES', description: 'PROFILE.LANGUAGE_DESCRIPTION' },
+    { value: 'en', label: 'LANGUAGES.EN', description: 'PROFILE.LANGUAGE_DESCRIPTION' }
+  ];
+
   savedBadge = false;
   showResetConfirm = false;
 
@@ -101,7 +111,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
   constructor(
     public readonly preferencesService: PreferencesService,
     private readonly authService: AuthService,
-    private readonly profileImageService: ProfileImageService
+    private readonly profileImageService: ProfileImageService,
+    private readonly languageService: LanguageService
   ) {}
 
   ngOnInit(): void {
@@ -165,6 +176,11 @@ export class ProfileComponent implements OnInit, OnDestroy {
       wallpaperEnabled,
       wallpaper: wallpaperEnabled && this.prefs.wallpaper === 'none' ? 'arwallpaper' : this.prefs.wallpaper
     });
+  }
+
+  setLanguage(language: AppLanguage): void {
+    this.languageService.setLanguage(language);
+    this.flashSaved();
   }
 
   get wallpaperPreviewLabel(): string {

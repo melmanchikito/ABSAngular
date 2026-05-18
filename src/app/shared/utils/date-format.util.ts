@@ -1,17 +1,17 @@
 export function formatDateOnly(value: string | Date | null | undefined): string {
   const formattedValue = formatDateTime(value);
 
-  return formattedValue === 'Sin registro' ? formattedValue : formattedValue.slice(0, 10);
+  return formattedValue === '-' ? formattedValue : formattedValue.slice(0, 10);
 }
 
 export function formatDateTime(value: string | Date | null | undefined): string {
-  if (!value || value === 'Sin registro') {
-    return 'Sin registro';
+  if (!value || value === '-') {
+    return '-';
   }
 
   if (value instanceof Date) {
     if (Number.isNaN(value.getTime())) {
-      return 'Sin registro';
+      return '-';
     }
 
     const yyyy = value.getFullYear();
@@ -27,7 +27,7 @@ export function formatDateTime(value: string | Date | null | undefined): string 
   const normalizedValue = String(value).trim();
 
   if (!normalizedValue) {
-    return 'Sin registro';
+    return '-';
   }
 
   const cleanValue = normalizedValue.replace('T', ' ').replace(/Z$/i, '');
@@ -41,7 +41,7 @@ export function formatDateTime(value: string | Date | null | undefined): string 
   const date = new Date(normalizedValue);
 
   if (Number.isNaN(date.getTime())) {
-    return 'Sin registro';
+    return '-';
   }
 
   return formatDateTime(date);

@@ -329,11 +329,11 @@ export class LocationMaintenanceComponent implements OnInit, AfterViewInit, OnDe
 
   formatTime(value?: string | null): string {
     if (!value) {
-      return 'Sin registro';
+      return '-';
     }
 
     const timePart = value.split(' ')[1];
-    return timePart || 'Sin registro';
+    return timePart || '-';
   }
 
   trackByLocationId(_: number, location: LocationItem): number {
@@ -369,7 +369,7 @@ export class LocationMaintenanceComponent implements OnInit, AfterViewInit, OnDe
       return formatDateTime(value as string | null | undefined);
     }
 
-    return value === null || value === undefined || value === '' ? 'Sin registro' : String(value);
+    return value === null || value === undefined || value === '' ? '-' : String(value);
   }
 
   formatPoint(point: MapPoint | null): string {

@@ -1,9 +1,16 @@
 <section class="home-page page-shell non-operational-page visual-page-background">
   <header class="home-hero">
-    <div>
-      <span class="eyebrow">Dashboard ERP</span>
-      <h1>Bienvenido, {{ username }}</h1>
-      <p>Indicadores, modulos y actividad operativa del sistema ABS.</p>
+    <div class="hero-title-row">
+      <span class="hero-title-icon">
+        <lucide-angular [img]="chartIcon" [size]="22" [strokeWidth]="2.4"></lucide-angular>
+      </span>
+      <div>
+        <h1>{{ 'HOME.WELCOME' | translate:{ username: username } }}</h1>
+        <nav class="page-breadcrumb" aria-label="Ruta de pagina">
+          <span>{{ 'COMMON.HOME' | translate }}</span>
+          <span class="current">{{ 'HOME.BREADCRUMB' | translate }}</span>
+        </nav>
+      </div>
     </div>
 
     <div class="hero-summary">
@@ -12,15 +19,15 @@
       </span>
       <div>
         <strong>{{ dashboardModeLabel }}</strong>
-        <small>{{ isDashboardEditing ? 'Puedes mover y redimensionar widgets' : 'Activa el lapiz para editar el layout' }}</small>
+        <small>{{ (isDashboardEditing ? 'HOME.SUMMARY_EDITING' : 'HOME.SUMMARY_IDLE') | translate }}</small>
       </div>
       <button
         type="button"
         class="dashboard-edit-btn"
         [class.active]="isDashboardEditing"
         [attr.aria-pressed]="isDashboardEditing"
-        title="Editar dashboard"
-        aria-label="Editar dashboard"
+        [title]="'HOME.EDIT_DASHBOARD' | translate"
+        [attr.aria-label]="'HOME.EDIT_DASHBOARD' | translate"
         (click)="toggleDashboardEditing()"
       >
         <lucide-angular [img]="editIcon" [size]="17" [strokeWidth]="2.45"></lucide-angular>
@@ -29,8 +36,8 @@
         *ngIf="isDashboardEditing"
         type="button"
         class="layout-reset-btn"
-        title="Restaurar layout"
-        aria-label="Restaurar layout del dashboard"
+        [title]="'HOME.RESET_LAYOUT' | translate"
+        [attr.aria-label]="'HOME.RESET_LAYOUT' | translate"
         (click)="resetDashboardLayout()"
       >
         <lucide-angular [img]="resetIcon" [size]="17" [strokeWidth]="2.45"></lucide-angular>

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import {
   AccentColor,
+  AppLanguage,
   AppPreferences,
   AppTheme,
   CardDensity,
@@ -61,6 +62,10 @@ export class PreferencesService {
 
   setSidebarPosition(sidebarPosition: SidebarPosition): void {
     this.update({ sidebarPosition });
+  }
+
+  setLanguage(language: AppLanguage): void {
+    this.update({ language });
   }
 
   update(data: Partial<AppPreferences>): void {

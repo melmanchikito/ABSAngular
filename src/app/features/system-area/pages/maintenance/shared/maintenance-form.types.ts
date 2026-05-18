@@ -24,13 +24,16 @@ export type FormValue = string | number | boolean | null;
 export interface SelectOption {
   value: string | number;
   label: string;
+  translationKey?: string;
 }
 
 export interface FormFieldConfig {
   key: string;
   label: string;
+  translationKey?: string;
   type?: FieldType;
   placeholder?: string;
+  placeholderKey?: string;
   required?: boolean;
   minLength?: number;
   maxLength?: number;
@@ -45,6 +48,7 @@ export interface FormFieldConfig {
   createOptionsKey?: string;
   editOptionsKey?: string;
   emptyOptionsMessage?: string;
+  emptyOptionsMessageKey?: string;
 }
 
 export interface MaintenanceFormConfig {

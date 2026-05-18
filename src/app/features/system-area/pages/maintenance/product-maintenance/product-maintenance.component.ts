@@ -298,13 +298,13 @@ export class ProductMaintenanceComponent implements OnInit {
 
   formatAmount(value?: number | null): string {
     if (value === null || value === undefined) {
-      return 'Sin registro';
+      return '-';
     }
 
     const amount = Number(value);
 
     if (!Number.isFinite(amount)) {
-      return 'Sin registro';
+      return '-';
     }
 
     return new Intl.NumberFormat('es-EC', {

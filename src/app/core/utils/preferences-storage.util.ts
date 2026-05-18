@@ -1,5 +1,6 @@
 import {
   AccentColor,
+  AppLanguage,
   AppPreferences,
   AppTheme,
   CardDensity,
@@ -21,6 +22,7 @@ export const PREFERENCES_STORAGE_KEYS = {
   headerVariant: 'abs_header_variant',
   legacyHeaderStyle: 'abs_header_style',
   sidebarPosition: 'abs_sidebar_position',
+  language: 'abs_language',
   animationsDisabled: 'animationsDisabled'
 } as const;
 
@@ -86,6 +88,7 @@ const THEMES: readonly AppTheme[] = ['light', 'dark', 'system', 'liquid-glass'];
 const FONT_SIZES: readonly FontSize[] = ['small', 'medium', 'large', 'extralarge'];
 const HEADER_VARIANTS: readonly HeaderVariant[] = ['classic', 'floating'];
 const SIDEBAR_POSITIONS: readonly SidebarPosition[] = ['left', 'right'];
+const LANGUAGES: readonly AppLanguage[] = ['es', 'en'];
 const ACCENT_COLORS: readonly AccentColor[] = ['absRed', 'executiveRed', 'enterpriseGray', 'premiumNight'];
 const CARD_DENSITIES: readonly CardDensity[] = ['compact', 'normal', 'comfortable'];
 export function loadStoredPreferences(storage: Storage = localStorage): AppPreferences {
@@ -124,6 +127,7 @@ export function persistStoredPreferences(
   storage.setItem(PREFERENCES_STORAGE_KEYS.headerVariant, normalizedPrefs.headerVariant);
   storage.setItem(PREFERENCES_STORAGE_KEYS.legacyHeaderStyle, normalizedPrefs.headerVariant);
   storage.setItem(PREFERENCES_STORAGE_KEYS.sidebarPosition, normalizedPrefs.sidebarPosition);
+  storage.setItem(PREFERENCES_STORAGE_KEYS.language, normalizedPrefs.language);
   storage.setItem(PREFERENCES_STORAGE_KEYS.animationsDisabled, String(!normalizedPrefs.showAnimations));
 
   return normalizedPrefs;
@@ -175,6 +179,7 @@ export function applyPreferencesToDocument(
   root.setAttribute('data-header-variant', normalizedPrefs.headerVariant);
   root.setAttribute('data-header-style', normalizedPrefs.headerVariant);
   root.setAttribute('data-sidebar-position', normalizedPrefs.sidebarPosition);
+  root.setAttribute('lang', normalizedPrefs.language);
 }
 
 export function normalizePreferences(rawPreferences: unknown): AppPreferences {
@@ -225,7 +230,7 @@ export function normalizePreferences(rawPreferences: unknown): AppPreferences {
 
     currency: readString(source['currency']) ?? DEFAULT_PREFERENCES.currency,
     dateFormat: readString(source['dateFormat']) ?? DEFAULT_PREFERENCES.dateFormat,
-    language: readString(source['language']) ?? DEFAULT_PREFERENCES.language,
+    language: parseEnum(source['language'], LANGUAGES, DEFAULT_PREFERENCES.language),
 
     soundEnabled: parseBoolean(source['soundEnabled']) ?? DEFAULT_PREFERENCES.soundEnabled,
     vibrationEnabled: parseBoolean(source['vibrationEnabled']) ?? DEFAULT_PREFERENCES.vibrationEnabled,
@@ -257,6 +262,7 @@ function loadLegacyPreferences(
     storage.getItem(PREFERENCES_STORAGE_KEYS.headerVariant) ||
     storage.getItem(PREFERENCES_STORAGE_KEYS.legacyHeaderStyle);
   const sidebarPosition = storage.getItem(PREFERENCES_STORAGE_KEYS.sidebarPosition);
+  const language = storage.getItem(PREFERENCES_STORAGE_KEYS.language);
 
   return normalizePreferences({
     ...basePreferences,
@@ -266,6 +272,7 @@ function loadLegacyPreferences(
     ...(wallpaperEnabled !== null ? { wallpaperEnabled } : {}),
     ...(headerVariant ? { headerVariant } : {}),
     ...(sidebarPosition ? { sidebarPosition } : {}),
+    ...(language ? { language } : {}),
     ...(animationsDisabled !== null ? { animationsDisabled } : {})
   });
 }

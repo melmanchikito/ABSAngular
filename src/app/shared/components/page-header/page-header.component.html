@@ -7,7 +7,11 @@
 
       <div>
         <h1>{{ title }}</h1>
-        <p *ngIf="subtitle">{{ subtitle }}</p>
+        <nav class="page-breadcrumb" *ngIf="breadcrumbParts.length" aria-label="Ruta de pagina">
+          <ng-container *ngFor="let part of breadcrumbParts; let last = last">
+            <span [class.current]="last">{{ part }}</span>
+          </ng-container>
+        </nav>
       </div>
     </div>
   </div>

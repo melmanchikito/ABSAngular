@@ -7,12 +7,13 @@
         </span>
         <div>
           <h1>{{ area.title }}</h1>
-          <span class="submodule-label" *ngIf="submodule">
-            Submodulo: {{ submodule.label }}
-          </span>
+          <nav class="page-breadcrumb" aria-label="Ruta de pagina">
+            <ng-container *ngFor="let part of pageBreadcrumb; let last = last">
+              <span [class.current]="last">{{ part }}</span>
+            </ng-container>
+          </nav>
         </div>
       </div>
-      <p>{{ pageSubtitle }}</p>
     </div>
   </div>
 

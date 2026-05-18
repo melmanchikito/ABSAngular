@@ -6,6 +6,8 @@ import { authInterceptor } from './core/interceptors/auth.interceptor';
 import { loaderInterceptor } from './core/interceptors/loader.interceptor';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { providePrimeNG } from 'primeng/config';
+import { provideTranslateService } from '@ngx-translate/core';
+import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -19,6 +21,14 @@ export const appConfig: ApplicationConfig = {
         loaderInterceptor,
         authInterceptor
       ])
-    )
+    ),
+    provideTranslateService({
+      fallbackLang: 'es',
+      lang: 'es',
+      loader: provideTranslateHttpLoader({
+        prefix: 'assets/i18n/',
+        suffix: '.json'
+      })
+    })
   ]
 };

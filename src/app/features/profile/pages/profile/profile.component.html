@@ -1,8 +1,16 @@
 <div class="profile-page non-operational-page visual-page-background">
   <section class="page-header">
-    <div>
-      <h1>Perfil y preferencias</h1>
-      <p>Personaliza la experiencia del sistema ABS.</p>
+    <div class="profile-title-row">
+      <span class="profile-title-icon">
+        <lucide-angular [img]="profileIcon" [size]="22" [strokeWidth]="2.4"></lucide-angular>
+      </span>
+      <div>
+        <h1>{{ 'PROFILE.TITLE' | translate }}</h1>
+        <nav class="page-breadcrumb" aria-label="Ruta de pagina">
+          <span>{{ 'PROFILE.BREADCRUMB_ROOT' | translate }}</span>
+          <span class="current">{{ 'PROFILE.TITLE' | translate }}</span>
+        </nav>
+      </div>
     </div>
 
     <div class="header-actions">
@@ -12,10 +20,10 @@
           [size]="16"
           [strokeWidth]="2.6"
         ></lucide-angular>
-        Guardado
+        {{ 'PROFILE.SAVED' | translate }}
       </span>
       <button class="reset-top" type="button" (click)="showResetConfirm = true">
-        Restablecer todo
+        {{ 'PROFILE.RESET_ALL' | translate }}
       </button>
     </div>
   </section>
@@ -46,14 +54,14 @@
           [size]="15"
           [strokeWidth]="2.4"
         ></lucide-angular>
-        {{ isUploadingImage ? 'Subiendo...' : 'Cambiar foto' }}
+        {{ (isUploadingImage ? 'PROFILE.UPLOADING' : 'PROFILE.CHANGE_PHOTO') | translate }}
       </button>
     </div>
 
     <div class="user-info">
       <h2>{{ username }}</h2>
       <p>{{ email }}</p>
-      <span>Usuario ABS</span>
+      <span>{{ 'PROFILE.USER_BADGE' | translate }}</span>
     </div>
 
     <p class="image-success" *ngIf="imageMessage">
@@ -487,14 +495,14 @@
         [strokeWidth]="2.3"
       ></lucide-angular>
       <div>
-        <h2>Regional y formato</h2>
-        <p>Moneda, fechas e idioma.</p>
+        <h2>{{ 'PROFILE.REGIONAL_TITLE' | translate }}</h2>
+        <p>{{ 'PROFILE.REGIONAL_DESCRIPTION' | translate }}</p>
       </div>
     </div>
 
     <div class="pref-row">
       <div>
-        <h3>Moneda</h3>
+        <h3>{{ 'PROFILE.CURRENCY' | translate }}</h3>
       </div>
       <select [ngModel]="prefs.currency" (ngModelChange)="update({ currency: $event })">
         <option value="USD">USD - Dólar</option>
@@ -506,7 +514,7 @@
 
     <div class="pref-row">
       <div>
-        <h3>Formato de fecha</h3>
+        <h3>{{ 'PROFILE.DATE_FORMAT' | translate }}</h3>
       </div>
       <select [ngModel]="prefs.dateFormat" (ngModelChange)="update({ dateFormat: $event })">
         <option value="DD/MM/YYYY">DD/MM/YYYY</option>
@@ -517,11 +525,13 @@
 
     <div class="pref-row">
       <div>
-        <h3>Idioma</h3>
+        <h3>{{ 'PROFILE.LANGUAGE' | translate }}</h3>
+        <p>{{ 'PROFILE.LANGUAGE_DESCRIPTION' | translate }}</p>
       </div>
-      <select [ngModel]="prefs.language" (ngModelChange)="update({ language: $event })">
-        <option value="es">Español</option>
-        <option value="en">English</option>
+      <select [ngModel]="prefs.language" (ngModelChange)="setLanguage($event)">
+        <option *ngFor="let option of languageOptions" [ngValue]="option.value">
+          {{ option.label | translate }}
+        </option>
       </select>
     </div>
   </section>

@@ -1,14 +1,14 @@
 <footer class="data-grid-pagination app-grid-footer">
   <p class="pagination-count app-grid-count">
-    {{ rangeLabel }}
+    {{ 'GRID.PAGINATION_LABEL' | translate:{ first: firstVisibleRecord, last: lastVisibleRecord, total: safeTotalItems, label: (safeTotalItems === 1 ? ('GRID.RECORD' | translate) : itemLabel) } }}
   </p>
 
-  <nav class="pagination-actions app-grid-pagination" aria-label="Paginacion del listado">
+  <nav class="pagination-actions app-grid-pagination" [attr.aria-label]="'GRID.PAGINATION_LABEL' | translate:{ first: firstVisibleRecord, last: lastVisibleRecord, total: safeTotalItems, label: itemLabel }">
     <button
       type="button"
       class="pagination-btn pagination-edge"
-      title="Primera pagina"
-      aria-label="Primera pagina"
+      [title]="'GRID.FIRST_PAGE' | translate"
+      [attr.aria-label]="'GRID.FIRST_PAGE' | translate"
       [disabled]="isFirstPage"
       (click)="goToFirst()"
     >
@@ -18,8 +18,8 @@
     <button
       type="button"
       class="pagination-btn pagination-edge"
-      title="Pagina anterior"
-      aria-label="Pagina anterior"
+      [title]="'GRID.PREVIOUS_PAGE' | translate"
+      [attr.aria-label]="'GRID.PREVIOUS_PAGE' | translate"
       [disabled]="isFirstPage"
       (click)="goToPrevious()"
     >
@@ -33,7 +33,7 @@
         class="pagination-btn pagination-page"
         [class.active]="item.page === safeCurrentPage"
         [attr.aria-current]="item.page === safeCurrentPage ? 'page' : null"
-        [attr.aria-label]="'Pagina ' + item.page"
+        [attr.aria-label]="'GRID.PAGE' | translate:{ page: item.page }"
         (click)="goToPage(item.page)"
       >
         {{ item.page }}
@@ -47,8 +47,8 @@
     <button
       type="button"
       class="pagination-btn pagination-edge"
-      title="Pagina siguiente"
-      aria-label="Pagina siguiente"
+      [title]="'GRID.NEXT_PAGE' | translate"
+      [attr.aria-label]="'GRID.NEXT_PAGE' | translate"
       [disabled]="isLastPage"
       (click)="goToNext()"
     >
@@ -58,8 +58,8 @@
     <button
       type="button"
       class="pagination-btn pagination-edge"
-      title="Ultima pagina"
-      aria-label="Ultima pagina"
+      [title]="'GRID.LAST_PAGE' | translate"
+      [attr.aria-label]="'GRID.LAST_PAGE' | translate"
       [disabled]="isLastPage"
       (click)="goToLast()"
     >

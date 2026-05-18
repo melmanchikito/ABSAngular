@@ -333,7 +333,7 @@ export class EmployeeMaintenanceComponent implements OnInit {
       return formatDateTime(value as string | null | undefined);
     }
 
-    return value === null || value === undefined || value === '' ? 'Sin registro' : String(value);
+    return value === null || value === undefined || value === '' ? '-' : String(value);
   }
 
   @HostListener('document:click')
@@ -348,7 +348,7 @@ export class EmployeeMaintenanceComponent implements OnInit {
 
     const fullName = `${this.getEmployeeFirstNames(employee)} ${this.getEmployeeSurnames(employee)}`.trim();
 
-    return fullName || 'Sin registro';
+    return fullName || '-';
   }
 
   private getEmployeeFirstNames(employee: EmployeeItem): string {
@@ -358,7 +358,7 @@ export class EmployeeMaintenanceComponent implements OnInit {
     ]
       .map((value) => String(value ?? '').trim())
       .filter(Boolean)
-      .join(' ') || 'Sin registro';
+      .join(' ') || '-';
   }
 
   private getEmployeeSurnames(employee: EmployeeItem): string {
@@ -368,7 +368,7 @@ export class EmployeeMaintenanceComponent implements OnInit {
     ]
       .map((value) => String(value ?? '').trim())
       .filter(Boolean)
-      .join(' ') || 'Sin registro';
+      .join(' ') || '-';
   }
 
   private formatSex(value?: string | null): string {
@@ -382,7 +382,7 @@ export class EmployeeMaintenanceComponent implements OnInit {
       return 'Femenino';
     }
 
-    return normalizedValue || 'Sin registro';
+    return normalizedValue || '-';
   }
 
   private getRelationLabel(employee: EmployeeItem, key: RelationKey): string {
@@ -404,7 +404,7 @@ export class EmployeeMaintenanceComponent implements OnInit {
 
     const id = employee[`${key}_id` as keyof EmployeeItem];
 
-    return id === null || id === undefined || id === '' ? 'Sin registro' : String(id);
+    return id === null || id === undefined || id === '' ? '-' : String(id);
   }
 
   private toDisplayValue(value: unknown): string {

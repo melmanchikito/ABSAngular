@@ -400,7 +400,7 @@ export class OptionMaintenanceComponent implements OnInit {
       return formatDateTime(value as string | null | undefined);
     }
 
-    return value === null || value === undefined || value === '' ? 'Sin registro' : String(value);
+    return value === null || value === undefined || value === '' ? '-' : String(value);
   }
 
   @HostListener('document:click')

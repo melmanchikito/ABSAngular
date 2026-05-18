@@ -85,6 +85,10 @@ export class RrhhAreaComponent {
     return this.submodule?.description ?? this.area.subtitle;
   }
 
+  get pageBreadcrumb(): string[] {
+    return [this.area.title, this.submodule?.label ?? 'General'].filter(Boolean);
+  }
+
   get activeCategoryConfig(): RrhhAreaCategory {
     return (
       this.categories.find((category) => category.key === this.activeCategory) ??

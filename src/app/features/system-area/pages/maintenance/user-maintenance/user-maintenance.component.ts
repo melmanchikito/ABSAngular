@@ -450,7 +450,7 @@ export class UserMaintenanceComponent {
     }
 
     if (key === 'employee_display_code') {
-      return this.getEmployeeCode(user) || 'Sin registro';
+      return this.getEmployeeCode(user) || '-';
     }
 
     const value = user[key];
@@ -459,7 +459,7 @@ export class UserMaintenanceComponent {
       return formatDateTime(value as string | null | undefined);
     }
 
-    return value === null || value === undefined || value === '' ? 'Sin registro' : String(value);
+    return value === null || value === undefined || value === '' ? '-' : String(value);
   }
 
   private getEmployeeCode(user: UserItem): string {

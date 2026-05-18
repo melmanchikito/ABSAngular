@@ -2,6 +2,7 @@ export type AppTheme = 'light' | 'dark' | 'system' | 'liquid-glass';
 export type FontSize = 'small' | 'medium' | 'large' | 'extralarge';
 export type HeaderVariant = 'classic' | 'floating';
 export type SidebarPosition = 'left' | 'right';
+export type AppLanguage = 'es' | 'en';
 
 export type AccentColor =
   | 'absRed'
@@ -56,7 +57,7 @@ export interface AppPreferences {
 
   currency: string;
   dateFormat: string;
-  language: string;
+  language: AppLanguage;
 
   soundEnabled: boolean;
   vibrationEnabled: boolean;

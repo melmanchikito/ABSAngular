@@ -1,5 +1,8 @@
 :host {
   display: block;
+  position: relative;
+  z-index: 60;
+  overflow: visible;
 }
 
 .page-header,
@@ -9,6 +12,9 @@
 }
 
 .page-header {
+  position: relative;
+  z-index: 1;
+  overflow: visible;
   justify-content: space-between;
   gap: 1rem;
   margin-bottom: 1rem;
@@ -38,7 +44,7 @@
 }
 
 h1,
-p {
+.page-breadcrumb {
   margin: 0;
 }
 
@@ -47,10 +53,33 @@ h1 {
   font-size: clamp(1.4rem, 2.3vw, 1.95rem);
 }
 
-p {
+.page-breadcrumb {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
   margin-top: 0.35rem;
   color: var(--abs-text-muted);
-  line-height: 1.45;
+  font-size: 0.82rem;
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+.page-breadcrumb span {
+  display: inline-flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.page-breadcrumb span:not(.current)::after {
+  content: '/';
+  margin-left: 0.4rem;
+  color: color-mix(in srgb, var(--abs-text-muted) 48%, transparent);
+  font-weight: 700;
+}
+
+.page-breadcrumb .current {
+  color: var(--abs-primary);
 }
 
 @media (max-width: 768px) {

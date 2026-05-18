@@ -11,7 +11,7 @@
             class="item"
             [class.active]="activeArea === area.name"
             (click)="toggleArea(area)"
-            [title]="collapsed ? area.name : ''"
+            [title]="collapsed ? (area.translationKey | translate) : ''"
           >
             <lucide-angular
               class="icon"
@@ -19,7 +19,7 @@
               [size]="18"
               [strokeWidth]="2.2"
             ></lucide-angular>
-            <span class="item-text">{{ area.name }}</span>
+            <span class="item-text">{{ area.translationKey | translate }}</span>
 
             <lucide-angular
               class="arrow"
@@ -47,7 +47,7 @@
               (click)="selectChild(area, child)"
             >
               <span class="submenu-dot"></span>
-              <span>{{ child.label }}</span>
+              <span>{{ child.translationKey | translate }}</span>
             </button>
           </div>
         </ng-container>
@@ -58,7 +58,7 @@
           class="item"
           [class.active]="activeArea === 'Correo'"
           (click)="goToMail()"
-          [title]="collapsed ? 'Correo' : ''"
+          [title]="collapsed ? ('COMMON.MAIL' | translate) : ''"
         >
           <lucide-angular
             class="icon"
@@ -66,13 +66,13 @@
             [size]="18"
             [strokeWidth]="2.2"
           ></lucide-angular>
-          <span class="item-text">Correo</span>
+          <span class="item-text">{{ 'COMMON.MAIL' | translate }}</span>
         </li>
 
         <li
           class="item"
           (click)="logout()"
-          [title]="collapsed ? 'Cerrar sesion' : ''"
+          [title]="collapsed ? ('COMMON.LOGOUT' | translate) : ''"
         >
           <lucide-angular
             class="icon"
@@ -80,7 +80,7 @@
             [size]="18"
             [strokeWidth]="2.2"
           ></lucide-angular>
-          <span class="item-text">Cerrar sesion</span>
+          <span class="item-text">{{ 'COMMON.LOGOUT' | translate }}</span>
         </li>
       </ul>
     </nav>

@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { LoaderComponent } from './shared/components/loader/loader.component';
 import { PreferencesService } from './core/services/preferences.service';
+import { LanguageService } from './core/services/language.service';
 
 @Component({
   selector: 'app-root',
@@ -11,5 +12,8 @@ import { PreferencesService } from './core/services/preferences.service';
   styleUrl: './app.component.scss'
 })
 export class AppComponent {
-  constructor(private readonly preferencesService: PreferencesService) {}
+  constructor(
+    private readonly preferencesService: PreferencesService,
+    private readonly languageService: LanguageService
+  ) {}
 }

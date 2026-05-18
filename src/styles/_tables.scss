@@ -12,7 +12,7 @@
 .app-table td {
   padding: 0.9rem 1rem;
   border-bottom: 1px solid color-mix(in srgb, var(--abs-border) 72%, transparent);
-  text-align: left;
+  text-align: center;
   vertical-align: middle;
 }
 
@@ -37,7 +37,7 @@
   min-width: 150px;
   background: color-mix(in srgb, var(--abs-surface) 96%, var(--abs-bg));
   box-shadow: -12px 0 18px -18px rgba(15, 23, 42, 0.55);
-  text-align: right;
+  text-align: center;
 }
 
 .table-wrapper .app-table th:last-child {
@@ -66,5 +66,6 @@
 .table-actions {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 0.45rem;
 }
