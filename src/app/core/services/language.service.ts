@@ -8,7 +8,7 @@ import { PreferencesService } from './preferences.service';
   providedIn: 'root'
 })
 export class LanguageService {
-  readonly supportedLanguages: readonly AppLanguage[] = ['es', 'en'];
+  readonly supportedLanguages: readonly AppLanguage[] = ['es', 'en', 'it'];
 
   constructor(
     private readonly translateService: TranslateService,

@@ -6,7 +6,7 @@
       </span>
       <div>
         <h1>{{ 'HOME.WELCOME' | translate:{ username: username } }}</h1>
-        <nav class="page-breadcrumb" aria-label="Ruta de pagina">
+        <nav class="page-breadcrumb" [attr.aria-label]="'COMMON.BREADCRUMB' | translate">
           <span>{{ 'COMMON.HOME' | translate }}</span>
           <span class="current">{{ 'HOME.BREADCRUMB' | translate }}</span>
         </nav>
@@ -45,17 +45,17 @@
     </div>
   </header>
 
-  <section class="kpi-grid" aria-label="KPIs principales">
+  <section class="kpi-grid" [attr.aria-label]="'HOME.KPIS_LABEL' | translate">
     <article class="metric-card" *ngFor="let kpi of kpis">
       <span class="metric-icon">
         <lucide-angular [img]="kpi.icon" [size]="20" [strokeWidth]="2.35"></lucide-angular>
       </span>
       <div>
         <strong>{{ kpi.value }}</strong>
-        <span>{{ kpi.label }}</span>
-        <small>{{ kpi.helper }}</small>
+        <span>{{ kpi.label | translate }}</span>
+        <small>{{ kpi.helper | translate }}</small>
       </div>
-      <em>{{ kpi.trend }}</em>
+      <em>{{ kpi.trend | translate }}</em>
     </article>
   </section>
 
@@ -63,7 +63,7 @@
     #dashboardGrid
     class="dashboard-grid grid-stack"
     [class.dashboard-editing]="isDashboardEditing"
-    aria-label="Dashboard avanzado"
+    [attr.aria-label]="'HOME.ADVANCED_DASHBOARD' | translate"
   >
     <article
       class="dashboard-widget grid-stack-item"
@@ -77,17 +77,17 @@
       <div class="grid-stack-item-content dashboard-panel">
         <header class="widget-head">
           <div>
-            <span class="eyebrow">{{ widget.eyebrow }}</span>
-            <h2>{{ widget.title }}</h2>
-            <p>{{ widget.subtitle }}</p>
+            <span class="eyebrow">{{ widget.eyebrow | translate }}</span>
+            <h2>{{ widget.title | translate }}</h2>
+            <p>{{ widget.subtitle | translate }}</p>
           </div>
 
           <button
             *ngIf="isDashboardEditing"
             type="button"
             class="widget-drag-handle"
-            title="Mover widget"
-            aria-label="Mover widget"
+            [title]="'HOME.MOVE_WIDGET' | translate"
+            [attr.aria-label]="'HOME.MOVE_WIDGET' | translate"
           >
             <i class="pi pi-arrows-alt"></i>
           </button>
@@ -120,13 +120,13 @@
             <article *ngFor="let module of moduleStatuses">
               <div class="module-row-head">
                 <div>
-                  <strong>{{ module.name }}</strong>
-                  <small>{{ module.owner }}</small>
+                  <strong>{{ module.name | translate }}</strong>
+                  <small>{{ module.owner | translate }}</small>
                 </div>
-                <p-tag [value]="module.status" [severity]="module.severity"></p-tag>
+                <p-tag [value]="module.status | translate" [severity]="module.severity"></p-tag>
               </div>
               <p-progressBar [value]="module.progress" [showValue]="false"></p-progressBar>
-              <span class="progress-label">{{ module.progress }}% operativo</span>
+              <span class="progress-label">{{ 'HOME.OPERATIONAL_PERCENT' | translate:{ progress: module.progress } }}</span>
             </article>
           </div>
 
@@ -136,10 +136,10 @@
                 <lucide-angular [img]="clockIcon" [size]="17" [strokeWidth]="2.35"></lucide-angular>
               </span>
               <div>
-                <strong>{{ activity.title }}</strong>
-                <small>{{ activity.detail }}</small>
+                <strong>{{ activity.title | translate }}</strong>
+                <small>{{ activity.detail | translate }}</small>
               </div>
-              <p-tag [value]="activity.time" [severity]="activity.severity"></p-tag>
+              <p-tag [value]="activity.time | translate" [severity]="activity.severity"></p-tag>
             </article>
           </div>
 
@@ -154,8 +154,8 @@
                 <lucide-angular [img]="item.icon" [size]="20" [strokeWidth]="2.35"></lucide-angular>
               </span>
               <span>
-                <strong>{{ item.label }}</strong>
-                <small>{{ item.description }}</small>
+                <strong>{{ item.label | translate }}</strong>
+                <small>{{ item.description | translate }}</small>
               </span>
             </button>
           </div>

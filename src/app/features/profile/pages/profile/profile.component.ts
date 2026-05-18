@@ -58,42 +58,43 @@ export class ProfileComponent implements OnInit, OnDestroy {
   readonly profileIcon = UserCircle;
 
   readonly themeOptions: readonly SelectOption<AppTheme>[] = [
-    { value: 'light', label: 'Claro', description: 'Interfaz limpia para espacios iluminados.' },
-    { value: 'dark', label: 'Oscuro', description: 'Mayor contraste para trabajo continuo.' },
-    { value: 'system', label: 'Sistema', description: 'Usa la preferencia del dispositivo.' },
-    { value: 'liquid-glass', label: 'Liquid Glass', description: 'Vidrio translúcido con profundidad visual.' }
+    { value: 'light', label: 'PROFILE.THEME_LIGHT', description: 'PROFILE.THEME_LIGHT_DESCRIPTION' },
+    { value: 'dark', label: 'PROFILE.THEME_DARK', description: 'PROFILE.THEME_DARK_DESCRIPTION' },
+    { value: 'system', label: 'PROFILE.THEME_SYSTEM', description: 'PROFILE.THEME_SYSTEM_DESCRIPTION' },
+    { value: 'liquid-glass', label: 'PROFILE.THEME_LIQUID', description: 'PROFILE.THEME_LIQUID_DESCRIPTION' }
   ];
 
   readonly headerVariantOptions: readonly SelectOption<HeaderVariant>[] = [
-    { value: 'classic', label: 'Clasico', description: 'Header actual con distribucion amplia.' },
-    { value: 'floating', label: 'Compacto flotante', description: 'Barra redondeada con avatar central colapsable.' }
+    { value: 'classic', label: 'PROFILE.HEADER_CLASSIC', description: 'PROFILE.HEADER_CLASSIC_DESCRIPTION' },
+    { value: 'floating', label: 'PROFILE.HEADER_FLOATING', description: 'PROFILE.HEADER_FLOATING_DESCRIPTION' }
   ];
 
   readonly sidebarPositionOptions: readonly SelectOption<SidebarPosition>[] = [
-    { value: 'left', label: 'Izquierda', description: 'Menu lateral en la posicion actual.' },
-    { value: 'right', label: 'Derecha', description: 'Menu lateral anclado al borde derecho.' }
+    { value: 'left', label: 'PROFILE.SIDEBAR_LEFT', description: 'PROFILE.SIDEBAR_LEFT_DESCRIPTION' },
+    { value: 'right', label: 'PROFILE.SIDEBAR_RIGHT', description: 'PROFILE.SIDEBAR_RIGHT_DESCRIPTION' }
   ];
 
   readonly accentOptions: readonly SelectOption<AccentColor>[] = [
-    { value: 'absRed', label: 'Rojo ABS', description: 'Marca principal' },
-    { value: 'executiveRed', label: 'Rojo ejecutivo', description: 'Formal y elegante' },
-    { value: 'enterpriseGray', label: 'Gris empresarial', description: 'Neutro y serio' },
-    { value: 'premiumNight', label: 'Nocturno premium', description: 'Rojo, dorado y gris oscuro' }
+    { value: 'absRed', label: 'PROFILE.ACCENT_ABS_RED', description: 'PROFILE.ACCENT_ABS_RED_DESCRIPTION' },
+    { value: 'executiveRed', label: 'PROFILE.ACCENT_EXECUTIVE_RED', description: 'PROFILE.ACCENT_EXECUTIVE_RED_DESCRIPTION' },
+    { value: 'enterpriseGray', label: 'PROFILE.ACCENT_ENTERPRISE_GRAY', description: 'PROFILE.ACCENT_ENTERPRISE_GRAY_DESCRIPTION' },
+    { value: 'premiumNight', label: 'PROFILE.ACCENT_PREMIUM_NIGHT', description: 'PROFILE.ACCENT_PREMIUM_NIGHT_DESCRIPTION' }
   ];
 
   readonly wallpaperOptions: readonly SelectOption<SystemWallpaper>[] = [
-    { value: 'none', label: 'Sin fondo' },
+    { value: 'none', label: 'PROFILE.WALLPAPER_NONE' },
     { value: 'arwallaros', label: 'AR Wall Aros', asset: 'assets/auth/arwallaros.webp' },
     { value: 'arwallpaper', label: 'AR Wallpaper', asset: 'assets/auth/arwallpaper.webp' },
-    { value: 'autofondo', label: 'Auto fondo', asset: 'assets/auth/autofondo.svg' },
-    { value: 'fondonnewpass', label: 'Fondo new pass', asset: 'assets/auth/fondonnewpass.webp' },
-    { value: 'fondonnew', label: 'Fondo new', asset: 'assets/auth/fondonnew.webp' },
+    { value: 'autofondo', label: 'PROFILE.WALLPAPER_AUTO', asset: 'assets/auth/autofondo.svg' },
+    { value: 'fondonnewpass', label: 'PROFILE.WALLPAPER_NEW_PASS', asset: 'assets/auth/fondonnewpass.webp' },
+    { value: 'fondonnew', label: 'PROFILE.WALLPAPER_NEW', asset: 'assets/auth/fondonnew.webp' },
     { value: 'lockScreen', label: 'Lock screen', asset: 'assets/auth/lockScreen.webp' }
   ];
 
   readonly languageOptions: readonly SelectOption<AppLanguage>[] = [
-    { value: 'es', label: 'LANGUAGES.ES', description: 'PROFILE.LANGUAGE_DESCRIPTION' },
-    { value: 'en', label: 'LANGUAGES.EN', description: 'PROFILE.LANGUAGE_DESCRIPTION' }
+    { value: 'es', label: 'Español', description: 'PROFILE.LANGUAGE_DESCRIPTION' },
+    { value: 'en', label: 'English', description: 'PROFILE.LANGUAGE_DESCRIPTION' },
+    { value: 'it', label: 'Italiano', description: 'PROFILE.LANGUAGE_DESCRIPTION' }
   ];
 
   savedBadge = false;
@@ -184,7 +185,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
   }
 
   get wallpaperPreviewLabel(): string {
-    return this.wallpaperOptions.find((option) => option.value === this.prefs.wallpaper)?.label ?? 'Sin fondo';
+    return this.wallpaperOptions.find((option) => option.value === this.prefs.wallpaper)?.label ?? 'PROFILE.WALLPAPER_NONE';
   }
 
   get wallpaperPreviewStyle(): Record<string, string> {
@@ -231,7 +232,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
     this.imageError = '';
 
     if (!file.type.startsWith('image/')) {
-      this.imageError = 'Selecciona una imagen válida.';
+      this.imageError = 'PROFILE.IMAGE_INVALID';
       input.value = '';
       return;
     }
@@ -240,7 +241,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
     const maxSizeBytes = maxSizeMb * 1024 * 1024;
 
     if (file.size > maxSizeBytes) {
-      this.imageError = `La imagen no debe superar los ${maxSizeMb} MB.`;
+      this.imageError = 'PROFILE.IMAGE_TOO_LARGE';
       input.value = '';
       return;
     }
@@ -250,7 +251,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
     this.profileImageService.uploadUserImage(file).subscribe({
       next: (imageUrl) => {
         this.profileImageUrl = imageUrl;
-        this.imageMessage = 'Foto actualizada correctamente.';
+        this.imageMessage = 'PROFILE.IMAGE_UPDATED';
         this.isUploadingImage = false;
         input.value = '';
 
@@ -259,7 +260,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
         }, 1800);
       },
       error: () => {
-        this.imageError = 'No se pudo actualizar la foto.';
+        this.imageError = 'PROFILE.IMAGE_UPDATE_ERROR';
         this.isUploadingImage = false;
         input.value = '';
       }

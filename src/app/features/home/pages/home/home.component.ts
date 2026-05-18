@@ -38,7 +38,7 @@ import { LabelLayout } from 'echarts/features';
 import { CanvasRenderer } from 'echarts/renderers';
 import { AuthService } from '../../../../core/services/auth.service';
 import { PreferencesService } from '../../../../core/services/preferences.service';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 type ChartKey = 'systemTrend' | 'ticketFlow' | 'moduleShare' | 'healthGauge';
 type DashboardWidgetType = 'chart' | 'gauge' | 'modules' | 'activity' | 'quick';
@@ -135,69 +135,69 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 
   readonly kpis: HomeKpi[] = [
     {
-      label: 'Tickets activos',
+      label: 'HOME.KPI_ACTIVE_TICKETS',
       value: '128',
-      helper: '32 pendientes criticos',
-      trend: '+12% esta semana',
+      helper: 'HOME.KPI_ACTIVE_TICKETS_HELPER',
+      trend: 'HOME.KPI_ACTIVE_TICKETS_TREND',
       icon: ChartColumn
     },
     {
-      label: 'Usuarios operativos',
+      label: 'HOME.KPI_OPERATIONAL_USERS',
       value: '842',
-      helper: 'Sesiones y permisos vigentes',
-      trend: '+4.8% vs. mes anterior',
+      helper: 'HOME.KPI_OPERATIONAL_USERS_HELPER',
+      trend: 'HOME.KPI_OPERATIONAL_USERS_TREND',
       icon: Users
     },
     {
-      label: 'Procesos ERP',
+      label: 'HOME.KPI_ERP_PROCESSES',
       value: '96%',
-      helper: 'Ejecucion promedio',
-      trend: 'Estable',
+      helper: 'HOME.KPI_ERP_PROCESSES_HELPER',
+      trend: 'HOME.KPI_ERP_PROCESSES_TREND',
       icon: MonitorCog
     },
     {
-      label: 'Modulos disponibles',
+      label: 'HOME.KPI_AVAILABLE_MODULES',
       value: '6',
-      helper: 'Accesos principales',
-      trend: '100% publicados',
+      helper: 'HOME.KPI_AVAILABLE_MODULES_HELPER',
+      trend: 'HOME.KPI_AVAILABLE_MODULES_TREND',
       icon: Package
     }
   ];
 
   readonly quickAccess: QuickAccess[] = [
     {
-      label: 'Finanzas',
-      description: 'Contable, SRI, caja y tesoreria.',
+      label: 'SIDEBAR.FINANCE',
+      description: 'HOME.QUICK_FINANCE_DESCRIPTION',
       route: '/main/modulo/finanzas/contable-sri',
       icon: CircleDollarSign
     },
     {
-      label: 'RRHH',
-      description: 'Empleado, proveedores y administracion.',
+      label: 'SIDEBAR.HR',
+      description: 'HOME.QUICK_HR_DESCRIPTION',
       route: '/main/modulo/rrhh/empleado',
       icon: Users
     },
     {
-      label: 'Clientes',
-      description: 'Comercial, vendedores y clientes.',
+      label: 'SIDEBAR.CLIENTS',
+      description: 'HOME.QUICK_CLIENTS_DESCRIPTION',
       route: '/main/modulo/clientes/comercial',
       icon: Users
     },
     {
-      label: 'Producto',
-      description: 'Produccion, distribucion y compras.',
+      label: 'SIDEBAR.PRODUCT',
+      description: 'HOME.QUICK_PRODUCT_DESCRIPTION',
       route: '/main/modulo/producto/produccion-distribucion',
       icon: Package
     },
     {
-      label: 'Analisis',
-      description: 'Indicadores, medicion y reportes.',
+      label: 'SIDEBAR.ANALYSIS',
+      description: 'HOME.QUICK_ANALYSIS_DESCRIPTION',
       route: '/main/modulo/analisis/am-r',
       icon: ChartColumn
     },
     {
-      label: 'Sistema',
-      description: 'Configuracion, soporte y developer.',
+      label: 'SIDEBAR.SYSTEM',
+      description: 'HOME.QUICK_SYSTEM_DESCRIPTION',
       route: '/main/modulo/sistema/configuracion',
       icon: MonitorCog
     }
@@ -205,41 +205,42 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 
   readonly recentActivity: RecentActivity[] = [
     {
-      title: 'Ticket asignado',
-      detail: 'Se asigno un nuevo caso de mantenimiento.',
-      time: 'Hace 5 min',
+      title: 'HOME.ACTIVITY_TICKET_ASSIGNED',
+      detail: 'HOME.ACTIVITY_TICKET_ASSIGNED_DETAIL',
+      time: 'HOME.TIME_5_MIN',
       severity: 'warn'
     },
     {
-      title: 'Empresa registrada',
-      detail: 'Se agrego una nueva empresa al sistema.',
-      time: 'Hoy',
+      title: 'HOME.ACTIVITY_COMPANY_REGISTERED',
+      detail: 'HOME.ACTIVITY_COMPANY_REGISTERED_DETAIL',
+      time: 'HOME.TIME_TODAY',
       severity: 'success'
     },
     {
-      title: 'Ubicacion actualizada',
-      detail: 'Se modifico informacion de una ubicacion.',
-      time: 'Ayer',
+      title: 'HOME.ACTIVITY_LOCATION_UPDATED',
+      detail: 'HOME.ACTIVITY_LOCATION_UPDATED_DETAIL',
+      time: 'HOME.TIME_YESTERDAY',
       severity: 'info'
     },
     {
-      title: 'Permiso sincronizado',
-      detail: 'Se actualizo el perfil de acceso de un usuario.',
-      time: 'Lun',
+      title: 'HOME.ACTIVITY_PERMISSION_SYNCED',
+      detail: 'HOME.ACTIVITY_PERMISSION_SYNCED_DETAIL',
+      time: 'HOME.TIME_MONDAY',
       severity: 'secondary'
     }
   ];
 
   readonly moduleStatuses: ModuleStatus[] = [
-    { name: 'Sistema', owner: 'Configuracion', progress: 96, status: 'Activo', severity: 'success' },
-    { name: 'Help Desk', owner: 'Tickets', progress: 82, status: 'Atencion', severity: 'warn' },
-    { name: 'Producto', owner: 'Produccion', progress: 74, status: 'Operativo', severity: 'info' },
-    { name: 'Finanzas', owner: 'Contable', progress: 68, status: 'Revision', severity: 'secondary' }
+    { name: 'SIDEBAR.SYSTEM', owner: 'SIDEBAR.CONFIGURATION', progress: 96, status: 'STATUS.ACTIVE', severity: 'success' },
+    { name: 'HOME.MODULE_HELP_DESK', owner: 'HOME.MODULE_TICKETS', progress: 82, status: 'HOME.STATUS_ATTENTION', severity: 'warn' },
+    { name: 'SIDEBAR.PRODUCT', owner: 'HOME.MODULE_PRODUCTION', progress: 74, status: 'HOME.STATUS_OPERATIONAL', severity: 'info' },
+    { name: 'SIDEBAR.FINANCE', owner: 'HOME.MODULE_ACCOUNTING', progress: 68, status: 'HOME.STATUS_REVIEW', severity: 'secondary' }
   ];
 
   private readonly dashboardLayoutKey = 'abs_home_dashboard_layout';
   private readonly chartInstances = new Map<string, EChartsType>();
   private preferencesSubscription?: Subscription;
+  private languageSubscription?: Subscription;
   private grid?: GridStack;
   private resizeObserver?: ResizeObserver;
   private resizeAnimationFrame: number | null = null;
@@ -254,6 +255,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     private readonly authService: AuthService,
     private readonly router: Router,
     private readonly preferencesService: PreferencesService,
+    private readonly translateService: TranslateService,
     private readonly zone: NgZone,
     private readonly changeDetector: ChangeDetectorRef
   ) {
@@ -267,6 +269,12 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
       this.resizeChartsSoon(120);
       this.changeDetector.markForCheck();
     });
+
+    this.languageSubscription = this.translateService.onLangChange.subscribe(() => {
+      this.chartOptions = this.buildChartOptions();
+      this.resizeChartsSoon(120);
+      this.changeDetector.markForCheck();
+    });
   }
 
   ngAfterViewInit(): void {
@@ -277,6 +285,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.preferencesSubscription?.unsubscribe();
+    this.languageSubscription?.unsubscribe();
     this.resizeObserver?.disconnect();
     this.clearResizeWork();
     this.clearSaveLayoutWork();
@@ -285,11 +294,13 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   get username(): string {
-    return this.authService.getName() || localStorage.getItem('username') || 'Usuario';
+    return this.authService.getName() || localStorage.getItem('username') || this.translateService.instant('COMMON.USER');
   }
 
   get dashboardModeLabel(): string {
-    return this.isDashboardEditing ? 'Edicion activa' : 'Dashboard bloqueado';
+    return this.isDashboardEditing
+      ? this.translateService.instant('HOME.MODE_EDITING')
+      : this.translateService.instant('HOME.MODE_LOCKED');
   }
 
   navigate(route: string): void {
@@ -470,61 +481,61 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     return [
       {
         id: 'system-trend',
-        eyebrow: 'Resumen general',
-        title: 'Actividad del sistema',
-        subtitle: 'Usuarios, tickets y procesos por dia',
+        eyebrow: 'HOME.WIDGET_SYSTEM_TREND_EYEBROW',
+        title: 'HOME.WIDGET_SYSTEM_TREND_TITLE',
+        subtitle: 'HOME.WIDGET_SYSTEM_TREND_SUBTITLE',
         type: 'chart',
         chartKey: 'systemTrend',
         layout: { x: 0, y: 0, w: 8, h: 4 }
       },
       {
         id: 'health-gauge',
-        eyebrow: 'Indicadores',
-        title: 'Salud operativa',
-        subtitle: 'Disponibilidad ponderada del entorno ABS',
+        eyebrow: 'HOME.WIDGET_HEALTH_EYEBROW',
+        title: 'HOME.WIDGET_HEALTH_TITLE',
+        subtitle: 'HOME.WIDGET_HEALTH_SUBTITLE',
         type: 'gauge',
         chartKey: 'healthGauge',
         layout: { x: 8, y: 0, w: 4, h: 4 }
       },
       {
         id: 'ticket-flow',
-        eyebrow: 'Help Desk',
-        title: 'Flujo de tickets',
-        subtitle: 'Entrada, resueltos y vencidos',
+        eyebrow: 'HOME.WIDGET_TICKET_FLOW_EYEBROW',
+        title: 'HOME.WIDGET_TICKET_FLOW_TITLE',
+        subtitle: 'HOME.WIDGET_TICKET_FLOW_SUBTITLE',
         type: 'chart',
         chartKey: 'ticketFlow',
         layout: { x: 0, y: 4, w: 6, h: 4 }
       },
       {
         id: 'module-share',
-        eyebrow: 'Estado de modulos',
-        title: 'Uso por modulo',
-        subtitle: 'Distribucion mock de actividad ERP',
+        eyebrow: 'HOME.WIDGET_MODULE_SHARE_EYEBROW',
+        title: 'HOME.WIDGET_MODULE_SHARE_TITLE',
+        subtitle: 'HOME.WIDGET_MODULE_SHARE_SUBTITLE',
         type: 'chart',
         chartKey: 'moduleShare',
         layout: { x: 6, y: 4, w: 6, h: 4 }
       },
       {
         id: 'module-status',
-        eyebrow: 'Operaciones',
-        title: 'Estado de modulos',
-        subtitle: 'Avance operativo por area',
+        eyebrow: 'HOME.WIDGET_MODULE_STATUS_EYEBROW',
+        title: 'HOME.WIDGET_MODULE_STATUS_TITLE',
+        subtitle: 'HOME.WIDGET_MODULE_STATUS_SUBTITLE',
         type: 'modules',
         layout: { x: 0, y: 8, w: 5, h: 4 }
       },
       {
         id: 'recent-activity',
-        eyebrow: 'Auditoria',
-        title: 'Actividad reciente',
-        subtitle: 'Ultimos eventos relevantes',
+        eyebrow: 'HOME.WIDGET_RECENT_ACTIVITY_EYEBROW',
+        title: 'HOME.WIDGET_RECENT_ACTIVITY_TITLE',
+        subtitle: 'HOME.WIDGET_RECENT_ACTIVITY_SUBTITLE',
         type: 'activity',
         layout: { x: 5, y: 8, w: 4, h: 4 }
       },
       {
         id: 'quick-access',
-        eyebrow: 'Accesos rapidos',
-        title: 'Modulos principales',
-        subtitle: 'Rutas frecuentes del sistema',
+        eyebrow: 'HOME.WIDGET_QUICK_ACCESS_EYEBROW',
+        title: 'HOME.WIDGET_QUICK_ACCESS_TITLE',
+        subtitle: 'HOME.WIDGET_QUICK_ACCESS_SUBTITLE',
         type: 'quick',
         layout: { x: 9, y: 8, w: 3, h: 4 }
       }
@@ -597,6 +608,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     const success = '#16a34a';
     const warning = '#f59e0b';
     const info = '#2563eb';
+    const t = (key: string) => this.translateService.instant(key) as string;
 
     return {
       systemTrend: {
@@ -608,7 +620,15 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
         xAxis: {
           type: 'category',
           boundaryGap: false,
-          data: ['Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab', 'Dom'],
+          data: [
+            t('HOME.DAY_MON'),
+            t('HOME.DAY_TUE'),
+            t('HOME.DAY_WED'),
+            t('HOME.DAY_THU'),
+            t('HOME.DAY_FRI'),
+            t('HOME.DAY_SAT'),
+            t('HOME.DAY_SUN')
+          ],
           axisLine: { lineStyle: { color: gridLine } },
           axisLabel: { color: muted }
         },
@@ -619,7 +639,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
         },
         series: [
           {
-            name: 'Usuarios',
+            name: t('HOME.CHART_USERS'),
             type: 'line',
             smooth: true,
             symbolSize: 7,
@@ -627,7 +647,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
             areaStyle: { opacity: 0.11 }
           },
           {
-            name: 'Tickets',
+            name: t('HOME.CHART_TICKETS'),
             type: 'line',
             smooth: true,
             symbolSize: 7,
@@ -635,7 +655,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
             areaStyle: { opacity: 0.08 }
           },
           {
-            name: 'Procesos',
+            name: t('HOME.CHART_PROCESSES'),
             type: 'line',
             smooth: true,
             symbolSize: 7,
@@ -652,7 +672,13 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
         grid: { left: 32, right: 18, top: 48, bottom: 30 },
         xAxis: {
           type: 'category',
-          data: ['Soporte', 'Equipos', 'Redes', 'Accesos', 'ERP'],
+          data: [
+            t('HOME.CATEGORY_SUPPORT'),
+            t('HOME.CATEGORY_EQUIPMENT'),
+            t('HOME.CATEGORY_NETWORKS'),
+            t('HOME.CATEGORY_ACCESS'),
+            'ERP'
+          ],
           axisLine: { lineStyle: { color: gridLine } },
           axisLabel: { color: muted }
         },
@@ -662,9 +688,9 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
           axisLabel: { color: muted }
         },
         series: [
-          { name: 'Entrantes', type: 'bar', barMaxWidth: 18, data: [28, 42, 31, 24, 38] },
-          { name: 'Resueltos', type: 'bar', barMaxWidth: 18, data: [24, 36, 26, 22, 34] },
-          { name: 'Vencidos', type: 'bar', barMaxWidth: 18, data: [3, 5, 4, 2, 6] }
+          { name: t('HOME.CHART_INCOMING'), type: 'bar', barMaxWidth: 18, data: [28, 42, 31, 24, 38] },
+          { name: t('HOME.CHART_RESOLVED'), type: 'bar', barMaxWidth: 18, data: [24, 36, 26, 22, 34] },
+          { name: t('HOME.CHART_OVERDUE'), type: 'bar', barMaxWidth: 18, data: [3, 5, 4, 2, 6] }
         ]
       },
       moduleShare: {
@@ -679,7 +705,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
         },
         series: [
           {
-            name: 'Actividad',
+            name: t('HOME.CHART_ACTIVITY'),
             type: 'pie',
             radius: ['52%', '74%'],
             center: ['38%', '52%'],
@@ -687,12 +713,12 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
             label: { color: text, formatter: '{b}' },
             labelLine: { lineStyle: { color: gridLine } },
             data: [
-              { value: 28, name: 'Sistema' },
-              { value: 24, name: 'Help Desk' },
-              { value: 18, name: 'Producto' },
-              { value: 12, name: 'Finanzas' },
-              { value: 10, name: 'RRHH' },
-              { value: 8, name: 'Clientes' }
+              { value: 28, name: t('SIDEBAR.SYSTEM') },
+              { value: 24, name: t('HOME.MODULE_HELP_DESK') },
+              { value: 18, name: t('SIDEBAR.PRODUCT') },
+              { value: 12, name: t('SIDEBAR.FINANCE') },
+              { value: 10, name: t('SIDEBAR.HR') },
+              { value: 8, name: t('SIDEBAR.CLIENTS') }
             ]
           }
         ]
@@ -726,7 +752,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
               offsetCenter: [0, '48%']
             },
             title: { color: muted, offsetCenter: [0, '76%'], fontSize: 12 },
-            data: [{ value: 94, name: 'Operativo' }]
+            data: [{ value: 94, name: t('HOME.STATUS_OPERATIONAL') }]
           }
         ]
       }

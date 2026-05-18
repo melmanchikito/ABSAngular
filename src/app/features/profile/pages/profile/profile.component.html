@@ -6,7 +6,7 @@
       </span>
       <div>
         <h1>{{ 'PROFILE.TITLE' | translate }}</h1>
-        <nav class="page-breadcrumb" aria-label="Ruta de pagina">
+        <nav class="page-breadcrumb" [attr.aria-label]="'COMMON.BREADCRUMB' | translate">
           <span>{{ 'PROFILE.BREADCRUMB_ROOT' | translate }}</span>
           <span class="current">{{ 'PROFILE.TITLE' | translate }}</span>
         </nav>
@@ -32,7 +32,7 @@
     <div class="avatar profile-avatar">
       <img
         [src]="profileImageUrl || 'assets/auth/perfil.webp'"
-        alt="Foto de perfil"
+        [alt]="'HEADER.PROFILE_PHOTO' | translate"
       />
 
       <input
@@ -65,11 +65,11 @@
     </div>
 
     <p class="image-success" *ngIf="imageMessage">
-      {{ imageMessage }}
+      {{ imageMessage | translate }}
     </p>
 
     <p class="image-error" *ngIf="imageError">
-      {{ imageError }}
+      {{ imageError | translate }}
     </p>
   </section>
 
@@ -82,17 +82,17 @@
         [strokeWidth]="2.3"
       ></lucide-angular>
       <div>
-        <h2>Apariencia del header</h2>
-        <p>Selecciona como deseas visualizar la cabecera del sistema.</p>
+        <h2>{{ 'PROFILE.HEADER_APPEARANCE_TITLE' | translate }}</h2>
+        <p>{{ 'PROFILE.HEADER_APPEARANCE_DESCRIPTION' | translate }}</p>
       </div>
     </div>
 
     <div class="pref-row header-variant-row">
       <div>
-        <h3>Tipo de header</h3>
-        <p>Cambia entre la cabecera clásica y la versión compacta flotante.</p>
+        <h3>{{ 'PROFILE.HEADER_TYPE' | translate }}</h3>
+        <p>{{ 'PROFILE.HEADER_TYPE_DESCRIPTION' | translate }}</p>
       </div>
-      <div class="header-style-group" role="radiogroup" aria-label="Apariencia del header">
+      <div class="header-style-group" role="radiogroup" [attr.aria-label]="'PROFILE.HEADER_APPEARANCE_TITLE' | translate">
         <button
           type="button"
           class="header-style-option"
@@ -106,8 +106,8 @@
             <i></i>
           </span>
           <span>
-            <strong>{{ option.label }}</strong>
-            <small>{{ option.description }}</small>
+            <strong>{{ option.label | translate }}</strong>
+            <small>{{ option.description | translate }}</small>
           </span>
         </button>
       </div>
@@ -123,15 +123,15 @@
         [strokeWidth]="2.3"
       ></lucide-angular>
       <div>
-        <h2>Sincronización</h2>
-        <p>Cómo y cuándo se envían los datos pendientes.</p>
+        <h2>{{ 'PROFILE.SYNC_TITLE' | translate }}</h2>
+        <p>{{ 'PROFILE.SYNC_DESCRIPTION' | translate }}</p>
       </div>
     </div>
 
     <div class="pref-row">
       <div>
-        <h3>Sincronización automática</h3>
-        <p>Envía registros pendientes en segundo plano.</p>
+        <h3>{{ 'PROFILE.AUTO_SYNC' | translate }}</h3>
+        <p>{{ 'PROFILE.AUTO_SYNC_DESCRIPTION' | translate }}</p>
       </div>
       <label class="switch">
         <input type="checkbox" [ngModel]="prefs.autoSync" (ngModelChange)="update({ autoSync: $event })" />
@@ -141,21 +141,21 @@
 
     <div class="pref-row" *ngIf="prefs.autoSync">
       <div>
-        <h3>Intervalo de sincronización</h3>
-        <p>Cada cuánto tiempo se intenta sincronizar.</p>
+        <h3>{{ 'PROFILE.SYNC_INTERVAL' | translate }}</h3>
+        <p>{{ 'PROFILE.SYNC_INTERVAL_DESCRIPTION' | translate }}</p>
       </div>
       <select [ngModel]="prefs.syncInterval" (ngModelChange)="update({ syncInterval: $event })">
-        <option value="5">Cada 5 minutos</option>
-        <option value="15">Cada 15 minutos</option>
-        <option value="30">Cada 30 minutos</option>
-        <option value="60">Cada 1 hora</option>
+        <option value="5">{{ 'PROFILE.EVERY_5_MINUTES' | translate }}</option>
+        <option value="15">{{ 'PROFILE.EVERY_15_MINUTES' | translate }}</option>
+        <option value="30">{{ 'PROFILE.EVERY_30_MINUTES' | translate }}</option>
+        <option value="60">{{ 'PROFILE.EVERY_1_HOUR' | translate }}</option>
       </select>
     </div>
 
     <div class="pref-row">
       <div>
-        <h3>Notificaciones de sincronización</h3>
-        <p>Muestra aviso cuando se complete la sincronización.</p>
+        <h3>{{ 'PROFILE.SYNC_NOTIFICATIONS' | translate }}</h3>
+        <p>{{ 'PROFILE.SYNC_NOTIFICATIONS_DESCRIPTION' | translate }}</p>
       </div>
       <label class="switch">
         <input type="checkbox" [ngModel]="prefs.syncNotifications" (ngModelChange)="update({ syncNotifications: $event })" />
@@ -165,8 +165,8 @@
 
     <div class="pref-row">
       <div>
-        <h3>Reintentar automáticamente</h3>
-        <p>Reintenta procesos fallidos en el próximo ciclo.</p>
+        <h3>{{ 'PROFILE.RETRY_FAILED_SYNC' | translate }}</h3>
+        <p>{{ 'PROFILE.RETRY_FAILED_SYNC_DESCRIPTION' | translate }}</p>
       </div>
       <label class="switch">
         <input type="checkbox" [ngModel]="prefs.retryFailedSync" (ngModelChange)="update({ retryFailedSync: $event })" />
@@ -176,8 +176,8 @@
 
     <div class="pref-row">
       <div>
-        <h3>Solo en WiFi</h3>
-        <p>No sincroniza con datos móviles.</p>
+        <h3>{{ 'PROFILE.SYNC_ONLY_WIFI' | translate }}</h3>
+        <p>{{ 'PROFILE.SYNC_ONLY_WIFI_DESCRIPTION' | translate }}</p>
       </div>
       <label class="switch">
         <input type="checkbox" [ngModel]="prefs.syncOnlyOnWifi" (ngModelChange)="update({ syncOnlyOnWifi: $event })" />
@@ -195,17 +195,17 @@
         [strokeWidth]="2.3"
       ></lucide-angular>
       <div>
-        <h2>Apariencia</h2>
-        <p>Tema, colores, tamaño de letra y densidad visual.</p>
+        <h2>{{ 'PREFERENCES.APPEARANCE' | translate }}</h2>
+        <p>{{ 'PROFILE.APPEARANCE_DESCRIPTION' | translate }}</p>
       </div>
     </div>
 
     <div class="pref-row">
       <div>
-        <h3>Tema de la aplicación</h3>
-        <p>Modo claro, oscuro, automático o Liquid Glass global.</p>
+        <h3>{{ 'PROFILE.APP_THEME' | translate }}</h3>
+        <p>{{ 'PROFILE.APP_THEME_DESCRIPTION' | translate }}</p>
       </div>
-      <div class="liquid-theme-group" role="radiogroup" aria-label="Tema de la aplicacion">
+      <div class="liquid-theme-group" role="radiogroup" [attr.aria-label]="'PROFILE.APP_THEME' | translate">
         <button
           type="button"
           class="liquid-theme-option"
@@ -215,8 +215,8 @@
         >
           <span class="liquid-indicator"></span>
           <span>
-            <strong>{{ option.label }}</strong>
-            <small>{{ option.description }}</small>
+            <strong>{{ option.label | translate }}</strong>
+            <small>{{ option.description | translate }}</small>
           </span>
         </button>
       </div>
@@ -224,14 +224,14 @@
 
     <div class="pref-row">
       <div>
-        <h3>Color del sistema</h3>
-        <p>Color principal de botones y elementos activos.</p>
+        <h3>{{ 'PROFILE.SYSTEM_COLOR' | translate }}</h3>
+        <p>{{ 'PROFILE.SYSTEM_COLOR_DESCRIPTION' | translate }}</p>
       </div>
       <label class="select-shell accent-select">
         <span class="select-swatch" [ngClass]="'swatch-' + prefs.accentColor"></span>
         <select [ngModel]="prefs.accentColor" (ngModelChange)="setAccentColor($event)">
           <option *ngFor="let option of accentOptions" [ngValue]="option.value">
-            {{ option.label }}
+            {{ option.label | translate }}
           </option>
         </select>
       </label>
@@ -239,8 +239,8 @@
 
     <div class="pref-row wallpaper-row">
       <div>
-        <h3>Fondo de pantalla del sistema</h3>
-        <p>Disponible solo en Inicio y pantallas visuales, no en mantenimientos ni procesos.</p>
+        <h3>{{ 'PROFILE.SYSTEM_WALLPAPER' | translate }}</h3>
+        <p>{{ 'PROFILE.SYSTEM_WALLPAPER_DESCRIPTION' | translate }}</p>
       </div>
       <div class="wallpaper-controls">
         <div class="wallpaper-actions">
@@ -256,7 +256,7 @@
           <label class="select-shell wallpaper-select">
             <select [ngModel]="prefs.wallpaper" (ngModelChange)="setWallpaper($event)">
               <option *ngFor="let option of wallpaperOptions" [ngValue]="option.value">
-                {{ option.label }}
+                {{ option.label | translate }}
               </option>
             </select>
           </label>
@@ -267,40 +267,40 @@
           [class.empty]="!prefs.wallpaperEnabled || prefs.wallpaper === 'none'"
           [ngStyle]="wallpaperPreviewStyle"
         >
-          <span>{{ prefs.wallpaperEnabled ? wallpaperPreviewLabel : 'Sin fondo activo' }}</span>
+          <span>{{ (prefs.wallpaperEnabled ? wallpaperPreviewLabel : 'PROFILE.WALLPAPER_INACTIVE') | translate }}</span>
         </div>
       </div>
     </div>
 
     <div class="pref-row">
       <div>
-        <h3>Tamaño de fuente</h3>
-        <p>Afecta textos, formularios y contenido del sistema.</p>
+        <h3>{{ 'PROFILE.FONT_SIZE' | translate }}</h3>
+        <p>{{ 'PROFILE.FONT_SIZE_DESCRIPTION' | translate }}</p>
       </div>
       <div class="chip-group">
-        <button [class.active]="prefs.fontSize === 'small'" (click)="setFontSize('small')">Pequeña</button>
-        <button [class.active]="prefs.fontSize === 'medium'" (click)="setFontSize('medium')">Normal</button>
-        <button [class.active]="prefs.fontSize === 'large'" (click)="setFontSize('large')">Grande</button>
-        <button [class.active]="prefs.fontSize === 'extralarge'" (click)="setFontSize('extralarge')">Extra</button>
+        <button [class.active]="prefs.fontSize === 'small'" (click)="setFontSize('small')">{{ 'PROFILE.FONT_SMALL' | translate }}</button>
+        <button [class.active]="prefs.fontSize === 'medium'" (click)="setFontSize('medium')">{{ 'PROFILE.FONT_MEDIUM' | translate }}</button>
+        <button [class.active]="prefs.fontSize === 'large'" (click)="setFontSize('large')">{{ 'PROFILE.FONT_LARGE' | translate }}</button>
+        <button [class.active]="prefs.fontSize === 'extralarge'" (click)="setFontSize('extralarge')">{{ 'PROFILE.FONT_EXTRA' | translate }}</button>
       </div>
     </div>
 
     <div class="pref-row">
       <div>
-        <h3>Densidad de tarjetas</h3>
-        <p>Espacio entre elementos en formularios y listas.</p>
+        <h3>{{ 'PROFILE.CARD_DENSITY' | translate }}</h3>
+        <p>{{ 'PROFILE.CARD_DENSITY_DESCRIPTION' | translate }}</p>
       </div>
       <div class="chip-group">
-        <button [class.active]="prefs.cardDensity === 'compact'" (click)="setCardDensity('compact')">Compacto</button>
-        <button [class.active]="prefs.cardDensity === 'normal'" (click)="setCardDensity('normal')">Normal</button>
-        <button [class.active]="prefs.cardDensity === 'comfortable'" (click)="setCardDensity('comfortable')">Cómodo</button>
+        <button [class.active]="prefs.cardDensity === 'compact'" (click)="setCardDensity('compact')">{{ 'PROFILE.DENSITY_COMPACT' | translate }}</button>
+        <button [class.active]="prefs.cardDensity === 'normal'" (click)="setCardDensity('normal')">{{ 'PROFILE.DENSITY_NORMAL' | translate }}</button>
+        <button [class.active]="prefs.cardDensity === 'comfortable'" (click)="setCardDensity('comfortable')">{{ 'PROFILE.DENSITY_COMFORTABLE' | translate }}</button>
       </div>
     </div>
 
     <div class="pref-row">
       <div>
-        <h3>Desactivar animaciones</h3>
-        <p>Reduce movimientos visuales y deja las transiciones en cero.</p>
+        <h3>{{ 'PROFILE.DISABLE_ANIMATIONS' | translate }}</h3>
+        <p>{{ 'PROFILE.DISABLE_ANIMATIONS_DESCRIPTION' | translate }}</p>
       </div>
       <label class="switch">
         <input
@@ -314,8 +314,8 @@
 
     <div class="pref-row">
       <div>
-        <h3>Sidebar compacto</h3>
-        <p>Reduce el menú lateral para ganar espacio.</p>
+        <h3>{{ 'PROFILE.COMPACT_SIDEBAR' | translate }}</h3>
+        <p>{{ 'PROFILE.COMPACT_SIDEBAR_DESCRIPTION' | translate }}</p>
       </div>
       <label class="switch">
         <input type="checkbox" [ngModel]="prefs.compactSidebar" (ngModelChange)="update({ compactSidebar: $event })" />
@@ -325,25 +325,25 @@
 
     <div class="pref-row">
       <div>
-        <h3>PosiciÃ³n del menÃº lateral</h3>
-        <p>Elige en quÃ© borde se ancla el menÃº principal.</p>
+        <h3>{{ 'PROFILE.SIDEBAR_POSITION' | translate }}</h3>
+        <p>{{ 'PROFILE.SIDEBAR_POSITION_DESCRIPTION' | translate }}</p>
       </div>
-      <div class="chip-group" role="radiogroup" aria-label="Posicion del menu lateral">
+      <div class="chip-group" role="radiogroup" [attr.aria-label]="'PROFILE.SIDEBAR_POSITION' | translate">
         <button
           type="button"
           *ngFor="let option of sidebarPositionOptions"
           [class.active]="prefs.sidebarPosition === option.value"
           (click)="setSidebarPosition(option.value)"
         >
-          {{ option.label }}
+          {{ option.label | translate }}
         </button>
       </div>
     </div>
 
     <div class="pref-row">
       <div>
-        <h3>Imágenes de productos</h3>
-        <p>Muestra miniaturas en listas y documentos.</p>
+        <h3>{{ 'PROFILE.PRODUCT_IMAGES' | translate }}</h3>
+        <p>{{ 'PROFILE.PRODUCT_IMAGES_DESCRIPTION' | translate }}</p>
       </div>
       <label class="switch">
         <input type="checkbox" [ngModel]="prefs.showProductImages" (ngModelChange)="update({ showProductImages: $event })" />
@@ -361,27 +361,27 @@
         [strokeWidth]="2.3"
       ></lucide-angular>
       <div>
-        <h2>Pedidos y carrito</h2>
-        <p>Comportamiento al crear y gestionar pedidos.</p>
+        <h2>{{ 'PROFILE.ORDERS_CART_TITLE' | translate }}</h2>
+        <p>{{ 'PROFILE.ORDERS_CART_DESCRIPTION' | translate }}</p>
       </div>
     </div>
 
     <div class="pref-row">
       <div>
-        <h3>Guardar carrito por defecto</h3>
-        <p>Qué hacer cuando confirmas el carrito.</p>
+        <h3>{{ 'PROFILE.DEFAULT_SAVE_MODE' | translate }}</h3>
+        <p>{{ 'PROFILE.DEFAULT_SAVE_MODE_DESCRIPTION' | translate }}</p>
       </div>
       <select [ngModel]="prefs.defaultSaveMode" (ngModelChange)="update({ defaultSaveMode: $event })">
-        <option value="ask">Preguntar siempre</option>
-        <option value="draft">Siempre borrador</option>
-        <option value="order">Siempre pedido</option>
+        <option value="ask">{{ 'PROFILE.SAVE_MODE_ASK' | translate }}</option>
+        <option value="draft">{{ 'PROFILE.SAVE_MODE_DRAFT' | translate }}</option>
+        <option value="order">{{ 'PROFILE.SAVE_MODE_ORDER' | translate }}</option>
       </select>
     </div>
 
     <div class="pref-row">
       <div>
-        <h3>Confirmar antes de eliminar</h3>
-        <p>Muestra confirmación antes de borrar datos.</p>
+        <h3>{{ 'PROFILE.CONFIRM_BEFORE_DELETE' | translate }}</h3>
+        <p>{{ 'PROFILE.CONFIRM_BEFORE_DELETE_DESCRIPTION' | translate }}</p>
       </div>
       <label class="switch">
         <input type="checkbox" [ngModel]="prefs.confirmBeforeDelete" (ngModelChange)="update({ confirmBeforeDelete: $event })" />
@@ -391,8 +391,8 @@
 
     <div class="pref-row">
       <div>
-        <h3>Expandir ítems automáticamente</h3>
-        <p>Muestra detalles al abrir historial.</p>
+        <h3>{{ 'PROFILE.AUTO_EXPAND_ITEMS' | translate }}</h3>
+        <p>{{ 'PROFILE.AUTO_EXPAND_ITEMS_DESCRIPTION' | translate }}</p>
       </div>
       <label class="switch">
         <input type="checkbox" [ngModel]="prefs.autoExpandOrderItems" (ngModelChange)="update({ autoExpandOrderItems: $event })" />
@@ -402,8 +402,8 @@
 
     <div class="pref-row">
       <div>
-        <h3>Mostrar desglose de IVA</h3>
-        <p>Muestra subtotal, descuentos e IVA por separado.</p>
+        <h3>{{ 'PROFILE.SHOW_TAX_BREAKDOWN' | translate }}</h3>
+        <p>{{ 'PROFILE.SHOW_TAX_BREAKDOWN_DESCRIPTION' | translate }}</p>
       </div>
       <label class="switch">
         <input type="checkbox" [ngModel]="prefs.showTaxBreakdown" (ngModelChange)="update({ showTaxBreakdown: $event })" />
@@ -413,8 +413,8 @@
 
     <div class="pref-row">
       <div>
-        <h3>Verificar stock al confirmar</h3>
-        <p>Consulta disponibilidad antes de crear un pedido.</p>
+        <h3>{{ 'PROFILE.WARN_STOCK' | translate }}</h3>
+        <p>{{ 'PROFILE.WARN_STOCK_DESCRIPTION' | translate }}</p>
       </div>
       <label class="switch">
         <input type="checkbox" [ngModel]="prefs.warnStockBeforeOrder" (ngModelChange)="update({ warnStockBeforeOrder: $event })" />
@@ -424,16 +424,16 @@
 
     <div class="pref-row">
       <div>
-        <h3>Descuento global por defecto</h3>
-        <p>Prellena el descuento al crear pedidos.</p>
+        <h3>{{ 'PROFILE.DEFAULT_GLOBAL_DISCOUNT' | translate }}</h3>
+        <p>{{ 'PROFILE.DEFAULT_GLOBAL_DISCOUNT_DESCRIPTION' | translate }}</p>
       </div>
       <input class="small-input" type="number" min="0" max="100" [ngModel]="prefs.defaultGlobalDiscount" (ngModelChange)="update({ defaultGlobalDiscount: +$event })" />
     </div>
 
     <div class="pref-row">
       <div>
-        <h3>Pedidos por página</h3>
-        <p>Cantidad visible en el historial.</p>
+        <h3>{{ 'PROFILE.ORDERS_PAGE_SIZE' | translate }}</h3>
+        <p>{{ 'PROFILE.ORDERS_PAGE_SIZE_DESCRIPTION' | translate }}</p>
       </div>
       <select [ngModel]="prefs.ordersPageSize" (ngModelChange)="update({ ordersPageSize: +$event })">
         <option [ngValue]="5">5</option>
@@ -453,31 +453,31 @@
         [strokeWidth]="2.3"
       ></lucide-angular>
       <div>
-        <h2>PDF y documentos</h2>
-        <p>Personalización de documentos impresos.</p>
+        <h2>{{ 'PREFERENCES.DOCUMENTS' | translate }}</h2>
+        <p>{{ 'PROFILE.DOCUMENTS_DESCRIPTION' | translate }}</p>
       </div>
     </div>
 
     <div class="pref-row">
       <div>
-        <h3>Nombre de empresa en PDF</h3>
-        <p>Aparece en el encabezado de documentos.</p>
+        <h3>{{ 'PROFILE.PDF_COMPANY_NAME' | translate }}</h3>
+        <p>{{ 'PROFILE.PDF_COMPANY_NAME_DESCRIPTION' | translate }}</p>
       </div>
       <input type="text" [ngModel]="prefs.pdfCompanyName" (ngModelChange)="update({ pdfCompanyName: $event })" />
     </div>
 
     <div class="pref-row">
       <div>
-        <h3>Texto de pie de página</h3>
-        <p>Nota o aviso legal al pie.</p>
+        <h3>{{ 'PROFILE.PDF_FOOTER_TEXT' | translate }}</h3>
+        <p>{{ 'PROFILE.PDF_FOOTER_TEXT_DESCRIPTION' | translate }}</p>
       </div>
       <input type="text" [ngModel]="prefs.pdfFooterText" (ngModelChange)="update({ pdfFooterText: $event })" />
     </div>
 
     <div class="pref-row">
       <div>
-        <h3>Descargar PDF automáticamente</h3>
-        <p>Descarga el PDF al guardar documentos.</p>
+        <h3>{{ 'PROFILE.PDF_AUTO_DOWNLOAD' | translate }}</h3>
+        <p>{{ 'PROFILE.PDF_AUTO_DOWNLOAD_DESCRIPTION' | translate }}</p>
       </div>
       <label class="switch">
         <input type="checkbox" [ngModel]="prefs.pdfAutoDownload" (ngModelChange)="update({ pdfAutoDownload: $event })" />
@@ -505,10 +505,10 @@
         <h3>{{ 'PROFILE.CURRENCY' | translate }}</h3>
       </div>
       <select [ngModel]="prefs.currency" (ngModelChange)="update({ currency: $event })">
-        <option value="USD">USD - Dólar</option>
-        <option value="EUR">EUR - Euro</option>
-        <option value="COP">COP - Peso colombiano</option>
-        <option value="PEN">PEN - Sol peruano</option>
+        <option value="USD">{{ 'PROFILE.CURRENCY_USD' | translate }}</option>
+        <option value="EUR">{{ 'PROFILE.CURRENCY_EUR' | translate }}</option>
+        <option value="COP">{{ 'PROFILE.CURRENCY_COP' | translate }}</option>
+        <option value="PEN">{{ 'PROFILE.CURRENCY_PEN' | translate }}</option>
       </select>
     </div>
 
@@ -530,7 +530,7 @@
       </div>
       <select [ngModel]="prefs.language" (ngModelChange)="setLanguage($event)">
         <option *ngFor="let option of languageOptions" [ngValue]="option.value">
-          {{ option.label | translate }}
+          {{ option.label }}
         </option>
       </select>
     </div>
@@ -545,15 +545,15 @@
         [strokeWidth]="2.3"
       ></lucide-angular>
       <div>
-        <h2>Notificaciones y alertas</h2>
-        <p>Sonidos, vibración y avisos del sistema.</p>
+        <h2>{{ 'PREFERENCES.NOTIFICATIONS' | translate }}</h2>
+        <p>{{ 'PROFILE.NOTIFICATIONS_DESCRIPTION' | translate }}</p>
       </div>
     </div>
 
     <div class="pref-row">
       <div>
-        <h3>Sonido</h3>
-        <p>Beep en acciones importantes.</p>
+        <h3>{{ 'PROFILE.SOUND' | translate }}</h3>
+        <p>{{ 'PROFILE.SOUND_DESCRIPTION' | translate }}</p>
       </div>
       <label class="switch">
         <input type="checkbox" [ngModel]="prefs.soundEnabled" (ngModelChange)="update({ soundEnabled: $event })" />
@@ -563,8 +563,8 @@
 
     <div class="pref-row">
       <div>
-        <h3>Vibración</h3>
-        <p>Retroalimentación háptica en móvil.</p>
+        <h3>{{ 'PROFILE.VIBRATION' | translate }}</h3>
+        <p>{{ 'PROFILE.VIBRATION_DESCRIPTION' | translate }}</p>
       </div>
       <label class="switch">
         <input type="checkbox" [ngModel]="prefs.vibrationEnabled" (ngModelChange)="update({ vibrationEnabled: $event })" />
@@ -574,16 +574,16 @@
 
     <div class="pref-row">
       <div>
-        <h3>Umbral de stock bajo</h3>
-        <p>Alerta si el stock es menor al número indicado.</p>
+        <h3>{{ 'PROFILE.LOW_STOCK_THRESHOLD' | translate }}</h3>
+        <p>{{ 'PROFILE.LOW_STOCK_THRESHOLD_DESCRIPTION' | translate }}</p>
       </div>
       <input class="small-input" type="number" min="0" [ngModel]="prefs.lowStockWarningThreshold" (ngModelChange)="update({ lowStockWarningThreshold: +$event })" />
     </div>
 
     <div class="pref-row">
       <div>
-        <h3>Banner sin conexión</h3>
-        <p>Muestra aviso cuando no hay internet.</p>
+        <h3>{{ 'PROFILE.OFFLINE_BANNER' | translate }}</h3>
+        <p>{{ 'PROFILE.OFFLINE_BANNER_DESCRIPTION' | translate }}</p>
       </div>
       <label class="switch">
         <input type="checkbox" [ngModel]="prefs.showOfflineBanner" (ngModelChange)="update({ showOfflineBanner: $event })" />
@@ -601,23 +601,23 @@
         [strokeWidth]="2.3"
       ></lucide-angular>
       <div>
-        <h2>Datos y privacidad</h2>
-        <p>Retención de historial y seguridad local.</p>
+        <h2>{{ 'PREFERENCES.PRIVACY' | translate }}</h2>
+        <p>{{ 'PROFILE.PRIVACY_DESCRIPTION' | translate }}</p>
       </div>
     </div>
 
     <div class="pref-row">
       <div>
-        <h3>Conservar historial</h3>
-        <p>0 significa conservar siempre.</p>
+        <h3>{{ 'PROFILE.KEEP_HISTORY' | translate }}</h3>
+        <p>{{ 'PROFILE.KEEP_HISTORY_DESCRIPTION' | translate }}</p>
       </div>
       <input class="small-input" type="number" min="0" [ngModel]="prefs.keepHistoryDays" (ngModelChange)="update({ keepHistoryDays: +$event })" />
     </div>
 
     <div class="pref-row">
       <div>
-        <h3>PIN de acceso</h3>
-        <p>Solicita PIN al abrir la aplicación.</p>
+        <h3>{{ 'PROFILE.ACCESS_PIN' | translate }}</h3>
+        <p>{{ 'PROFILE.ACCESS_PIN_DESCRIPTION' | translate }}</p>
       </div>
       <label class="switch">
         <input type="checkbox" [ngModel]="prefs.requirePinOnOpen" (ngModelChange)="update({ requirePinOnOpen: $event })" />
@@ -627,18 +627,18 @@
   </section>
 
   <section class="info-footer">
-    <strong>Información:</strong>
-    Las preferencias se guardan localmente por ahora. Luego se podrán sincronizar con la API.
+    <strong>{{ 'PROFILE.INFO_TITLE' | translate }}:</strong>
+    {{ 'PROFILE.INFO_TEXT' | translate }}
   </section>
 
   <div class="modal-backdrop" *ngIf="showResetConfirm">
     <div class="modal">
-      <h2>¿Restablecer preferencias?</h2>
-      <p>Volverás a la configuración inicial. Esta acción no se puede deshacer.</p>
+      <h2>{{ 'PROFILE.RESET_CONFIRM_TITLE' | translate }}</h2>
+      <p>{{ 'PROFILE.RESET_CONFIRM_TEXT' | translate }}</p>
 
       <div class="modal-actions">
-        <button class="danger" (click)="reset()">Restablecer</button>
-        <button (click)="showResetConfirm = false">Cancelar</button>
+        <button class="danger" (click)="reset()">{{ 'PROFILE.RESET' | translate }}</button>
+        <button (click)="showResetConfirm = false">{{ 'COMMON.CANCEL' | translate }}</button>
       </div>
     </div>
   </div>
