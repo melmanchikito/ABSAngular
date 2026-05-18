@@ -61,18 +61,20 @@
 
   <section
     #dashboardGrid
-    class="dashboard-grid grid-stack"
+    class="dashboard-section dashboard-grid grid-stack"
     [class.dashboard-editing]="isDashboardEditing"
     [attr.aria-label]="'HOME.ADVANCED_DASHBOARD' | translate"
   >
     <article
       class="dashboard-widget grid-stack-item"
       *ngFor="let widget of dashboardWidgets; trackBy: trackWidget"
+      [ngClass]="'widget-' + widget.id"
       [attr.gs-id]="widget.id"
       [attr.gs-x]="widget.layout.x"
       [attr.gs-y]="widget.layout.y"
       [attr.gs-w]="widget.layout.w"
       [attr.gs-h]="widget.layout.h"
+      [attr.gs-min-h]="widget.minH || null"
     >
       <div class="grid-stack-item-content dashboard-panel">
         <header class="widget-head">
@@ -81,16 +83,6 @@
             <h2>{{ widget.title | translate }}</h2>
             <p>{{ widget.subtitle | translate }}</p>
           </div>
-
-          <button
-            *ngIf="isDashboardEditing"
-            type="button"
-            class="widget-drag-handle"
-            [title]="'HOME.MOVE_WIDGET' | translate"
-            [attr.aria-label]="'HOME.MOVE_WIDGET' | translate"
-          >
-            <i class="pi pi-arrows-alt"></i>
-          </button>
         </header>
 
         <ng-container [ngSwitch]="widget.type">
@@ -98,9 +90,9 @@
             <div
               echarts
               class="dashboard-chart"
-              [options]="chartOptions[widget.chartKey || 'systemTrend']"
+              [options]="getChartOptions(widget, 'systemTrend')"
               [initOpts]="chartInitOpts"
-              [autoResize]="false"
+              [autoResize]="true"
               (chartInit)="onChartInit($event, widget.id)"
             ></div>
           </div>
@@ -109,9 +101,9 @@
             <div
               echarts
               class="dashboard-chart"
-              [options]="chartOptions[widget.chartKey || 'healthGauge']"
+              [options]="getChartOptions(widget, 'healthGauge')"
               [initOpts]="chartInitOpts"
-              [autoResize]="false"
+              [autoResize]="true"
               (chartInit)="onChartInit($event, widget.id)"
             ></div>
           </div>

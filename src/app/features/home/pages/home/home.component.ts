@@ -59,6 +59,7 @@ interface DashboardWidget {
   type: DashboardWidgetType;
   layout: DashboardLayout;
   chartKey?: ChartKey;
+  minH?: number;
 }
 
 interface HomeKpi {
@@ -237,8 +238,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     { name: 'SIDEBAR.FINANCE', owner: 'HOME.MODULE_ACCOUNTING', progress: 68, status: 'HOME.STATUS_REVIEW', severity: 'secondary' }
   ];
 
-  private readonly dashboardLayoutKey = 'abs_home_dashboard_layout';
   private readonly chartInstances = new Map<string, EChartsType>();
+  private readonly dashboardLayoutKey = 'abs_home_dashboard_grid_layout_v3';
   private preferencesSubscription?: Subscription;
   private languageSubscription?: Subscription;
   private grid?: GridStack;
@@ -265,7 +266,6 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnInit(): void {
     this.preferencesSubscription = this.preferencesService.preferences$.subscribe((prefs) => {
       this.chartOptions = this.buildChartOptions();
-      this.grid?.setAnimation(prefs.showAnimations && this.isDashboardEditing);
       this.resizeChartsSoon(120);
       this.changeDetector.markForCheck();
     });
@@ -286,9 +286,9 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnDestroy(): void {
     this.preferencesSubscription?.unsubscribe();
     this.languageSubscription?.unsubscribe();
-    this.resizeObserver?.disconnect();
     this.clearResizeWork();
     this.clearSaveLayoutWork();
+    this.resizeObserver?.disconnect();
     this.grid?.destroy(false);
     this.chartInstances.clear();
   }
@@ -308,34 +308,32 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   resetDashboardLayout(): void {
-    if (!this.isDashboardEditing) {
-      return;
-    }
-
     localStorage.removeItem(this.dashboardLayoutKey);
 
     if (!this.grid) {
+      this.resizeChartsSoon(80);
       return;
     }
 
     this.grid.batchUpdate();
     this.defaultWidgets().forEach((widget) => {
-      const element = this.dashboardGrid?.nativeElement.querySelector(
-        `[gs-id="${widget.id}"]`
-      ) as HTMLElement | null;
-
+      const element = this.findWidgetElement(widget.id);
       if (element) {
-        this.grid?.update(element, { ...widget.layout, id: widget.id });
+        this.grid?.update(element, { ...widget.layout, id: widget.id, minH: widget.minH });
       }
     });
     this.grid.batchUpdate(false);
-    this.saveGridLayout();
+    this.saveDashboardLayout();
     this.resizeChartsSoon(80);
   }
 
   toggleDashboardEditing(): void {
     this.isDashboardEditing = !this.isDashboardEditing;
     this.syncGridEditingState();
+    if (!this.isDashboardEditing) {
+      this.saveDashboardLayout();
+    }
+    this.resizeChartsSoon(80);
   }
 
   onChartInit(instance: unknown, widgetId: string): void {
@@ -351,43 +349,54 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     return item.route;
   }
 
-  private initializeGrid(): void {
-    const gridElement = this.dashboardGrid?.nativeElement;
+  getChartOptions(widget: DashboardWidget, fallback: ChartKey): EChartsCoreOption {
+    return this.chartOptions[widget.chartKey ?? fallback];
+  }
 
-    if (!gridElement) {
+  private initializeGrid(): void {
+    const element = this.dashboardGrid?.nativeElement;
+
+    if (!element) {
       return;
     }
 
     this.grid = GridStack.init(
       {
         column: 12,
-        cellHeight: 112,
-        margin: '18px 38px',
+        cellHeight: 120,
+        margin: '16px 19px',
         float: false,
         animate: false,
         disableDrag: true,
         disableResize: true,
         draggable: {
-          handle: '.widget-drag-handle'
+          handle: '.widget-head'
         },
         resizable: {
           handles: 'e,se,s,sw,w'
+        },
+        columnOpts: {
+          breakpoints: [
+            { w: 760, c: 1, layout: 'list' },
+            { w: 1200, c: 1, layout: 'list' }
+          ],
+          layout: 'list'
         }
       },
-      gridElement
+      element
     );
 
     this.grid.on('change', () => {
       if (this.isDashboardEditing) {
-        this.saveGridLayoutSoon();
+        this.saveDashboardLayoutSoon();
       }
 
-      this.resizeChartsSoon(140);
+      this.resizeChartsSoon(120);
     });
 
     this.grid.on('dragstop resizestop', () => {
       if (this.isDashboardEditing) {
-        this.saveGridLayout();
+        this.saveDashboardLayout();
       }
 
       this.resizeChartsSoon(60);
@@ -395,11 +404,11 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 
     if (typeof ResizeObserver !== 'undefined') {
       this.resizeObserver = new ResizeObserver(() => this.resizeChartsSoon(160));
-      this.resizeObserver.observe(gridElement);
+      this.resizeObserver.observe(element);
     }
 
-    this.resizeChartsSoon(120);
     this.syncGridEditingState();
+    this.resizeChartsSoon(120);
   }
 
   private syncGridEditingState(): void {
@@ -412,7 +421,12 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     this.grid.setAnimation(this.preferencesService.snapshot.showAnimations && this.isDashboardEditing);
   }
 
-  private saveGridLayout(): void {
+  private saveDashboardLayoutSoon(): void {
+    this.clearSaveLayoutWork();
+    this.saveLayoutTimer = setTimeout(() => this.saveDashboardLayout(), 260);
+  }
+
+  private saveDashboardLayout(): void {
     if (!this.grid) {
       return;
     }
@@ -425,15 +439,10 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
         x: item.x ?? 0,
         y: item.y ?? 0,
         w: item.w ?? 4,
-        h: item.h ?? 3
+        h: item.h ?? 4
       }));
 
     localStorage.setItem(this.dashboardLayoutKey, JSON.stringify(layout));
-  }
-
-  private saveGridLayoutSoon(): void {
-    this.clearSaveLayoutWork();
-    this.saveLayoutTimer = setTimeout(() => this.saveGridLayout(), 260);
   }
 
   private resizeChartsSoon(delay = 90): void {
@@ -466,14 +475,11 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private createDashboardWidgets(): DashboardWidget[] {
-    const storedLayout = this.loadStoredLayout();
+    const storedLayout = this.loadStoredDashboardLayout();
 
     return this.defaultWidgets().map((widget) => ({
       ...widget,
-      layout: {
-        ...widget.layout,
-        ...(storedLayout[widget.id] ?? {})
-      }
+      layout: storedLayout[widget.id] ?? widget.layout
     }));
   }
 
@@ -486,7 +492,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
         subtitle: 'HOME.WIDGET_SYSTEM_TREND_SUBTITLE',
         type: 'chart',
         chartKey: 'systemTrend',
-        layout: { x: 0, y: 0, w: 8, h: 4 }
+        layout: { x: 0, y: 0, w: 8, h: 4 },
+        minH: 3
       },
       {
         id: 'health-gauge',
@@ -495,7 +502,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
         subtitle: 'HOME.WIDGET_HEALTH_SUBTITLE',
         type: 'gauge',
         chartKey: 'healthGauge',
-        layout: { x: 8, y: 0, w: 4, h: 4 }
+        layout: { x: 8, y: 0, w: 4, h: 4 },
+        minH: 3
       },
       {
         id: 'ticket-flow',
@@ -504,7 +512,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
         subtitle: 'HOME.WIDGET_TICKET_FLOW_SUBTITLE',
         type: 'chart',
         chartKey: 'ticketFlow',
-        layout: { x: 0, y: 4, w: 6, h: 4 }
+        layout: { x: 0, y: 4, w: 6, h: 4 },
+        minH: 3
       },
       {
         id: 'module-share',
@@ -513,7 +522,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
         subtitle: 'HOME.WIDGET_MODULE_SHARE_SUBTITLE',
         type: 'chart',
         chartKey: 'moduleShare',
-        layout: { x: 6, y: 4, w: 6, h: 4 }
+        layout: { x: 6, y: 4, w: 6, h: 4 },
+        minH: 3
       },
       {
         id: 'module-status',
@@ -521,7 +531,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
         title: 'HOME.WIDGET_MODULE_STATUS_TITLE',
         subtitle: 'HOME.WIDGET_MODULE_STATUS_SUBTITLE',
         type: 'modules',
-        layout: { x: 0, y: 8, w: 5, h: 4 }
+        layout: { x: 0, y: 8, w: 5, h: 5 },
+        minH: 4
       },
       {
         id: 'recent-activity',
@@ -529,7 +540,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
         title: 'HOME.WIDGET_RECENT_ACTIVITY_TITLE',
         subtitle: 'HOME.WIDGET_RECENT_ACTIVITY_SUBTITLE',
         type: 'activity',
-        layout: { x: 5, y: 8, w: 4, h: 4 }
+        layout: { x: 5, y: 8, w: 4, h: 5 },
+        minH: 4
       },
       {
         id: 'quick-access',
@@ -537,12 +549,17 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
         title: 'HOME.WIDGET_QUICK_ACCESS_TITLE',
         subtitle: 'HOME.WIDGET_QUICK_ACCESS_SUBTITLE',
         type: 'quick',
-        layout: { x: 9, y: 8, w: 3, h: 4 }
+        layout: { x: 9, y: 8, w: 3, h: 5 },
+        minH: 4
       }
     ];
   }
 
-  private loadStoredLayout(): Record<string, DashboardLayout> {
+  private findWidgetElement(widgetId: string): HTMLElement | null {
+    return this.grid?.el.querySelector(`[gs-id="${widgetId}"]`) as HTMLElement | null;
+  }
+
+  private loadStoredDashboardLayout(): Record<string, DashboardLayout> {
     const stored = localStorage.getItem(this.dashboardLayoutKey);
 
     if (!stored) {
@@ -556,6 +573,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
         return {};
       }
 
+      const validWidgetIds = new Set(this.defaultWidgetIds());
+
       return parsed.reduce<Record<string, DashboardLayout>>((layout, item) => {
         if (!item || typeof item !== 'object') {
           return layout;
@@ -568,7 +587,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
         const w = this.readLayoutNumber(record['w']);
         const h = this.readLayoutNumber(record['h']);
 
-        if (id && x !== null && y !== null && w !== null && h !== null) {
+        if (validWidgetIds.has(id) && x !== null && y !== null && w !== null && h !== null) {
           layout[id] = { x, y, w, h };
         }
 
@@ -582,6 +601,18 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private readLayoutNumber(value: unknown): number | null {
     return typeof value === 'number' && Number.isFinite(value) ? value : null;
+  }
+
+  private defaultWidgetIds(): string[] {
+    return [
+      'system-trend',
+      'health-gauge',
+      'ticket-flow',
+      'module-share',
+      'module-status',
+      'recent-activity',
+      'quick-access'
+    ];
   }
 
   private buildChartOptions(): Record<ChartKey, EChartsCoreOption> {
