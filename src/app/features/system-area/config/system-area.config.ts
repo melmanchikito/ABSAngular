@@ -132,6 +132,12 @@ const configuracionCategories = createCategories(
       route: route('sistema/configuracion/acciones')
     },
     {
+      label: 'Permisos',
+      description: 'Arbol general de permisos del sistema.',
+      icon: ShieldCheck,
+      route: route('sistema/configuracion/mantenimientos/permisos')
+    },
+    {
       label: 'Area',
       description: 'Grupos organizacionales internos.',
       icon: FolderKanban,

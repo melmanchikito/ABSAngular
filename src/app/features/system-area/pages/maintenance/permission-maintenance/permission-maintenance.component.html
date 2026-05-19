@@ -1,0 +1,219 @@
+<section class="permission-maintenance-page page-shell visual-page-background">
+  <app-page-header
+    eyebrow="Sistema / Configuracion / Mantenimientos / Permisos"
+    title="Mantenimiento - Permisos"
+    subtitle="Consulta el arbol de permisos real por usuario."
+    [icon]="permissionIcon"
+  >
+    <div page-actions class="app-page-actions">
+      <button
+        type="button"
+        class="btn-outline app-grid-icon-button"
+        title="Actualizar"
+        aria-label="Actualizar permisos"
+        [disabled]="isLoading || selectedUserId === null"
+        (click)="loadPermissions()"
+      >
+        <lucide-angular [img]="refreshIcon" [size]="17" [strokeWidth]="2.4"></lucide-angular>
+      </button>
+    </div>
+  </app-page-header>
+
+  <div class="alert-error" *ngIf="errorMessage">{{ errorMessage }}</div>
+  <div class="alert-error" *ngIf="usersErrorMessage">{{ usersErrorMessage }}</div>
+
+  <section class="permission-layout">
+    <article class="permission-panel app-card">
+      <header class="permission-panel-header">
+        <div>
+          <span class="panel-eyebrow">Listado</span>
+          <h2>Arbol de permisos</h2>
+        </div>
+
+        <div class="stats-strip" aria-label="Resumen de permisos">
+          <span><strong>{{ stats.areas }}</strong> areas</span>
+          <span><strong>{{ stats.modules }}</strong> modulos</span>
+          <span><strong>{{ stats.options }}</strong> opciones</span>
+          <span><strong>{{ stats.activeActions }}</strong> activas</span>
+        </div>
+      </header>
+
+      <section class="user-selector-panel">
+        <label class="user-select-field">
+          <span>Usuario</span>
+          <select
+            [ngModel]="selectedUserId"
+            name="permissionMaintenanceUser"
+            [disabled]="isLoadingUsers || isLoading"
+            (ngModelChange)="onUserChange($event)"
+          >
+            <option [ngValue]="null">{{ isLoadingUsers ? 'Cargando usuarios...' : 'Seleccione un usuario...' }}</option>
+            <option *ngFor="let user of users; trackBy: trackByUserId" [ngValue]="user.id">
+              {{ getUserLabel(user) }}
+            </option>
+          </select>
+        </label>
+
+        <div class="selected-user-pill" *ngIf="selectedUser">
+          <lucide-angular [img]="permissionIcon" [size]="18" [strokeWidth]="2.4"></lucide-angular>
+          <span>{{ selectedUserLabel }}</span>
+        </div>
+      </section>
+
+      <section class="permission-toolbar">
+        <label class="tree-search">
+          <lucide-angular [img]="searchIcon" [size]="18" [strokeWidth]="2.3"></lucide-angular>
+          <input
+            type="search"
+            name="permissionSearch"
+            [ngModel]="searchTerm"
+            appDebouncedSearch
+            (debouncedSearch)="onSearchChange($event)"
+            placeholder="Buscar por area, modulo, opcion o accion..."
+            autocomplete="off"
+          />
+        </label>
+
+        <span class="result-pill" *ngIf="searchTerm">
+          {{ visibleStats.areas }} areas / {{ visibleStats.actions }} acciones
+        </span>
+      </section>
+
+      <app-empty-state
+        *ngIf="isLoading"
+        message="Cargando permisos..."
+        [icon]="permissionIcon"
+      ></app-empty-state>
+
+      <app-empty-state
+        *ngIf="!isLoading && selectedUserId === null"
+        message="Seleccione un usuario para consultar sus permisos."
+        [icon]="permissionIcon"
+      ></app-empty-state>
+
+      <app-empty-state
+        *ngIf="!isLoading && selectedUserId !== null && !areas.length"
+        message="No existen permisos registrados."
+        [icon]="permissionIcon"
+      ></app-empty-state>
+
+      <app-empty-state
+        *ngIf="!isLoading && selectedUserId !== null && areas.length && !visibleAreas.length"
+        message="No se encontraron permisos con la busqueda aplicada."
+        [icon]="searchIcon"
+      ></app-empty-state>
+
+      <div class="permission-tree" *ngIf="!isLoading && visibleAreas.length">
+        <article
+          class="area-node tree-node"
+          *ngFor="let area of visibleAreas; trackBy: trackByArea"
+        >
+          <button type="button" class="node-header area-header" (click)="toggleArea(area.id)">
+            <span class="node-title">
+              <span class="node-icon">
+                <lucide-angular [img]="areaIcon" [size]="21" [strokeWidth]="2.4"></lucide-angular>
+              </span>
+              <span>
+                <small>Area</small>
+                <strong>{{ formatValue(area.name) }}</strong>
+              </span>
+            </span>
+
+            <span class="node-meta">
+              {{ safeModules(area).length || '-' }} modulos
+              <lucide-angular
+                class="chevron"
+                [class.open]="isAreaExpanded(area.id)"
+                [img]="chevronIcon"
+                [size]="18"
+                [strokeWidth]="2.4"
+              ></lucide-angular>
+            </span>
+          </button>
+
+          <section class="node-body" *ngIf="isAreaExpanded(area.id)">
+            <div class="empty-inline" *ngIf="!safeModules(area).length">-</div>
+
+            <article
+              class="module-node tree-node"
+              *ngFor="let moduleItem of safeModules(area); trackBy: trackByModule"
+            >
+              <button type="button" class="node-header module-header" (click)="toggleModule(moduleItem.id)">
+                <span class="node-title">
+                  <span class="node-icon subtle">
+                    <lucide-angular [img]="moduleIcon" [size]="19" [strokeWidth]="2.4"></lucide-angular>
+                  </span>
+                  <span>
+                    <small>Modulo</small>
+                    <strong>{{ formatValue(moduleItem.name) }}</strong>
+                  </span>
+                </span>
+
+                <span class="node-meta">
+                  {{ safeOptions(moduleItem).length || '-' }} opciones
+                  <lucide-angular
+                    class="chevron"
+                    [class.open]="isModuleExpanded(moduleItem.id)"
+                    [img]="chevronIcon"
+                    [size]="17"
+                    [strokeWidth]="2.4"
+                  ></lucide-angular>
+                </span>
+              </button>
+
+              <section class="node-body module-body" *ngIf="isModuleExpanded(moduleItem.id)">
+                <div class="empty-inline" *ngIf="!safeOptions(moduleItem).length">-</div>
+
+                <article
+                  class="option-node"
+                  *ngFor="let option of safeOptions(moduleItem); trackBy: trackByOption"
+                >
+                  <button type="button" class="option-header" (click)="toggleOption(option.id)">
+                    <span class="node-title">
+                      <span class="node-icon compact">
+                        <lucide-angular [img]="optionIcon" [size]="17" [strokeWidth]="2.4"></lucide-angular>
+                      </span>
+                      <span>
+                        <small>Opcion</small>
+                        <strong>{{ formatValue(option.name) }}</strong>
+                      </span>
+                    </span>
+
+                    <span class="node-meta">
+                      {{ safeActions(option).length || '-' }} acciones
+                      <lucide-angular
+                        class="chevron"
+                        [class.open]="isOptionExpanded(option.id)"
+                        [img]="chevronIcon"
+                        [size]="16"
+                        [strokeWidth]="2.4"
+                      ></lucide-angular>
+                    </span>
+                  </button>
+
+                  <section class="actions-row" *ngIf="isOptionExpanded(option.id)">
+                    <div class="empty-inline" *ngIf="!safeActions(option).length">-</div>
+
+                    <span
+                      class="action-badge"
+                      *ngFor="let action of safeActions(option); trackBy: trackByAction"
+                      [class.active]="action.has_permission"
+                      [class.inactive]="!action.has_permission"
+                    >
+                      <lucide-angular
+                        [img]="action.has_permission ? activeIcon : inactiveIcon"
+                        [size]="14"
+                        [strokeWidth]="2.5"
+                      ></lucide-angular>
+                      {{ formatActionName(action) }}
+                    </span>
+                  </section>
+                </article>
+              </section>
+            </article>
+          </section>
+        </article>
+      </div>
+    </article>
+  </section>
+</section>

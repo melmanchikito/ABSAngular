@@ -30,6 +30,8 @@ import {
   ModuleItem,
   UpdateModuleRequest
 } from '../../../models/module-maintenance.model';
+import { AreaItem } from '../../../models/area-maintenance.model';
+import { AreaMaintenanceService } from '../../../services/area-maintenance.service';
 import { ModuleMaintenanceService } from '../../../services/module-maintenance.service';
 
 type ModuleStatusFilter = 'all' | 'active' | 'inactive';
@@ -76,6 +78,7 @@ export class ModuleMaintenanceComponent implements OnInit {
     { key: 'id', label: 'ID', width: '88px' },
     { key: 'code', label: 'Codigo' },
     { key: 'name', label: 'Nombre' },
+    { key: 'area', label: 'Area' },
     { key: 'order', label: 'Orden', width: '110px' },
     { key: 'canceled', label: 'Estado', width: '140px' },
     { key: 'canceled_at', label: 'Fecha anulacion', width: '180px' },
@@ -90,6 +93,7 @@ export class ModuleMaintenanceComponent implements OnInit {
   ];
 
   modules: ModuleItem[] = [];
+  areas: AreaItem[] = [];
   selectedModuleId: number | null = null;
   searchTerm = '';
   statusFilter: ModuleStatusFilter = 'all';
@@ -109,7 +113,10 @@ export class ModuleMaintenanceComponent implements OnInit {
 
   moduleForm: ModuleForm = this.createEmptyForm();
 
-  constructor(private readonly moduleService: ModuleMaintenanceService) {}
+  constructor(
+    private readonly moduleService: ModuleMaintenanceService,
+    private readonly areaService: AreaMaintenanceService
+  ) {}
 
   ngOnInit(): void {
     this.loadModules();
@@ -135,6 +142,8 @@ export class ModuleMaintenanceComponent implements OnInit {
       return [
         module.code,
         module.name,
+        this.getModuleAreaLabel(module),
+        String(module.area_id ?? ''),
         String(module.order)
       ].some((value) => value.toLowerCase().includes(term));
     });
@@ -165,6 +174,20 @@ export class ModuleMaintenanceComponent implements OnInit {
     this.isLoading = true;
     this.errorMessage = '';
 
+    this.areaService.getAreas().subscribe({
+      next: (areas) => {
+        this.areas = areas;
+        this.loadModulesList();
+      },
+      error: (error) => {
+        this.areas = [];
+        this.loadModulesList();
+        this.handleHttpError(error, 'No se pudo cargar el listado de areas.');
+      }
+    });
+  }
+
+  private loadModulesList(): void {
     this.moduleService.getModules().subscribe({
       next: (modules) => {
         this.modules = modules;
@@ -299,6 +322,10 @@ export class ModuleMaintenanceComponent implements OnInit {
 
     const value = module[key];
 
+    if (key === 'area') {
+      return this.getModuleAreaLabel(module);
+    }
+
     if (isDateLikeField(String(key))) {
       return formatDateTime(value as string | null | undefined);
     }
@@ -317,6 +344,44 @@ export class ModuleMaintenanceComponent implements OnInit {
       name: '',
       order: null
     };
+  }
+
+  private getModuleAreaLabel(module: ModuleItem): string {
+    const linkedArea = this.findAreaForModule(module);
+
+    if (linkedArea) {
+      const code = String(linkedArea.code ?? '').trim();
+      const name = String(linkedArea.name ?? '').trim();
+
+      if (code && name) {
+        return `${code} - ${name}`;
+      }
+
+      return name || code || '-';
+    }
+
+    const areaCode = String(module.area?.code ?? '').trim();
+    const areaName = String(module.area?.name ?? '').trim();
+
+    if (areaCode && areaName) {
+      return `${areaCode} - ${areaName}`;
+    }
+
+    if (areaName || areaCode) {
+      return areaName || areaCode;
+    }
+
+    return '-';
+  }
+
+  private findAreaForModule(module: ModuleItem): AreaItem | undefined {
+    const areaId = module.area_id ?? module.area?.id;
+
+    if (areaId === null || areaId === undefined || areaId === '') {
+      return undefined;
+    }
+
+    return this.areas.find((area) => String(area.id) === String(areaId));
   }
 
   private createFormFromModule(module: ModuleItem): ModuleForm {

@@ -1,0 +1,1024 @@
+[1m[31m[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'selectedAreas' does not exist on type 'PermissionManagerComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.html:61:30:
+[37m      61 │             [class.selected]="[32mselectedAreas[37m[area.id]"
+         ╵                               [32m~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component PermissionManagerComponent.
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.ts:63:15:
+[37m      63 │   templateUrl: [32m'./permission-manager.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'toggleArea' does not exist on type 'PermissionManagerComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.html:62:21:
+[37m      62 │             (click)="[32mtoggleArea[37m(area)"
+         ╵                      [32m~~~~~~~~~~[0m
+
+  Error occurs in the template of component PermissionManagerComponent.
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.ts:63:15:
+[37m      63 │   templateUrl: [32m'./permission-manager.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'selectedAreas' does not exist on type 'PermissionManagerComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.html:64:54:
+[37m      64 │ ...lass="choice-box" [class.checked]="[32mselectedAreas[37m[area.id]"></span>
+         ╵                                       [32m~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component PermissionManagerComponent.
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.ts:63:15:
+[37m      63 │   templateUrl: [32m'./permission-manager.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'icon' does not exist on type 'PermissionAreaNode'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.html:66:42:
+[37m      66 │ ...  <lucide-angular [img]="area.[32micon[37m" [size]="22" [strokeWidth]="...
+         ╵                                  [32m~~~~[0m
+
+  Error occurs in the template of component PermissionManagerComponent.
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.ts:63:15:
+[37m      63 │   templateUrl: [32m'./permission-manager.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'label' does not exist on type 'PermissionAreaNode'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.html:69:30:
+[37m      69 │               <strong>{{ area.[32mlabel[37m }}</strong>
+         ╵                               [32m~~~~~[0m
+
+  Error occurs in the template of component PermissionManagerComponent.
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.ts:63:15:
+[37m      63 │   templateUrl: [32m'./permission-manager.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'visibleModules' does not exist on type 'PermissionManagerComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.html:86:41:
+[37m      86 │         <div class="empty-panel" *ngIf="![32mvisibleModules[37m.length">
+         ╵                                          [32m~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component PermissionManagerComponent.
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.ts:63:15:
+[37m      63 │   templateUrl: [32m'./permission-manager.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'visibleModules' does not exist on type 'PermissionManagerComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.html:90:42:
+[37m      90 │         <div class="module-groups" *ngIf="[32mvisibleModules[37m.length">
+         ╵                                           [32m~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component PermissionManagerComponent.
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.ts:63:15:
+[37m      63 │   templateUrl: [32m'./permission-manager.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'visibleModules' does not exist on type 'PermissionManagerComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.html:92:38:
+[37m      92 │ ... *ngFor="let moduleItem of [32mvisibleModules[37m; trackBy: trackByModule"
+         ╵                               [32m~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component PermissionManagerComponent.
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.ts:63:15:
+[37m      63 │   templateUrl: [32m'./permission-manager.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'selectedModules' does not exist on type 'PermissionManagerComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.html:95:30:
+[37m      95 │             [class.selected]="[32mselectedModules[37m[moduleItem.id]"
+         ╵                               [32m~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component PermissionManagerComponent.
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.ts:63:15:
+[37m      63 │   templateUrl: [32m'./permission-manager.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'toggleModule' does not exist on type 'PermissionManagerComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.html:96:21:
+[37m      96 │             (click)="[32mtoggleModule[37m(moduleItem)"
+         ╵                      [32m~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component PermissionManagerComponent.
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.ts:63:15:
+[37m      63 │   templateUrl: [32m'./permission-manager.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'selectedModules' does not exist on type 'PermissionManagerComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.html:98:54:
+[37m      98 │ ...oice-box" [class.checked]="[32mselectedModules[37m[moduleItem.id]"></span>
+         ╵                               [32m~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component PermissionManagerComponent.
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.ts:63:15:
+[37m      63 │   templateUrl: [32m'./permission-manager.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'visibleOptionGroups' does not exist on type 'PermissionManagerComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.html:120:41:
+[37m      120 │ ...    <div class="empty-panel" *ngIf="![32mvisibleOptionGroups[37m.length">
+          ╵                                         [32m~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component PermissionManagerComponent.
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.ts:63:15:
+[37m      63 │   templateUrl: [32m'./permission-manager.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'visibleOptionGroups' does not exist on type 'PermissionManagerComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.html:124:39:
+[37m      124 │         <div class="tree-stack" *ngIf="[32mvisibleOptionGroups[37m.length">
+          ╵                                        [32m~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component PermissionManagerComponent.
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.ts:63:15:
+[37m      63 │   templateUrl: [32m'./permission-manager.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'visibleOptionGroups' does not exist on type 'PermissionManagerComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.html:125:60:
+[37m      125 │ ... *ngFor="let group of [32mvisibleOptionGroups[37m; trackBy: trackByOpt...
+          ╵                          [32m~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component PermissionManagerComponent.
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.ts:63:15:
+[37m      63 │   templateUrl: [32m'./permission-manager.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2551: Property 'trackByOptionGroup' does not exist on type 'PermissionManagerComponent'. Did you mean 'trackByOption'?[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.html:125:90:
+[37m      125 │ ...="let group of visibleOptionGroups; trackBy: [32mtrackByOptionGroup[37m">
+          ╵                                                 [32m~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component PermissionManagerComponent.
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.ts:63:15:
+[37m      63 │   templateUrl: [32m'./permission-manager.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'trackByCategory' does not exist on type 'PermissionManagerComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.html:132:96:
+[37m      132 │ ...For="let category of group.categories; trackBy: [32mtrackByCategory[37m">
+          ╵                                                    [32m~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component PermissionManagerComponent.
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.ts:63:15:
+[37m      63 │   templateUrl: [32m'./permission-manager.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'selectedOptions' does not exist on type 'PermissionManagerComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.html:142:36:
+[37m      142 │                   [class.selected]="[32mselectedOptions[37m[option.id]"
+          ╵                                     [32m~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component PermissionManagerComponent.
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.ts:63:15:
+[37m      63 │   templateUrl: [32m'./permission-manager.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2551: Property 'toggleOption' does not exist on type 'PermissionManagerComponent'. Did you mean 'toggleAction'?[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.html:143:27:
+[37m      143 │                   (click)="[32mtoggleOption[37m(option)"
+          ╵                            [32m~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component PermissionManagerComponent.
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.ts:63:15:
+[37m      63 │   templateUrl: [32m'./permission-manager.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'selectedOptions' does not exist on type 'PermissionManagerComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.html:145:66:
+[37m      145 │ ...e-box small" [class.checked]="[32mselectedOptions[37m[option.id]"></span>
+          ╵                                  [32m~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component PermissionManagerComponent.
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.ts:63:15:
+[37m      63 │   templateUrl: [32m'./permission-manager.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'visibleActionOptions' does not exist on type 'PermissionManagerComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.html:164:41:
+[37m      164 │ ...   <div class="empty-panel" *ngIf="![32mvisibleActionOptions[37m.length">
+          ╵                                        [32m~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component PermissionManagerComponent.
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.ts:63:15:
+[37m      63 │   templateUrl: [32m'./permission-manager.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'visibleActionOptions' does not exist on type 'PermissionManagerComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.html:168:42:
+[37m      168 │ ...  <div class="actions-stack" *ngIf="[32mvisibleActionOptions[37m.length">
+          ╵                                        [32m~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component PermissionManagerComponent.
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.ts:63:15:
+[37m      63 │   templateUrl: [32m'./permission-manager.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'visibleActionOptions' does not exist on type 'PermissionManagerComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.html:169:59:
+[37m      169 │ ... *ngFor="let item of [32mvisibleActionOptions[37m; trackBy: trackByAct...
+          ╵                         [32m~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component PermissionManagerComponent.
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.ts:63:15:
+[37m      63 │   templateUrl: [32m'./permission-manager.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2551: Property 'trackByActionOption' does not exist on type 'PermissionManagerComponent'. Did you mean 'trackByOption'?[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.html:169:90:
+[37m      169 │ ..."let item of visibleActionOptions; trackBy: [32mtrackByActionOption[37m">
+          ╵                                                [32m~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component PermissionManagerComponent.
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.ts:63:15:
+[37m      63 │   templateUrl: [32m'./permission-manager.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'actionOptions' does not exist on type 'PermissionManagerComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.html:177:38:
+[37m      177 │ ...     *ngFor="let action of [32mactionOptions[37m; trackBy: trackByAction"
+          ╵                               [32m~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component PermissionManagerComponent.
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.ts:63:15:
+[37m      63 │   templateUrl: [32m'./permission-manager.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'selectedActions' does not exist on type 'PermissionManagerComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.html:180:34:
+[37m      180 │ ...      [class.selected]="[32mselectedActions[37m[item.option.id]?.[acti...
+          ╵                            [32m~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component PermissionManagerComponent.
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.ts:63:15:
+[37m      63 │   templateUrl: [32m'./permission-manager.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2554: Expected 1 arguments, but got 2.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.html:181:51:
+[37m      181 │                 (click)="toggleAction(item.option, [32maction.id[37m)"
+          ╵                                                    [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component PermissionManagerComponent.
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.ts:63:15:
+[37m      63 │   templateUrl: [32m'./permission-manager.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'selectedActions' does not exist on type 'PermissionManagerComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.html:183:64:
+[37m      183 │ ...small" [class.checked]="[32mselectedActions[37m[item.option.id]?.[acti...
+          ╵                            [32m~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component PermissionManagerComponent.
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.ts:63:15:
+[37m      63 │   templateUrl: [32m'./permission-manager.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2551: Property 'optionLabel' does not exist on type 'SelectedActionSummary'. Did you mean 'actionLabel'?[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.html:230:48:
+[37m      230 │ ...        <strong>{{ item.path }} > {{ item.[32moptionLabel[37m }}</strong>
+          ╵                                              [32m~~~~~~~~~~~[0m
+
+  Error occurs in the template of component PermissionManagerComponent.
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.ts:63:15:
+[37m      63 │   templateUrl: [32m'./permission-manager.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'actions' does not exist on type 'SelectedActionSummary'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.html:231:29:
+[37m      231 │               <small>{{ item.[32mactions[37m.join(', ') }}</small>
+          ╵                              [32m~~~~~~~[0m
+
+  Error occurs in the template of component PermissionManagerComponent.
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.ts:63:15:
+[37m      63 │   templateUrl: [32m'./permission-manager.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+[39m[22m
+[1m[31m[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'getPermissionsTree' does not exist on type 'PermissionManagerService'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/maintenance/permission-maintenance/permission-maintenance.component.ts:90:27:
+[37m      90 │     this.permissionService.[32mgetPermissionsTree[37m().subscribe({
+         ╵                            [32m~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS7006: Parameter 'areas' implicitly has an 'any' type.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/maintenance/permission-maintenance/permission-maintenance.component.ts:91:13:
+[37m      91 │       next: ([32mareas[37m) => {
+         ╵              [32m~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS7006: Parameter 'error' implicitly has an 'any' type.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/maintenance/permission-maintenance/permission-maintenance.component.ts:97:14:
+[37m      97 │       error: ([32merror[37m) => {
+         ╵               [32m~~~~~[0m
+
+[39m[22m
+[1m[31m[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2554: Expected 1 arguments, but got 0.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/maintenance/permission-maintenance/permission-maintenance.component.ts:90:27:
+[37m      90 │     this.permissionService.[32mgetPermissionsTree[37m().subscribe({
+         ╵                            [32m~~~~~~~~~~~~~~~~~~[0m
+
+  An argument for 'userId' was not provided.
+
+    src/app/features/system-area/services/permission-manager.service.ts:83:21:
+[37m      83 │   getPermissionsTree([32muserId: number[37m): Observable<PermissionAreaNod...
+         ╵                      [32m~~~~~~~~~~~~~~[0m
+
+[39m[22m
+[1m[31m[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2554: Expected 1 arguments, but got 0.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/maintenance/permission-maintenance/permission-maintenance.component.ts:90:27:
+[37m      90 │     this.permissionService.[32mgetPermissionsTree[37m().subscribe({
+         ╵                            [32m~~~~~~~~~~~~~~~~~~[0m
+
+  An argument for 'userId' was not provided.
+
+    src/app/features/system-area/services/permission-manager.service.ts:83:21:
+[37m      83 │   getPermissionsTree([32muserId: number[37m): Observable<PermissionAreaNod...
+         ╵                      [32m~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'MockUser'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.ts:74:18:
+[37m      74 │   readonly users: [32mMockUser[37m[] = [
+         ╵                   [32m~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'MockUser'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.ts:102:22:
+[37m      102 │   get selectedUser(): [32mMockUser[37m | undefined {
+          ╵                       [32m~~~~~~~~[0m
+
+[39m[22m
+[1m[31m[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2554: Expected 1 arguments, but got 0.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/maintenance/permission-maintenance/permission-maintenance.component.ts:90:27:
+[37m      90 │     this.permissionService.[32mgetPermissionsTree[37m().subscribe({
+         ╵                            [32m~~~~~~~~~~~~~~~~~~[0m
+
+  An argument for 'userId' was not provided.
+
+    src/app/features/system-area/services/permission-manager.service.ts:83:21:
+[37m      83 │   getPermissionsTree([32muserId: number[37m): Observable<PermissionAreaNod...
+         ╵                      [32m~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'loadUsers' does not exist on type 'PermissionManagerComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.ts:96:9:
+[37m      96 │     this.[32mloadUsers[37m();
+         ╵          [32m~~~~~~~~~[0m
+
+[39m[22m
+[1m[31m[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2554: Expected 1 arguments, but got 0.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/maintenance/permission-maintenance/permission-maintenance.component.ts:90:27:
+[37m      90 │     this.permissionService.[32mgetPermissionsTree[37m().subscribe({
+         ╵                            [32m~~~~~~~~~~~~~~~~~~[0m
+
+  An argument for 'userId' was not provided.
+
+    src/app/features/system-area/services/permission-manager.service.ts:83:21:
+[37m      83 │   getPermissionsTree([32muserId: number[37m): Observable<PermissionAreaNod...
+         ╵                      [32m~~~~~~~~~~~~~~[0m
+
+[39m[22m
+[1m[31m[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2554: Expected 1 arguments, but got 0.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/maintenance/permission-maintenance/permission-maintenance.component.ts:90:27:
+[37m      90 │     this.permissionService.[32mgetPermissionsTree[37m().subscribe({
+         ╵                            [32m~~~~~~~~~~~~~~~~~~[0m
+
+  An argument for 'userId' was not provided.
+
+    src/app/features/system-area/services/permission-manager.service.ts:83:21:
+[37m      83 │   getPermissionsTree([32muserId: number[37m): Observable<PermissionAreaNod...
+         ╵                      [32m~~~~~~~~~~~~~~[0m
+
+[39m[22m
+[1m[31m[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2554: Expected 1 arguments, but got 0.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/maintenance/permission-maintenance/permission-maintenance.component.ts:90:27:
+[37m      90 │     this.permissionService.[32mgetPermissionsTree[37m().subscribe({
+         ╵                            [32m~~~~~~~~~~~~~~~~~~[0m
+
+  An argument for 'userId' was not provided.
+
+    src/app/features/system-area/services/permission-manager.service.ts:83:21:
+[37m      83 │   getPermissionsTree([32muserId: number[37m): Observable<PermissionAreaNod...
+         ╵                      [32m~~~~~~~~~~~~~~[0m
+
+[39m[22m
+[1m[31m[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2554: Expected 1 arguments, but got 0.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/maintenance/permission-maintenance/permission-maintenance.component.ts:90:27:
+[37m      90 │     this.permissionService.[32mgetPermissionsTree[37m().subscribe({
+         ╵                            [32m~~~~~~~~~~~~~~~~~~[0m
+
+  An argument for 'userId' was not provided.
+
+    src/app/features/system-area/services/permission-manager.service.ts:83:21:
+[37m      83 │   getPermissionsTree([32muserId: number[37m): Observable<PermissionAreaNod...
+         ╵                      [32m~~~~~~~~~~~~~~[0m
+
+[39m[22m
+[1m[31m[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2322: Type '{ actionId: number; actionLabel: string; path: string; hasPermission: boolean; changed: boolean; }[]' is not assignable to type 'SelectedActionSummary[]'.
+  Property 'key' is missing in type '{ actionId: number; actionLabel: string; path: string; hasPermission: boolean; changed: boolean; }' but required in type 'SelectedActionSummary'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.ts:133:4:
+[37m      133 │     [32mreturn[37m this.permissionAreas.flatMap((area) =>
+          ╵     [32m~~~~~~[0m
+
+  'key' is declared here.
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.ts:29:2:
+[37m      29 │   [32mkey[37m: string;
+         ╵   [32m~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2561: Object literal may only specify known properties, but 'userId' does not exist in type 'PermissionPayload'. Did you mean to write 'user_id'?[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.ts:421:6:
+[37m      421 │       [32muserId[37m: this.selectedUserId,
+          ╵       [32m~~~~~~[0m
+
+[39m[22m
+[1m[31m[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2322: Type '{ actionId: number; actionLabel: string; path: string; hasPermission: boolean; changed: boolean; }[]' is not assignable to type 'SelectedActionSummary[]'.
+  Property 'key' is missing in type '{ actionId: number; actionLabel: string; path: string; hasPermission: boolean; changed: boolean; }' but required in type 'SelectedActionSummary'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.ts:136:4:
+[37m      136 │     [32mreturn[37m this.permissionAreas.flatMap((area) =>
+          ╵     [32m~~~~~~[0m
+
+  'key' is declared here.
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.ts:29:2:
+[37m      29 │   [32mkey[37m: string;
+         ╵   [32m~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2561: Object literal may only specify known properties, but 'userId' does not exist in type 'PermissionPayload'. Did you mean to write 'user_id'?[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.ts:424:6:
+[37m      424 │       [32muserId[37m: this.selectedUserId,
+          ╵       [32m~~~~~~[0m
+
+[39m[22m
+[1m[31m[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'isAreaSelected' does not exist on type 'PermissionManagerComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.ts:112:54:
+[37m      112 │ ...this.permissionAreas.filter((area) => this.[32misAreaSelected[37m(area));
+          ╵                                               [32m~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'isAreaSelected' does not exist on type 'PermissionManagerComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.ts:117:29:
+[37m      117 │       .filter((area) => this.[32misAreaSelected[37m(area))
+          ╵                              [32m~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'isModuleSelected' does not exist on type 'PermissionManagerComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.ts:124:37:
+[37m      124 │         .filter((moduleItem) => this.[32misModuleSelected[37m(moduleItem))
+          ╵                                      [32m~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'isOptionSelected' does not exist on type 'PermissionManagerComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.ts:133:35:
+[37m      133 │           .filter((option) => this.[32misOptionSelected[37m(option))
+          ╵                                    [32m~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'isActionSelected' does not exist on type 'PermissionManagerComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.ts:144:37:
+[37m      144 │ ...       .filter((action) => this.[32misActionSelected[37m(option, action))
+          ╵                                    [32m~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'actionKey' does not exist on type 'PermissionManagerComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.ts:146:24:
+[37m      146 │               key: this.[32mactionKey[37m(option.id, action.id),
+          ╵                         [32m~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'isActionSelected' does not exist on type 'PermissionManagerComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.ts:150:34:
+[37m      150 │               hasPermission: this.[32misActionSelected[37m(option, action),
+          ╵                                   [32m~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2554: Expected 1 arguments, but got 2.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.ts:151:50:
+[37m      151 │               changed: this.actionChanged(option, [32maction[37m)
+          ╵                                                   [32m~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2561: Object literal may only specify known properties, but 'userId' does not exist in type 'PermissionPayload'. Did you mean to write 'user_id'?[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.ts:429:6:
+[37m      429 │       [32muserId[37m: this.selectedUserId,
+          ╵       [32m~~~~~~[0m
+
+[39m[22m
+[1m[31m[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'isAreaSelected' does not exist on type 'PermissionManagerComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.ts:112:54:
+[37m      112 │ ...this.permissionAreas.filter((area) => this.[32misAreaSelected[37m(area));
+          ╵                                               [32m~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'isAreaSelected' does not exist on type 'PermissionManagerComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.ts:117:29:
+[37m      117 │       .filter((area) => this.[32misAreaSelected[37m(area))
+          ╵                              [32m~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'isModuleSelected' does not exist on type 'PermissionManagerComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.ts:124:37:
+[37m      124 │         .filter((moduleItem) => this.[32misModuleSelected[37m(moduleItem))
+          ╵                                      [32m~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'isOptionSelected' does not exist on type 'PermissionManagerComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.ts:133:35:
+[37m      133 │           .filter((option) => this.[32misOptionSelected[37m(option))
+          ╵                                    [32m~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'isActionSelected' does not exist on type 'PermissionManagerComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.ts:144:37:
+[37m      144 │ ...       .filter((action) => this.[32misActionSelected[37m(option, action))
+          ╵                                    [32m~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'actionKey' does not exist on type 'PermissionManagerComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.ts:146:24:
+[37m      146 │               key: this.[32mactionKey[37m(option.id, action.id),
+          ╵                         [32m~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'isActionSelected' does not exist on type 'PermissionManagerComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.ts:150:34:
+[37m      150 │               hasPermission: this.[32misActionSelected[37m(option, action),
+          ╵                                   [32m~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2554: Expected 1 arguments, but got 2.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.ts:151:50:
+[37m      151 │               changed: this.actionChanged(option, [32maction[37m)
+          ╵                                                   [32m~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2561: Object literal may only specify known properties, but 'userId' does not exist in type 'PermissionPayload'. Did you mean to write 'user_id'?[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.ts:432:6:
+[37m      432 │       [32muserId[37m: this.selectedUserId,
+          ╵       [32m~~~~~~[0m
+
+[39m[22m
+[1m[31m[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2554: Expected 2 arguments, but got 1.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.html:231:37:
+[37m      231 │                     [class.changed]="[32mactionChanged[37m(action.id)"
+          ╵                                      [32m~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component PermissionManagerComponent.
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.ts:52:15:
+[37m      52 │   templateUrl: [32m'./permission-manager.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2554: Expected 4 arguments, but got 1.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.html:232:29:
+[37m      232 │                     (click)="[32mtoggleAction[37m(action)"
+          ╵                              [32m~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component PermissionManagerComponent.
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.ts:52:15:
+[37m      52 │   templateUrl: [32m'./permission-manager.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'actionKey' does not exist on type 'PermissionManagerComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.ts:146:24:
+[37m      146 │               key: this.[32mactionKey[37m(option.id, action.id),
+          ╵                         [32m~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'clearAreaSelection' does not exist on type 'PermissionManagerComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.ts:197:11:
+[37m      197 │       this.[32mclearAreaSelection[37m(area);
+          ╵            [32m~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'clearModuleSelection' does not exist on type 'PermissionManagerComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.ts:209:11:
+[37m      209 │       this.[32mclearModuleSelection[37m(moduleItem);
+          ╵            [32m~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'clearOptionSelection' does not exist on type 'PermissionManagerComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.ts:222:11:
+[37m      222 │       this.[32mclearOptionSelection[37m(option);
+          ╵            [32m~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'actionKey' does not exist on type 'PermissionManagerComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.ts:239:21:
+[37m      239 │     const key = this.[32mactionKey[37m(option.id, action.id);
+          ╵                      [32m~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'actionKey' does not exist on type 'PermissionManagerComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.ts:267:75:
+[37m      267 │ ...tion) => this.actionState[this.[32mactionKey[37m(option.id, action.id)]);
+          ╵                                   [32m~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'actionKey' does not exist on type 'PermissionManagerComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.ts:283:41:
+[37m      283 │ ... Boolean(this.actionState[this.[32mactionKey[37m(option.id, action.id)]);
+          ╵                                   [32m~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'actionKey' does not exist on type 'PermissionManagerComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.ts:287:21:
+[37m      287 │     const key = this.[32mactionKey[37m(option.id, action.id);
+          ╵                      [32m~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2554: Expected 2 arguments, but got 1.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.ts:499:26:
+[37m      499 │             changed: this.[32mactionChanged[37m(action.id)
+          ╵                           [32m~~~~~~~~~~~~~[0m
+
+  An argument for 'action' was not provided.
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.ts:286:46:
+[37m      286 │ ...n: PermissionOptionNode, [32maction: PermissionActionNode[37m): boolean {
+          ╵                             [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2561: Object literal may only specify known properties, but 'userId' does not exist in type 'PermissionPayload'. Did you mean to write 'user_id'?[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.ts:506:6:
+[37m      506 │       [32muserId[37m: this.selectedUserId,
+          ╵       [32m~~~~~~[0m
+
+[39m[22m
+[1m[31m[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2554: Expected 2 arguments, but got 1.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.html:231:37:
+[37m      231 │                     [class.changed]="[32mactionChanged[37m(action.id)"
+          ╵                                      [32m~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component PermissionManagerComponent.
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.ts:52:15:
+[37m      52 │   templateUrl: [32m'./permission-manager.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2554: Expected 4 arguments, but got 1.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.html:232:29:
+[37m      232 │                     (click)="[32mtoggleAction[37m(action)"
+          ╵                              [32m~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component PermissionManagerComponent.
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.ts:52:15:
+[37m      52 │   templateUrl: [32m'./permission-manager.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'actionKey' does not exist on type 'PermissionManagerComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.ts:146:24:
+[37m      146 │               key: this.[32mactionKey[37m(option.id, action.id),
+          ╵                         [32m~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'clearAreaSelection' does not exist on type 'PermissionManagerComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.ts:197:11:
+[37m      197 │       this.[32mclearAreaSelection[37m(area);
+          ╵            [32m~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'clearModuleSelection' does not exist on type 'PermissionManagerComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.ts:209:11:
+[37m      209 │       this.[32mclearModuleSelection[37m(moduleItem);
+          ╵            [32m~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'clearOptionSelection' does not exist on type 'PermissionManagerComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.ts:222:11:
+[37m      222 │       this.[32mclearOptionSelection[37m(option);
+          ╵            [32m~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'actionKey' does not exist on type 'PermissionManagerComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.ts:239:21:
+[37m      239 │     const key = this.[32mactionKey[37m(option.id, action.id);
+          ╵                      [32m~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'actionKey' does not exist on type 'PermissionManagerComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.ts:267:75:
+[37m      267 │ ...tion) => this.actionState[this.[32mactionKey[37m(option.id, action.id)]);
+          ╵                                   [32m~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'actionKey' does not exist on type 'PermissionManagerComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.ts:283:41:
+[37m      283 │ ... Boolean(this.actionState[this.[32mactionKey[37m(option.id, action.id)]);
+          ╵                                   [32m~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'actionKey' does not exist on type 'PermissionManagerComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.ts:287:21:
+[37m      287 │     const key = this.[32mactionKey[37m(option.id, action.id);
+          ╵                      [32m~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2554: Expected 2 arguments, but got 1.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.ts:499:26:
+[37m      499 │             changed: this.[32mactionChanged[37m(action.id)
+          ╵                           [32m~~~~~~~~~~~~~[0m
+
+  An argument for 'action' was not provided.
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.ts:286:46:
+[37m      286 │ ...n: PermissionOptionNode, [32maction: PermissionActionNode[37m): boolean {
+          ╵                             [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2561: Object literal may only specify known properties, but 'userId' does not exist in type 'PermissionPayload'. Did you mean to write 'user_id'?[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.ts:506:6:
+[37m      506 │       [32muserId[37m: this.selectedUserId,
+          ╵       [32m~~~~~~[0m
+
+[39m[22m
+[1m[31m[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2554: Expected 2 arguments, but got 1.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.html:231:37:
+[37m      231 │                     [class.changed]="[32mactionChanged[37m(action.id)"
+          ╵                                      [32m~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component PermissionManagerComponent.
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.ts:52:15:
+[37m      52 │   templateUrl: [32m'./permission-manager.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2554: Expected 4 arguments, but got 1.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.html:232:29:
+[37m      232 │                     (click)="[32mtoggleAction[37m(action)"
+          ╵                              [32m~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component PermissionManagerComponent.
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.ts:52:15:
+[37m      52 │   templateUrl: [32m'./permission-manager.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'actionKey' does not exist on type 'PermissionManagerComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.ts:146:24:
+[37m      146 │               key: this.[32mactionKey[37m(option.id, action.id),
+          ╵                         [32m~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'clearAreaSelection' does not exist on type 'PermissionManagerComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.ts:197:11:
+[37m      197 │       this.[32mclearAreaSelection[37m(area);
+          ╵            [32m~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'clearModuleSelection' does not exist on type 'PermissionManagerComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.ts:209:11:
+[37m      209 │       this.[32mclearModuleSelection[37m(moduleItem);
+          ╵            [32m~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'clearOptionSelection' does not exist on type 'PermissionManagerComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.ts:222:11:
+[37m      222 │       this.[32mclearOptionSelection[37m(option);
+          ╵            [32m~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'actionKey' does not exist on type 'PermissionManagerComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.ts:239:21:
+[37m      239 │     const key = this.[32mactionKey[37m(option.id, action.id);
+          ╵                      [32m~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'actionKey' does not exist on type 'PermissionManagerComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.ts:267:75:
+[37m      267 │ ...tion) => this.actionState[this.[32mactionKey[37m(option.id, action.id)]);
+          ╵                                   [32m~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'actionKey' does not exist on type 'PermissionManagerComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.ts:283:41:
+[37m      283 │ ... Boolean(this.actionState[this.[32mactionKey[37m(option.id, action.id)]);
+          ╵                                   [32m~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'actionKey' does not exist on type 'PermissionManagerComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.ts:287:21:
+[37m      287 │     const key = this.[32mactionKey[37m(option.id, action.id);
+          ╵                      [32m~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'actionKey' does not exist on type 'PermissionManagerComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.ts:423:27:
+[37m      423 │             nextState[this.[32mactionKey[37m(option.id, action.id)] = has...
+          ╵                            [32m~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2554: Expected 2 arguments, but got 1.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.ts:509:26:
+[37m      509 │             changed: this.[32mactionChanged[37m(action.id)
+          ╵                           [32m~~~~~~~~~~~~~[0m
+
+  An argument for 'action' was not provided.
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.ts:286:46:
+[37m      286 │ ...n: PermissionOptionNode, [32maction: PermissionActionNode[37m): boolean {
+          ╵                             [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2561: Object literal may only specify known properties, but 'userId' does not exist in type 'PermissionPayload'. Did you mean to write 'user_id'?[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.ts:516:6:
+[37m      516 │       [32muserId[37m: this.selectedUserId,
+          ╵       [32m~~~~~~[0m
+
+[39m[22m
+[1m[31m[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2554: Expected 2 arguments, but got 1.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.html:231:37:
+[37m      231 │                     [class.changed]="[32mactionChanged[37m(action.id)"
+          ╵                                      [32m~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component PermissionManagerComponent.
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.ts:52:15:
+[37m      52 │   templateUrl: [32m'./permission-manager.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2554: Expected 4 arguments, but got 1.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.html:232:29:
+[37m      232 │                     (click)="[32mtoggleAction[37m(action)"
+          ╵                              [32m~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component PermissionManagerComponent.
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.ts:52:15:
+[37m      52 │   templateUrl: [32m'./permission-manager.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+[39m[22m
+[1m[31m[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'optionHasChanges' does not exist on type 'PermissionManagerComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/system-area/pages/process/permission-manager/permission-manager.component.ts:503:68:
+[37m      503 │ ...> this.isOptionSelected(option) || this.[32moptionHasChanges[37m(option))
+          ╵                                            [32m~~~~~~~~~~~~~~~~[0m
+
+[39m[22m

@@ -166,13 +166,37 @@ export function createMaintenanceFormConfig(
       editSubtitle: 'Actualiza el modulo seleccionado.',
       listUrl: `${listBase}/modulos`,
       idParam: 'module_id',
-      fields: [baseFields.code, baseFields.name, { key: 'order', label: 'Orden', type: 'number', required: true, numeric: true }],
+      fields: [
+        baseFields.code,
+        baseFields.name,
+        { key: 'order', label: 'Orden', type: 'number', required: true, numeric: true },
+        {
+          key: 'area_id',
+          label: 'Area',
+          type: 'select',
+          required: true,
+          numeric: true,
+          optionsKey: 'areas',
+          sourceKeys: ['area.id'],
+          emptyOptionsMessage: 'No existen areas disponibles para vincular.'
+        }
+      ],
+      optionLoaders: {
+        areas: () => services.areaService.getAreas().pipe(map((items) => items.map(toCatalogOption)))
+      },
       load: (id) => services.moduleService.getModuleById(id),
       create: (payload) => services.moduleService.insertModule(payload as never),
       update: (payload) => services.moduleService.updateModule(payload as never),
       toCreatePayload: (form, username) => cleanPayload({ ...form, created_by: username }),
       toUpdatePayload: (id, form, username) =>
-        cleanPayload({ module_id: id, name: form['name'], order: form['order'], updated_by: username })
+        cleanPayload({
+          module_id: id,
+          code: form['code'],
+          name: form['name'],
+          order: form['order'],
+          area_id: form['area_id'],
+          updated_by: username
+        })
     },
     actions: {
       entity,

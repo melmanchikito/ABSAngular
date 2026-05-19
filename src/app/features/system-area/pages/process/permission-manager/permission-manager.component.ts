@@ -1,120 +1,49 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
-  BarChart3,
-  Boxes,
   Building2,
   CheckCircle2,
-  CircleDollarSign,
-  ClipboardCheck,
-  FileBarChart,
-  FileText,
+  CircleAlert,
   FolderKanban,
   KeyRound,
-  Landmark,
   LayoutDashboard,
   LucideAngularModule,
-  LucideIconData,
-  MonitorCog,
-  Package,
   Save,
-  Settings,
   ShieldCheck,
-  Tags,
-  UserRound,
-  Users,
-  Wrench
+  UserRound
 } from 'lucide-angular';
 import { PageHeaderComponent } from '../../../../../shared/components/page-header/page-header.component';
 import { StepItem, StepperComponent } from '../../../../../shared/components/stepper/stepper.component';
-
-type PermissionAction = 'view' | 'create' | 'edit' | 'delete' | 'print' | 'export';
-
-interface MockUser {
-  id: number;
-  name: string;
-}
-
-interface PermissionOption {
-  id: string;
-  label: string;
-}
-
-interface PermissionCategory {
-  id: string;
-  label: string;
-  icon: LucideIconData;
-  options: PermissionOption[];
-}
-
-interface PermissionModule {
-  id: string;
-  label: string;
-  icon: LucideIconData;
-  categories: PermissionCategory[];
-}
-
-interface PermissionArea {
-  id: string;
-  label: string;
-  icon: LucideIconData;
-  modules: PermissionModule[];
-}
+import { UserItem } from '../../../models/user-maintenance.model';
+import {
+  PermissionActionNode,
+  PermissionAreaNode,
+  PermissionManagerService,
+  PermissionModuleNode,
+  PermissionOptionNode
+} from '../../../services/permission-manager.service';
+import { UserMaintenanceService } from '../../../services/user-maintenance.service';
 
 interface SelectedActionSummary {
-  optionId: string;
-  optionLabel: string;
+  key: string;
+  actionId: number;
+  actionLabel: string;
   path: string;
-  actions: string[];
+  hasPermission: boolean;
+  changed: boolean;
 }
 
 interface PermissionPayload {
-  userId: number | null;
-  areas: string[];
-  modules: string[];
-  options: string[];
-  actions: Array<{
-    optionId: string;
-    action: PermissionAction;
+  user_id: number | null;
+  permissions: Array<{
+    option_id: number;
+    actions: Array<{
+      action_id: number;
+      has_permission: boolean;
+    }>;
   }>;
 }
-
-const ACTION_OPTIONS: Array<{ id: PermissionAction; label: string }> = [
-  { id: 'view', label: 'Ver' },
-  { id: 'create', label: 'Crear' },
-  { id: 'edit', label: 'Editar' },
-  { id: 'delete', label: 'Eliminar' },
-  { id: 'print', label: 'Imprimir' },
-  { id: 'export', label: 'Exportar' }
-];
-
-const category = (
-  moduleId: string,
-  id: string,
-  label: string,
-  icon: LucideIconData,
-  optionLabels: string[]
-): PermissionCategory => ({
-  id: `${moduleId}.${id}`,
-  label,
-  icon,
-  options: optionLabels.map((optionLabel) => ({
-    id: `${moduleId}.${id}.${optionLabel.toLowerCase().replace(/\s+/g, '-')}`,
-    label: optionLabel
-  }))
-});
-
-const simpleCategories = (moduleId: string, label: string): PermissionCategory[] => [
-  category(moduleId, 'mantenimientos', 'Mantenimientos', Wrench, [
-    'Catalogos',
-    'Parametros',
-    'Responsables'
-  ]),
-  category(moduleId, 'procesos', 'Procesos', Settings, ['Validacion', 'Seguimiento']),
-  category(moduleId, 'documentos', 'Documentos', FileText, ['Soportes', 'Actas']),
-  category(moduleId, 'informes', 'Informes', BarChart3, ['Resumen', 'Indicadores'])
-];
 
 @Component({
   selector: 'app-permission-manager',
@@ -123,9 +52,10 @@ const simpleCategories = (moduleId: string, label: string): PermissionCategory[]
   templateUrl: './permission-manager.component.html',
   styleUrl: './permission-manager.component.scss'
 })
-export class PermissionManagerComponent {
+export class PermissionManagerComponent implements OnInit {
   readonly pageIcon = ShieldCheck;
   readonly saveIcon = Save;
+  readonly alertIcon = CircleAlert;
   readonly steps: StepItem[] = [
     { label: 'Usuario', icon: UserRound },
     { label: 'Areas', icon: Building2 },
@@ -134,216 +64,33 @@ export class PermissionManagerComponent {
     { label: 'Acciones', icon: KeyRound },
     { label: 'Confirmar', icon: CheckCircle2 }
   ];
-  readonly users: MockUser[] = [
-    { id: 1, name: 'German' },
-    { id: 2, name: 'Danna' },
-    { id: 3, name: 'Cesar' }
-  ];
-  readonly actionOptions = ACTION_OPTIONS;
-  readonly permissionAreas: PermissionArea[] = [
-    {
-      id: 'finanzas',
-      label: 'Finanzas',
-      icon: CircleDollarSign,
-      modules: [
-        {
-          id: 'finanzas.contable-sri',
-          label: 'Contable y SRI',
-          icon: Landmark,
-          categories: simpleCategories('finanzas.contable-sri', 'Contable y SRI')
-        },
-        {
-          id: 'finanzas.caja-tesoreria',
-          label: 'Caja y Tesoreria',
-          icon: CircleDollarSign,
-          categories: simpleCategories('finanzas.caja-tesoreria', 'Caja y Tesoreria')
-        }
-      ]
-    },
-    {
-      id: 'rrhh',
-      label: 'RRHH',
-      icon: Users,
-      modules: [
-        {
-          id: 'rrhh.empleado',
-          label: 'Empleado',
-          icon: Users,
-          categories: simpleCategories('rrhh.empleado', 'Empleado')
-        },
-        {
-          id: 'rrhh.proveedores',
-          label: 'Proveedores',
-          icon: Building2,
-          categories: simpleCategories('rrhh.proveedores', 'Proveedores')
-        },
-        {
-          id: 'rrhh.administracion',
-          label: 'Administracion',
-          icon: ClipboardCheck,
-          categories: simpleCategories('rrhh.administracion', 'Administracion')
-        }
-      ]
-    },
-    {
-      id: 'clientes',
-      label: 'Clientes',
-      icon: Users,
-      modules: [
-        {
-          id: 'clientes.marketing',
-          label: 'Marketing',
-          icon: BarChart3,
-          categories: simpleCategories('clientes.marketing', 'Marketing')
-        },
-        {
-          id: 'clientes.cobranza',
-          label: 'Cobranza',
-          icon: CircleDollarSign,
-          categories: simpleCategories('clientes.cobranza', 'Cobranza')
-        },
-        {
-          id: 'clientes.codigo-imp',
-          label: 'Codigo IMP',
-          icon: Tags,
-          categories: simpleCategories('clientes.codigo-imp', 'Codigo IMP')
-        },
-        {
-          id: 'clientes.legal',
-          label: 'Legal',
-          icon: Landmark,
-          categories: simpleCategories('clientes.legal', 'Legal')
-        },
-        {
-          id: 'clientes.comercial',
-          label: 'Comercial',
-          icon: Users,
-          categories: [
-            category('clientes.comercial', 'mantenimientos', 'Mantenimientos', Wrench, [
-              'Vendedor'
-            ]),
-            category('clientes.comercial', 'procesos', 'Procesos', Settings, [
-              'Gestion comercial de dispositivos',
-              'Gestion comercial'
-            ]),
-            category('clientes.comercial', 'documentos', 'Documentos', FileText, [
-              'Contratos comerciales',
-              'Soportes de venta'
-            ]),
-            category('clientes.comercial', 'informes', 'Informes', BarChart3, [
-              'Vendedores activos',
-              'Actividad comercial'
-            ])
-          ]
-        }
-      ]
-    },
-    {
-      id: 'producto',
-      label: 'Producto',
-      icon: Package,
-      modules: [
-        {
-          id: 'producto.produccion-distribucion',
-          label: 'Produccion y Distribucion',
-          icon: Boxes,
-          categories: simpleCategories('producto.produccion-distribucion', 'Produccion y Distribucion')
-        },
-        {
-          id: 'producto.compras-importaciones',
-          label: 'Compras e Importaciones',
-          icon: Package,
-          categories: simpleCategories('producto.compras-importaciones', 'Compras e Importaciones')
-        }
-      ]
-    },
-    {
-      id: 'analisis',
-      label: 'Analisis',
-      icon: FileBarChart,
-      modules: [
-        {
-          id: 'analisis.am-r',
-          label: 'AM y R',
-          icon: BarChart3,
-          categories: simpleCategories('analisis.am-r', 'AM y R')
-        }
-      ]
-    },
-    {
-      id: 'sistema',
-      label: 'Sistema',
-      icon: MonitorCog,
-      modules: [
-        {
-          id: 'sistema.configuracion',
-          label: 'Configuracion',
-          icon: Settings,
-          categories: [
-            category('sistema.configuracion', 'mantenimientos', 'Mantenimientos', Wrench, [
-              'Empresas',
-              'Ubicacion',
-              'Sucursal',
-              'Modulos',
-              'Opciones',
-              'User',
-              'Acciones',
-              'Preferencia'
-            ]),
-            category('sistema.configuracion', 'procesos', 'Procesos', Settings, [
-              'Gestor de permisos',
-              'Auditoria de cambios',
-              'Validacion de parametros'
-            ]),
-            category('sistema.configuracion', 'documentos', 'Documentos', FileText, [
-              'Parametros generales',
-              'Actas de cambios'
-            ]),
-            category('sistema.configuracion', 'informes', 'Informes', BarChart3, [
-              'Resumen de configuracion',
-              'Cambios por periodo'
-            ])
-          ]
-        },
-        {
-          id: 'sistema.helpdesk',
-          label: 'Helpdesk',
-          icon: ClipboardCheck,
-          categories: simpleCategories('sistema.helpdesk', 'Helpdesk')
-        },
-        {
-          id: 'sistema.developer',
-          label: 'Developer',
-          icon: Settings,
-          categories: simpleCategories('sistema.developer', 'Developer')
-        }
-      ]
-    }
-  ];
+  users: UserItem[] = [];
 
   activeStep = 0;
   selectedUserId: number | null = null;
-  selectedAreas: Record<string, boolean> = {};
-  selectedModules: Record<string, boolean> = {};
-  selectedOptions: Record<string, boolean> = {};
-  selectedActions: Record<string, Partial<Record<PermissionAction, boolean>>> = {};
+  permissionAreas: PermissionAreaNode[] = [];
+  selectedAreaIds = new Set<number>();
+  selectedModuleIds = new Set<number>();
+  selectedOptionIds = new Set<number>();
+  actionState: Record<string, boolean> = {};
+  originalActionState: Record<string, boolean> = {};
   validationMessage = '';
   savedMessage = '';
+  loadError = '';
+  loadErrorDetail = '';
+  usersError = '';
+  isLoadingUsers = false;
+  isLoadingPermissions = false;
+  permissionsLoaded = false;
 
-  selectedAreaSummary: string[] = [];
-  selectedModuleSummary: string[] = [];
-  selectedOptionSummary: string[] = [];
-  selectedActionSummary: SelectedActionSummary[] = [];
-  visibleModules: Array<PermissionModule & { areaLabel: string }> = [];
-  visibleOptionGroups: Array<{
-    areaLabel: string;
-    module: PermissionModule;
-    categories: PermissionCategory[];
-  }> = [];
-  visibleActionOptions: Array<{
-    path: string;
-    option: PermissionOption;
-  }> = [];
+  constructor(
+    private readonly permissionService: PermissionManagerService,
+    private readonly userService: UserMaintenanceService
+  ) {}
+
+  ngOnInit(): void {
+    this.loadUsers();
+  }
 
   get canGoNext(): boolean {
     return this.isStepValid(this.activeStep);
@@ -353,8 +100,85 @@ export class PermissionManagerComponent {
     return this.steps.map((_, index) => index === 0 || this.arePreviousStepsValid(index));
   }
 
-  get selectedUser(): MockUser | undefined {
+  get selectedUser(): UserItem | undefined {
     return this.users.find((user) => user.id === this.selectedUserId);
+  }
+
+  get selectedUserLabel(): string {
+    return this.selectedUser ? this.getUserLabel(this.selectedUser) : 'Sin usuario';
+  }
+
+  get selectedAreas(): PermissionAreaNode[] {
+    return this.permissionAreas.filter((area) => this.isAreaSelected(area));
+  }
+
+  get selectedAreaSummary(): string[] {
+    return this.permissionAreas
+      .filter((area) => this.isAreaSelected(area))
+      .map((area) => area.name);
+  }
+
+  get selectedModuleSummary(): string[] {
+    return this.permissionAreas.flatMap((area) =>
+      this.safeModules(area)
+        .filter((moduleItem) => this.isModuleSelected(moduleItem))
+        .map((moduleItem) => `${area.name} > ${moduleItem.name}`)
+    );
+  }
+
+  get selectedOptionSummary(): string[] {
+    return this.permissionAreas.flatMap((area) =>
+      this.safeModules(area).flatMap((moduleItem) =>
+        this.safeOptions(moduleItem)
+          .filter((option) => this.isOptionSelected(option))
+          .map((option) => `${area.name} > ${moduleItem.name} > ${option.name}`)
+      )
+    );
+  }
+
+  get selectedActionSummary(): SelectedActionSummary[] {
+    return this.permissionAreas.flatMap((area) =>
+      this.safeModules(area).flatMap((moduleItem) =>
+        this.safeOptions(moduleItem).flatMap((option) =>
+          this.safeActions(option)
+            .filter((action) => this.isActionSelected(option, action))
+            .map((action) => ({
+              key: this.actionKey(option.id, action.id),
+              actionId: action.id,
+              actionLabel: action.name,
+              path: `${area.name} > ${moduleItem.name} > ${option.name}`,
+              hasPermission: this.isActionSelected(option, action),
+              changed: this.actionChanged(option, action)
+            }))
+        )
+      )
+    );
+  }
+
+  get changedActionCount(): number {
+    return Object.keys(this.actionState).filter((key) => this.actionState[key] !== this.originalActionState[key]).length;
+  }
+
+  onUserChange(userId: number | null): void {
+    this.selectedUserId = userId;
+    this.validationMessage = '';
+    this.savedMessage = '';
+    this.loadError = '';
+    this.loadErrorDetail = '';
+    this.permissionAreas = [];
+    this.selectedAreaIds.clear();
+    this.selectedModuleIds.clear();
+    this.selectedOptionIds.clear();
+    this.actionState = {};
+    this.originalActionState = {};
+    this.permissionsLoaded = false;
+    this.activeStep = 0;
+
+    if (userId === null) {
+      return;
+    }
+
+    this.loadUserPermissions(userId);
   }
 
   setActiveStep(step: number): void {
@@ -367,153 +191,249 @@ export class PermissionManagerComponent {
     this.validationMessage = this.stepValidationMessage(this.firstInvalidStepBefore(step));
   }
 
-  toggleArea(area: PermissionArea): void {
-    const nextValue = !this.selectedAreas[area.id];
-    this.selectedAreas = { ...this.selectedAreas, [area.id]: nextValue };
-
-    if (!nextValue) {
-      area.modules.forEach((item) => this.clearModule(item));
+  toggleArea(area: PermissionAreaNode): void {
+    if (this.isAreaSelected(area)) {
+      this.selectedAreaIds.delete(area.id);
+      this.clearAreaSelection(area);
+      this.savedMessage = '';
+      return;
     }
 
-    this.refreshDerivedState();
+    this.selectedAreaIds.add(area.id);
+    this.savedMessage = '';
   }
 
-  toggleModule(moduleItem: PermissionModule): void {
-    const nextValue = !this.selectedModules[moduleItem.id];
-    this.selectedModules = { ...this.selectedModules, [moduleItem.id]: nextValue };
-
-    if (!nextValue) {
-      this.clearModule(moduleItem);
+  toggleModule(area: PermissionAreaNode, moduleItem: PermissionModuleNode): void {
+    if (this.isModuleSelected(moduleItem)) {
+      this.selectedModuleIds.delete(moduleItem.id);
+      this.clearModuleSelection(moduleItem);
+      this.savedMessage = '';
+      return;
     }
 
-    this.refreshDerivedState();
+    this.selectedAreaIds.add(area.id);
+    this.selectedModuleIds.add(moduleItem.id);
+    this.savedMessage = '';
   }
 
-  toggleOption(option: PermissionOption): void {
-    const nextValue = !this.selectedOptions[option.id];
-    this.selectedOptions = { ...this.selectedOptions, [option.id]: nextValue };
-
-    if (!nextValue) {
-      const { [option.id]: _removed, ...remainingActions } = this.selectedActions;
-      this.selectedActions = remainingActions;
+  toggleOption(area: PermissionAreaNode, moduleItem: PermissionModuleNode, option: PermissionOptionNode): void {
+    if (this.isOptionSelected(option)) {
+      this.selectedOptionIds.delete(option.id);
+      this.clearOptionSelection(option);
+      this.savedMessage = '';
+      return;
     }
 
-    this.refreshDerivedState();
+    this.selectedAreaIds.add(area.id);
+    this.selectedModuleIds.add(moduleItem.id);
+    this.selectedOptionIds.add(option.id);
+    this.savedMessage = '';
   }
 
-  toggleAction(option: PermissionOption, action: PermissionAction): void {
-    const optionActions = this.selectedActions[option.id] ?? {};
+  toggleAction(
+    area: PermissionAreaNode,
+    moduleItem: PermissionModuleNode,
+    option: PermissionOptionNode,
+    action: PermissionActionNode
+  ): void {
+    const key = this.actionKey(option.id, action.id);
 
-    this.selectedActions = {
-      ...this.selectedActions,
-      [option.id]: {
-        ...optionActions,
-        [action]: !optionActions[action]
-      }
+    this.selectedAreaIds.add(area.id);
+    this.selectedModuleIds.add(moduleItem.id);
+    this.selectedOptionIds.add(option.id);
+    this.actionState = {
+      ...this.actionState,
+      [key]: !this.actionState[key]
     };
-
-    this.refreshDerivedState();
+    this.savedMessage = '';
   }
 
   savePermissions(): void {
     const payload = this.createPayload();
 
-    console.log('Mock permission payload', payload);
-    this.savedMessage = 'Permisos mock preparados. Revisa la consola para ver el payload.';
+    console.log('Permission payload', payload);
+    this.savedMessage = 'Payload de permisos preparado. Revisa la consola para ver los cambios locales.';
   }
 
-  trackByArea(_: number, area: PermissionArea): string {
+  areaHasPermission(area: PermissionAreaNode): boolean {
+    return this.safeModules(area).some((moduleItem) => this.moduleHasPermission(moduleItem));
+  }
+
+  moduleHasPermission(moduleItem: PermissionModuleNode): boolean {
+    return this.safeOptions(moduleItem).some((option) => this.optionHasPermission(option));
+  }
+
+  optionHasPermission(option: PermissionOptionNode): boolean {
+    return this.safeActions(option).some((action) => this.actionState[this.actionKey(option.id, action.id)]);
+  }
+
+  isAreaSelected(area: PermissionAreaNode): boolean {
+    return this.selectedAreaIds.has(area.id);
+  }
+
+  isModuleSelected(moduleItem: PermissionModuleNode): boolean {
+    return this.selectedModuleIds.has(moduleItem.id);
+  }
+
+  isOptionSelected(option: PermissionOptionNode): boolean {
+    return this.selectedOptionIds.has(option.id);
+  }
+
+  isActionSelected(option: PermissionOptionNode, action: PermissionActionNode): boolean {
+    return Boolean(this.actionState[this.actionKey(option.id, action.id)]);
+  }
+
+  actionChanged(option: PermissionOptionNode, action: PermissionActionNode): boolean {
+    const key = this.actionKey(option.id, action.id);
+    return this.actionState[key] !== this.originalActionState[key];
+  }
+
+  selectedModulesForArea(area: PermissionAreaNode): PermissionModuleNode[] {
+    return this.safeModules(area).filter((moduleItem) => this.isModuleSelected(moduleItem));
+  }
+
+  selectedOptionsForModule(moduleItem: PermissionModuleNode): PermissionOptionNode[] {
+    return this.safeOptions(moduleItem).filter((option) => this.isOptionSelected(option));
+  }
+
+  safeModules(area: PermissionAreaNode): PermissionModuleNode[] {
+    return Array.isArray(area.modules) ? area.modules : [];
+  }
+
+  safeOptions(moduleItem: PermissionModuleNode): PermissionOptionNode[] {
+    return Array.isArray(moduleItem.options) ? moduleItem.options : [];
+  }
+
+  safeActions(option: PermissionOptionNode): PermissionActionNode[] {
+    return Array.isArray(option.actions) ? option.actions : [];
+  }
+
+  trackByArea(_: number, area: PermissionAreaNode): number {
     return area.id;
   }
 
-  trackByModule(_: number, moduleItem: PermissionModule): string {
+  trackByModule(_: number, moduleItem: PermissionModuleNode): number {
     return moduleItem.id;
   }
 
-  trackByCategory(_: number, category: PermissionCategory): string {
-    return category.id;
-  }
-
-  trackByOption(_: number, option: PermissionOption): string {
+  trackByOption(_: number, option: PermissionOptionNode): number {
     return option.id;
   }
 
-  trackByOptionGroup(
-    _: number,
-    group: { areaLabel: string; module: PermissionModule; categories: PermissionCategory[] }
-  ): string {
-    return group.module.id;
-  }
-
-  trackByActionOption(_: number, item: { path: string; option: PermissionOption }): string {
-    return item.option.id;
-  }
-
-  trackByAction(_: number, action: { id: PermissionAction; label: string }): PermissionAction {
+  trackByAction(_: number, action: PermissionActionNode): number {
     return action.id;
   }
 
   trackByActionSummary(_: number, item: SelectedActionSummary): string {
-    return item.optionId;
+    return item.key;
   }
 
-  private refreshDerivedState(): void {
-    this.visibleModules = this.permissionAreas.flatMap((area) =>
-      this.selectedAreas[area.id]
-        ? area.modules.map((item) => ({ ...item, areaLabel: area.label }))
-        : []
-    );
-
-    this.visibleOptionGroups = this.permissionAreas.flatMap((area) =>
-      area.modules
-        .filter((item) => this.selectedModules[item.id])
-        .map((item) => ({
-          areaLabel: area.label,
-          module: item,
-          categories: item.categories
-        }))
-    );
-
-    this.visibleActionOptions = this.visibleOptionGroups.flatMap((group) =>
-      group.categories.flatMap((item) =>
-        item.options
-          .filter((option) => this.selectedOptions[option.id])
-          .map((option) => ({
-            path: `${group.areaLabel} > ${group.module.label} > ${item.label}`,
-            option
-          }))
-      )
-    );
-
-    this.selectedAreaSummary = this.permissionAreas
-      .filter((area) => this.selectedAreas[area.id])
-      .map((area) => area.label);
-    this.selectedModuleSummary = this.visibleModules
-      .filter((item) => this.selectedModules[item.id])
-      .map((item) => `${item.areaLabel} > ${item.label}`);
-    this.selectedOptionSummary = this.visibleActionOptions.map((item) => `${item.path} > ${item.option.label}`);
-    this.selectedActionSummary = this.visibleActionOptions
-      .map((item) => ({
-        optionId: item.option.id,
-        optionLabel: item.option.label,
-        path: item.path,
-        actions: ACTION_OPTIONS.filter((action) => this.selectedActions[item.option.id]?.[action.id]).map(
-          (action) => action.label
-        )
-      }))
-      .filter((item) => item.actions.length);
+  trackByUserId(_: number, user: UserItem): number {
+    return user.id;
   }
 
-  private clearModule(moduleItem: PermissionModule): void {
-    this.selectedModules = { ...this.selectedModules, [moduleItem.id]: false };
+  getUserLabel(user: UserItem): string {
+    return [user.name, user.lastname].filter(Boolean).join(' ').trim() || user.username || user.email || `Usuario ${user.id}`;
+  }
 
-    moduleItem.categories.forEach((item) => {
-      item.options.forEach((option) => {
-        this.selectedOptions = { ...this.selectedOptions, [option.id]: false };
-        const { [option.id]: _removed, ...remainingActions } = this.selectedActions;
-        this.selectedActions = remainingActions;
+  private loadUsers(): void {
+    this.isLoadingUsers = true;
+    this.usersError = '';
+
+    this.userService.getUsers().subscribe({
+      next: (users) => {
+        this.users = users.filter((user) => !user.canceled);
+        this.isLoadingUsers = false;
+      },
+      error: (error) => {
+        console.error('Error cargando usuarios para Gestor de permisos:', error);
+        console.error('Respuesta backend:', (error as { error?: unknown }).error);
+        this.users = [];
+        this.usersError = 'No se pudo cargar el listado de usuarios.';
+        this.isLoadingUsers = false;
+      }
+    });
+  }
+
+  private loadUserPermissions(userId: number): void {
+    this.isLoadingPermissions = true;
+
+    console.group('GESTOR PERMISOS COMPONENT LOAD');
+    console.log('User ID:', userId);
+    console.log('Inicio de carga de permisos desde el componente.');
+    console.trace();
+    console.groupEnd();
+
+    this.permissionService.getUserPermissions(userId).subscribe({
+      next: (areas) => {
+        this.permissionAreas = areas;
+        this.hydrateActionState(areas);
+        this.permissionsLoaded = true;
+        this.isLoadingPermissions = false;
+
+        console.group('GESTOR PERMISOS COMPONENT SUCCESS');
+        console.log('User ID:', userId);
+        console.log('Areas renderizadas:', areas);
+        console.log('Estado local de acciones:', this.actionState);
+        console.log('Permisos cargados:', this.permissionsLoaded);
+        console.trace();
+        console.groupEnd();
+      },
+      error: (error) => {
+        console.group('GESTOR PERMISOS COMPONENT ERROR');
+        console.log('User ID:', userId);
+        console.log('Error completo:', error);
+        console.log('Status:', error?.status);
+        console.log('StatusText:', error?.statusText);
+        console.log('Message:', error?.message);
+        console.log('URL:', error?.url);
+        console.log('Error body:', error?.error);
+
+        if (error?.error) {
+          console.log('error.error:', error.error);
+        }
+
+        if (error?.headers) {
+          console.log('Headers:', error.headers);
+        }
+
+        console.log('Stack/error object:', error?.stack ?? error);
+        console.trace();
+        console.groupEnd();
+
+        this.loadError = 'Error al cargar permisos';
+        this.loadErrorDetail = this.getPermissionErrorDetail(error);
+        this.permissionsLoaded = false;
+        this.isLoadingPermissions = false;
+      }
+    });
+  }
+
+  private hydrateActionState(areas: PermissionAreaNode[]): void {
+    const nextState: Record<string, boolean> = {};
+    this.selectedAreaIds.clear();
+    this.selectedModuleIds.clear();
+    this.selectedOptionIds.clear();
+
+    areas.forEach((area) => {
+      this.safeModules(area).forEach((moduleItem) => {
+        this.safeOptions(moduleItem).forEach((option) => {
+          this.safeActions(option).forEach((action) => {
+            const hasPermission = Boolean(action.has_permission);
+            nextState[this.actionKey(option.id, action.id)] = hasPermission;
+
+            if (hasPermission) {
+              this.selectedAreaIds.add(area.id);
+              this.selectedModuleIds.add(moduleItem.id);
+              this.selectedOptionIds.add(option.id);
+            }
+          });
+        });
       });
     });
+
+    this.actionState = nextState;
+    this.originalActionState = { ...nextState };
   }
 
   private arePreviousStepsValid(step: number): boolean {
@@ -539,17 +459,13 @@ export class PermissionManagerComponent {
   private isStepValid(step: number): boolean {
     switch (step) {
       case 0:
-        return this.selectedUserId !== null;
+        return Boolean(this.selectedUserId && this.permissionsLoaded && !this.isLoadingPermissions);
       case 1:
-        return this.selectedAreaSummary.length > 0;
       case 2:
-        return this.selectedModuleSummary.length > 0;
       case 3:
-        return this.selectedOptionSummary.length > 0;
       case 4:
-        return this.selectedActionSummary.length > 0;
       case 5:
-        return this.arePreviousStepsValid(5);
+        return this.permissionsLoaded;
       default:
         return false;
     }
@@ -557,29 +473,79 @@ export class PermissionManagerComponent {
 
   private stepValidationMessage(step: number): string {
     const messages = [
-      'Seleccione un usuario para iniciar la asignacion de permisos.',
-      'Marque al menos un area disponible para el usuario.',
-      'Seleccione uno o mas modulos de las areas permitidas.',
-      'Seleccione al menos una opcion interna.',
-      'Marque al menos una accion para las opciones seleccionadas.',
+      'Seleccione un usuario y espere la carga de permisos antes de continuar.',
+      'Revise las areas cargadas antes de continuar.',
+      'Revise los modulos cargados antes de continuar.',
+      'Revise las opciones cargadas antes de continuar.',
+      'Revise o ajuste las acciones antes de confirmar.',
       'Revise el resumen antes de guardar.'
     ];
 
     return messages[step] ?? 'Complete la informacion requerida.';
   }
 
+  private getPermissionErrorDetail(error: { status?: number } | null | undefined): string {
+    if (error?.status === 0) {
+      return 'Problema de conexion o permisos CORS.';
+    }
+
+    if (error?.status === 404) {
+      return 'No se pudo cargar el arbol de permisos. Verifique el endpoint.';
+    }
+
+    return 'No se pudo cargar el arbol de permisos del usuario.';
+  }
+
   private createPayload(): PermissionPayload {
-    return {
-      userId: this.selectedUserId,
-      areas: this.permissionAreas.filter((area) => this.selectedAreas[area.id]).map((area) => area.id),
-      modules: this.visibleModules.filter((item) => this.selectedModules[item.id]).map((item) => item.id),
-      options: this.visibleActionOptions.map((item) => item.option.id),
-      actions: this.visibleActionOptions.flatMap((item) =>
-        ACTION_OPTIONS.filter((action) => this.selectedActions[item.option.id]?.[action.id]).map((action) => ({
-          optionId: item.option.id,
-          action: action.id
-        }))
+    const permissions = this.permissionAreas.flatMap((area) =>
+      this.safeModules(area).flatMap((moduleItem) =>
+        this.safeOptions(moduleItem)
+          .filter((option) => this.isOptionSelected(option) || this.optionHasChanges(option))
+          .map((option) => ({
+            option_id: option.id,
+            actions: this.safeActions(option).map((action) => ({
+              action_id: action.id,
+              has_permission: this.isActionSelected(option, action)
+            }))
+          }))
       )
+    );
+
+    return {
+      user_id: this.selectedUserId,
+      permissions
     };
+  }
+
+  private clearAreaSelection(area: PermissionAreaNode): void {
+    this.safeModules(area).forEach((moduleItem) => {
+      this.selectedModuleIds.delete(moduleItem.id);
+      this.clearModuleSelection(moduleItem);
+    });
+  }
+
+  private clearModuleSelection(moduleItem: PermissionModuleNode): void {
+    this.safeOptions(moduleItem).forEach((option) => {
+      this.selectedOptionIds.delete(option.id);
+      this.clearOptionSelection(option);
+    });
+  }
+
+  private clearOptionSelection(option: PermissionOptionNode): void {
+    const nextState = { ...this.actionState };
+
+    this.safeActions(option).forEach((action) => {
+      nextState[this.actionKey(option.id, action.id)] = false;
+    });
+
+    this.actionState = nextState;
+  }
+
+  private optionHasChanges(option: PermissionOptionNode): boolean {
+    return this.safeActions(option).some((action) => this.actionChanged(option, action));
+  }
+
+  private actionKey(optionId: number, actionId: number): string {
+    return `${optionId}:${actionId}`;
   }
 }

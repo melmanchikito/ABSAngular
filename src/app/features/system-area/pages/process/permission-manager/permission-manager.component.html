@@ -1,8 +1,8 @@
 <section class="permission-page page-shell visual-page-background">
   <app-page-header
-    eyebrow="Sistema / Configuración / Procesos / Gestor de permisos"
+    eyebrow="Sistema / Configuracion / Procesos / Gestor de permisos"
     title="Gestor de permisos"
-    subtitle="Asigna permisos mock por usuario, areas, modulos, opciones y acciones."
+    subtitle="Consulta permisos reales por usuario y ajusta acciones en estado local."
     [icon]="pageIcon"
   ></app-page-header>
 
@@ -20,26 +20,51 @@
           <div>
             <span class="panel-eyebrow">Paso 1</span>
             <h2>Usuario</h2>
-            <p>Selecciona el usuario al que se le preparara el paquete de permisos.</p>
+            <p>Selecciona un usuario para consultar sus permisos reales desde el backend.</p>
           </div>
         </header>
 
         <div class="user-picker">
           <label class="field-control">
             <span>Usuario</span>
-            <select [(ngModel)]="selectedUserId" name="permissionUser">
-              <option [ngValue]="null">Seleccione un usuario...</option>
-              <option *ngFor="let user of users" [ngValue]="user.id">{{ user.name }}</option>
+            <select
+              [ngModel]="selectedUserId"
+              name="permissionUser"
+              [disabled]="isLoadingUsers || isLoadingPermissions"
+              (ngModelChange)="onUserChange($event)"
+            >
+              <option [ngValue]="null">{{ isLoadingUsers ? 'Cargando usuarios...' : 'Seleccione un usuario...' }}</option>
+              <option *ngFor="let user of users; trackBy: trackByUserId" [ngValue]="user.id">
+                {{ getUserLabel(user) }}
+              </option>
             </select>
           </label>
 
           <div class="selected-user" *ngIf="selectedUser">
             <lucide-angular [img]="steps[0].icon" [size]="22" [strokeWidth]="2.4"></lucide-angular>
             <div>
-              <strong>{{ selectedUser.name }}</strong>
-              <span>ID mock: {{ selectedUser.id }}</span>
+              <strong>{{ selectedUserLabel }}</strong>
+              <span *ngIf="isLoadingPermissions">Cargando permisos...</span>
+              <span *ngIf="!isLoadingPermissions && permissionsLoaded">Permisos cargados</span>
+              <span *ngIf="!isLoadingPermissions && !permissionsLoaded">ID: {{ selectedUser.id }}</span>
             </div>
           </div>
+        </div>
+
+        <div class="alert-error compact-alert permission-error" *ngIf="usersError">
+          <lucide-angular [img]="alertIcon" [size]="17" [strokeWidth]="2.4"></lucide-angular>
+          <span class="permission-error-copy">
+            <strong>Error al cargar usuarios</strong>
+            <small>{{ usersError }}</small>
+          </span>
+        </div>
+
+        <div class="alert-error compact-alert permission-error" *ngIf="loadError">
+          <lucide-angular [img]="alertIcon" [size]="17" [strokeWidth]="2.4"></lucide-angular>
+          <span class="permission-error-copy">
+            <strong>{{ loadError }}</strong>
+            <small>{{ loadErrorDetail }}</small>
+          </span>
         </div>
       </article>
 
@@ -48,28 +73,30 @@
           <div>
             <span class="panel-eyebrow">Paso 2</span>
             <h2>Areas</h2>
-            <p>Marca las areas principales que el usuario podra utilizar dentro del sistema ABS.</p>
+            <p>Areas devueltas por el endpoint de permisos del usuario.</p>
           </div>
-          <span class="panel-counter">{{ selectedAreaSummary.length }} seleccionadas</span>
+          <span class="panel-counter">{{ permissionAreas.length }} areas</span>
         </header>
 
-        <div class="area-grid">
-          <button
+        <div class="empty-panel" *ngIf="!permissionAreas.length">-</div>
+
+        <div class="area-grid" *ngIf="permissionAreas.length">
+          <article
             *ngFor="let area of permissionAreas; trackBy: trackByArea"
-            type="button"
             class="permission-card area-card"
-            [class.selected]="selectedAreas[area.id]"
+            [class.selected]="isAreaSelected(area)"
             (click)="toggleArea(area)"
           >
-            <span class="choice-box" [class.checked]="selectedAreas[area.id]"></span>
+            <span class="choice-box" [class.checked]="isAreaSelected(area)"></span>
             <span class="card-icon">
-              <lucide-angular [img]="area.icon" [size]="22" [strokeWidth]="2.4"></lucide-angular>
+              <lucide-angular [img]="steps[1].icon" [size]="22" [strokeWidth]="2.4"></lucide-angular>
             </span>
             <span class="card-copy">
-              <strong>{{ area.label }}</strong>
-              <small>{{ area.modules.length }} modulos disponibles</small>
+              <strong>{{ area.name || '-' }}</strong>
+              <small *ngIf="safeModules(area).length">{{ safeModules(area).length }} modulos disponibles</small>
+              <small *ngIf="!safeModules(area).length">Sin modulos disponibles</small>
             </span>
-          </button>
+          </article>
         </div>
       </article>
 
@@ -78,32 +105,41 @@
           <div>
             <span class="panel-eyebrow">Paso 3</span>
             <h2>Modulos</h2>
-            <p>Los modulos se muestran segun las areas seleccionadas en el paso anterior.</p>
+            <p>Modulos agrupados por area segun el arbol real de permisos.</p>
           </div>
           <span class="panel-counter">{{ selectedModuleSummary.length }} seleccionados</span>
         </header>
 
-        <div class="empty-panel" *ngIf="!visibleModules.length">
-          Selecciona al menos un area para ver sus modulos.
-        </div>
+        <div class="empty-panel" *ngIf="!selectedAreas.length">Seleccione al menos un area.</div>
 
-        <div class="module-groups" *ngIf="visibleModules.length">
-          <button
-            *ngFor="let moduleItem of visibleModules; trackBy: trackByModule"
-            type="button"
-            class="permission-card module-card"
-            [class.selected]="selectedModules[moduleItem.id]"
-            (click)="toggleModule(moduleItem)"
-          >
-            <span class="choice-box" [class.checked]="selectedModules[moduleItem.id]"></span>
-            <span class="card-icon">
-              <lucide-angular [img]="moduleItem.icon" [size]="21" [strokeWidth]="2.4"></lucide-angular>
-            </span>
-            <span class="card-copy">
-              <small>{{ moduleItem.areaLabel }}</small>
-              <strong>{{ moduleItem.label }}</strong>
-            </span>
-          </button>
+        <div class="tree-stack" *ngIf="selectedAreas.length">
+          <section class="tree-module" *ngFor="let area of selectedAreas; trackBy: trackByArea">
+            <header class="tree-module-header">
+              <span>Area</span>
+              <strong>{{ area.name || '-' }}</strong>
+            </header>
+
+            <div class="empty-inline" *ngIf="!safeModules(area).length">Sin modulos disponibles</div>
+
+            <div class="module-groups" *ngIf="safeModules(area).length">
+              <article
+                *ngFor="let moduleItem of safeModules(area); trackBy: trackByModule"
+                class="permission-card module-card"
+                [class.selected]="isModuleSelected(moduleItem)"
+                (click)="toggleModule(area, moduleItem)"
+              >
+                <span class="choice-box" [class.checked]="isModuleSelected(moduleItem)"></span>
+                <span class="card-icon">
+                  <lucide-angular [img]="steps[2].icon" [size]="21" [strokeWidth]="2.4"></lucide-angular>
+                </span>
+                <span class="card-copy">
+                  <small>{{ area.name || '-' }}</small>
+                  <strong>{{ moduleItem.name || '-' }}</strong>
+                  <small *ngIf="!safeOptions(moduleItem).length">Sin opciones disponibles</small>
+                </span>
+              </article>
+            </div>
+          </section>
         </div>
       </article>
 
@@ -112,41 +148,42 @@
           <div>
             <span class="panel-eyebrow">Paso 4</span>
             <h2>Opciones</h2>
-            <p>El arbol agrupa Mantenimientos, Procesos, Documentos e Informes por modulo.</p>
+            <p>Opciones reales agrupadas dentro de cada modulo.</p>
           </div>
           <span class="panel-counter">{{ selectedOptionSummary.length }} seleccionadas</span>
         </header>
 
-        <div class="empty-panel" *ngIf="!visibleOptionGroups.length">
-          Selecciona modulos para habilitar opciones internas.
-        </div>
+        <div class="empty-panel" *ngIf="!selectedModuleSummary.length">Seleccione al menos un modulo.</div>
 
-        <div class="tree-stack" *ngIf="visibleOptionGroups.length">
-          <section class="tree-module" *ngFor="let group of visibleOptionGroups; trackBy: trackByOptionGroup">
+        <div class="tree-stack" *ngIf="selectedModuleSummary.length">
+          <section class="tree-module" *ngFor="let area of selectedAreas; trackBy: trackByArea">
             <header class="tree-module-header">
-              <span>{{ group.areaLabel }}</span>
-              <strong>{{ group.module.label }}</strong>
+              <span>Area</span>
+              <strong>{{ area.name || '-' }}</strong>
             </header>
 
-            <div class="category-grid">
-              <article class="category-card" *ngFor="let category of group.categories; trackBy: trackByCategory">
-                <header>
-                  <lucide-angular [img]="category.icon" [size]="18" [strokeWidth]="2.4"></lucide-angular>
-                  <strong>{{ category.label }}</strong>
-                </header>
+            <div class="empty-inline" *ngIf="!selectedModulesForArea(area).length">Sin modulos seleccionados</div>
 
-                <button
-                  *ngFor="let option of category.options; trackBy: trackByOption"
-                  type="button"
+            <article class="category-card" *ngFor="let moduleItem of selectedModulesForArea(area); trackBy: trackByModule">
+              <header>
+                <lucide-angular [img]="steps[2].icon" [size]="18" [strokeWidth]="2.4"></lucide-angular>
+                <strong>{{ moduleItem.name || '-' }}</strong>
+              </header>
+
+              <div class="empty-inline" *ngIf="!safeOptions(moduleItem).length">Sin opciones disponibles</div>
+
+              <div class="option-grid" *ngIf="safeOptions(moduleItem).length">
+                <div
+                  *ngFor="let option of safeOptions(moduleItem); trackBy: trackByOption"
                   class="option-row"
-                  [class.selected]="selectedOptions[option.id]"
-                  (click)="toggleOption(option)"
+                  [class.selected]="isOptionSelected(option)"
+                  (click)="toggleOption(area, moduleItem, option)"
                 >
-                  <span class="choice-box small" [class.checked]="selectedOptions[option.id]"></span>
-                  <span>{{ option.label }}</span>
-                </button>
-              </article>
-            </div>
+                  <span class="choice-box small" [class.checked]="isOptionSelected(option)"></span>
+                  <span>{{ option.name || '-' }}</span>
+                </div>
+              </div>
+            </article>
           </section>
         </div>
       </article>
@@ -156,35 +193,57 @@
           <div>
             <span class="panel-eyebrow">Paso 5</span>
             <h2>Acciones</h2>
-            <p>Marca las acciones disponibles para cada opcion seleccionada.</p>
+            <p>Marca o desmarca acciones segun el permiso requerido para el usuario.</p>
           </div>
-          <span class="panel-counter">{{ selectedActionSummary.length }} con acciones</span>
+          <span class="panel-counter">{{ changedActionCount }} cambios</span>
         </header>
 
-        <div class="empty-panel" *ngIf="!visibleActionOptions.length">
-          Selecciona opciones internas para asignar acciones.
+        <div class="empty-panel" *ngIf="!permissionAreas.length">-</div>
+        <div class="empty-panel" *ngIf="permissionAreas.length && !selectedOptionSummary.length">
+          Seleccione al menos una opcion.
         </div>
 
-        <div class="actions-stack" *ngIf="visibleActionOptions.length">
-          <article class="action-card" *ngFor="let item of visibleActionOptions; trackBy: trackByActionOption">
-            <header>
-              <span>{{ item.path }}</span>
-              <strong>{{ item.option.label }}</strong>
+        <div class="actions-stack" *ngIf="selectedOptionSummary.length">
+          <section class="tree-module" *ngFor="let area of selectedAreas; trackBy: trackByArea">
+            <header class="tree-module-header">
+              <span>Area</span>
+              <strong>{{ area.name || '-' }}</strong>
             </header>
 
-            <div class="action-grid">
-              <button
-                *ngFor="let action of actionOptions; trackBy: trackByAction"
-                type="button"
-                class="action-toggle"
-                [class.selected]="selectedActions[item.option.id]?.[action.id]"
-                (click)="toggleAction(item.option, action.id)"
-              >
-                <span class="choice-box small" [class.checked]="selectedActions[item.option.id]?.[action.id]"></span>
-                <span>{{ action.label }}</span>
-              </button>
-            </div>
-          </article>
+            <div class="empty-inline" *ngIf="!selectedModulesForArea(area).length">Sin modulos seleccionados</div>
+
+            <article class="action-card" *ngFor="let moduleItem of selectedModulesForArea(area); trackBy: trackByModule">
+              <header>
+                <span>Modulo</span>
+                <strong>{{ moduleItem.name || '-' }}</strong>
+              </header>
+
+              <div class="empty-inline" *ngIf="!selectedOptionsForModule(moduleItem).length">Sin opciones seleccionadas</div>
+
+              <section class="option-actions" *ngFor="let option of selectedOptionsForModule(moduleItem); trackBy: trackByOption">
+                <header>
+                  <span>Opcion</span>
+                  <strong>{{ option.name || '-' }}</strong>
+                </header>
+
+                <div class="empty-inline" *ngIf="!safeActions(option).length">Sin acciones disponibles</div>
+
+                <div class="action-grid" *ngIf="safeActions(option).length">
+                  <button
+                    *ngFor="let action of safeActions(option); trackBy: trackByAction"
+                    type="button"
+                    class="action-toggle"
+                    [class.selected]="isActionSelected(option, action)"
+                    [class.changed]="actionChanged(option, action)"
+                    (click)="toggleAction(area, moduleItem, option, action)"
+                  >
+                    <span class="choice-box small" [class.checked]="isActionSelected(option, action)"></span>
+                    <span>{{ action.name || '-' }}</span>
+                  </button>
+                </div>
+              </section>
+            </article>
+          </section>
         </div>
       </article>
 
@@ -193,43 +252,51 @@
           <div>
             <span class="panel-eyebrow">Paso 6</span>
             <h2>Confirmar</h2>
-            <p>Revisa el resumen antes de guardar el payload mock en consola.</p>
+            <p>Revisa los permisos marcados y los cambios locales antes de imprimir el payload.</p>
           </div>
         </header>
 
         <div class="summary-layout">
           <section class="summary-card featured">
             <span>Usuario seleccionado</span>
-            <strong>{{ selectedUser?.name || 'Sin usuario' }}</strong>
+            <strong>{{ selectedUserLabel }}</strong>
           </section>
 
           <section class="summary-card">
-            <span>Areas permitidas</span>
-            <ul>
+            <span>Areas con permisos</span>
+            <ul *ngIf="selectedAreaSummary.length; else noAreas">
               <li *ngFor="let area of selectedAreaSummary">{{ area }}</li>
             </ul>
+            <ng-template #noAreas><strong>-</strong></ng-template>
           </section>
 
           <section class="summary-card">
-            <span>Modulos permitidos</span>
-            <ul>
+            <span>Modulos con permisos</span>
+            <ul *ngIf="selectedModuleSummary.length; else noModules">
               <li *ngFor="let moduleItem of selectedModuleSummary">{{ moduleItem }}</li>
             </ul>
+            <ng-template #noModules><strong>-</strong></ng-template>
           </section>
 
           <section class="summary-card wide">
-            <span>Opciones permitidas</span>
-            <ul>
+            <span>Opciones con permisos</span>
+            <ul *ngIf="selectedOptionSummary.length; else noOptions">
               <li *ngFor="let option of selectedOptionSummary">{{ option }}</li>
             </ul>
+            <ng-template #noOptions><strong>-</strong></ng-template>
           </section>
 
           <section class="summary-card wide">
-            <span>Acciones permitidas</span>
-            <div class="action-summary" *ngFor="let item of selectedActionSummary; trackBy: trackByActionSummary">
-              <strong>{{ item.path }} > {{ item.optionLabel }}</strong>
-              <small>{{ item.actions.join(', ') }}</small>
+            <span>Acciones marcadas</span>
+            <div
+              class="action-summary"
+              *ngFor="let item of selectedActionSummary; trackBy: trackByActionSummary"
+              [class.changed]="item.changed"
+            >
+              <strong>{{ item.path }} > {{ item.actionLabel }}</strong>
+              <small>{{ item.changed ? 'Modificado localmente' : 'Sin cambios' }}</small>
             </div>
+            <strong *ngIf="!selectedActionSummary.length">-</strong>
           </section>
         </div>
 

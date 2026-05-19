@@ -256,6 +256,18 @@
   text-align: center;
 }
 
+.empty-inline {
+  min-height: 42px;
+  display: flex;
+  align-items: center;
+  padding: 0.65rem 0.75rem;
+  border: 1.5px dashed color-mix(in srgb, var(--abs-border) 78%, #6b7280);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--abs-surface) 72%, transparent);
+  color: var(--abs-text-muted);
+  font-weight: 800;
+}
+
 .tree-stack,
 .actions-stack {
   display: grid;
@@ -323,6 +335,11 @@
   padding: 0.45rem 0.55rem;
 }
 
+.option-grid {
+  display: grid;
+  gap: 0.45rem;
+}
+
 .option-row:hover,
 .option-row.selected,
 .action-toggle:hover,
@@ -339,9 +356,30 @@
   margin-bottom: 0.85rem;
 }
 
-.action-card header span {
+.action-card header span,
+.option-actions header span {
   line-height: 1.35;
   text-transform: none;
+}
+
+.option-actions {
+  display: grid;
+  gap: 0.65rem;
+  padding: 0.85rem 0;
+  border-top: 1px solid color-mix(in srgb, var(--abs-border) 72%, transparent);
+}
+
+.option-actions:first-of-type {
+  border-top: 0;
+  padding-top: 0;
+}
+
+.option-actions header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 0;
 }
 
 .action-grid {
@@ -352,6 +390,12 @@
 
 .action-toggle {
   padding: 0.55rem 0.7rem;
+}
+
+.action-toggle.changed,
+.action-summary.changed {
+  border-color: color-mix(in srgb, var(--abs-primary) 50%, var(--abs-border));
+  background: color-mix(in srgb, var(--abs-primary) 7%, var(--abs-surface));
 }
 
 .summary-layout {
@@ -412,6 +456,35 @@
 
 .compact-alert {
   margin: 0;
+}
+
+.permission-error {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  padding: 0.85rem 0.95rem;
+  border-radius: 14px;
+}
+
+.permission-error lucide-angular {
+  flex: 0 0 auto;
+  margin-top: 0.12rem;
+}
+
+.permission-error-copy {
+  display: grid;
+  gap: 0.16rem;
+  min-width: 0;
+}
+
+.permission-error-copy strong {
+  color: var(--abs-text);
+  font-size: 0.95rem;
+}
+
+.permission-error-copy small {
+  color: var(--abs-text-muted);
+  line-height: 1.35;
 }
 
 @media (prefers-reduced-motion: no-preference) {

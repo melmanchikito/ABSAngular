@@ -292,6 +292,13 @@ export const MAIN_ROUTES: Routes = [
       ...legacyMaintenanceRedirects,
       ...maintenanceRoutes,
       {
+        path: 'modulo/sistema/configuracion/mantenimientos/permisos',
+        loadComponent: () =>
+          import('../system-area/pages/maintenance/permission-maintenance/permission-maintenance.component').then(
+            (m) => m.PermissionMaintenanceComponent
+          )
+      },
+      {
         path: 'modulo/clientes/comercial/procesos/gestion-comercial-dispositivos',
         loadComponent: () =>
           import(
