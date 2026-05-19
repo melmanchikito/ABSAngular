@@ -2,6 +2,7 @@ import { Observable } from 'rxjs';
 
 export type MaintenanceEntity =
   | 'companies'
+  | 'areas'
   | 'locations'
   | 'branches'
   | 'modules'

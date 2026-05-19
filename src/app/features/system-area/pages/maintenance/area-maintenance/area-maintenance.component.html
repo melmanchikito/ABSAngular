@@ -1,0 +1,199 @@
+<section class="area-page page-shell">
+  <app-page-header
+    eyebrow="Sistema"
+    title="Mantenimiento - Area"
+    subtitle="Administra las areas registradas en el sistema."
+    [icon]="areaIcon"
+  >
+    <div page-actions class="app-page-actions" (click)="$event.stopPropagation()">
+      <div class="app-grid-filter-menu">
+        <button
+          type="button"
+          class="btn-outline app-grid-filter-trigger app-grid-icon-button"
+          [class.active]="filtersOpen || statusFilter !== 'all'"
+          title="Filtros"
+          aria-label="Abrir filtros"
+          (click)="toggleFilters($event)"
+        >
+          <lucide-angular [img]="filterIcon" [size]="17" [strokeWidth]="2.4"></lucide-angular>
+        </button>
+
+        <section class="app-grid-filter-panel" *ngIf="filtersOpen" (click)="$event.stopPropagation()">
+          <strong class="app-grid-filter-title">Filtros del listado</strong>
+          <label class="app-grid-filter-field">
+            <span>Estado</span>
+            <select [(ngModel)]="statusFilterDraft">
+              <option *ngFor="let option of statusFilterOptions" [ngValue]="option.value">{{ option.label }}</option>
+            </select>
+          </label>
+          <div class="app-grid-filter-actions">
+            <button type="button" class="btn-outline" (click)="clearFilters()">Limpiar</button>
+            <button type="button" class="btn-primary" (click)="applyFilters()">Aplicar</button>
+          </div>
+        </section>
+      </div>
+
+      <button
+        type="button"
+        class="primary-btn btn-primary app-grid-icon-button"
+        title="Nuevo"
+        aria-label="Nuevo"
+        routerLink="create"
+      >
+        <lucide-angular [img]="addIcon" [size]="18" [strokeWidth]="2.4"></lucide-angular>
+      </button>
+    </div>
+  </app-page-header>
+
+  <div class="alert-success" *ngIf="successMessage">{{ successMessage }}</div>
+  <div class="alert-error" *ngIf="errorMessage">{{ errorMessage }}</div>
+
+  <section class="content-grid">
+    <article class="areas-panel app-card app-grid-card">
+      <header class="app-grid-header">
+        <div class="app-grid-title">
+          <span class="app-grid-eyebrow">Listado</span>
+          <h2 class="app-grid-heading">Areas</h2>
+        </div>
+      </header>
+
+      <section class="app-grid-toolbar">
+        <label class="app-grid-search">
+          <lucide-angular [img]="searchIcon" [size]="18" [strokeWidth]="2.3"></lucide-angular>
+          <input
+            type="search"
+            name="areaSearch"
+            [ngModel]="searchTerm"
+            appDebouncedSearch
+            (debouncedSearch)="searchTerm = $event; onFiltersChange()"
+            placeholder="Buscar por codigo, nombre u orden..."
+            autocomplete="off"
+          />
+        </label>
+
+        <button
+          type="button"
+          class="ghost-btn btn-outline refresh-btn app-grid-icon-button"
+          title="Actualizar"
+          aria-label="Actualizar listado"
+          (click)="loadAreas()"
+          [disabled]="isLoading"
+        >
+          <lucide-angular [img]="refreshIcon" [size]="17" [strokeWidth]="2.3"></lucide-angular>
+        </button>
+      </section>
+
+      <div class="app-grid-table-wrapper">
+        <table class="area-table app-table app-grid-table">
+          <thead>
+            <tr>
+              <th
+                *ngFor="let column of gridColumns; trackBy: trackByColumnKey"
+                [class]="getColumnClass(column)"
+                [style.width]="column.width || null"
+              >
+                {{ column.label }}
+              </th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngIf="isLoading">
+              <td [attr.colspan]="gridColumns.length">
+                <app-empty-state message="Cargando areas..." [icon]="areaIcon"></app-empty-state>
+              </td>
+            </tr>
+
+            <tr *ngIf="!isLoading && !areas.length">
+              <td [attr.colspan]="gridColumns.length">
+                <app-empty-state message="No existen areas registradas." [icon]="areaIcon"></app-empty-state>
+              </td>
+            </tr>
+
+            <tr *ngIf="!isLoading && areas.length && !filteredAreas.length">
+              <td [attr.colspan]="gridColumns.length">
+                <app-empty-state
+                  message="No se encontraron areas con los filtros aplicados."
+                  [icon]="searchIcon"
+                ></app-empty-state>
+              </td>
+            </tr>
+
+            <tr
+              *ngFor="let area of paginatedAreas; trackBy: trackByAreaId"
+              class="area-row app-grid-row-clickable"
+              [class.app-grid-row-selected]="selectedAreaId === area.id"
+              (click)="selectArea(area)"
+            >
+              <td *ngFor="let column of gridColumns; trackBy: trackByColumnKey" [class]="getColumnClass(column)">
+                <ng-container [ngSwitch]="column.key">
+                  <app-status-badge
+                    *ngSwitchCase="'canceled'"
+                    [label]="area.canceled ? 'Inactiva' : 'Activa'"
+                    [variant]="area.canceled ? 'inactive' : 'active'"
+                  ></app-status-badge>
+
+                  <div *ngSwitchCase="'actions'" class="app-grid-actions">
+                    <button
+                      type="button"
+                      class="icon-action btn-icon"
+                      title="Ver area"
+                      aria-label="Ver area"
+                      (click)="$event.stopPropagation(); selectArea(area)"
+                    >
+                      <lucide-angular [img]="detailIcon" [size]="17" [strokeWidth]="2.3"></lucide-angular>
+                    </button>
+
+                    <button
+                      type="button"
+                      class="icon-action btn-icon"
+                      title="Editar area"
+                      aria-label="Editar area"
+                      [routerLink]="['edit', area.id]"
+                      (click)="$event.stopPropagation()"
+                    >
+                      <lucide-angular [img]="editIcon" [size]="17" [strokeWidth]="2.3"></lucide-angular>
+                    </button>
+
+                    <button
+                      type="button"
+                      class="icon-action danger btn-icon"
+                      title="Anular area"
+                      aria-label="Anular area"
+                      [disabled]="area.canceled"
+                      (click)="$event.stopPropagation(); askCancel(area)"
+                    >
+                      <lucide-angular [img]="trashIcon" [size]="17" [strokeWidth]="2.3"></lucide-angular>
+                    </button>
+                  </div>
+
+                  <span *ngSwitchDefault>{{ formatGridValue(area, column.key) }}</span>
+                </ng-container>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <app-data-grid-pagination
+        [showing]="showingCount"
+        [pageSize]="pageSize"
+        [totalItems]="filteredAreas.length"
+        itemLabel="areas"
+        [currentPage]="currentPage"
+        [totalPages]="totalPages"
+        (pageChange)="setPage($event)"
+      ></app-data-grid-pagination>
+    </article>
+  </section>
+
+  <app-confirm-dialog
+    [open]="!!areaToCancel"
+    title="Anular area"
+    [message]="cancelAreaMessage"
+    confirmLabel="Anular area"
+    [loading]="isSaving"
+    (confirm)="confirmCancel()"
+    (cancel)="closeCancelConfirm()"
+  ></app-confirm-dialog>
+</section>

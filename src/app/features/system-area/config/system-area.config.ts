@@ -131,7 +131,12 @@ const configuracionCategories = createCategories(
       icon: ClipboardCheck,
       route: route('sistema/configuracion/acciones')
     },
-    { label: 'Areas', description: 'Grupos organizacionales internos.', icon: FolderKanban },
+    {
+      label: 'Area',
+      description: 'Grupos organizacionales internos.',
+      icon: FolderKanban,
+      route: route('sistema/configuracion/mantenimientos/areas')
+    },
     { label: 'Preferencia', description: 'Preferencias generales de operacion.', icon: Gauge }
   ],
   [
@@ -139,6 +144,12 @@ const configuracionCategories = createCategories(
     { label: 'Actas de cambios', description: 'Soporte documental de ajustes realizados.', icon: FileCheck2 }
   ],
   [
+    {
+      label: 'Gestor de permisos',
+      description: 'Asignacion visual de permisos por usuario.',
+      icon: ShieldCheck,
+      route: route('sistema/configuracion/procesos/gestor-permisos')
+    },
     { label: 'Auditoria de cambios', description: 'Revision de cambios aplicados.', icon: ShieldCheck },
     { label: 'Validacion de parametros', description: 'Control de consistencia de configuraciones.', icon: ClipboardCheck }
   ],

@@ -38,6 +38,15 @@ const MAINTENANCE_ROUTES: readonly MaintenanceRouteConfig[] = [
       )
   },
   {
+    slug: 'areas',
+    path: 'modulo/sistema/configuracion/mantenimientos/areas',
+    entity: 'areas',
+    loadComponent: () =>
+      import('../system-area/pages/maintenance/area-maintenance/area-maintenance.component').then(
+        (m) => m.AreaMaintenanceComponent
+      )
+  },
+  {
     slug: 'ubicaciones',
     path: 'modulo/sistema/configuracion/mantenimientos/ubicaciones',
     entity: 'locations',
@@ -290,9 +299,9 @@ export const MAIN_ROUTES: Routes = [
           ).then((m) => m.CommercialDeviceManagementComponent)
       },
       {
-        path: 'modulo/clientes/comercial/procesos/gestor-permisos',
+        path: 'modulo/sistema/configuracion/procesos/gestor-permisos',
         loadComponent: () =>
-          import('../clients-area/pages/process/permission-manager/permission-manager.component').then(
+          import('../system-area/pages/process/permission-manager/permission-manager.component').then(
             (m) => m.PermissionManagerComponent
           )
       },

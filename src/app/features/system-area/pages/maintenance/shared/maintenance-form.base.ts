@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ArrowLeft, Save } from 'lucide-angular';
 import { Observable, forkJoin } from 'rxjs';
 import { ActionMaintenanceService } from '../../../services/action-maintenance.service';
+import { AreaMaintenanceService } from '../../../services/area-maintenance.service';
 import { BranchMaintenanceService } from '../../../services/branch-maintenance.service';
 import { CompanyMaintenanceService } from '../../../services/company-maintenance.service';
 import { EmployeeMaintenanceService } from '../../../services/employee-maintenance.service';
@@ -60,6 +61,7 @@ export abstract class MaintenanceFormBase {
   protected readonly route = inject(ActivatedRoute);
   protected readonly router = inject(Router);
   private readonly companyService = inject(CompanyMaintenanceService);
+  private readonly areaService = inject(AreaMaintenanceService);
   private readonly employeeService = inject(EmployeeMaintenanceService);
   private readonly locationService = inject(LocationMaintenanceService);
   private readonly branchService = inject(BranchMaintenanceService);
@@ -339,6 +341,7 @@ export abstract class MaintenanceFormBase {
   private getConfigServices(): MaintenanceFormConfigServices {
     return {
       companyService: this.companyService,
+      areaService: this.areaService,
       employeeService: this.employeeService,
       locationService: this.locationService,
       branchService: this.branchService,

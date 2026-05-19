@@ -224,7 +224,6 @@ export class PermissionManagerComponent {
             ]),
             category('clientes.comercial', 'procesos', 'Procesos', Settings, [
               'Gestion comercial de dispositivos',
-              'Gestor de permisos',
               'Gestion comercial'
             ]),
             category('clientes.comercial', 'documentos', 'Documentos', FileText, [
@@ -292,6 +291,7 @@ export class PermissionManagerComponent {
               'Preferencia'
             ]),
             category('sistema.configuracion', 'procesos', 'Procesos', Settings, [
+              'Gestor de permisos',
               'Auditoria de cambios',
               'Validacion de parametros'
             ]),

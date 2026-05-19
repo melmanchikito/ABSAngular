@@ -1,6 +1,7 @@
 import { map } from 'rxjs';
 import { FIELD_LIMITS } from '../../../../../shared/constants/field-limits.constants';
 import { ActionMaintenanceService } from '../../../services/action-maintenance.service';
+import { AreaMaintenanceService } from '../../../services/area-maintenance.service';
 import { BranchMaintenanceService } from '../../../services/branch-maintenance.service';
 import { CompanyMaintenanceService } from '../../../services/company-maintenance.service';
 import { EmployeeMaintenanceService } from '../../../services/employee-maintenance.service';
@@ -23,6 +24,7 @@ import { cleanPayload } from './maintenance-form.helpers';
 
 export interface MaintenanceFormConfigServices {
   companyService: CompanyMaintenanceService;
+  areaService: AreaMaintenanceService;
   employeeService: EmployeeMaintenanceService;
   locationService: LocationMaintenanceService;
   branchService: BranchMaintenanceService;
@@ -80,6 +82,28 @@ export function createMaintenanceFormConfig(
           email: form['email'],
           updated_by: username
         })
+    },
+    areas: {
+      entity,
+      eyebrow: 'Sistema',
+      listTitle: 'Mantenimiento - Area',
+      createTitle: 'Crear area',
+      editTitle: 'Editar area',
+      createSubtitle: 'Registra una nueva area del sistema.',
+      editSubtitle: 'Actualiza el area seleccionada.',
+      listUrl: `${listBase}/mantenimientos/areas`,
+      idParam: 'area_id',
+      fields: [
+        baseFields.code,
+        baseFields.name,
+        { key: 'order', label: 'Orden', type: 'number', required: true, numeric: true }
+      ],
+      load: (id) => services.areaService.getAreaById(id),
+      create: (payload) => services.areaService.insertArea(payload as never),
+      update: (payload) => services.areaService.updateArea(payload as never),
+      toCreatePayload: (form, username) => cleanPayload({ ...form, created_by: username }),
+      toUpdatePayload: (id, form, username) =>
+        cleanPayload({ area_id: id, name: form['name'], order: form['order'], updated_by: username })
     },
     locations: {
       entity,
