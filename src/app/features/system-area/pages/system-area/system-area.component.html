@@ -19,7 +19,7 @@
 
   <div class="section-buttons">
     <button
-      *ngFor="let category of categories"
+      *ngFor="let category of categories; trackBy: trackCategory"
       type="button"
       class="section-btn"
       [class.active]="activeCategory === category.key"
@@ -37,9 +37,12 @@
   </div>
 
   <div
+    #contentCard
     class="content-card app-card"
     [class.category-exiting]="isCategoryExiting"
+    [class.category-entering]="isCategoryEntering"
     [attr.data-motion-cycle]="contentAnimationCycle"
+    [style.min-height.px]="contentMinHeight || null"
   >
     <div class="content-header">
       <div>
@@ -48,25 +51,26 @@
       </div>
 
       <span class="counter">
-        {{ activeOptions.length }} opciones
+        {{ activeOptionCards.length }} opciones
       </span>
     </div>
 
-    <div class="options-grid" *ngIf="activeOptions.length; else emptyState">
+    <div class="options-grid" *ngIf="activeOptionCards.length; else emptyState">
       <button
-        *ngFor="let option of activeOptions"
+        *ngFor="let optionCard of activeOptionCards; trackBy: trackOptionCard"
         type="button"
         class="option-card"
-        [class.option-card-link]="option.route"
-        (click)="selectOption(option)"
+        [class.option-card-link]="optionCard.option.route"
+        [style.animation-delay.ms]="optionCard.animationDelay"
+        (click)="selectOption(optionCard.option)"
       >
         <span class="option-icon">
-          <lucide-angular [img]="option.icon" [size]="19" [strokeWidth]="2.3"></lucide-angular>
+          <lucide-angular [img]="optionCard.option.icon" [size]="19" [strokeWidth]="2.3"></lucide-angular>
         </span>
 
         <span class="option-content">
-          <strong>{{ option.label }}</strong>
-          <small>{{ option.description }}</small>
+          <strong>{{ optionCard.option.label }}</strong>
+          <small>{{ optionCard.option.description }}</small>
         </span>
 
         <span class="option-arrow">&rsaquo;</span>

@@ -16,7 +16,7 @@
 @keyframes system-module-enter {
   from {
     opacity: 0;
-    transform: translate3d(0, 18px, 0);
+    transform: translate3d(0, 16px, 0);
   }
 
   to {
@@ -28,7 +28,7 @@
 @keyframes system-module-card-enter {
   from {
     opacity: 0;
-    transform: translate3d(0, 18px, 0) scale(0.975);
+    transform: translate3d(0, 14px, 0) scale(0.985);
   }
 
   to {
@@ -45,7 +45,19 @@
 
   to {
     opacity: 0;
-    transform: translate3d(0, 10px, 0) scale(0.985);
+    transform: translate3d(0, 8px, 0) scale(0.992);
+  }
+}
+
+@keyframes system-options-enter {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 14px, 0) scale(0.99);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
   }
 }
 
@@ -147,7 +159,11 @@
   color: var(--abs-text);
   cursor: pointer;
   text-align: left;
-  transition: all 0.24s ease;
+  transition:
+    border-color 240ms var(--abs-motion-ease),
+    background-color 240ms var(--abs-motion-ease),
+    color 240ms var(--abs-motion-ease),
+    transform 180ms var(--abs-motion-ease);
   box-shadow: var(--system-shadow);
 }
 
@@ -208,6 +224,7 @@
   border-radius: 20px;
   padding: 1.25rem;
   box-shadow: var(--system-shadow);
+  overflow: hidden;
 }
 
 .content-header {
@@ -261,7 +278,11 @@
   color: var(--abs-text);
   cursor: default;
   text-align: left;
-  transition: all 0.22s ease;
+  transition:
+    border-color 220ms var(--abs-motion-ease),
+    background-color 220ms var(--abs-motion-ease),
+    color 220ms var(--abs-motion-ease),
+    transform 180ms var(--abs-motion-ease);
   box-shadow: 0 3px 10px rgba(15, 23, 42, 0.05);
 }
 
@@ -341,6 +362,14 @@
     animation: system-module-enter var(--abs-motion-base) var(--abs-motion-ease-premium) both;
   }
 
+  .content-card,
+  .content-header,
+  .options-grid,
+  .empty-state,
+  .option-card {
+    will-change: opacity, transform;
+  }
+
   .section-btn {
     animation: system-module-card-enter var(--abs-motion-slow) var(--abs-motion-ease-premium) both;
   }
@@ -362,7 +391,7 @@
   }
 
   .content-card {
-    animation: system-module-card-enter var(--abs-motion-slow) var(--abs-motion-ease-premium) 260ms both;
+    animation: system-module-enter 580ms var(--abs-motion-ease-out) 240ms both;
   }
 
   .content-header {
@@ -372,56 +401,17 @@
   .category-exiting .content-header,
   .category-exiting .options-grid,
   .category-exiting .empty-state {
-    animation: system-options-exit 150ms var(--abs-motion-ease) both;
+    animation: system-options-exit 180ms var(--abs-motion-ease) both;
   }
 
-  .options-grid,
-  .empty-state {
-    animation: system-module-enter var(--abs-motion-base) var(--abs-motion-ease-premium) both;
+  .category-entering .content-header,
+  .category-entering .options-grid,
+  .category-entering .empty-state {
+    animation: system-options-enter 520ms var(--abs-motion-ease-out) both;
   }
 
   .option-card {
-    animation: system-module-card-enter 420ms var(--abs-motion-ease-premium) both;
-  }
-
-  .option-card:nth-child(1) {
-    animation-delay: 45ms;
-  }
-
-  .option-card:nth-child(2) {
-    animation-delay: 80ms;
-  }
-
-  .option-card:nth-child(3) {
-    animation-delay: 115ms;
-  }
-
-  .option-card:nth-child(4) {
-    animation-delay: 150ms;
-  }
-
-  .option-card:nth-child(5) {
-    animation-delay: 185ms;
-  }
-
-  .option-card:nth-child(6) {
-    animation-delay: 220ms;
-  }
-
-  .option-card:nth-child(7) {
-    animation-delay: 255ms;
-  }
-
-  .option-card:nth-child(8) {
-    animation-delay: 290ms;
-  }
-
-  .option-card:nth-child(9) {
-    animation-delay: 325ms;
-  }
-
-  .option-card:nth-child(10) {
-    animation-delay: 360ms;
+    animation: system-module-card-enter 430ms var(--abs-motion-ease-out) both;
   }
 }
 

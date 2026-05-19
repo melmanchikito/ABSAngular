@@ -290,6 +290,13 @@ export const MAIN_ROUTES: Routes = [
           ).then((m) => m.CommercialDeviceManagementComponent)
       },
       {
+        path: 'modulo/clientes/comercial/procesos/gestor-permisos',
+        loadComponent: () =>
+          import('../clients-area/pages/process/permission-manager/permission-manager.component').then(
+            (m) => m.PermissionManagerComponent
+          )
+      },
+      {
         path: 'modulo/rrhh',
         redirectTo: 'modulo/rrhh/empleado',
         pathMatch: 'full'

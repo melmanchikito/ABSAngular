@@ -1,0 +1,246 @@
+<section class="permission-page page-shell visual-page-background">
+  <app-page-header
+    eyebrow="Clientes / Comercial / Procesos"
+    title="Gestor de permisos"
+    subtitle="Asigna permisos mock por usuario, areas, modulos, opciones y acciones."
+    [icon]="pageIcon"
+  ></app-page-header>
+
+  <app-stepper
+    [steps]="steps"
+    [activeStep]="activeStep"
+    [canGoNext]="canGoNext"
+    [enabledSteps]="enabledSteps"
+    [validationMessage]="validationMessage"
+    (activeStepChange)="setActiveStep($event)"
+  >
+    <section class="permission-step" [ngSwitch]="activeStep">
+      <article class="wizard-panel app-card" *ngSwitchCase="0">
+        <header class="panel-heading">
+          <div>
+            <span class="panel-eyebrow">Paso 1</span>
+            <h2>Usuario</h2>
+            <p>Selecciona el usuario al que se le preparara el paquete de permisos.</p>
+          </div>
+        </header>
+
+        <div class="user-picker">
+          <label class="field-control">
+            <span>Usuario</span>
+            <select [(ngModel)]="selectedUserId" name="permissionUser">
+              <option [ngValue]="null">Seleccione un usuario...</option>
+              <option *ngFor="let user of users" [ngValue]="user.id">{{ user.name }}</option>
+            </select>
+          </label>
+
+          <div class="selected-user" *ngIf="selectedUser">
+            <lucide-angular [img]="steps[0].icon" [size]="22" [strokeWidth]="2.4"></lucide-angular>
+            <div>
+              <strong>{{ selectedUser.name }}</strong>
+              <span>ID mock: {{ selectedUser.id }}</span>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="wizard-panel app-card" *ngSwitchCase="1">
+        <header class="panel-heading">
+          <div>
+            <span class="panel-eyebrow">Paso 2</span>
+            <h2>Areas</h2>
+            <p>Marca las areas principales que el usuario podra utilizar dentro del sistema ABS.</p>
+          </div>
+          <span class="panel-counter">{{ selectedAreaSummary.length }} seleccionadas</span>
+        </header>
+
+        <div class="area-grid">
+          <button
+            *ngFor="let area of permissionAreas; trackBy: trackByArea"
+            type="button"
+            class="permission-card area-card"
+            [class.selected]="selectedAreas[area.id]"
+            (click)="toggleArea(area)"
+          >
+            <span class="choice-box" [class.checked]="selectedAreas[area.id]"></span>
+            <span class="card-icon">
+              <lucide-angular [img]="area.icon" [size]="22" [strokeWidth]="2.4"></lucide-angular>
+            </span>
+            <span class="card-copy">
+              <strong>{{ area.label }}</strong>
+              <small>{{ area.modules.length }} modulos disponibles</small>
+            </span>
+          </button>
+        </div>
+      </article>
+
+      <article class="wizard-panel app-card" *ngSwitchCase="2">
+        <header class="panel-heading">
+          <div>
+            <span class="panel-eyebrow">Paso 3</span>
+            <h2>Modulos</h2>
+            <p>Los modulos se muestran segun las areas seleccionadas en el paso anterior.</p>
+          </div>
+          <span class="panel-counter">{{ selectedModuleSummary.length }} seleccionados</span>
+        </header>
+
+        <div class="empty-panel" *ngIf="!visibleModules.length">
+          Selecciona al menos un area para ver sus modulos.
+        </div>
+
+        <div class="module-groups" *ngIf="visibleModules.length">
+          <button
+            *ngFor="let moduleItem of visibleModules; trackBy: trackByModule"
+            type="button"
+            class="permission-card module-card"
+            [class.selected]="selectedModules[moduleItem.id]"
+            (click)="toggleModule(moduleItem)"
+          >
+            <span class="choice-box" [class.checked]="selectedModules[moduleItem.id]"></span>
+            <span class="card-icon">
+              <lucide-angular [img]="moduleItem.icon" [size]="21" [strokeWidth]="2.4"></lucide-angular>
+            </span>
+            <span class="card-copy">
+              <small>{{ moduleItem.areaLabel }}</small>
+              <strong>{{ moduleItem.label }}</strong>
+            </span>
+          </button>
+        </div>
+      </article>
+
+      <article class="wizard-panel app-card" *ngSwitchCase="3">
+        <header class="panel-heading">
+          <div>
+            <span class="panel-eyebrow">Paso 4</span>
+            <h2>Opciones</h2>
+            <p>El arbol agrupa Mantenimientos, Procesos, Documentos e Informes por modulo.</p>
+          </div>
+          <span class="panel-counter">{{ selectedOptionSummary.length }} seleccionadas</span>
+        </header>
+
+        <div class="empty-panel" *ngIf="!visibleOptionGroups.length">
+          Selecciona modulos para habilitar opciones internas.
+        </div>
+
+        <div class="tree-stack" *ngIf="visibleOptionGroups.length">
+          <section class="tree-module" *ngFor="let group of visibleOptionGroups; trackBy: trackByOptionGroup">
+            <header class="tree-module-header">
+              <span>{{ group.areaLabel }}</span>
+              <strong>{{ group.module.label }}</strong>
+            </header>
+
+            <div class="category-grid">
+              <article class="category-card" *ngFor="let category of group.categories; trackBy: trackByCategory">
+                <header>
+                  <lucide-angular [img]="category.icon" [size]="18" [strokeWidth]="2.4"></lucide-angular>
+                  <strong>{{ category.label }}</strong>
+                </header>
+
+                <button
+                  *ngFor="let option of category.options; trackBy: trackByOption"
+                  type="button"
+                  class="option-row"
+                  [class.selected]="selectedOptions[option.id]"
+                  (click)="toggleOption(option)"
+                >
+                  <span class="choice-box small" [class.checked]="selectedOptions[option.id]"></span>
+                  <span>{{ option.label }}</span>
+                </button>
+              </article>
+            </div>
+          </section>
+        </div>
+      </article>
+
+      <article class="wizard-panel app-card" *ngSwitchCase="4">
+        <header class="panel-heading">
+          <div>
+            <span class="panel-eyebrow">Paso 5</span>
+            <h2>Acciones</h2>
+            <p>Marca las acciones disponibles para cada opcion seleccionada.</p>
+          </div>
+          <span class="panel-counter">{{ selectedActionSummary.length }} con acciones</span>
+        </header>
+
+        <div class="empty-panel" *ngIf="!visibleActionOptions.length">
+          Selecciona opciones internas para asignar acciones.
+        </div>
+
+        <div class="actions-stack" *ngIf="visibleActionOptions.length">
+          <article class="action-card" *ngFor="let item of visibleActionOptions; trackBy: trackByActionOption">
+            <header>
+              <span>{{ item.path }}</span>
+              <strong>{{ item.option.label }}</strong>
+            </header>
+
+            <div class="action-grid">
+              <button
+                *ngFor="let action of actionOptions; trackBy: trackByAction"
+                type="button"
+                class="action-toggle"
+                [class.selected]="selectedActions[item.option.id]?.[action.id]"
+                (click)="toggleAction(item.option, action.id)"
+              >
+                <span class="choice-box small" [class.checked]="selectedActions[item.option.id]?.[action.id]"></span>
+                <span>{{ action.label }}</span>
+              </button>
+            </div>
+          </article>
+        </div>
+      </article>
+
+      <article class="wizard-panel app-card" *ngSwitchCase="5">
+        <header class="panel-heading">
+          <div>
+            <span class="panel-eyebrow">Paso 6</span>
+            <h2>Confirmar</h2>
+            <p>Revisa el resumen antes de guardar el payload mock en consola.</p>
+          </div>
+        </header>
+
+        <div class="summary-layout">
+          <section class="summary-card featured">
+            <span>Usuario seleccionado</span>
+            <strong>{{ selectedUser?.name || 'Sin usuario' }}</strong>
+          </section>
+
+          <section class="summary-card">
+            <span>Areas permitidas</span>
+            <ul>
+              <li *ngFor="let area of selectedAreaSummary">{{ area }}</li>
+            </ul>
+          </section>
+
+          <section class="summary-card">
+            <span>Modulos permitidos</span>
+            <ul>
+              <li *ngFor="let moduleItem of selectedModuleSummary">{{ moduleItem }}</li>
+            </ul>
+          </section>
+
+          <section class="summary-card wide">
+            <span>Opciones permitidas</span>
+            <ul>
+              <li *ngFor="let option of selectedOptionSummary">{{ option }}</li>
+            </ul>
+          </section>
+
+          <section class="summary-card wide">
+            <span>Acciones permitidas</span>
+            <div class="action-summary" *ngFor="let item of selectedActionSummary; trackBy: trackByActionSummary">
+              <strong>{{ item.path }} > {{ item.optionLabel }}</strong>
+              <small>{{ item.actions.join(', ') }}</small>
+            </div>
+          </section>
+        </div>
+
+        <div class="confirm-actions">
+          <div class="alert-success compact-alert" *ngIf="savedMessage">{{ savedMessage }}</div>
+          <button type="button" class="btn-primary" [disabled]="!canGoNext" (click)="savePermissions()">
+            <lucide-angular [img]="saveIcon" [size]="18" [strokeWidth]="2.4"></lucide-angular>
+            Guardar permisos
+          </button>
+        </div>
+      </article>
+    </section>
+  </app-stepper>
+</section>

@@ -14,6 +14,7 @@ import {
   Scale,
   ScrollText,
   Settings,
+  ShieldCheck,
   Tags,
   UserRoundCheck,
   Users,
@@ -186,6 +187,12 @@ export const CLIENTS_AREA_CONFIG: ClientsAreaConfig = {
             description: 'Vinculacion de vendedores con equipos comerciales.',
             icon: Link2,
             route: route('comercial/procesos/gestion-comercial-dispositivos')
+          },
+          {
+            label: 'Gestor de permisos',
+            description: 'Asignacion visual de permisos por usuario.',
+            icon: ShieldCheck,
+            route: route('comercial/procesos/gestor-permisos')
           },
           { label: 'Gestion comercial', description: 'Seguimiento de oportunidades y actividades.', icon: ClipboardCheck }
         ],
